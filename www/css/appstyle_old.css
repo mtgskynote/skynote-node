@@ -1,0 +1,56 @@
+html, body{
+  height:100%;
+  width:100%;
+  background-color: #111;
+
+}
+
+.container {
+  font-family: Helvetica, Arial, sans-serif;
+  height:100%;
+  width:100%;
+}
+
+.container > * {
+  background-color: #ccc;
+
+}
+
+/* Typically, you wouldn't specify a height or min-height on this, instead allowing your actual content (i.e., text, images, etc.) to dictate the height of your content area. But since this example has very minimal content, I've set a min-height to mimic a taller content area. */
+.content {
+  min-height: 50%;
+  overflow-y: scroll;
+}
+
+/* Layout is stacked vertically by default (for narrower viewports), so give some breathing room between the sections. */
+/* Select all elements where parent is a container */
+.container > * {
+
+}
+
+/* Now let's apply grid for wider viewports. */
+@media screen and (min-width: 40em) {
+  .container > * {
+
+  }
+  /* Define the grid */
+  .container {
+    display: grid;
+    grid-template-columns: 18% 60% 18%;
+    grid-gap: 1% 1%;
+    grid-template-rows: 10% 70% 10%;
+  }
+  /* Place items on the grid */
+  .header {
+    grid-column: 1 / span 3;
+    text-align: center
+  }
+  .sidebar {
+    grid-row-end: span 2;
+    overflow-y: scroll;
+  }
+  .content {
+    grid-column: 2;
+  }
+
+}
