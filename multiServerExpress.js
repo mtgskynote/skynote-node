@@ -8,13 +8,14 @@ const https = require('https');
 const { program } = require('commander');
 program
     .option('--nocerts')
+    .option('-p, --port <number>');
 program.parse();
-
+const options = program.opts();
 
 //const { Server } = require('socket.io');
 //const socketio = new Server(server); 
 
-var portnum = process.argv[2] || 3000; // Get portnum from the command line if it is there, otherwise use 3000 as default
+var portnum = options.port || 3000; // Get portnum from the command line if it is there, otherwise use 3000 as default
 
 var theServer;
 //Certificate for Domain 1
