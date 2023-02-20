@@ -5,7 +5,7 @@
   "main": "index.js",
   "type": "module",
   "scripts": {
-    "server": "nodemon server",
+    "server": "nodemon server --nocerts -p 8001",
     "client": "npm start --prefix client-jb",
     "start": "concurrently  --kill-others-on-fail  \"npm run server\" \"npm run client\" "
   },

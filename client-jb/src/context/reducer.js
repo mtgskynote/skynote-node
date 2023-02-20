@@ -59,6 +59,34 @@ const reducer = (state, action) => {
     };
   }
 
+  if (action.type === LOGIN_USER_BEGIN) {
+    return {
+      ...state,
+      isLoading: true,
+    };
+  }
+  if (action.type === LOGIN_USER_SUCCESS) {
+    return {
+      ...state,
+      isLoading: false,
+      user: action.payload.user,
+      token: action.payload.token,
+      userLocation: action.payload.location,
+      showAlert: true,
+      alertType: "success",
+      alertText: "Login Successful! Redirecting...",
+    };
+  }
+  if (action.type === LOGIN_USER_ERROR) {
+    return {
+      ...state,
+      isLoading: false,
+      showAlert: true,
+      alertType: "danger",
+      alertText: action.payload.msg,
+    };
+  }
+
   throw new Error(`no such action :${action.type}`);
 };
 export default reducer;
