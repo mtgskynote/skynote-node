@@ -1,16 +1,20 @@
 import { createTunnel } from "tunnel-ssh";
 import mongoose from "mongoose";
 import fs from "fs";
+import dotenv from "dotenv";
+dotenv.config();
+
+const public_key = process.env.PUBLIC_KEY;
 
 const connectDB = async (url) => {
   mongoose.set("strictQuery", false);
 
-  const privateKey = fs.readFileSync("./id_ed25519");
+  const privateKey = fs.readFileSync(public_key);
 
   const sshOptions = {
     host: "appskynote.com",
     port: 22,
-    username: "dilipharish",
+    username: process.env.USERNAME,
     privateKey: privateKey,
   };
 

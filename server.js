@@ -18,7 +18,7 @@ import notFoundMiddleWare from "./middleware-jb/not-found.js";
 import errorHandlerMiddleWare from "./middleware-jb/error-handler.js"; // best practice to import it at the last
 
 const app = express();
-const [options, server] = serverAuthentication(app);
+// const [options, server] = serverAuthentication(app);
 
 if (process.env.NODE_ENV !== "production") {
   app.use(morgan("dev")); // morgan is a middleware that allows us to log the requests in the console
@@ -44,13 +44,13 @@ app.use("/api/v1/jobs", jobsRoutes);
 app.use(notFoundMiddleWare);
 app.use(errorHandlerMiddleWare);
 
-const port = process.env.PORT || options.port || 3000;
-// const port = process.env.PORT;
+// const port = process.env.PORT || options.port || 3000;
+const port = process.env.PORT;
 
 const start = async () => {
   try {
     await connectDB(process.env.MONGO_URL);
-    server.listen(port, () =>
+    app.listen(port, () =>
       console.log(`Server is listening on port ${port}...`)
     );
   } catch (error) {
