@@ -4,46 +4,50 @@ import fs from "fs";
 import dotenv from "dotenv";
 dotenv.config();
 
-const public_key = process.env.PUBLIC_KEY;
+const private_key = process.env.VPS_PRIVATE_KEY;
 
 const connectDB = async (url) => {
   mongoose.set("strictQuery", false);
 
-  const privateKey = fs.readFileSync(public_key);
+  if (private_key) {
+    const privateKey = fs.readFileSync(private_key);
 
-  const sshOptions = {
-    host: "appskynote.com",
-    port: 22,
-    username: process.env.USERNAME,
-    privateKey: privateKey,
-  };
-
-  const mySimpleTunnel = (sshOptions, port, autoClose = true) => {
-    let forwardOptions = {
-      srcAddr: "127.0.0.1",
-      srcPort: port,
-      dstAddr: "127.0.0.1",
-      dstPort: port,
+    const sshOptions = {
+      host: "appskynote.com",
+      port: 22,
+      username: process.env.VPS_USERNAME,
+      privateKey: privateKey,
     };
 
-    let tunnelOptions = {
-      autoClose: autoClose,
-    };
+    const mySimpleTunnel = (sshOptions, port, autoClose = true) => {
+      let forwardOptions = {
+        srcAddr: "127.0.0.1",
+        srcPort: port,
+        dstAddr: "127.0.0.1",
+        dstPort: port,
+      };
 
-    let serverOptions = {
-      host: "127.0.0.1",
-      port: port,
-    };
+      let tunnelOptions = {
+        autoClose: autoClose,
+      };
 
-    return createTunnel(
-      tunnelOptions,
-      serverOptions,
-      sshOptions,
-      forwardOptions
-    );
-  };
-  await mySimpleTunnel(sshOptions, 27017);
-  console.log("tunnel ssh established.");
+      let serverOptions = {
+        host: "127.0.0.1",
+        port: port,
+      };
+
+      return createTunnel(
+        tunnelOptions,
+        serverOptions,
+        sshOptions,
+        forwardOptions
+      );
+    };
+    await mySimpleTunnel(sshOptions, 27017);
+    console.log("tunnel ssh established.");
+  } else {
+    console.log("private key not found from .env file");
+  }
 
   const connectionDone = mongoose
     .connect(
