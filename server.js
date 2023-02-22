@@ -1,6 +1,5 @@
 import express from "express";
 import dotenv from "dotenv";
-import serverAuthentication from "./serverAuthentication.js";
 
 dotenv.config();
 import "express-async-errors"; // this is a package that allows us to use async await in express
@@ -18,7 +17,6 @@ import notFoundMiddleWare from "./middleware-jb/not-found.js";
 import errorHandlerMiddleWare from "./middleware-jb/error-handler.js"; // best practice to import it at the last
 
 const app = express();
-// const [options, server] = serverAuthentication(app);
 
 if (process.env.NODE_ENV !== "production") {
   app.use(morgan("dev")); // morgan is a middleware that allows us to log the requests in the console
