@@ -1,7 +1,7 @@
 {
   "name": "skynote",
   "version": "1.0.0",
-  "description": "#### Track Your Job Search",
+  "description": "#### Music Learning",
   "main": "index.js",
   "type": "module",
   "scripts": {
@@ -26,8 +26,11 @@
     "fs": "^0.0.1-security",
     "http-status-codes": "^2.2.0",
     "jsonwebtoken": "^9.0.0",
+    "moment": "^2.29.4",
     "mongoose": "^6.9.0",
     "morgan": "^1.10.0",
+    "react-icons": "^4.8.0",
+    "recharts": "^2.4.3",
     "tunnel-ssh": "^5.0.5",
     "validator": "^13.7.0"
   }
