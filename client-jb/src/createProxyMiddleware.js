@@ -9,7 +9,7 @@ import { createProxyMiddleware } from "http-proxy-middleware";
 dotenv.config();
 
 // access process variable
-const proxyPort = process.env.PROXY_PORT_TO_NODE_BACKEND || 3000;
+const proxyPort = process.env.PROXY_PORT_TO_NODE_BACKEND || 5000;
 
 module.exports = function (app) {
   app.use(
