@@ -25,7 +25,7 @@ const Navbar = () => {
           >
             <FaUserCircle />
             {console.log("user", user)}
-            {user && user.email.split("@")[0]}
+            {user.email && user.email.split("@")[0]}
             <FaCaretDown />
           </button>
           <div className={showLogout ? "dropdown show-dropdown" : "dropdown"}>
