@@ -5,8 +5,12 @@ const SharedLayout = () => {
   return (
     <Wrapper>
       <nav>
-        <Link to="add-job">add job</Link>
-        <Link to="all-jobs">add job</Link>
+        <div>
+          <Link to="add-job">add job</Link>
+        </div>
+        <div>
+          <Link to="all-jobs">all jobs</Link>
+        </div>
       </nav>
       <Outlet />
     </Wrapper>

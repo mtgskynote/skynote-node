@@ -1,5 +1,5 @@
 import { BrowserRouter, Routes, Route, Link } from "react-router-dom";
-import { Register, Landing, Error } from "./pages";
+import { Register, Landing, Error, ProtectedRoute } from "./pages";
 
 import {
   AllJobs,
@@ -22,7 +22,14 @@ function App() {
         </nav> */}
 
         <Routes>
-          <Route path="/dashboard" element={<SharedLayout />}>
+          <Route
+            path="/"
+            element={
+              <ProtectedRoute>
+                <SharedLayout />
+              </ProtectedRoute>
+            }
+          >
             <Route path="stats" element={<Stats />} />
             <Route path="all-jobs" element={<AllJobs />} />
             <Route path="add-job" element={<AddJob />} />
