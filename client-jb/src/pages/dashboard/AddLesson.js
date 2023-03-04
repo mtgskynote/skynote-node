@@ -1,3 +1,4 @@
+import React from "react";
 const AddLesson = () => {
   return <h1>Add Lesson Page</h1>;
 };
