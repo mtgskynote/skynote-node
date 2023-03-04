@@ -6,6 +6,7 @@ import {
   SETUP_USER_SUCCESS,
   SETUP_USER_ERROR,
   TOGGLE_SIDEBAR,
+  LOGOUT_USER,
 } from "./actions";
 
 import reducer from "./reducer";
@@ -54,7 +55,7 @@ const AppProvider = ({ children }) => {
     localStorage.setItem("location", location);
   };
 
-  const removeUserToLocalStorage = (user, token, location) => {
+  const removeUserFromLocalStorage = (user, token, location) => {
     localStorage.removeItem("user");
     localStorage.removeItem("token");
     localStorage.removeItem("location");
@@ -92,6 +93,11 @@ const AppProvider = ({ children }) => {
     dispatch({ type: TOGGLE_SIDEBAR });
   };
 
+  const logoutUser = () => {
+    dispatch({ type: LOGOUT_USER });
+    removeUserFromLocalStorage();
+  };
+
   return (
     <AppContext.Provider
       value={{
@@ -99,13 +105,16 @@ const AppProvider = ({ children }) => {
         displayAlert,
         setupUser,
         toggleSidebar,
+        logoutUser,
       }}
     >
       {children}
     </AppContext.Provider>
   );
 };
-// make sure use
+// useContext is a hook that allows us to access the context. It takes the context object (AppContext) as an argument
+//and returns the context value. The context value is determined by the value prop of the nearest <AppContext.Provider> above the calling component in the tree.
+
 const useAppContext = () => {
   return useContext(AppContext);
 };

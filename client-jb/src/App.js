@@ -13,14 +13,6 @@ function App() {
   return (
     <div className="App">
       <BrowserRouter>
-        {/* <nav>
-          <Link to="/">
-            <div>dashboard div</div>
-          </Link>
-          <Link to="/register">Register</Link>
-          <Link to="/landing">Landing</Link>
-        </nav> */}
-
         <Routes>
           <Route
             path="/"
@@ -35,9 +27,6 @@ function App() {
             <Route path="add-job" element={<AddJob />} />
             <Route path="profile" element={<Profile />} />
           </Route>
-          {/* <Route path="all-jobs" element={<AllJobs />} />
-            <Route path="add-job" element={<AddJob />} />
-            <Route path="profile" element={<Profile />} /> */}
           <Route path="/register" element={<Register />} />
           <Route path="/landing" element={<Landing />} />
           <Route path="*" element={<Error />} />
