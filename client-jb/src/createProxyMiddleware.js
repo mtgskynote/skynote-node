@@ -13,9 +13,9 @@ const proxyPort = process.env.PROXY_PORT_TO_NODE_BACKEND || 5000;
 
 module.exports = function (app) {
   app.use(
-    "/api/v1",
+    "/api",
     createProxyMiddleware({
-      target: `http://127.0.0.1:${proxyPort}`,
+      target: `http://127.0.0.1:${proxyPort}/`,
       changeOrigin: true,
     })
   );
