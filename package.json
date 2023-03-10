@@ -5,6 +5,7 @@
   "main": "index.js",
   "type": "module",
   "scripts": {
+    "build-client": "cd client-jb && npm run build",
     "server": "nodemon server",
     "client": "npm start --prefix client-jb",
     "start": "concurrently  --kill-others-on-fail  \"npm run server\" \"npm run client\" "

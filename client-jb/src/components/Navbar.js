@@ -24,8 +24,7 @@ const Navbar = () => {
             onClick={() => setShowLogout(!showLogout)}
           >
             <FaUserCircle />
-            {console.log("user", user)}
-            {user.email && user.email.split("@")[0]}
+            {user.name && user.name}
             <FaCaretDown />
           </button>
           <div className={showLogout ? "dropdown show-dropdown" : "dropdown"}>

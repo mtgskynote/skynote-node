@@ -9,13 +9,17 @@ import morgan from "morgan"; // this is a package that allows us to log the requ
 import connectDB from "./db/connect.js";
 
 //routers
-import authRoutes from "./routes/authRoutes.js";
-import jobsRoutes from "./routes/jobRoutes.js";
+import authRouter from "./routes/authRoutes.js";
+import jobsRouter from "./routes/jobRoutes.js";
 
 // middleware
 import notFoundMiddleWare from "./middleware-jb/not-found.js";
 import errorHandlerMiddleWare from "./middleware-jb/error-handler.js"; // best practice to import it at the last
 import authenticateUser from "./middleware-jb/authenticateUser.js";
+
+import { dirname } from "path";
+import { fileURLToPath } from "url";
+import path from "path";
 
 const app = express();
 
@@ -28,17 +32,22 @@ if (process.env.NODE_ENV !== "production") {
 // to make json values available in the code.
 
 // app.use is a method that allows us to use middleware
+const __dirname = dirname(fileURLToPath(import.meta.url));
+app.use(express.static(path.resolve(__dirname, "./client-jb/build")));
 app.use(express.json());
-
-console.log("hello world");
-// app.get is a method that allows us to create a route.
 
 app.get("/api/v1", (req, res) => {
   res.send({ msg: "API" });
 });
+
 // app.use is a method that allows us to use middleware
-app.use("/api/v1/auth", authRoutes);
-app.use("/api/v1/jobs", authenticateUser, jobsRoutes);
+app.use("/api/v1/auth", authRouter);
+app.use("/api/v1/jobs", authenticateUser, jobsRouter);
+
+// only when ready to deploy
+app.get("*", function (request, response) {
+  response.sendFile(path.resolve(__dirname, "./client-jb/build", "index.html"));
+});
 
 app.use(notFoundMiddleWare);
 app.use(errorHandlerMiddleWare);
