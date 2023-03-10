@@ -3,8 +3,8 @@ import { useNavigate } from "react-router-dom";
 import { Logo, FormRow, Alert } from "../components";
 import Wrapper from "../assets/wrappers/RegisterPage";
 import { useAppContext } from "../context/appContext";
-import { useGoogleLogin } from "@react-oauth/google";
-import { useDispatch } from "react-redux";
+// import { useGoogleLogin } from "@react-oauth/google";
+// import { useDispatch } from "react-redux";
 
 // global context and useNavigate later
 
