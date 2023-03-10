@@ -3,6 +3,8 @@ import { useNavigate } from "react-router-dom";
 import { Logo, FormRow, Alert } from "../components";
 import Wrapper from "../assets/wrappers/RegisterPage";
 import { useAppContext } from "../context/appContext";
+import { useGoogleLogin } from "@react-oauth/google";
+import { useDispatch } from "react-redux";
 
 // global context and useNavigate later
 
@@ -18,6 +20,7 @@ const initialState = {
 function Register() {
   const [values, setValues] = useState(initialState);
   const navigate = useNavigate();
+
   const { user, isLoading, showAlert, displayAlert, setupUser } =
     useAppContext();
 
@@ -62,6 +65,7 @@ function Register() {
       }, 3000);
     }
   }, [user, navigate]);
+
   return (
     <Wrapper className="full-page">
       <form className="form" onSubmit={onSubmit}>
@@ -103,6 +107,15 @@ function Register() {
             {values.isMember ? "Register" : "Login"}
           </button>
         </p>
+        <div className="g-signin2" data-onsuccess="onSignIn">
+          <button
+            type="button"
+            onClick={() => "login()"}
+            className="google-btn"
+          >
+            <i className="fa-brands fa-google btn"></i> Sign up with google
+          </button>
+        </div>
       </form>
     </Wrapper>
   );

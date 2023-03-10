@@ -15,6 +15,7 @@ import jobsRoutes from "./routes/jobRoutes.js";
 // middleware
 import notFoundMiddleWare from "./middleware-jb/not-found.js";
 import errorHandlerMiddleWare from "./middleware-jb/error-handler.js"; // best practice to import it at the last
+import authenticateUser from "./middleware-jb/authenticateUser.js";
 
 const app = express();
 
@@ -37,7 +38,7 @@ app.get("/api/v1", (req, res) => {
 });
 // app.use is a method that allows us to use middleware
 app.use("/api/v1/auth", authRoutes);
-app.use("/api/v1/jobs", jobsRoutes);
+app.use("/api/v1/jobs", authenticateUser, jobsRoutes);
 
 app.use(notFoundMiddleWare);
 app.use(errorHandlerMiddleWare);
