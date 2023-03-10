@@ -21,21 +21,25 @@ import { dirname } from "path";
 import { fileURLToPath } from "url";
 import path from "path";
 
+import helmet from "helmet";
+import xss from "xss-clean";
+import mongoSanitize from "express-mongo-sanitize";
+
 const app = express();
 
 if (process.env.NODE_ENV !== "production") {
   app.use(morgan("dev")); // morgan is a middleware that allows us to log the requests in the console
 }
 
-// since authrouter contains routes that are post methods
-// as json we can use a built-in method from express we can invoke it
-// to make json values available in the code.
-
-// app.use is a method that allows us to use middleware
 const __dirname = dirname(fileURLToPath(import.meta.url));
+
 app.use(express.static(path.resolve(__dirname, "./client-jb/build")));
 app.use(express.json());
+app.use(helmet());
+app.use(xss());
+app.use(mongoSanitize());
 
+// app.use is a method that allows us to use middleware
 app.get("/api/v1", (req, res) => {
   res.send({ msg: "API" });
 });
