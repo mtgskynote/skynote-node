@@ -13,42 +13,24 @@ const files = [
   // "5_Cuerdas_Al_Aire_2_(Suelta)_A.xml",
 ];
 
-const folderBasePath = "/assets/musicXmlFiles";
+const folderBasePath = "";
 
-const getTitle = (fileName) => {
-  // console.log(`${folderBasePath}/${fileName}`);
-  // fetch(`${folderBasePath}/${fileName}`)
-  //   .then((response) => response.text())
-  //   .then((xmlFileData) => {
-  //     let arr = new XMLParser()
-  //       .parseFromString(xmlFileData)
-  //       .getElementsByTagName("movement-title");
-  //     if (arr && arr.length > 0) {
-  //       console.log(arr[0].value);
-  //     } else {
-  //       console.log("Title not found");
-  //     }
-  //   });
-
-  return new Promise((resolve, rej) => {
-    console.log(`${folderBasePath}/${fileName}`);
-    fetch(filename)
-      .then((response) => response.text())
-      .then((xmlFileData) => {
-        console.log(xmlFileData);
-        let arr = new XMLParser()
-          .parseFromString(xmlFileData)
-          .getElementsByTagName("movement-title");
-        if (arr && arr.length > 0) {
-          resolve(arr[0].value);
-        } else {
-          resolve("hello-title"); // write filename here (fileName) if want to display the file name.
-        }
-      })
-      .catch((err) => {
-        console.log(err.message);
-      });
-  });
+const getTitle = async (fileName) => {
+  try {
+    const response = await fetch(`${folderBasePath}/${fileName}`);
+    const xmlFileData = await response.text();
+    const arr = new XMLParser()
+      .parseFromString(xmlFileData)
+      .getElementsByTagName("movement-title");
+    if (arr && arr.length > 0) {
+      return arr[0].value;
+    } else {
+      return fileName; // write filename here (fileName) if want to display the file name.
+    }
+  } catch (err) {
+    console.log(err.message);
+    return fileName;
+  }
 };
 
 const LevelOne = () => {
