@@ -2,7 +2,7 @@ import React from "react";
 import { useParams } from "react-router-dom";
 import OpenSheetMusicDisplay from "./OpenSheetMusicDisplay";
 
-const folderBasePath = "";
+const folderBasePath = "/musicXmlFiles";
 
 const ProgressPlayFile = (props) => {
   const params = useParams();

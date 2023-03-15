@@ -7,13 +7,13 @@ import XMLParser from "react-xml-parser";
 
 const files = [
   "1_Cuerdas_Al_Aire_1_(Suelta)_A.xml",
-  // "2_Cuerdas_Al_Aire_1_(Suelta)_D.xml",
-  // "3_Cuerdas_Al_Aire_1_(Suelta)_G.xml",
-  // "4_Cuerdas_Al_Aire_1_(Suelta)_E.xml",
-  // "5_Cuerdas_Al_Aire_2_(Suelta)_A.xml",
+  "2_Cuerdas_Al_Aire_1_(Suelta)_D.xml",
+  "3_Cuerdas_Al_Aire_1_(Suelta)_G.xml",
+  "4_Cuerdas_Al_Aire_1_(Suelta)_E.xml",
+  "5_Cuerdas_Al_Aire_2_(Suelta)_A.xml",
 ];
 
-const folderBasePath = "";
+const folderBasePath = "/musicXmlFiles";
 
 const getTitle = async (fileName) => {
   try {
@@ -25,7 +25,7 @@ const getTitle = async (fileName) => {
     if (arr && arr.length > 0) {
       return arr[0].value;
     } else {
-      return fileName; // write filename here (fileName) if want to display the file name.
+      return "movement-title"; // write filename here (fileName) if want to display the file name.
     }
   } catch (err) {
     console.log(err.message);

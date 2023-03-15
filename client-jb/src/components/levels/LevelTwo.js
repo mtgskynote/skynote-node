@@ -6,33 +6,31 @@ import Row from "react-bootstrap/Row";
 import XMLParser from "react-xml-parser";
 
 const files = [
-  "6. Cuerdas_Al_Aire_2_(Suelta)_D.xml",
-  "7. Cuerdas_Al_Aire_2_(Suelta)_G.xml",
-  "8. Cuerdas_Al_Aire_2_(Suelta)_E.xml",
-  "9. Cuerdas_Al_Aire_3_(Suelta)_A.xml",
-  "10. Cuerdas_Al_Aire_3_(Suelta)_D.xml",
+  "6_Cuerdas_Al_Aire_2_(Suelta)_D.xml",
+  "7_Cuerdas_Al_Aire_2_(Suelta)_G.xml",
+  "8_Cuerdas_Al_Aire_2_(Suelta)_E.xml",
+  "9_Cuerdas_Al_Aire_3_(Suelta)_A.xml",
+  "10_Cuerdas_Al_Aire_3_(Suelta)_D.xml",
 ];
 
 const folderBasePath = "/musicXmlFiles";
 
-const getTitle = (fileName) => {
-  return new Promise((resolve, rej) => {
-    fetch(`${folderBasePath}/${fileName}`)
-      .then((response) => response.text())
-      .then((xmlFileData) => {
-        let arr = new XMLParser()
-          .parseFromString(xmlFileData)
-          .getElementsByTagName("movement-title");
-        if (arr && arr.length > 0) {
-          resolve(arr[0].value);
-        } else {
-          resolve("movement-title"); // write filename here (fileName) if want to display the file name.
-        }
-      })
-      .catch((err) => {
-        console.log(err.message);
-      });
-  });
+const getTitle = async (fileName) => {
+  try {
+    const response = await fetch(`${folderBasePath}/${fileName}`);
+    const xmlFileData = await response.text();
+    const arr = new XMLParser()
+      .parseFromString(xmlFileData)
+      .getElementsByTagName("movement-title");
+    if (arr && arr.length > 0) {
+      return arr[0].value;
+    } else {
+      return "movement-title"; // write filename here (fileName) if want to display the file name.
+    }
+  } catch (err) {
+    console.log(err.message);
+    return fileName;
+  }
 };
 
 const LevelTwo = () => {
