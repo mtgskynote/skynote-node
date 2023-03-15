@@ -9,29 +9,53 @@ import {
   SharedLayout,
 } from "./pages/dashboard";
 
+import Progress from "./components/Progress";
+import ProgressPlayFile from "./components/ProgressPlayFile";
+
+import LevelOne from "./components/levels/LevelOne";
+import LevelTwo from "./components/levels/LevelTwo";
+import LevelThree from "./components/levels/LevelThree";
+
+import ErrorBoundary from "./components/ErrorBoundary";
+
 function App() {
   return (
-    <div className="App">
-      <BrowserRouter>
-        <Routes>
-          <Route
-            path="/"
-            element={
-              <ProtectedRoute>
-                <SharedLayout />
-              </ProtectedRoute>
-            }
-          >
-            <Route index element={<Stats />} />
-            <Route path="all-lessons" element={<AllLessons />} />
-            <Route path="add-lesson" element={<AddLesson />} />
-            <Route path="profile" element={<Profile />} />
-          </Route>
-          <Route path="/register" element={<Register />} />
-          <Route path="/landing" element={<Landing />} />
-          <Route path="*" element={<Error />} />
-        </Routes>
-      </BrowserRouter>
+    <div>
+      <ErrorBoundary>
+        <div className="App">
+          <BrowserRouter>
+            <Routes>
+              <Route
+                path="/"
+                element={
+                  <ProtectedRoute>
+                    <SharedLayout />
+                  </ProtectedRoute>
+                }
+              >
+                <Route index element={<Stats />} />
+                <Route path="all-lessons" element={<AllLessons />} />
+                <Route path="add-lesson" element={<AddLesson />} />
+                <Route path="profile" element={<Profile />} />
+                <Route path="/progress" element={<Progress />} />
+                <Route path="/progress/:file" element={<ProgressPlayFile />} />
+                <Route path="/levels/levelone" element={<LevelOne />} />
+                <Route path="/levels/leveltwo" element={<LevelTwo />} />
+                <Route path="/levels/levelthree" element={<LevelThree />} />
+              </Route>
+              <Route path="/progress" element={<Progress />} />
+              <Route path="/progress/:file" element={<ProgressPlayFile />} />
+              <Route path="/levels/levelone" element={<LevelOne />} />
+              <Route path="/levels/leveltwo" element={<LevelTwo />} />
+              <Route path="/levels/levelthree" element={<LevelThree />} />
+
+              <Route path="/register" element={<Register />} />
+              <Route path="/landing" element={<Landing />} />
+              <Route path="*" element={<Error />} />
+            </Routes>
+          </BrowserRouter>
+        </div>
+      </ErrorBoundary>
     </div>
   );
 }
