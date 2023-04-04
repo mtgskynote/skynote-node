@@ -1,48 +1,88 @@
-//  https://fontawesome.com/search?c=media-playback&o=r
+import { useEffect } from "react";
 
-const titles = ["search",                            "beginning",                      "play",                  "record",                       "volume",                        "tempo",                  "visualize"]
-const icons = [["fa-solid", "fa-magnifying-glass"], ["fa-solid", "fa-backward-fast"], ["fa-solid", "fa-play"], ["fa-solid", "fa-record-vinyl"], ["fa-solid", "fa-volume-high"], ["fa-solid", "fa-gauge"], ["fa-solid", "fa-bolt-lightning"]];
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import {
+  faMagnifyingGlass,
+  faBackwardFast,
+  faPlay,
+  faRecordVinyl,
+  faVolumeHigh,
+  faGauge,
+  faBoltLightning,
+} from "@fortawesome/free-solid-svg-icons";
 
-const numButtons=icons.length;
+const useControlBar = () => {
+  const titles = [
+    "search",
+    "beginning",
+    "play",
+    "record",
+    "volume",
+    "tempo",
+    "visualize",
+  ];
+  const icons = [
+    faMagnifyingGlass,
+    faBackwardFast,
+    faPlay,
+    faRecordVinyl,
+    faVolumeHigh,
+    faGauge,
+    faBoltLightning,
+  ];
 
-function makeControlBar(){
-	// create a div element to contain the buttons
-	var controlbar = document.createElement("div");
-	controlbar.style.display = "table"; // set display property to flex to create a row of buttons
-	controlbar.style.margin = "0 auto" //centers
-	controlbar.style.backgroundColor = "blue";
-	controlbar.style.justifyContent = "center";
-    controlbar.style.alignItems = "center";
-    controlbar.style.borderRadius = "8px";
+  const numButtons = icons.length;
 
+  useEffect(() => {
+    // add event listeners here
+    const buttons = document.querySelectorAll("button");
+    buttons.forEach((button) => {
+      button.addEventListener("mousedown", () => {
+        console.log(`${button.getAttribute("title")} button was clicked.`);
+      });
+    });
 
-	// create buttons 
-	for (var i = 0; i < numButtons; i++) {
-	  	let button = document.createElement("button");
-	  	button.style.margin = ".3rem .2rem"
-	  	button.style.borderRadius = "5px";
-	    button.setAttribute("title", titles[i]); // these show on hover
-	    if (button.getAttribute("title") =="record") button.style.color = "red";
+    return () => {
+      // remove event listeners here
+      buttons.forEach((button) => {
+        button.removeEventListener("mousedown", () => {
+          console.log(`${button.getAttribute("title")} button was clicked.`);
+        });
+      });
+    };
+  }, []);
 
-	    button.setAttribute("id", titles[i]);
+  const controlbar = (
+    <div
+      style={{
+        display: "table",
+        margin: "0 auto",
+        backgroundColor: "blue",
+        justifyContent: "center",
+        alignItems: "center",
+        borderRadius: "8px",
+      }}
+    >
+      {titles.map((title, i) => {
+        return (
+          <button
+            key={title}
+            style={{
+              margin: ".3rem .2rem",
+              borderRadius: "5px",
+              color: title === "record" ? "red" : undefined,
+            }}
+            title={title}
+            id={title}
+          >
+            <FontAwesomeIcon icon={icons[i]} />
+          </button>
+        );
+      })}
+    </div>
+  );
 
-	  	// add button icons
-	   	for (let k=0;k<2;k++){ // each font-awsome icon has two classes
-	   		button.classList.add(icons[i][k]) // depends on css library from font-awesome - see index.html
-	   	}
-
-	    // console message for the developer
-	  	button.addEventListener("mousedown", function() {
-	    	console.log(`${button.getAttribute("title")} button was clicked.`);
-	  	});
-
-	  	controlbar.appendChild(button); // add button to container div
-	}
-
-	return controlbar
+  return controlbar;
 };
 
-export {makeControlBar};
-
-
-
+export { useControlBar };
