@@ -322,9 +322,3 @@ ul {
     margin-right: 0.5rem;
   }
 }
-
-
-#controlbar {
-  position: fixed;
-  bottom: 0;
-}

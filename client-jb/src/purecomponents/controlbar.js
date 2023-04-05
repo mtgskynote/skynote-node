@@ -1,5 +1,4 @@
 import { useEffect } from "react";
-
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faMagnifyingGlass,
@@ -31,7 +30,7 @@ const useControlBar = () => {
     faBoltLightning,
   ];
 
-  const numButtons = icons.length;
+  //const numButtons = icons.length;
 
   useEffect(() => {
     // add event listeners here
