@@ -14,13 +14,13 @@ const ProgressPlayFile = (props) => {
   useEffect(() => {
     const visualizeButton = document.getElementById("visualize");
     visualizeButton.addEventListener("click", () => {
-      window.location.href = "/levels/levelone";
+      window.location.href = "/TimbreVisualization";
     });
 
     return () => {
       // remove event listener here
       visualizeButton.removeEventListener("click", () => {
-        window.location.href = "/levels/levelone";
+        window.location.href = "/TimbreVisualization";
       });
     };
   }, []);

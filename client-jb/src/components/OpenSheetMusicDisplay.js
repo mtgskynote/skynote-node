@@ -32,11 +32,7 @@ class OpenSheetMusicDisplay extends Component {
     if (this.props.drawTitle !== prevProps.drawTitle) {
       this.setupOsmd();
     } else {
-      this.osmd.load(this.props.file).then(() => {
-        if (this.osmd.Sheet) {
-          this.osmd.render();
-        }
-      });
+      this.osmd.load(this.props.file).then(() => this.osmd.render());
     }
     window.addEventListener("resize", this.resize);
   }

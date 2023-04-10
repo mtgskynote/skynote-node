@@ -15,8 +15,9 @@ import ProgressPlayFile from "./components/ProgressPlayFile";
 import LevelOne from "./components/levels/LevelOne";
 import LevelTwo from "./components/levels/LevelTwo";
 import LevelThree from "./components/levels/LevelThree";
-
 import ErrorBoundary from "./components/ErrorBoundary";
+
+import TimbreVisualization from "./components/TimbreVisualization";
 
 function App() {
   return (
@@ -42,12 +43,16 @@ function App() {
                 <Route path="/levels/levelone" element={<LevelOne />} />
                 <Route path="/levels/leveltwo" element={<LevelTwo />} />
                 <Route path="/levels/levelthree" element={<LevelThree />} />
+                <Route
+                  path="/TimbreVisualization"
+                  element={<TimbreVisualization />}
+                />
               </Route>
-              <Route path="/progress" element={<Progress />} />
+              {/* <Route path="/progress" element={<Progress />} />
               <Route path="/progress/:file" element={<ProgressPlayFile />} />
               <Route path="/levels/levelone" element={<LevelOne />} />
               <Route path="/levels/leveltwo" element={<LevelTwo />} />
-              <Route path="/levels/levelthree" element={<LevelThree />} />
+              <Route path="/levels/levelthree" element={<LevelThree />} /> */}
 
               <Route path="/register" element={<Register />} />
               <Route path="/landing" element={<Landing />} />
