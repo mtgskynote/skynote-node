@@ -1,3 +1,5 @@
+// opensheetmusicdisplay.js
+
 import React, { Component } from "react";
 import { OpenSheetMusicDisplay as OSMD } from "opensheetmusicdisplay";
 
@@ -17,7 +19,11 @@ class OpenSheetMusicDisplay extends Component {
         this.props.drawTitle !== undefined ? this.props.drawTitle : true,
     };
     this.osmd = new OSMD(this.divRef.current, options);
-    this.osmd.load(this.props.file).then(() => this.osmd.render());
+    this.osmd.load(this.props.file).then(() => {
+      this.osmd.render();
+      const cursor = this.osmd.cursor;
+      this.props.cursorRef.current = cursor;
+    });
   }
 
   resize() {
@@ -37,7 +43,6 @@ class OpenSheetMusicDisplay extends Component {
     window.addEventListener("resize", this.resize);
   }
 
-  // Called after render
   componentDidMount() {
     this.setupOsmd();
   }

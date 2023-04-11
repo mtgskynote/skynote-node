@@ -8,10 +8,14 @@ import {
   faVolumeHigh,
   faGauge,
   faBoltLightning,
+  faMousePointer,
+  faICursor,
 } from "@fortawesome/free-solid-svg-icons";
 
-const useControlBar = () => {
+const useControlBar = (cursorRef) => {
   const titles = [
+    "cursorShow",
+    "cursorHide",
     "search",
     "beginning",
     "play",
@@ -21,6 +25,8 @@ const useControlBar = () => {
     "visualize",
   ];
   const icons = [
+    faICursor,
+    faMousePointer,
     faMagnifyingGlass,
     faBackwardFast,
     faPlay,
@@ -30,26 +36,31 @@ const useControlBar = () => {
     faBoltLightning,
   ];
 
-  //const numButtons = icons.length;
-
   useEffect(() => {
-    // add event listeners here
     const buttons = document.querySelectorAll("button");
     buttons.forEach((button) => {
       button.addEventListener("mousedown", () => {
         console.log(`${button.getAttribute("title")} button was clicked.`);
+        if (button.getAttribute("title") === "cursorShow") {
+          cursorRef.current.show();
+        } else if (button.getAttribute("title") === "cursorHide") {
+          cursorRef.current.hide();
+          // console.log(cursorRef.current);
+        }
       });
     });
 
     return () => {
-      // remove event listeners here
       buttons.forEach((button) => {
         button.removeEventListener("mousedown", () => {
           console.log(`${button.getAttribute("title")} button was clicked.`);
+          if (button.getAttribute("title") === "cursorShow") {
+            cursorRef.current.show();
+          }
         });
       });
     };
-  }, []);
+  }, [cursorRef]);
 
   const controlbar = (
     <div
