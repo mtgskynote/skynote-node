@@ -11,6 +11,7 @@ const ProgressPlayFile = (props) => {
 
   const cursorRef = React.useRef(null);
   const controlbar = useControlBar(cursorRef);
+
   useEffect(() => {
     // cursor show
     const cursorShowButton = document.getElementById("cursorShow");

@@ -18,11 +18,13 @@ class OpenSheetMusicDisplay extends Component {
       drawTitle:
         this.props.drawTitle !== undefined ? this.props.drawTitle : true,
     };
+
     this.osmd = new OSMD(this.divRef.current, options);
     this.osmd.load(this.props.file).then(() => {
       this.osmd.render();
       const cursor = this.osmd.cursor;
       this.props.cursorRef.current = cursor;
+      cursor.show();
     });
   }
 
