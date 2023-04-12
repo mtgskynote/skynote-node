@@ -6,6 +6,7 @@ import Row from "react-bootstrap/Row";
 import XMLParser from "react-xml-parser";
 
 const files = [
+  "50_Tercer_dedo_Ejercicios_2.xml",
   "1_Cuerdas_Al_Aire_1_(Suelta)_A.xml",
   "2_Cuerdas_Al_Aire_1_(Suelta)_D.xml",
   "3_Cuerdas_Al_Aire_1_(Suelta)_G.xml",

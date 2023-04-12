@@ -1,38 +1,44 @@
 import { useEffect } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
-  faMagnifyingGlass,
-  faBackwardFast,
+  faEye,
+  faEyeSlash,
+  faUndoAlt,
+  faBackward,
   faPlay,
+  faForward,
   faRecordVinyl,
   faVolumeHigh,
   faGauge,
+  faMagnifyingGlass,
   faBoltLightning,
-  faMousePointer,
-  faICursor,
 } from "@fortawesome/free-solid-svg-icons";
 
 const useControlBar = (cursorRef) => {
   const titles = [
     "cursorShow",
     "cursorHide",
-    "search",
     "beginning",
+    "backward",
     "play",
+    "forward",
     "record",
     "volume",
     "tempo",
+    "search",
     "visualize",
   ];
   const icons = [
-    faICursor,
-    faMousePointer,
-    faMagnifyingGlass,
-    faBackwardFast,
+    faEye,
+    faEyeSlash,
+    faUndoAlt,
+    faBackward,
     faPlay,
+    faForward,
     faRecordVinyl,
     faVolumeHigh,
     faGauge,
+    faMagnifyingGlass,
     faBoltLightning,
   ];
 
@@ -41,12 +47,6 @@ const useControlBar = (cursorRef) => {
     buttons.forEach((button) => {
       button.addEventListener("mousedown", () => {
         console.log(`${button.getAttribute("title")} button was clicked.`);
-        if (button.getAttribute("title") === "cursorShow") {
-          cursorRef.current.show();
-        } else if (button.getAttribute("title") === "cursorHide") {
-          cursorRef.current.hide();
-          // console.log(cursorRef.current);
-        }
       });
     });
 
@@ -54,9 +54,6 @@ const useControlBar = (cursorRef) => {
       buttons.forEach((button) => {
         button.removeEventListener("mousedown", () => {
           console.log(`${button.getAttribute("title")} button was clicked.`);
-          if (button.getAttribute("title") === "cursorShow") {
-            cursorRef.current.show();
-          }
         });
       });
     };

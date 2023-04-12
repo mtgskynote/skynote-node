@@ -1,5 +1,3 @@
-// progressplayfile.js
-
 import React, { useEffect } from "react";
 import { useParams } from "react-router-dom";
 import OpenSheetMusicDisplay from "./OpenSheetMusicDisplay";
@@ -13,24 +11,70 @@ const ProgressPlayFile = (props) => {
 
   const cursorRef = React.useRef(null);
   const controlbar = useControlBar(cursorRef);
-
-  const handleCursorButtonClick = () => {
-    cursorRef.current.show();
-  };
-
   useEffect(() => {
+    // cursor show
+    const cursorShowButton = document.getElementById("cursorShow");
+    const handleCursorShowButtonClick = () => {
+      cursorRef.current.show();
+    };
+    cursorShowButton.addEventListener("click", handleCursorShowButtonClick);
+
+    // cursor hide
+    const cursorHideButton = document.getElementById("cursorHide");
+    const handleCursorHideButtonClick = () => {
+      cursorRef.current.hide();
+    };
+    cursorHideButton.addEventListener("click", handleCursorHideButtonClick);
+
+    // cursor beginning
+    const beginningButton = document.getElementById("beginning");
+    const handleBeginningButtonClick = () => {
+      cursorRef.current.reset();
+    };
+    beginningButton.addEventListener("click", handleBeginningButtonClick);
+
+    // cursor backward
+    const backwardButton = document.getElementById("backward");
+    const handleBackwardButtonClick = () => {
+      cursorRef.current.previous();
+    };
+    backwardButton.addEventListener("click", handleBackwardButtonClick);
+
+    // cursor play
+    const playButton = document.getElementById("play");
+    const handlePlayButtonClick = () => {
+      cursorRef.current.hide(); //need to change this to play
+    };
+    playButton.addEventListener("click", handlePlayButtonClick);
+
+    //cursor forward
+    const forwardButton = document.getElementById("forward");
+    const handleForwardButtonClick = () => {
+      cursorRef.current.next();
+    };
+    forwardButton.addEventListener("click", handleForwardButtonClick);
+
+    // cursor Timbre Visualization
     const visualizeButton = document.getElementById("visualize");
-    visualizeButton.addEventListener("click", () => {
+    const handleVisualizeButtonClick = () => {
       window.location.href = "/TimbreVisualization";
-    });
-    const cursorNextButton = document.getElementById("cursorShow");
-    cursorNextButton.addEventListener("click", handleCursorButtonClick);
+    };
+    visualizeButton.addEventListener("click", handleVisualizeButtonClick);
 
     return () => {
-      visualizeButton.removeEventListener("click", () => {
-        window.location.href = "/TimbreVisualization";
-      });
-      cursorNextButton.removeEventListener("click", handleCursorButtonClick);
+      visualizeButton.removeEventListener("click", handleVisualizeButtonClick);
+      cursorShowButton.removeEventListener(
+        "click",
+        handleCursorShowButtonClick
+      );
+      cursorHideButton.removeEventListener(
+        "click",
+        handleCursorHideButtonClick
+      );
+      beginningButton.removeEventListener("click", handleBeginningButtonClick);
+      backwardButton.removeEventListener("click", handleBackwardButtonClick);
+      playButton.removeEventListener("click", handlePlayButtonClick);
+      forwardButton.removeEventListener("click", handleForwardButtonClick);
     };
   }, []);
 
@@ -42,6 +86,7 @@ const ProgressPlayFile = (props) => {
         autoResize={true}
         cursorRef={cursorRef}
       />
+      {/* <button id="cursorShow">Show Cursor</button> */}
     </div>
   );
 };
