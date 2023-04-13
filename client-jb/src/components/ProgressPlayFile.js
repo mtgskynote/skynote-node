@@ -55,6 +55,8 @@ const ProgressPlayFile = (props) => {
     };
     forwardButton.addEventListener("click", handleForwardButtonClick);
 
+    //zoom in
+
     // cursor Timbre Visualization
     const visualizeButton = document.getElementById("visualize");
     const handleVisualizeButtonClick = () => {

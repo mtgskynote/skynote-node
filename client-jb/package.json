@@ -11,6 +11,7 @@
     "dotenv": "^16.0.3",
     "history": "^5.3.0",
     "http-proxy-middleware": "^2.0.6",
+    "ml5": "^0.12.2",
     "normalize.css": "^8.0.1",
     "opensheetmusicdisplay": "^1.7.4",
     "path": "^0.12.7",

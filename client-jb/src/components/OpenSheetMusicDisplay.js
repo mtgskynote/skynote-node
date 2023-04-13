@@ -10,13 +10,13 @@ class OpenSheetMusicDisplay extends Component {
     this.osmd = undefined;
     this.divRef = React.createRef();
   }
-
   setupOsmd() {
     const options = {
       autoResize:
         this.props.autoResize !== undefined ? this.props.autoResize : true,
       drawTitle:
         this.props.drawTitle !== undefined ? this.props.drawTitle : true,
+      zoom: this.props.zoom !== undefined ? this.props.zoom : 1.0,
     };
 
     this.osmd = new OSMD(this.divRef.current, options);
@@ -25,6 +25,7 @@ class OpenSheetMusicDisplay extends Component {
       const cursor = this.osmd.cursor;
       this.props.cursorRef.current = cursor;
       cursor.show();
+      this.osmd.zoom = this.props.zoom !== undefined ? this.props.zoom : 1.0; // 1.0 is default
     });
   }
 

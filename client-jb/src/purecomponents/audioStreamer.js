@@ -1,3 +1,5 @@
+import ml5 from "ml5";
+
 // Create an audio context
 const audioContext = new AudioContext(); // must be audioContext.resumed()'d by a user before mic will work.
 
@@ -29,6 +31,7 @@ var makeAudioStreamer = function () {
           stream,
           this.modelLoaded.bind(this)
         );
+        //console.log(this.pitch);
       });
     },
 
@@ -54,20 +57,20 @@ var makeAudioStreamer = function () {
       console.log("Pitch detection model loaded");
       this.getPitch(); //  to continuously get pitch after the model is loaded
     },
-
     getPitch: function () {
-      if (this.pitch) {
-        this.pitch.getPitch((err, frequency) => {
-          if (frequency) {
-            console.log("Frequency detected:", frequency);
-          } else {
-            console.log("No pitch detected");
-          }
-          this.getPitch(); // to recursively call the getPitch function
-        });
-      } else {
-        console.log("Pitch detection model not loaded yet");
-      }
+      return new Promise((resolve, reject) => {
+        if (this.pitch) {
+          this.pitch.getPitch((err, frequency) => {
+            if (err) {
+              reject(err);
+            } else {
+              resolve(frequency);
+            }
+          });
+        } else {
+          reject(new Error("Pitch detection model not loaded yet"));
+        }
+      });
     },
   };
 

@@ -10,7 +10,8 @@ import {
   faRecordVinyl,
   faVolumeHigh,
   faGauge,
-  faMagnifyingGlass,
+  faMagnifyingGlassPlus,
+  faMagnifyingGlassMinus,
   faBoltLightning,
 } from "@fortawesome/free-solid-svg-icons";
 
@@ -25,7 +26,8 @@ const useControlBar = (cursorRef) => {
     "record",
     "volume",
     "tempo",
-    "search",
+    "zoomIn",
+    "zoomOut",
     "visualize",
   ];
   const icons = [
@@ -38,7 +40,8 @@ const useControlBar = (cursorRef) => {
     faRecordVinyl,
     faVolumeHigh,
     faGauge,
-    faMagnifyingGlass,
+    faMagnifyingGlassPlus,
+    faMagnifyingGlassMinus,
     faBoltLightning,
   ];
 
