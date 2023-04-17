@@ -1,7 +1,7 @@
 import React, { useEffect } from "react";
 import { useParams } from "react-router-dom";
 import OpenSheetMusicDisplay from "./OpenSheetMusicDisplay";
-import { useControlBar } from "../purecomponents/controlbar";
+import { useControlBar } from "./controlbar";
 
 const folderBasePath = "/musicXmlFiles";
 

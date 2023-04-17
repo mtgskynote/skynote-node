@@ -1,11 +1,8 @@
 import React, { useRef, useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
-import PieChart from "../purecomponents/pieChart";
-import { useControlBar } from "../purecomponents/controlbar";
-import {
-  makeAudioStreamer,
-  getPitch,
-} from "../purecomponents/audioStreamer.js";
+import PieChart from "./pieChart";
+import { useControlBar } from "./controlbar";
+import { makeAudioStreamer, getPitch } from "./audioStreamer.js";
 
 const randInt = function (min, max) {
   return Math.floor(min + (max + 1 - min) * Math.random());
