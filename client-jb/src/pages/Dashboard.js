@@ -1,5 +1,4 @@
-import React from "react";
-import { Grid, Paper } from "@material-ui/core";
+import { Grid } from "@mui/material";
 import { Doughnut } from "react-chartjs-2";
 
 function DonutChart() {
@@ -55,7 +54,9 @@ function Dashboard() {
       </Grid>
       <Grid item xs={4}>
         <div className="grid-tile">
-          <div className="grid-tile">Tile 2</div>
+          <div className="grid-tile">
+            <div className="grid-tile">Tile 1</div>
+          </div>
         </div>
       </Grid>
       <Grid item xs={4}>
