@@ -89,7 +89,6 @@ const ProgressPlayFile = (props) => {
         autoResize={true}
         cursorRef={cursorRef}
       />
-      {/* <button id="cursorShow">Show Cursor</button> */}
     </div>
   );
 };
