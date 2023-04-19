@@ -6,7 +6,7 @@ import {
   PlaybackManager,
   LinearTimingSource,
   BasicAudioPlayer,
-  ControlPanel,
+  IAudioMetronomePlayer,
 } from "opensheetmusicdisplay";
 
 class OpenSheetMusicDisplay extends Component {
@@ -21,12 +21,12 @@ class OpenSheetMusicDisplay extends Component {
     var timingSource = new LinearTimingSource();
     this.playbackManager = new PlaybackManager(
       timingSource,
-      undefined,
+      IAudioMetronomePlayer,
       new BasicAudioPlayer(),
       undefined
     );
     this.playbackManager.DoPlayback = true;
-    this.playbackManager.DoPreCount = false;
+    this.playbackManager.DoPreCount = true;
     this.playbackManager.PreCountMeasures = 1;
 
     const initialize = () => {
@@ -44,6 +44,18 @@ class OpenSheetMusicDisplay extends Component {
       initialize,
     };
   }
+
+  myListener = {
+    selectionEndReached: function (o) {
+      console.log("end");
+    },
+    resetOccurred: function (o) {},
+    cursorPositionChanged: function (timestamp, data) {},
+    pauseOccurred: function (o) {
+      console.log("pause");
+    },
+    notesPlaybackEventOccurred: function (o) {},
+  };
 
   setupOsmd() {
     const options = {
@@ -64,6 +76,8 @@ class OpenSheetMusicDisplay extends Component {
       this.osmd.zoom = this.props.zoom !== undefined ? this.props.zoom : 1.0;
       this.playbackControl = this.playbackOsmd(this.osmd);
       this.playbackControl.initialize();
+      this.props.playbackRef.current = this.playbackManager;
+      // this.PlaybackManager.addListener(myListener);
     });
   }
 
@@ -88,24 +102,24 @@ class OpenSheetMusicDisplay extends Component {
     this.setupOsmd();
   }
 
-  handlePlayButtonClick() {
-    if (this.osmd && this.osmd.PlaybackManager) {
-      this.osmd.PlaybackManager.play();
-    }
-  }
+  // handlePlayButtonClick() {
+  //   if (this.osmd && this.osmd.PlaybackManager) {
+  //     this.osmd.PlaybackManager.play();
+  //   }
+  // }
 
-  handlePauseButtonClick() {
-    if (this.osmd && this.osmd.PlaybackManager) {
-      this.osmd.PlaybackManager.pause();
-    }
-  }
+  // handlePauseButtonClick() {
+  //   if (this.osmd && this.osmd.PlaybackManager) {
+  //     this.osmd.PlaybackManager.pause();
+  //   }
+  // }
 
   render() {
     return (
       <div>
         <div ref={this.divRef} />
-        <button onClick={() => this.handlePlayButtonClick()}>Play</button>
-        <button onClick={() => this.handlePauseButtonClick()}>Pause</button>
+        {/* <button onClick={() => this.handlePlayButtonClick()}>Play</button>
+        <button onClick={() => this.handlePauseButtonClick()}>Pause</button> */}
       </div>
     );
   }

@@ -10,6 +10,7 @@ const ProgressPlayFile = (props) => {
   console.log(`${folderBasePath}/${params.file}`);
 
   const cursorRef = React.useRef(null);
+  const playbackRef = React.useRef(null);
   const controlbar = useControlBar(cursorRef);
 
   useEffect(() => {
@@ -31,6 +32,7 @@ const ProgressPlayFile = (props) => {
     const beginningButton = document.getElementById("beginning");
     const handleBeginningButtonClick = () => {
       cursorRef.current.reset();
+      playbackRef.current.reset();
     };
     beginningButton.addEventListener("click", handleBeginningButtonClick);
 
@@ -44,9 +46,15 @@ const ProgressPlayFile = (props) => {
     // cursor play
     const playButton = document.getElementById("play");
     const handlePlayButtonClick = () => {
-      cursorRef.current.hide(); //need to change this to play
+      playbackRef.current.play(); //need to change this to play
     };
     playButton.addEventListener("click", handlePlayButtonClick);
+
+    const pauseButton = document.getElementById("pause");
+    const handlePauseButtonClick = () => {
+      playbackRef.current.pause(); //need to change this to play
+    };
+    pauseButton.addEventListener("click", handlePauseButtonClick);
 
     //cursor forward
     const forwardButton = document.getElementById("forward");
@@ -77,6 +85,7 @@ const ProgressPlayFile = (props) => {
       beginningButton.removeEventListener("click", handleBeginningButtonClick);
       backwardButton.removeEventListener("click", handleBackwardButtonClick);
       playButton.removeEventListener("click", handlePlayButtonClick);
+      pauseButton.removeEventListener("click", handlePauseButtonClick);
       forwardButton.removeEventListener("click", handleForwardButtonClick);
     };
   }, []);
@@ -88,6 +97,7 @@ const ProgressPlayFile = (props) => {
         file={`${folderBasePath}/${params.file}`}
         autoResize={true}
         cursorRef={cursorRef}
+        playbackRef={playbackRef}
       />
     </div>
   );
