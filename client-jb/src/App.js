@@ -7,7 +7,7 @@ import {
   Profile,
   Stats,
   SharedLayout,
-} from "./pages/dashboardbar";
+} from "./pages/dashboard";
 
 import Progress from "./components/Progress";
 import ProgressPlayFile from "./components/ProgressPlayFile";

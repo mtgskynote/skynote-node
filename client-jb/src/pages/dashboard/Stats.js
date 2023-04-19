@@ -1,17 +1,11 @@
 import { Grid, Paper } from "@mui/material";
-import {
-  Chart,
-  PieSeries,
-  Title,
-} from "@devexpress/dx-react-chart-material-ui";
-
 import { Chart as ChartJS, ArcElement, Tooltip, Legend } from "chart.js";
 import { Doughnut } from "react-chartjs-2";
 
 ChartJS.register(ArcElement, Tooltip, Legend);
 
 export const dataset = {
-  labels: ["Red", "Blue", "Yellow", "Green", "Purple", "Orange"],
+  labels: ["Level 1", "Level 2", "Level 3", "Level 4", "Level 5", "Level 6"],
   datasets: [
     {
       label: "# of Votes",

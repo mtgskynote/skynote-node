@@ -9,6 +9,7 @@ class OpenSheetMusicDisplay extends Component {
     this.divRef = React.createRef();
   }
 
+  // Sets up osmd features and options for rendering the xml score
   setupOsmd() {
     const options = {
       autoResize:

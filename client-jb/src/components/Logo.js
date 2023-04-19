@@ -1,8 +1,8 @@
-import logo from "../assets/images/logo.png";
+import logo from "../assets/images/new_logo_2023.jpg";
 
 const Logo = () => {
   return (
-    <img src={logo} width={130} height={100} alt="skynote" className="logo" />
+    <img src={logo} width={175} height={75} alt="skynote" className="logo" />
   );
 };
 
