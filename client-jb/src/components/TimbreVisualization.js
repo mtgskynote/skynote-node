@@ -1,79 +1,115 @@
-// import React, { useEffect } from "react";
-//import { useParams } from "react-router-dom";
-import { useControlBar } from "../purecomponents/controlbar";
-// import { PieViz } from "../purecomponents/pieViz4";
+import React, {useEffect, useState } from "react";
+import { useParams } from "react-router-dom";
+import PieChart from "./pieChart";
+//import { useControlBar } from "./controlbar";
+import { makeAudioStreamer, getPitch } from "./audioStreamer.js";
+import Queue from "../utils/QueueWithMaxLength"
 
-//import { useRef } from 'react';
-
-// const randInt = function (min, max) {
-//   return Math.floor(min + (max + 1 - min) * Math.random());
-// };
-
-// const labels = [
-//   "sweetness",
-//   "warmth",
-//   "vibrato",
-//   "tremelo",
-//   "stringency",
-//   "loudness",
-//   "roughness",
-// ];
+const randInt = function (min, max) {
+  return Math.floor(min + (max + 1 - min) * Math.random());
+};
 
 const TimbreVisualization = () => {
-  //let ref = useRef(0);
   //const params = useParams();
   //console.log(`${folderBasePath}/${params.file}`);
 
-  //this.pieVizRef = React.createRef();
+  // The array argument length determines the number of segments of the PieChart
+  //     and elements are used to initialized the radii of the segments
+  const [segments, setSegments] = useState([
+    .25+.5*Math.random(),
+    .25+.5*Math.random(),
+    .25+.5*Math.random(),
+    .25+.5*Math.random()
+  ]);
 
-  // const labels = [
-  //   "sweetness",
-  //   "warmth",
-  //   "vibrato",
-  //   "tremelo",
-  //   "stringency",
-  //   "loudness",
-  //   "roughness",
-  // ];
+  // keep track of the history of features we extract
+  const featureValues = {
+    pitch : new Queue(10),
+    rms: new Queue(10),
+    energy : new Queue(10),
+    spectralCentroid: new Queue(10)
+  }
 
-  // var m_width = 400;
-  // var m_height = 400;
 
-  // const svgelmt = document.createElementNS("http://www.w3.org/2000/svg", "svg");
-  // svgelmt.setAttributeNS(null, "width", m_width)
-  // svgelmt.setAttributeNS(null, "height", m_height)
-  // svgelmt.style.display = "table";
-  // svgelmt.style.margin = "auto" //centers
+  const audioStreamer = makeAudioStreamer();
+  // PieChart wedge labels (should be of same lengthas useState arg )
+  const labels = [
+    "pitch",
+    "rms",
+    "energy",
+    "spectralCentroid",
+  ];
 
-  // document.body.appendChild(svgelmt)
+  //const controlbar = useControlBar();
 
-  //const pieViz = usePieViz();
-  //var temp = pieViz.init(labels, 200, m_width, m_height, svgelmt);
-  //const  foo= useRef(pieViz)
+  function normalizeFrequency(frequency) {
+    const minFrequency = 20;
+    const maxFrequency = 20000;
+    return (frequency - minFrequency) / (maxFrequency - minFrequency);
+  }
 
-  const controlbar = useControlBar();
-  //console.log(`pieViz is ${pieViz}` )
+  useEffect(() => {
+    // let playbutton = document.getElementById("play");
+    // console.log(`playbutton is ${playbutton}`);
+
+    // playbutton.addEventListener("click", function () {
+    //   audioStreamer.init();
+    // });
+
+    audioStreamer.init(["rms",  "mfcc", "energy", "spectralCentroid"]);
+
+    const intervalId1 = setInterval(async () => {
+      let a = audioStreamer.getAmplitude();
+      try {
+        let pitch = await audioStreamer.getPitch();
+        //console.log("pitch returns:", pitch);
+        if (pitch) {  // pitch frequently returns null here!
+          featureValues.pitch.push(normalizeFrequency(pitch) * 100);
+          //console.log(`pitch=${pitch}, normalizedPitch=${normalizedPitch}`);
+          setSegments([featureValues.pitch.peek(), 10*featureValues.rms.peek(), featureValues.energy.peek(), featureValues.spectralCentroid.peek()/100 ]);
+        }
+        } catch (error) {
+          console.log("Error getting pitch:", error);
+       }
+     }, 500);
+
+    audioStreamer.setAnalyzerCallback(function(features){
+      //console.log(`features.rms : ${features.rms}`)
+      //console.log(`features.mfcc : ${features.mfcc}`)
+      //console.log(`features.energy : ${features.energy}`)
+      console.log(`features.spectralCentroid : ${features.spectralCentroid}`)
+      featureValues.rms.push(features.rms);
+      featureValues.spectralCentroid.push(features.spectralCentroid);
+      featureValues.energy.push(features.energy);
+      setSegments([featureValues.pitch.peek(), 10*featureValues.rms.peek(), featureValues.energy.peek(), featureValues.spectralCentroid.peek()/100 ]);
+    });
+
+    // Clean up interval on component unmount
+    return () => {
+      clearInterval(intervalId1);
+      audioStreamer.setAnalyzerCallback(null);
+    };
+  }, []); // Empty dependency array to run effect only once on component mount
+
   return (
-    <>
-      <div>{controlbar}</div>
-    </>
+    <div>
+      <div
+        style={{
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+        }}
+      >
+        <PieChart
+          m_width={440}
+          m_height={440}
+          radius={180}
+          segments={segments}
+          labels={labels}
+        />
+      </div>
+      {/* <div>{controlbar}</div>   */}
+    </div>
   );
-  //ref.current=PieViz
-  // ​
-  //   setInterval(function(){
-  //     //let a = audioStreamer.getAmplitude();
-  //     //pieViz.set_wedge_radius(0, a)}, 1000 );
-
-  //     PieViz.set_wedge_radius(randInt(0, labels.length-1), Math.random())} , 50 );
-  // ​
-  //     if (this.pieVizRef.current) {
-  //       this.pieVizRef.current.set_wedge_radius(0, Math.random()); // Update the radius of the first wedge to 50
-  //     }
-  // ​
-  // ​
-  //   //return(<> <PieViz labels={labels} width="400" height="400" radius="200"   />  <div> {controlbar}</div>    </>)
-  //   return(<> <PieViz labels={labels} m_width="400" m_height="400" pie_radius="200"   />  <div> {controlbar}</div>    </>)
-  // ​
 };
-
 export default TimbreVisualization;

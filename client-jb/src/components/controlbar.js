@@ -1,39 +1,54 @@
 import { useEffect } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
-  faMagnifyingGlass,
-  faBackwardFast,
+  faEye,
+  faEyeSlash,
+  faUndoAlt,
+  faBackward,
   faPlay,
+  faPause,
+  faForward,
   faRecordVinyl,
   faVolumeHigh,
   faGauge,
+  faMagnifyingGlassPlus,
+  faMagnifyingGlassMinus,
   faBoltLightning,
 } from "@fortawesome/free-solid-svg-icons";
 
-const useControlBar = () => {
+const useControlBar = (cursorRef) => {
   const titles = [
-    "search",
+    "cursorShow",
+    "cursorHide",
     "beginning",
+    "backward",
     "play",
+    "pause",
+    "forward",
     "record",
     "volume",
     "tempo",
+    "zoomIn",
+    "zoomOut",
     "visualize",
   ];
   const icons = [
-    faMagnifyingGlass,
-    faBackwardFast,
+    faEye,
+    faEyeSlash,
+    faUndoAlt,
+    faBackward,
     faPlay,
+    faPause,
+    faForward,
     faRecordVinyl,
     faVolumeHigh,
     faGauge,
+    faMagnifyingGlassPlus,
+    faMagnifyingGlassMinus,
     faBoltLightning,
   ];
 
-  //const numButtons = icons.length;
-
   useEffect(() => {
-    // add event listeners here
     const buttons = document.querySelectorAll("button");
     buttons.forEach((button) => {
       button.addEventListener("mousedown", () => {
@@ -42,14 +57,13 @@ const useControlBar = () => {
     });
 
     return () => {
-      // remove event listeners here
       buttons.forEach((button) => {
         button.removeEventListener("mousedown", () => {
           console.log(`${button.getAttribute("title")} button was clicked.`);
         });
       });
     };
-  }, []);
+  }, [cursorRef]);
 
   const controlbar = (
     <div
