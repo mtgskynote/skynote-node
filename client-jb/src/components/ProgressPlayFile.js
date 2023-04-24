@@ -31,9 +31,15 @@ const ProgressPlayFile = (props) => {
     // cursor beginning
     const beginningButton = document.getElementById("beginning");
     const handleBeginningButtonClick = () => {
-      cursorRef.current.reset();
-      playbackRef.current.reset();
+      const playbackManager = playbackRef.current;
+      const cursor = cursorRef.current;
+
+      cursor.reset();
+      playbackManager.pause();
+      playbackManager.setPlaybackStart(0);
+      playbackManager.reset();
     };
+
     beginningButton.addEventListener("click", handleBeginningButtonClick);
 
     // cursor backward
