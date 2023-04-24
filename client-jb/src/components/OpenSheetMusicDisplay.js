@@ -26,7 +26,7 @@ class OpenSheetMusicDisplay extends Component {
       undefined
     );
     this.playbackManager.DoPlayback = true;
-    this.playbackManager.DoPreCount = true;
+    this.playbackManager.DoPreCount = false;
     this.playbackManager.PreCountMeasures = 1;
 
     const initialize = () => {
@@ -34,7 +34,6 @@ class OpenSheetMusicDisplay extends Component {
       timingSource.pause();
       timingSource.Settings = osmd.Sheet.playbackSettings;
       this.playbackManager.initialize(osmd.Sheet.musicPartManager);
-      //playbackManager.removeListener(osmd.cursor); // only necessary if no duplicate checks in addListener
       this.playbackManager.addListener(osmd.cursor);
       this.playbackManager.reset();
       this.osmd.PlaybackManager = this.playbackManager;
@@ -86,6 +85,15 @@ class OpenSheetMusicDisplay extends Component {
   }
 
   componentWillUnmount() {
+    const playbackManager = this.props.playbackRef.current;
+    if (playbackManager) {
+      const basicAudioPlayer = playbackManager.AudioPlayer;
+      if (basicAudioPlayer) {
+        basicAudioPlayer.setVolume(0);
+        basicAudioPlayer.stopSound();
+      }
+      playbackManager.pause();
+    }
     window.removeEventListener("resize", this.resize);
   }
 
@@ -102,24 +110,10 @@ class OpenSheetMusicDisplay extends Component {
     this.setupOsmd();
   }
 
-  // handlePlayButtonClick() {
-  //   if (this.osmd && this.osmd.PlaybackManager) {
-  //     this.osmd.PlaybackManager.play();
-  //   }
-  // }
-
-  // handlePauseButtonClick() {
-  //   if (this.osmd && this.osmd.PlaybackManager) {
-  //     this.osmd.PlaybackManager.pause();
-  //   }
-  // }
-
   render() {
     return (
       <div>
         <div ref={this.divRef} />
-        {/* <button onClick={() => this.handlePlayButtonClick()}>Play</button>
-        <button onClick={() => this.handlePauseButtonClick()}>Pause</button> */}
       </div>
     );
   }
