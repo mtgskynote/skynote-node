@@ -1,5 +1,17 @@
-import { Grid, Paper } from "@mui/material";
-import { makeStyles } from "@mui/material/styles";
+import {
+  ListItem,
+  ListItemText,
+  List,
+  Grid,
+  Box,
+  Typography,
+} from "@mui/material";
+import { Rating } from "@mui/material";
+import {
+  createTheme,
+  responsiveFontSizes,
+  ThemeProvider,
+} from "@mui/material/styles";
 import { Chart as ChartJS, ArcElement, Tooltip, Legend } from "chart.js";
 import { Doughnut } from "react-chartjs-2";
 
@@ -32,16 +44,61 @@ export const dataset = {
   ],
 };
 
+const theme = createTheme({
+  typography: {
+    fontSize: 20,
+  },
+  palette: {
+    primary: {
+      main: "#f44336",
+    },
+    secondary: {
+      main: "#3f51b5",
+    },
+  },
+});
+
 const Stats = () => {
   return (
-    <Grid container spacing={3}>
+    <Grid container spacing={6}>
       <Grid item xs={12}>
-        <div className="grid-tile">Progress Play</div>
+        <Box p={2} border={1} textAlign="center">
+          Continue Learning.. Big Puppy
+          <div>
+            <Rating name="read-only" value={3} readOnly />
+          </div>
+        </Box>
       </Grid>
-      <Grid item xs={6}>
+      <Grid item xs={3}>
+        <div className="grid-tile">
+          <Box p={2} sx={{ fontSize: 25, textAlign: "left" }}>
+            Total Progress
+          </Box>
+          <Box p={2} sx={{ textAlign: "left" }}>
+            <List sx={{ listStyleType: "disc", pl: 4 }}>
+              <ListItem sx={{ display: "list-item" }}>
+                <ListItemText primary="5 Star Scores" />
+              </ListItem>
+              <ListItem sx={{ display: "list-item" }}>
+                <ListItemText primary="3 Star Scores" />
+              </ListItem>
+              <ListItem sx={{ display: "list-item" }}>
+                <ListItemText primary="Not Started" />
+              </ListItem>
+            </List>
+          </Box>
+        </div>
+      </Grid>
+      <Grid item xs={3}>
         <div className="grid-tile">
           <div className="grid-tile">
-            <Doughnut data={dataset} />;
+            <Doughnut
+              data={dataset}
+              options={{
+                responsive: true,
+                maintainAspectRatio: true,
+              }}
+            />
           </div>
         </div>
       </Grid>
