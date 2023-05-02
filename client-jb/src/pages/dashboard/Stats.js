@@ -1,21 +1,48 @@
-import {
-  ListItem,
-  ListItemText,
-  List,
-  Grid,
-  Box,
-  Typography,
-} from "@mui/material";
+import { ListItem, ListItemText, List, Grid, Box } from "@mui/material";
 import { Rating } from "@mui/material";
-import {
-  createTheme,
-  responsiveFontSizes,
-  ThemeProvider,
-} from "@mui/material/styles";
 import { Chart as ChartJS, ArcElement, Tooltip, Legend } from "chart.js";
 import { Doughnut } from "react-chartjs-2";
+// import Header and LineChart from components/Header.js
+import Header from "../../components/Header";
+import LineChart from "../../components/LineChart";
 
 ChartJS.register(ArcElement, Tooltip, Legend);
+
+const lineChartOptions = {
+  scales: {
+    xAxes: [
+      {
+        type: "time",
+        time: {
+          unit: "month",
+        },
+        ticks: {
+          source: "labels",
+        },
+      },
+    ],
+  },
+};
+
+const lineChartData = {
+  labels: [
+    "2022-01-01",
+    "2022-02-01",
+    "2022-03-01",
+    "2022-04-01",
+    "2022-05-01",
+    "2022-06-01",
+    "2022-07-01",
+  ],
+  datasets: [
+    {
+      label: "My Data",
+      data: [100, 150, 200, 250, 300, 350, 400],
+      fill: false,
+      borderColor: "#8884d8",
+    },
+  ],
+};
 
 export const dataset = {
   labels: ["Level 1", "Level 2", "Level 3", "Level 4", "Level 5", "Level 6"],
@@ -43,20 +70,6 @@ export const dataset = {
     },
   ],
 };
-
-const theme = createTheme({
-  typography: {
-    fontSize: 20,
-  },
-  palette: {
-    primary: {
-      main: "#f44336",
-    },
-    secondary: {
-      main: "#3f51b5",
-    },
-  },
-});
 
 const Stats = () => {
   return (
@@ -103,7 +116,11 @@ const Stats = () => {
         </div>
       </Grid>
       <Grid item xs={6}>
-        <div className="grid-tile">Tile 1</div>
+        <div className="grid-tile">
+          <Box height="400px" width="800px" m="-20px 0 0 0">
+            <LineChart isDashboard={true} />
+          </Box>
+        </div>
       </Grid>
       <Grid item xs={12}>
         <div className="grid-tile">Tile 3</div>
