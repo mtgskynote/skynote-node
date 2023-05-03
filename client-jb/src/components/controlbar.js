@@ -27,7 +27,7 @@ const useControlBar = (cursorRef) => {
     "forward",
     "record",
     "volume",
-    "tempo",
+    "metronome",
     "zoomIn",
     "zoomOut",
     "visualize",

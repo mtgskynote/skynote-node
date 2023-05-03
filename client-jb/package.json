@@ -14,6 +14,7 @@
     "@nivo/core": "^0.82.0",
     "@nivo/line": "^0.82.0",
     "@react-oauth/google": "^0.8.0",
+    "@tensorflow/tfjs": "^0.8.0",
     "@testing-library/jest-dom": "^5.16.5",
     "@testing-library/react": "^13.4.0",
     "@testing-library/user-event": "^13.5.0",
@@ -24,9 +25,12 @@
     "http-proxy-middleware": "^2.0.6",
     "material-ui-rating": "^4.2.0",
     "meyda": "^5.6.0",
-    "ml5": "^0.12.2",
     "normalize.css": "^8.0.1",
+<<<<<<< HEAD
     "opensheetmusicdisplay": "^1.7.5",
+=======
+    "opensheetmusicdisplay": "file:opensheetmusicdisplay.min.js",
+>>>>>>> origin/abhishek-setup4
     "path": "^0.12.7",
     "react-bootstrap": "^2.7.2",
     "react-chartjs-2": "^5.2.0",
