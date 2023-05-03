@@ -11,6 +11,8 @@ const ProgressPlayFile = (props) => {
 
   const cursorRef = React.useRef(null);
   const playbackRef = React.useRef(null);
+  const metroVolRef = React.useRef(0);
+
   const controlbar = useControlBar(cursorRef);
 
   useEffect(() => {
@@ -84,6 +86,37 @@ const ProgressPlayFile = (props) => {
     };
     forwardButton.addEventListener("click", handleForwardButtonClick);
 
+    //metronome
+    const metronomeButton = document.getElementById("metronome");
+    const handleMetronomeButtonClick = () => {
+      const metronomeButton = document.getElementById("metronome");
+      const rect = metronomeButton.getBoundingClientRect();
+      const existingVolumeSlider = document.getElementById(
+        "metronome-volume-slider"
+      );
+      if (existingVolumeSlider) {
+        existingVolumeSlider.remove();
+        return;
+      }
+      const volumeSlider = document.createElement("div");
+      volumeSlider.id = "metronome-volume-slider";
+      volumeSlider.className = "volume-slider";
+      volumeSlider.innerHTML =
+        '<input type="range" min="0" max="1" step="0.01" value="1" />';
+      volumeSlider.style.position = "absolute";
+      volumeSlider.style.top = rect.bottom + "px";
+      volumeSlider.style.left = rect.left - 30 + "px";
+      document.body.appendChild(volumeSlider);
+
+      const sliderInput = volumeSlider.querySelector("input");
+      sliderInput.addEventListener("input", (event) => {
+        metroVolRef.current = event.target.value;
+        // console.log(metroVolRef.current);
+      });
+    };
+
+    metronomeButton.addEventListener("click", handleMetronomeButtonClick);
+
     //zoom in
 
     //zoom out
@@ -94,15 +127,6 @@ const ProgressPlayFile = (props) => {
       window.location.href = "/TimbreVisualization";
     };
     visualizeButton.addEventListener("click", handleVisualizeButtonClick);
-
-    const handleBeforeUnload = () => {
-      const playbackManager = playbackRef.current;
-      if (playbackManager) {
-        playbackManager.pause();
-      }
-    };
-
-    window.addEventListener("beforeunload", handleBeforeUnload);
 
     return () => {
       visualizeButton.removeEventListener("click", handleVisualizeButtonClick);
@@ -119,7 +143,7 @@ const ProgressPlayFile = (props) => {
       playButton.removeEventListener("click", handlePlayButtonClick);
       pauseButton.removeEventListener("click", handlePauseButtonClick);
       forwardButton.removeEventListener("click", handleForwardButtonClick);
-      window.removeEventListener("beforeunload", handleBeforeUnload);
+      metronomeButton.removeEventListener("click", handleMetronomeButtonClick);
     };
   }, []);
 
@@ -131,6 +155,7 @@ const ProgressPlayFile = (props) => {
         autoResize={true}
         cursorRef={cursorRef}
         playbackRef={playbackRef}
+        metroVol={metroVolRef.current.value}
       />
     </div>
   );
