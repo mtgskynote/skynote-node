@@ -7,11 +7,12 @@ const folderBasePath = "/musicXmlFiles";
 
 const ProgressPlayFile = (props) => {
   const params = useParams();
-  console.log(`${folderBasePath}/${params.file}`);
+  // console.log(`${folderBasePath}/${params.file}`);
 
   const cursorRef = React.useRef(null);
   const playbackRef = React.useRef(null);
-  const metroVolRef = React.useRef(0);
+  // const metroVolRef = React.useRef(0);
+  const [metroVol, setMetroVol] = React.useState(0);
 
   const controlbar = useControlBar(cursorRef);
 
@@ -90,6 +91,8 @@ const ProgressPlayFile = (props) => {
     const metronomeButton = document.getElementById("metronome");
     const handleMetronomeButtonClick = () => {
       const metronomeButton = document.getElementById("metronome");
+
+      // to setup the slider relative to the button
       const rect = metronomeButton.getBoundingClientRect();
       const existingVolumeSlider = document.getElementById(
         "metronome-volume-slider"
@@ -108,10 +111,10 @@ const ProgressPlayFile = (props) => {
       volumeSlider.style.left = rect.left - 30 + "px";
       document.body.appendChild(volumeSlider);
 
+      // slider input for metronome volume control
       const sliderInput = volumeSlider.querySelector("input");
       sliderInput.addEventListener("input", (event) => {
-        metroVolRef.current = event.target.value;
-        // console.log(metroVolRef.current);
+        setMetroVol(event.target.value);
       });
     };
 
@@ -155,7 +158,7 @@ const ProgressPlayFile = (props) => {
         autoResize={true}
         cursorRef={cursorRef}
         playbackRef={playbackRef}
-        metroVol={metroVolRef.current.value}
+        metroVol={metroVol}
       />
     </div>
   );
