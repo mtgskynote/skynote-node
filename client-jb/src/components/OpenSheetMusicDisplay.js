@@ -76,6 +76,7 @@ class OpenSheetMusicDisplay extends Component {
       this.playbackControl = this.playbackOsmd(this.osmd);
       this.playbackControl.initialize();
       this.props.playbackRef.current = this.playbackManager;
+      this.osmd.PlaybackManager.bpmChanged(400, true);
       // this.osmd.PlaybackManager.Metronome.Volume = 0.5;
       // const metroVolume = this.props.metroVolRef.current;
       // console.log(metroVolume);

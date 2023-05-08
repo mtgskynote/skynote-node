@@ -1,9 +1,8 @@
-import ml5 from "ml5";
+// import ml5 from "ml5";
 //https://meyda.js.org/reference/index.html
-import Meyda from "meyda"
+import Meyda from "meyda";
 // Create an audio context
 const audioContext = new AudioContext(); // must be audioContext.resumed()'d by a user before mic will work.
-
 
 var makeAudioStreamer = function () {
   var audioStreamer = {
@@ -13,7 +12,7 @@ var makeAudioStreamer = function () {
     analyzer: null,
     analyzerCb: null,
 
-    init: function (meydaFeatures=[]) {
+    init: function (meydaFeatures = []) {
       navigator.mediaDevices.getUserMedia({ audio: true }).then((stream) => {
         audioContext.resume();
         const sourceNode = audioContext.createMediaStreamSource(stream);
@@ -35,7 +34,6 @@ var makeAudioStreamer = function () {
           analyzer.start();
         }
 
-
         // // analyserNode defined in object
         // this.analyserNode.fftSize = 2048;
 
@@ -47,12 +45,12 @@ var makeAudioStreamer = function () {
         // //analyserNode.connect(audioContext.destination);
 
         // Load pitch detection model
-        this.pitch = ml5.pitchDetection(
-          "./model",
-          audioContext,
-          stream,
-          this.modelLoaded.bind(this)
-        );
+        // this.pitch = ml5.pitchDetection(
+        //   "./model",
+        //   audioContext,
+        //   stream,
+        //   this.modelLoaded.bind(this)
+        // );
         //console.log(this.pitch);
       });
     },
@@ -73,8 +71,8 @@ var makeAudioStreamer = function () {
       return 0;
     },
 
-    setAnalyzerCallback: function (myfunc){
-      this.analyzerCb=myfunc;
+    setAnalyzerCallback: function (myfunc) {
+      this.analyzerCb = myfunc;
     },
 
     // Callback function for pitch detection model
@@ -84,21 +82,21 @@ var makeAudioStreamer = function () {
       console.log("Pitch detection model loaded");
       this.getPitch(); //  to continuously get pitch after the model is loaded
     },
-    getPitch: function () {
-      return new Promise((resolve, reject) => {
-        if (this.pitch) {
-          this.pitch.getPitch((err, frequency) => {
-            if (err) {
-              reject(err);
-            } else {
-              resolve(frequency);
-            }
-          });
-        } else {
-          reject(new Error("Pitch detection model not loaded yet"));
-        }
-      });
-    },
+    // getPitch: function () {
+    //   return new Promise((resolve, reject) => {
+    //     if (this.pitch) {
+    //       this.pitch.getPitch((err, frequency) => {
+    //         if (err) {
+    //           reject(err);
+    //         } else {
+    //           resolve(frequency);
+    //         }
+    //       });
+    //     } else {
+    //       reject(new Error("Pitch detection model not loaded yet"));
+    //     }
+    //   });
+    // },
   };
 
   return audioStreamer;
