@@ -72,7 +72,11 @@ const useControlBar = (cursorRef) => {
         margin: "0 auto",
         backgroundColor: "blue",
         justifyContent: "center",
-        alignItems: "center",
+        bottom: 20,
+        position: "fixed",
+        left: 0,
+        right: 0,
+        width: "max-content",
         borderRadius: "8px",
       }}
     >

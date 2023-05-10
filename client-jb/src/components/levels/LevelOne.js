@@ -7,6 +7,7 @@ import XMLParser from "react-xml-parser";
 
 const files = [
   "Row.xml",
+  "Btayhi_Isbahan.mxl",
   "50_Tercer_dedo_Ejercicios_2.xml",
   "1_Cuerdas_Al_Aire_1_(Suelta)_A.xml",
   "2_Cuerdas_Al_Aire_1_(Suelta)_D.xml",
