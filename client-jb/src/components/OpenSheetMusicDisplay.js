@@ -62,6 +62,8 @@ class OpenSheetMusicDisplay extends Component {
         this.props.autoResize !== undefined ? this.props.autoResize : true,
       drawTitle:
         this.props.drawTitle !== undefined ? this.props.drawTitle : true,
+      followCursor:
+        this.props.followCursor !== undefined ? this.props.followCursor : true,
       // zoom: this.props.zoom !== undefined ? this.props.zoom : 1.0,
     };
 
@@ -125,6 +127,10 @@ class OpenSheetMusicDisplay extends Component {
       // console.log("zoom2_OSMD", this.props.zoom);
       this.osmd.zoom = this.props.zoom;
       this.osmd.render(); // update the OSMD instance after changing the zoom level
+    }
+
+    if (this.props.followCursor !== prevProps.followCursor) {
+      this.osmd.followCursor = this.props.followCursor;
     }
 
     window.addEventListener("resize", this.resize);

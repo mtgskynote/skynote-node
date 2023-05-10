@@ -212,6 +212,7 @@ const ProgressPlayFile = (props) => {
         metroVol={metroVol}
         bpm={bpmChange}
         zoom={zoom}
+        followCursor={true}
       />
     </div>
   );

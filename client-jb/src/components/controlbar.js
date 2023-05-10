@@ -74,7 +74,7 @@ const useControlBar = (cursorRef) => {
         justifyContent: "center",
         bottom: 20,
         position: "fixed",
-        left: 0,
+        left: 225,
         right: 0,
         width: "max-content",
         borderRadius: "8px",
