@@ -62,7 +62,7 @@ class OpenSheetMusicDisplay extends Component {
         this.props.autoResize !== undefined ? this.props.autoResize : true,
       drawTitle:
         this.props.drawTitle !== undefined ? this.props.drawTitle : true,
-      zoom: this.props.zoom !== undefined ? this.props.zoom : 1.0,
+      // zoom: this.props.zoom !== undefined ? this.props.zoom : 1.0,
     };
 
     this.osmd = new OSMD(this.divRef.current, options);
@@ -72,16 +72,10 @@ class OpenSheetMusicDisplay extends Component {
       const cursor = this.osmd.cursor;
       this.props.cursorRef.current = cursor;
       cursor.show();
-      this.osmd.zoom = this.props.zoom !== undefined ? this.props.zoom : 1.0;
+      this.osmd.zoom = this.props.zoom;
       this.playbackControl = this.playbackOsmd(this.osmd);
       this.playbackControl.initialize();
       this.props.playbackRef.current = this.playbackManager;
-      this.osmd.PlaybackManager.bpmChanged(400, true);
-      // this.osmd.PlaybackManager.Metronome.Volume = 0.5;
-      // const metroVolume = this.props.metroVolRef.current;
-      // console.log(metroVolume);
-
-      // this.PlaybackManager.addListener(myListener);
     });
   }
 
@@ -102,8 +96,14 @@ class OpenSheetMusicDisplay extends Component {
     window.removeEventListener("resize", this.resize);
   }
 
+  // update metronome volume
   updateMetronomeVolume(newVolume) {
     this.osmd.PlaybackManager.Metronome.Volume = newVolume;
+  }
+
+  // update bpm value
+  updateBpm(newBpm) {
+    this.osmd.PlaybackManager.setBpm(newBpm);
   }
 
   componentDidUpdate(prevProps) {
@@ -115,6 +115,16 @@ class OpenSheetMusicDisplay extends Component {
 
     if (this.props.metroVol !== prevProps.metroVol) {
       this.updateMetronomeVolume(this.props.metroVol);
+    }
+
+    if (this.props.bpm !== prevProps.bpm) {
+      this.updateBpm(this.props.bpm);
+    }
+
+    if (this.props.zoom !== prevProps.zoom) {
+      // console.log("zoom2_OSMD", this.props.zoom);
+      this.osmd.zoom = this.props.zoom;
+      this.osmd.render(); // update the OSMD instance after changing the zoom level
     }
 
     window.addEventListener("resize", this.resize);
