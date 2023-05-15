@@ -56,6 +56,7 @@ class OpenSheetMusicDisplay extends Component {
     notesPlaybackEventOccurred: function (o) {},
   };
 
+  // Sets up osmd features and options for rendering the xml score
   setupOsmd() {
     const options = {
       autoResize:
