@@ -1,4 +1,5 @@
 import { ListItem, ListItemText, List, Grid, Box } from "@mui/material";
+import { makeStyles } from '@material-ui/styles'
 import { Rating } from "@mui/material";
 import { Chart as ChartJS, ArcElement, Tooltip, Legend } from "chart.js";
 import { Doughnut } from "react-chartjs-2";
@@ -7,6 +8,15 @@ import Header from "../../components/Header";
 import LineChart from "../../components/LineChart";
 
 ChartJS.register(ArcElement, Tooltip, Legend);
+
+const useStyles = makeStyles((theme) => ({
+  gridClassName: {
+    boxShadow: "1px 10px 5px",
+    position: 'relative'
+  },
+ // other classes here
+}));
+
 
 const lineChartOptions = {
   scales: {
@@ -72,6 +82,8 @@ export const dataset = {
 };
 
 const Stats = () => {
+  const classes = useStyles();
+
   return (
     <Grid container spacing={6}>
       <Grid item xs={12}>
@@ -82,11 +94,13 @@ const Stats = () => {
           </div>
         </Box>
       </Grid>
-      <Grid item xs={3}>
-        <div className="grid-tile">
-          <Box p={2} sx={{ fontSize: 25, textAlign: "left" }}>
-            Total Progress
-          </Box>
+      <Grid
+        item
+        xs={3}
+      >
+
+        <div container className={`${classes.gridClassName} grid-tile`}>
+          <Box p={2}>Total Progress</Box>
           <Box p={2} sx={{ textAlign: "left" }}>
             <List sx={{ listStyleType: "disc", pl: 4 }}>
               <ListItem sx={{ display: "list-item" }}>
@@ -104,7 +118,7 @@ const Stats = () => {
       </Grid>
       <Grid item xs={3}>
         <div className="grid-tile">
-          <div className="grid-tile">
+         
             <Doughnut
               data={dataset}
               options={{
@@ -112,9 +126,10 @@ const Stats = () => {
                 maintainAspectRatio: true,
               }}
             />
-          </div>
+         
         </div>
       </Grid>
+     
       <Grid item xs={6}>
         <div className="grid-tile">
           <Box height="400px" width="800px" m="-20px 0 0 0">

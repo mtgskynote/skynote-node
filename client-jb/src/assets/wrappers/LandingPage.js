@@ -36,5 +36,65 @@ const Wrapper = styled.main`
       display: block;
     }
   }
+  .primary-text {
+    text-align: center;
+    max-width: 80%;
+  }
+  .primary-subheading {
+  font-weight: 700;
+  color: #fe9e0d;
+  font-size: 1.15rem;
+  }
+
+  .work-section-wrapper {
+  margin-top: 15rem;
+  }
+  .work-section-top p {
+  text-align: center;
+  max-width: 600px !important;
+  }
+.work-section-top h1 {
+  max-width: 700px !important;
+}
+.work-section-top {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+}
+.work-section-info {
+  width: 290px;
+  min-height: 350px;
+  background-color: white;
+  padding: 1rem 2rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  border-radius: 1rem;
+  color: #505050;
+  margin: 1rem 2rem;
+}
+.work-section-info h2 {
+  margin: 1rem 0rem;
+}
+.work-section-bottom {
+  margin-top: 5rem;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-wrap: wrap;
+}
+.work-section-info p {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  font-weight: 600;
+}
+.work-section-info svg {
+  width: 2em;
+  height: 2em;
+}
 `
 export default Wrapper
