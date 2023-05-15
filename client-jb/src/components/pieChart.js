@@ -12,7 +12,7 @@ const def_colors = [
   "Yellow",
 ];
 const def_labels = ["a", "b", "c", "d", "e", "f", "g"];
-const def_segments = [1, 0.8, 0.5];
+const def_segments = [.1, 1, 0.8, 0.5];
 
 const circleScale = 0.82;
 //=====================================================================================================
@@ -24,7 +24,7 @@ const makePieStructure = function (
   labels = def_labels,
   m_width = 200,
   m_height = 200,
-  segments
+  segments = def_segments
 ) {
   for (let i = 0; i < 3; i++) {
     const circle = document.createElementNS(static_xmlns, "circle");
@@ -145,6 +145,7 @@ const PieChart = ({
     let i = 0;
     segments.forEach((segmentr) => {
       const arc = document.createElementNS(static_xmlns, "path");
+      // console.log(`segmentr = ${segmentr}, pie.radius=${pie.radius}, circleScale=${circleScale}`)
       arc.setAttribute(
         "d",
         circleSegmentPath(
