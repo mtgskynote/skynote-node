@@ -77,8 +77,9 @@ class OpenSheetMusicDisplay extends Component {
       this.playbackControl = this.playbackOsmd(this.osmd);
       this.playbackControl.initialize();
       this.props.playbackRef.current = this.playbackManager;
-      this.osmd.PlaybackManager.Metronome.Volume = 0.5;
-      console.log(this.osmd.PlaybackManager.Metronome.Volume);
+      // this.osmd.PlaybackManager.Metronome.Volume = 0.5;
+      // const metroVolume = this.props.metroVolRef.current;
+      // console.log(metroVolume);
 
       // this.PlaybackManager.addListener(myListener);
     });
@@ -101,12 +102,21 @@ class OpenSheetMusicDisplay extends Component {
     window.removeEventListener("resize", this.resize);
   }
 
+  updateMetronomeVolume(newVolume) {
+    this.osmd.PlaybackManager.Metronome.Volume = newVolume;
+  }
+
   componentDidUpdate(prevProps) {
     if (this.props.drawTitle !== prevProps.drawTitle) {
       this.setupOsmd();
-    } else {
+    } else if (this.props.file !== prevProps.file) {
       this.osmd.load(this.props.file).then(() => this.osmd.render());
     }
+
+    if (this.props.metroVol !== prevProps.metroVol) {
+      this.updateMetronomeVolume(this.props.metroVol);
+    }
+
     window.addEventListener("resize", this.resize);
   }
 
