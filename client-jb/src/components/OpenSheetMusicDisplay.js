@@ -78,8 +78,59 @@ class OpenSheetMusicDisplay extends Component {
       this.playbackControl = this.playbackOsmd(this.osmd);
       this.playbackControl.initialize();
       this.props.playbackRef.current = this.playbackManager;
+
+      // listener for cursor position
+      // this.drawContinuousLine(0);
+      // Draw red lines around note positions
+      for (let i = 0; i < this.osmd.graphic.measureList.length; i++) {
+        const measures = this.osmd.graphic.measureList[i];
+        for (let j = 0; j < measures.length; j++) {
+          const measure = measures[j];
+          for (const se of measure.staffEntries) {
+            const y = se.getLowestYAtEntry();
+            const x = se.PositionAndShape.AbsolutePosition.x;
+            console.log(`x: ${x}, y: ${y}`);
+            this.osmd.Drawer.DrawOverlayLine(
+              { x: x - 0.5, y: y },
+              { x: x + 0.5, y: y },
+              this.osmd.graphic.MusicPages[0]
+            );
+          }
+        }
+      }
     });
   }
+
+  // cursorPositionChanged(timestamp, data) {
+  //   const { cursorPosition } = data;
+  //   const { amplitude } = this.props;
+  //   const { prevCursorPosition } = this.state;
+
+  //   // Calculate the line position based on the amplitude and cursor position
+  //   const linePosition =
+  //     prevCursorPosition + amplitude * (cursorPosition - prevCursorPosition);
+
+  //   // Redraw the line
+  //   this.drawContinuousLine(linePosition);
+
+  //   // Update the previous cursor position in the component state
+  //   this.setState({ prevCursorPosition: cursorPosition });
+  // }
+
+  // drawContinuousLine(position) {
+  //   const { osmd } = this;
+  //   const musicPage = osmd.graphic.MusicPages[0]; // Assuming single-page display
+
+  //   // Remove previous line (optional)
+  //   this.osmd.Drawer.EraseOverlay(musicPage);
+
+  //   // Draw the continuous line
+  //   this.osmd.Drawer.DrawOverlayLine(
+  //     { x: 0, y: position },
+  //     { x: musicPage.width, y: position },
+  //     musicPage
+  //   );
+  // }
 
   resize() {
     this.forceUpdate();
@@ -141,9 +192,21 @@ class OpenSheetMusicDisplay extends Component {
   }
 
   render() {
+    const { amplitude, cursorPosition } = this.props;
     return (
       <div>
         <div ref={this.divRef} />
+        <div
+          style={{
+            position: "absolute",
+            top: `${cursorPosition}px`,
+            width: "100%",
+            height: "2px",
+            background: "red",
+            transform: `scaleX(${amplitude})`,
+            transformOrigin: "left",
+          }}
+        />
       </div>
     );
   }

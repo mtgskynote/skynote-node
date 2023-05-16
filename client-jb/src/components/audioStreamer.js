@@ -35,10 +35,10 @@ var makeAudioStreamer = function () {
         }
 
         // // analyserNode defined in object
-        // this.analyserNode.fftSize = 2048;
+        this.analyserNode.fftSize = 2048;
 
         // // Connect the source node to the analyser node
-        // sourceNode.connect(this.analyserNode);
+        sourceNode.connect(this.analyserNode);
 
         // // Connect the analyser node to the audio context destination
         // // NO DESTINATION for now - we don't want to hear the microphone audio played back
@@ -57,18 +57,18 @@ var makeAudioStreamer = function () {
 
     // Define a function to get the amplitude level of the first channel
     getAmplitude: function () {
-      // const bufferLength = this.analyserNode.frequencyBinCount;
-      // const dataArray = new Uint8Array(bufferLength);
-      // this.analyserNode.getByteTimeDomainData(dataArray);
-      // let maxAmplitude = 0;
-      // for (let i = 0; i < bufferLength; i++) {
-      //   const amplitude = Math.abs((dataArray[i] - 128) / 128);
-      //   if (amplitude > maxAmplitude) {
-      //     maxAmplitude = amplitude;
-      //   }
-      // }
-      // return maxAmplitude;
-      return 0;
+      const bufferLength = this.analyserNode.frequencyBinCount;
+      const dataArray = new Uint8Array(bufferLength);
+      this.analyserNode.getByteTimeDomainData(dataArray);
+      let maxAmplitude = 0;
+      for (let i = 0; i < bufferLength; i++) {
+        const amplitude = Math.abs((dataArray[i] - 128) / 128);
+        if (amplitude > maxAmplitude) {
+          maxAmplitude = amplitude;
+        }
+      }
+      return maxAmplitude;
+      // return 0;
     },
 
     setAnalyzerCallback: function (myfunc) {

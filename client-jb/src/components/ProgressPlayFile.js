@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import OpenSheetMusicDisplay from "./OpenSheetMusicDisplay";
 import { useControlBar } from "./controlbar";
+import { makeAudioStreamer } from "./audioStreamer.js";
 
 const folderBasePath = "/musicXmlFiles";
 
@@ -19,7 +20,25 @@ const ProgressPlayFile = (props) => {
 
   const controlbar = useControlBar(cursorRef);
 
+  const audioStreamer = makeAudioStreamer();
+  const [amplitude, setAmplitude] = useState(0);
+  const [cursorPosition, setCursorPosition] = useState(0);
+  const cursorPositionChanged = (position) => {
+    setCursorPosition(position);
+  };
+
   useEffect(() => {
+    // cursor position and amplitude
+    //--------------------------------------------------------------------------------
+    audioStreamer.init();
+    const intervalId1 = setInterval(async () => {
+      let a = audioStreamer.getAmplitude();
+      console.log(`amplitude is ${a}`);
+      setAmplitude(a);
+    }, 1500);
+
+    //--------------------------------------------------------------------------------
+
     // cursor show
     const cursorShowButton = document.getElementById("cursorShow");
     const handleCursorShowButtonClick = () => {
@@ -181,6 +200,8 @@ const ProgressPlayFile = (props) => {
     visualizeButton.addEventListener("click", handleVisualizeButtonClick);
 
     return () => {
+      clearInterval(intervalId1);
+
       visualizeButton.removeEventListener("click", handleVisualizeButtonClick);
       cursorShowButton.removeEventListener(
         "click",
@@ -213,6 +234,9 @@ const ProgressPlayFile = (props) => {
         bpm={bpmChange}
         zoom={zoom}
         followCursor={true}
+        amplitude={amplitude}
+        cursorPosition={cursorPosition}
+        cursorPositionChanged={cursorPositionChanged}
       />
     </div>
   );
