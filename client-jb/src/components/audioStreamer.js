@@ -53,6 +53,17 @@ var makeAudioStreamer = function (pitchCallback, pitchVectorCallback ) {
         sourceNode.connect(scriptNode);
         console.log(`audioStreamer: OK = pitch node connected!!`)
 
+        // necessary to pull audio throuth the scriptNode???????
+        const gain = audioContext.createGain();
+        gain.gain.setValueAtTime(0, audioContext.currentTime);
+
+        //mic.connect(scriptNode);
+        scriptNode.connect(gain);
+
+        gain.connect(audioContext.destination);
+
+
+
         // // Connect the analyser node to the audio context destination
         // // NO DESTINATION for now - we don't want to hear the microphone audio played back
         // //analyserNode.connect(audioContext.destination);

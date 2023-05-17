@@ -37,6 +37,7 @@ export async function makeCrepeScriptNode(audioContext, bufferSize, pitchCallbac
         onComplete(subsamples);
     }
     function process_microphone_buffer(event) {
+        //console.log(`process_mic_buffer`)
         resample(event.inputBuffer, function(resampled) {
           tf.tidy(() => {
             // run the prediction on the model
@@ -63,7 +64,7 @@ export async function makeCrepeScriptNode(audioContext, bufferSize, pitchCallbac
             const weightSum = weights.dataSync().reduce((a, b) => a + b, 0);
             const predicted_cent = productSum / weightSum;
             const predicted_hz = 10 * Math.pow(2, predicted_cent / 1200.0);  // *** pass predicted_hz to callback
-
+            //console.log(`pitchcallback with ${pitchCallback}`)
             pitchCallback && pitchCallback({pitch: predicted_hz.toFixed(3), confidence: confidence.toFixed(3)})
             pitchVectorCallback && pitchVectorCallback(activation.dataSync());
           });
