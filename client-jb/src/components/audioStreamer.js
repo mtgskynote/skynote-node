@@ -3,7 +3,7 @@ import * as tf from "@tensorflow/tfjs";
 import { makeCrepeScriptNode } from "./pitch/crepeScriptNode.js";
 //https://meyda.js.org/reference/index.html
 import Meyda from "meyda";
-import Meyda from "meyda";
+
 // Create an audio context
 const audioContext = new AudioContext(); // must be audioContext.resumed()'d by a user before mic will work.
 
