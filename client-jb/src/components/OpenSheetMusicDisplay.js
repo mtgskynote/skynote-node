@@ -12,7 +12,7 @@ import {
 class OpenSheetMusicDisplay extends Component {
   constructor(props) {
     super(props);
-    this.state = { dataReady: false, amplitude: 0 };
+    this.state = { dataReady: false };
     this.osmd = undefined;
     this.divRef = React.createRef();
   }
@@ -52,8 +52,6 @@ class OpenSheetMusicDisplay extends Component {
     const debounceDelay = 100; // Adjust the debounce delay as needed
     let timeoutId;
 
-    const { amplitude } = this.props;
-
     const updateCursorPosition = () => {
       const currentLeft = cursorElement.style.left;
       const currentTop = cursorElement.style.top;
@@ -64,7 +62,6 @@ class OpenSheetMusicDisplay extends Component {
         timeoutId = setTimeout(() => {
           console.log("Left cursor position:", currentLeft);
           console.log("Top cursor position:", currentTop);
-          this.setState({ amplitude });
         }, debounceDelay);
 
         prevLeft = currentLeft;
@@ -103,6 +100,7 @@ class OpenSheetMusicDisplay extends Component {
 
       // setup cursor position tracking
       this.setupCursorPositionTracking();
+      // this.osmd.render();
 
       // // Draw red lines around note positions
       // for (let i = 0; i < this.osmd.graphic.measureList.length; i++) {
@@ -185,13 +183,19 @@ class OpenSheetMusicDisplay extends Component {
 
   render() {
     const { amplitude } = this.props;
+    const currentTop = this.osmd?.cursor?.cursorElement?.style.top;
+    const currentLeft = this.osmd?.cursor?.cursorElement?.style.left;
+
+    // console.log("churrosTop", currentTop);
+    // console.log("churrosLeft", currentLeft);
     return (
       <div>
         <div ref={this.divRef} />
         <div
           style={{
             position: "absolute",
-            top: "250px",
+            top: currentTop,
+            left: currentLeft,
             width: "100%",
             height: "2px",
             background: "black",
