@@ -12,7 +12,7 @@ import {
 class OpenSheetMusicDisplay extends Component {
   constructor(props) {
     super(props);
-    this.state = { dataReady: false };
+    this.state = { dataReady: false, amplitude: 0 };
     this.osmd = undefined;
     this.divRef = React.createRef();
   }
@@ -44,17 +44,39 @@ class OpenSheetMusicDisplay extends Component {
     };
   }
 
-  myListener = {
-    selectionEndReached: function (o) {
-      console.log("end");
-    },
-    resetOccurred: function (o) {},
-    cursorPositionChanged: function (timestamp, data) {},
-    pauseOccurred: function (o) {
-      console.log("pause");
-    },
-    notesPlaybackEventOccurred: function (o) {},
-  };
+  setupCursorPositionTracking() {
+    const cursorElement = this.osmd.cursor.cursorElement;
+    let prevLeft = cursorElement.style.left;
+    let prevTop = cursorElement.style.top;
+
+    const debounceDelay = 100; // Adjust the debounce delay as needed
+    let timeoutId;
+
+    const { amplitude } = this.props;
+
+    const updateCursorPosition = () => {
+      const currentLeft = cursorElement.style.left;
+      const currentTop = cursorElement.style.top;
+
+      if (currentLeft !== prevLeft || currentTop !== prevTop) {
+        clearTimeout(timeoutId);
+
+        timeoutId = setTimeout(() => {
+          console.log("Left cursor position:", currentLeft);
+          console.log("Top cursor position:", currentTop);
+          this.setState({ amplitude });
+        }, debounceDelay);
+
+        prevLeft = currentLeft;
+        prevTop = currentTop;
+      }
+
+      // Recursive call to updateCursorPosition
+      requestAnimationFrame(updateCursorPosition);
+    };
+
+    requestAnimationFrame(updateCursorPosition);
+  }
 
   setupOsmd() {
     const options = {
@@ -79,58 +101,28 @@ class OpenSheetMusicDisplay extends Component {
       this.playbackControl.initialize();
       this.props.playbackRef.current = this.playbackManager;
 
-      // listener for cursor position
-      // this.drawContinuousLine(0);
-      // Draw red lines around note positions
-      for (let i = 0; i < this.osmd.graphic.measureList.length; i++) {
-        const measures = this.osmd.graphic.measureList[i];
-        for (let j = 0; j < measures.length; j++) {
-          const measure = measures[j];
-          for (const se of measure.staffEntries) {
-            const y = se.getLowestYAtEntry();
-            const x = se.PositionAndShape.AbsolutePosition.x;
-            console.log(`x: ${x}, y: ${y}`);
-            this.osmd.Drawer.DrawOverlayLine(
-              { x: x - 0.5, y: y },
-              { x: x + 0.5, y: y },
-              this.osmd.graphic.MusicPages[0]
-            );
-          }
-        }
-      }
+      // setup cursor position tracking
+      this.setupCursorPositionTracking();
+
+      // // Draw red lines around note positions
+      // for (let i = 0; i < this.osmd.graphic.measureList.length; i++) {
+      //   const measures = this.osmd.graphic.measureList[i];
+      //   for (let j = 0; j < measures.length; j++) {
+      //     const measure = measures[j];
+      //     for (const se of measure.staffEntries) {
+      //       const y = se.getLowestYAtEntry();
+      //       const x = se.PositionAndShape.AbsolutePosition.x;
+      //       // console.log(`x: ${x}, y: ${y}`);
+      //       this.osmd.Drawer.DrawOverlayLine(
+      //         { x: x - 0.5, y: y },
+      //         { x: x + 0.5, y: y },
+      //         this.osmd.graphic.MusicPages[0]
+      //       );
+      //     }
+      //   }
+      // }
     });
   }
-
-  // cursorPositionChanged(timestamp, data) {
-  //   const { cursorPosition } = data;
-  //   const { amplitude } = this.props;
-  //   const { prevCursorPosition } = this.state;
-
-  //   // Calculate the line position based on the amplitude and cursor position
-  //   const linePosition =
-  //     prevCursorPosition + amplitude * (cursorPosition - prevCursorPosition);
-
-  //   // Redraw the line
-  //   this.drawContinuousLine(linePosition);
-
-  //   // Update the previous cursor position in the component state
-  //   this.setState({ prevCursorPosition: cursorPosition });
-  // }
-
-  // drawContinuousLine(position) {
-  //   const { osmd } = this;
-  //   const musicPage = osmd.graphic.MusicPages[0]; // Assuming single-page display
-
-  //   // Remove previous line (optional)
-  //   this.osmd.Drawer.EraseOverlay(musicPage);
-
-  //   // Draw the continuous line
-  //   this.osmd.Drawer.DrawOverlayLine(
-  //     { x: 0, y: position },
-  //     { x: musicPage.width, y: position },
-  //     musicPage
-  //   );
-  // }
 
   resize() {
     this.forceUpdate();
@@ -192,17 +184,17 @@ class OpenSheetMusicDisplay extends Component {
   }
 
   render() {
-    const { amplitude, cursorPosition } = this.props;
+    const { amplitude } = this.props;
     return (
       <div>
         <div ref={this.divRef} />
         <div
           style={{
             position: "absolute",
-            top: `${cursorPosition}px`,
+            top: "250px",
             width: "100%",
             height: "2px",
-            background: "red",
+            background: "black",
             transform: `scaleX(${amplitude})`,
             transformOrigin: "left",
           }}

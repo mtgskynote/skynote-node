@@ -13,7 +13,7 @@ const ProgressPlayFile = (props) => {
   const cursorRef = React.useRef(null);
   const playbackRef = React.useRef(null);
 
-  const [metroVol, setMetroVol] = React.useState(0);
+  const [metroVol, setMetroVol] = React.useState(0.5);
   const [bpmChange, setBpm] = React.useState(null);
 
   const [zoom, setZoom] = useState(1.0);
@@ -22,10 +22,6 @@ const ProgressPlayFile = (props) => {
 
   const audioStreamer = makeAudioStreamer();
   const [amplitude, setAmplitude] = useState(0);
-  const [cursorPosition, setCursorPosition] = useState(0);
-  const cursorPositionChanged = (position) => {
-    setCursorPosition(position);
-  };
 
   useEffect(() => {
     // cursor position and amplitude
@@ -33,9 +29,9 @@ const ProgressPlayFile = (props) => {
     audioStreamer.init();
     const intervalId1 = setInterval(async () => {
       let a = audioStreamer.getAmplitude();
-      console.log(`amplitude is ${a}`);
+      // console.log(`amplitude is ${a}`);
       setAmplitude(a);
-    }, 1500);
+    }, 100);
 
     //--------------------------------------------------------------------------------
 
@@ -53,7 +49,7 @@ const ProgressPlayFile = (props) => {
     };
     cursorHideButton.addEventListener("click", handleCursorHideButtonClick);
 
-    // cursor beginning
+    // cursor beginning (reset)
     const beginningButton = document.getElementById("beginning");
     const handleBeginningButtonClick = () => {
       const playbackManager = playbackRef.current;
@@ -63,6 +59,7 @@ const ProgressPlayFile = (props) => {
       playbackManager.pause();
       playbackManager.setPlaybackStart(0);
       playbackManager.reset();
+      cursor.reset();
     };
 
     beginningButton.addEventListener("click", handleBeginningButtonClick);
@@ -235,8 +232,6 @@ const ProgressPlayFile = (props) => {
         zoom={zoom}
         followCursor={true}
         amplitude={amplitude}
-        cursorPosition={cursorPosition}
-        cursorPositionChanged={cursorPositionChanged}
       />
     </div>
   );
