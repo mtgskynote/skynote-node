@@ -1,4 +1,4 @@
-import React, { useRef, useEffect, useState } from "react";
+import React, { useRef, useEffect } from "react";
 const static_xmlns = "http://www.w3.org/2000/svg";
 
 // ---------  Constants  --------------------------//
@@ -111,37 +111,16 @@ const circleSegmentPath = function (c, r, startAngle, endAngle) {
 //=====================================================================================================
 //              PieChart exported react component
 //=====================================================================================================
-
-const PieChart = React.forwardRef(({
+const PieChart = ({
   labels = def_labels,
   radius = 100,
   m_width = 200,
   m_height = 200,
-//  segments = def_segments
-}, ref) => {
-//   const PieChart = ({
-//   labels = def_labels,
-//   radius = 100,
-//   m_width = 200,
-//   m_height = 200,
-//   segments = def_segments
-// }) => {
+  segments = def_segments
+}) => {
   const svgRef = useRef(null);
 
-//-----------   for parent component usage
-//console.log(`recreate PieChart`)
-const [segments, setSegments] = useState([.2, .5, .8, 1]);
-
-const updateData = (updatedData) => {
-  // Perform the update logic here
-  setSegments(updatedData);
-};
-
-React.useImperativeHandle(ref, () => ({
-  updateData: updateData
-}));
-
-//----------------------------------------
+  var updateSegments=function(foo){console.log("calling piechart updatesegments")}
 
   var pie = {
     numSegments: segments.length,
@@ -149,12 +128,10 @@ React.useImperativeHandle(ref, () => ({
     radius: radius,
   };
 
-  //useEffect(() => {
-    if (svgRef && svgRef.current){
-      while (svgRef.current.lastChild) {
-        svgRef.current.removeChild(svgRef.current.lastChild);
-      }
-    
+  useEffect(() => {
+    while (svgRef.current.lastChild) {
+      svgRef.current.removeChild(svgRef.current.lastChild);
+    }
 
     //svgRef.current.appendChild(makePieStructure(svgRef.current, pie.center, pie.radius, labels,  m_width, m_height, segments));
     makePieStructure(
@@ -186,8 +163,7 @@ React.useImperativeHandle(ref, () => ({
       svgRef.current.appendChild(arc);
       i = i + 1;
     });
-  }
-  //}, [segments]);
+  }, [segments]);
 
   return (
     <div>
@@ -195,6 +171,6 @@ React.useImperativeHandle(ref, () => ({
       <svg ref={svgRef} width={m_width} height={m_height} />
     </div>
   );
-});
+};
 
 export default PieChart;

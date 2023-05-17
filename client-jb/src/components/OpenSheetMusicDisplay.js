@@ -44,17 +44,36 @@ class OpenSheetMusicDisplay extends Component {
     };
   }
 
-  myListener = {
-    selectionEndReached: function (o) {
-      console.log("end");
-    },
-    resetOccurred: function (o) {},
-    cursorPositionChanged: function (timestamp, data) {},
-    pauseOccurred: function (o) {
-      console.log("pause");
-    },
-    notesPlaybackEventOccurred: function (o) {},
-  };
+  setupCursorPositionTracking() {
+    const cursorElement = this.osmd.cursor.cursorElement;
+    let prevLeft = cursorElement.style.left;
+    let prevTop = cursorElement.style.top;
+
+    const debounceDelay = 100; // Adjust the debounce delay as needed
+    let timeoutId;
+
+    const updateCursorPosition = () => {
+      const currentLeft = cursorElement.style.left;
+      const currentTop = cursorElement.style.top;
+
+      if (currentLeft !== prevLeft || currentTop !== prevTop) {
+        clearTimeout(timeoutId);
+
+        timeoutId = setTimeout(() => {
+          console.log("Left cursor position:", currentLeft);
+          console.log("Top cursor position:", currentTop);
+        }, debounceDelay);
+
+        prevLeft = currentLeft;
+        prevTop = currentTop;
+      }
+
+      // Recursive call to updateCursorPosition
+      requestAnimationFrame(updateCursorPosition);
+    };
+
+    requestAnimationFrame(updateCursorPosition);
+  }
 
   // Sets up osmd features and options for rendering the xml score
   setupOsmd() {
@@ -63,7 +82,9 @@ class OpenSheetMusicDisplay extends Component {
         this.props.autoResize !== undefined ? this.props.autoResize : true,
       drawTitle:
         this.props.drawTitle !== undefined ? this.props.drawTitle : true,
-      zoom: this.props.zoom !== undefined ? this.props.zoom : 1.0,
+      followCursor:
+        this.props.followCursor !== undefined ? this.props.followCursor : true,
+      // zoom: this.props.zoom !== undefined ? this.props.zoom : 1.0,
     };
 
     this.osmd = new OSMD(this.divRef.current, options);
@@ -73,14 +94,32 @@ class OpenSheetMusicDisplay extends Component {
       const cursor = this.osmd.cursor;
       this.props.cursorRef.current = cursor;
       cursor.show();
-      this.osmd.zoom = this.props.zoom !== undefined ? this.props.zoom : 1.0;
+      this.osmd.zoom = this.props.zoom;
       this.playbackControl = this.playbackOsmd(this.osmd);
       this.playbackControl.initialize();
       this.props.playbackRef.current = this.playbackManager;
-      this.osmd.PlaybackManager.Metronome.Volume = 0.5;
-      console.log(this.osmd.PlaybackManager.Metronome.Volume);
 
-      // this.PlaybackManager.addListener(myListener);
+      // setup cursor position tracking
+      this.setupCursorPositionTracking();
+      // this.osmd.render();
+
+      // // Draw red lines around note positions
+      // for (let i = 0; i < this.osmd.graphic.measureList.length; i++) {
+      //   const measures = this.osmd.graphic.measureList[i];
+      //   for (let j = 0; j < measures.length; j++) {
+      //     const measure = measures[j];
+      //     for (const se of measure.staffEntries) {
+      //       const y = se.getLowestYAtEntry();
+      //       const x = se.PositionAndShape.AbsolutePosition.x;
+      //       // console.log(`x: ${x}, y: ${y}`);
+      //       this.osmd.Drawer.DrawOverlayLine(
+      //         { x: x - 0.5, y: y },
+      //         { x: x + 0.5, y: y },
+      //         this.osmd.graphic.MusicPages[0]
+      //       );
+      //     }
+      //   }
+      // }
     });
   }
 
@@ -101,12 +140,41 @@ class OpenSheetMusicDisplay extends Component {
     window.removeEventListener("resize", this.resize);
   }
 
+  // update metronome volume
+  updateMetronomeVolume(newVolume) {
+    this.osmd.PlaybackManager.Metronome.Volume = newVolume;
+  }
+
+  // update bpm value
+  updateBpm(newBpm) {
+    this.osmd.PlaybackManager.setBpm(newBpm);
+  }
+
   componentDidUpdate(prevProps) {
     if (this.props.drawTitle !== prevProps.drawTitle) {
       this.setupOsmd();
-    } else {
+    } else if (this.props.file !== prevProps.file) {
       this.osmd.load(this.props.file).then(() => this.osmd.render());
     }
+
+    if (this.props.metroVol !== prevProps.metroVol) {
+      this.updateMetronomeVolume(this.props.metroVol);
+    }
+
+    if (this.props.bpm !== prevProps.bpm) {
+      this.updateBpm(this.props.bpm);
+    }
+
+    if (this.props.zoom !== prevProps.zoom) {
+      // console.log("zoom2_OSMD", this.props.zoom);
+      this.osmd.zoom = this.props.zoom;
+      this.osmd.render(); // update the OSMD instance after changing the zoom level
+    }
+
+    if (this.props.followCursor !== prevProps.followCursor) {
+      this.osmd.followCursor = this.props.followCursor;
+    }
+
     window.addEventListener("resize", this.resize);
   }
 
@@ -115,9 +183,27 @@ class OpenSheetMusicDisplay extends Component {
   }
 
   render() {
+    const { amplitude } = this.props;
+    const currentTop = this.osmd?.cursor?.cursorElement?.style.top;
+    const currentLeft = this.osmd?.cursor?.cursorElement?.style.left;
+
+    // console.log("churrosTop", currentTop);
+    // console.log("churrosLeft", currentLeft);
     return (
       <div>
         <div ref={this.divRef} />
+        <div
+          style={{
+            position: "absolute",
+            top: currentTop,
+            left: currentLeft,
+            width: "100%",
+            height: "2px",
+            background: "black",
+            transform: `scaleX(${amplitude})`,
+            transformOrigin: "left",
+          }}
+        />
       </div>
     );
   }
