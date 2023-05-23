@@ -9,6 +9,17 @@ import {
   IAudioMetronomePlayer,
 } from "opensheetmusicdisplay";
 
+import { Line } from "react-chartjs-2";
+import {
+  Chart as Chartjs,
+  LineElement,
+  CategoryScale, // x axis
+  LinearScale, // y axis
+  PointElement,
+} from "chart.js";
+
+Chartjs.register(LineElement, CategoryScale, LinearScale, PointElement);
+
 class OpenSheetMusicDisplay extends Component {
   constructor(props) {
     super(props);
@@ -101,25 +112,6 @@ class OpenSheetMusicDisplay extends Component {
 
       // setup cursor position tracking
       this.setupCursorPositionTracking();
-      // this.osmd.render();
-
-      // // Draw red lines around note positions
-      // for (let i = 0; i < this.osmd.graphic.measureList.length; i++) {
-      //   const measures = this.osmd.graphic.measureList[i];
-      //   for (let j = 0; j < measures.length; j++) {
-      //     const measure = measures[j];
-      //     for (const se of measure.staffEntries) {
-      //       const y = se.getLowestYAtEntry();
-      //       const x = se.PositionAndShape.AbsolutePosition.x;
-      //       // console.log(`x: ${x}, y: ${y}`);
-      //       this.osmd.Drawer.DrawOverlayLine(
-      //         { x: x - 0.5, y: y },
-      //         { x: x + 0.5, y: y },
-      //         this.osmd.graphic.MusicPages[0]
-      //       );
-      //     }
-      //   }
-      // }
     });
   }
 
@@ -187,10 +179,39 @@ class OpenSheetMusicDisplay extends Component {
     const currentTop = this.osmd?.cursor?.cursorElement?.style.top;
     const currentLeft = this.osmd?.cursor?.cursorElement?.style.left;
 
-    // console.log("churrosTop", currentTop);
-    // console.log("churrosLeft", currentLeft);
+    console.log("churrosTop", currentTop);
+    console.log("churrosLeft", currentLeft);
+
+    const data = {
+      labels: [
+        "amplitude",
+        "February",
+        "March",
+        "April",
+        "May",
+        "June",
+        "July",
+      ],
+      datasets: [
+        {
+          label: "amplitude points",
+          data: [amplitude, 19, 3, 5, 2, 3, 15],
+          backgroundColor: "aqua",
+          borderColor: "black",
+          PointBorderColor: "aqua",
+        },
+      ],
+    };
+    const options = {
+      plugin: {
+        legend: true,
+      },
+    };
+
     return (
       <div>
+        <Line data={data} options={options}></Line>
+
         <div ref={this.divRef} />
         <div
           style={{

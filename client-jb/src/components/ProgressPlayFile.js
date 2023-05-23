@@ -54,8 +54,6 @@ const ProgressPlayFile = (props) => {
     const handleBeginningButtonClick = () => {
       const playbackManager = playbackRef.current;
       const cursor = cursorRef.current;
-
-      cursor.reset();
       playbackManager.pause();
       playbackManager.setPlaybackStart(0);
       playbackManager.reset();
