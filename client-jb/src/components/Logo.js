@@ -1,9 +1,13 @@
 import logo from "../assets/images/new_logo_2023.jpg";
 
-const Logo = () => {
-  return (
-    <img src={logo} width={175} height={75} alt="skynote" className="logo" />
-  );
+// const Logo = () => {
+//   return (
+//     <img src={logo} alt="skynote" className="logo"/>
+//   );
+// };
+
+const Logo = ({ height, width }) => {
+  return (<img src= {logo} className="logo" height={height} width={width}/>);
 };
 
 export default Logo;

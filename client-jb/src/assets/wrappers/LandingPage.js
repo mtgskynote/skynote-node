@@ -75,6 +75,7 @@ const Wrapper = styled.main`
   font-weight: 700;
   color: #505050;
   font-size: 1.15rem;
+  text-align: center;
   }
 
   .work-section-wrapper {
@@ -94,7 +95,7 @@ const Wrapper = styled.main`
   flex-direction: column;
 }
 .work-section-info {
-  width: 290px;
+  width: 500px;
   min-height: 350px;
   background-color: white;
   padding: 1rem 2rem;
@@ -137,6 +138,7 @@ const Wrapper = styled.main`
   width: 50%;
   padding: 3em; 
   }
+
 .card{
   box-shadow: 0 0 2.5em rgba(25, 0, 58, 0.15);
   padding: 2em;
@@ -144,35 +146,53 @@ const Wrapper = styled.main`
   color: #1f003b;
   transition: all 0.3s ease-in-out;
   background-color: #ffffff;
+  align-items: "center";
 }
 .card .img-container{
   width: 8em;
   height: 8em;
   background-color: #1f003b;
   padding: 0.5em;
-  border-radius: 60%;
+  border-radius: 70%;
   margin: 0 auto;
+
 }
+
+.card .img2{
+  padding: 1em;
+  border-radius: 0em;
+  width: 90%;
+}
+
+.card a{
+  text-align: center;
+}
+
 .card img{
   width: 90%;
   border-radius: 50%;
 }
+
 .card h3{
   padding: 1em 0 0.5em 0;
   font-weight: 700;
   text-align: center;
 }
 .card p{
+  padding: 1em 0 0.5em 0;
   font-weight: 300; 
+  text-align: center;
   margin: 2em 0 2em 0;
   text-transform: capitalize;
   letter-spacing: 1px;
+  color: black;
 }
 .card a{
   text-decoration: none;
   color: inherit;
   font-size: 1.4em;
   text-align: center;
+  
 }
 .card:hover{
   background: linear-gradient(
@@ -184,11 +204,20 @@ const Wrapper = styled.main`
 .card:hover .img-container{ 
   transform: scale(1.15)
 }
+.card:hover p{ 
+  color: #ffffff;
+}
 .icons{
   margin: auto;
   display: flex;
   align-items: center;
   cursor: pointer;
+}
+
+.publicationbtn{
+  margin: auto;
+  display: flex;
+  align-items: right;
 }
 `
 export default Wrapper
