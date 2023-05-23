@@ -122,8 +122,9 @@ const Landing = () => {
      
       <div className="container page">
         <div className="info">
+        <Logo />
           <h1>
-            Violin <span> Learning </span> App
+            Instrument <span> Learning </span> App
           </h1>
           <p>
           Sound quality, intonation, rhythm, gestures and expression feedback in one app.
@@ -132,7 +133,7 @@ const Landing = () => {
             Login/Register
           </Link>
         </div>
-        <Logo />
+       
         {/* <img src={main} alt="look-ahead" className="img-main-img" /> */}
       </div>
 

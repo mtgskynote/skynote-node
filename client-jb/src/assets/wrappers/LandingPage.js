@@ -195,9 +195,7 @@ const Wrapper = styled.main`
   
 }
 .card:hover{
-  background: linear-gradient(
-    #6045ea, #8567f7
-  );
+  background: var(--primary-500);
   color: #ffffff;
 }
 
