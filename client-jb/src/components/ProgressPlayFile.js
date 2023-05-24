@@ -31,7 +31,7 @@ const ProgressPlayFile = (props) => {
       let a = audioStreamer.getAmplitude();
       // console.log(`amplitude is ${a}`);
       setAmplitude(a);
-    }, 100);
+    }, 200);
 
     //--------------------------------------------------------------------------------
 
@@ -54,8 +54,6 @@ const ProgressPlayFile = (props) => {
     const handleBeginningButtonClick = () => {
       const playbackManager = playbackRef.current;
       const cursor = cursorRef.current;
-
-      cursor.reset();
       playbackManager.pause();
       playbackManager.setPlaybackStart(0);
       playbackManager.reset();

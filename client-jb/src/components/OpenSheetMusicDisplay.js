@@ -9,12 +9,28 @@ import {
   IAudioMetronomePlayer,
 } from "opensheetmusicdisplay";
 
+import { Line } from "react-chartjs-2";
+import {
+  Chart as Chartjs,
+  LineElement,
+  CategoryScale, // x axis
+  LinearScale, // y axis
+  PointElement,
+} from "chart.js";
+
+Chartjs.register(LineElement, CategoryScale, LinearScale, PointElement);
+
 class OpenSheetMusicDisplay extends Component {
   constructor(props) {
     super(props);
-    this.state = { dataReady: false };
+    this.state = {
+      dataReady: false,
+      amplitudeData: [],
+    };
+
     this.osmd = undefined;
     this.divRef = React.createRef();
+    // this.chartRef = React.createRef();
   }
 
   playbackOsmd(osmd) {
@@ -101,25 +117,6 @@ class OpenSheetMusicDisplay extends Component {
 
       // setup cursor position tracking
       this.setupCursorPositionTracking();
-      // this.osmd.render();
-
-      // // Draw red lines around note positions
-      // for (let i = 0; i < this.osmd.graphic.measureList.length; i++) {
-      //   const measures = this.osmd.graphic.measureList[i];
-      //   for (let j = 0; j < measures.length; j++) {
-      //     const measure = measures[j];
-      //     for (const se of measure.staffEntries) {
-      //       const y = se.getLowestYAtEntry();
-      //       const x = se.PositionAndShape.AbsolutePosition.x;
-      //       // console.log(`x: ${x}, y: ${y}`);
-      //       this.osmd.Drawer.DrawOverlayLine(
-      //         { x: x - 0.5, y: y },
-      //         { x: x + 0.5, y: y },
-      //         this.osmd.graphic.MusicPages[0]
-      //       );
-      //     }
-      //   }
-      // }
     });
   }
 
@@ -175,6 +172,15 @@ class OpenSheetMusicDisplay extends Component {
       this.osmd.followCursor = this.props.followCursor;
     }
 
+    if (this.props.amplitude !== prevProps.amplitude) {
+      const { amplitudeData } = this.state;
+      const scaledAmplitude =
+        ((this.props.amplitude - 0.0078125) / (1 - 0.0078125)) * 10;
+      const newAmplitudeData = [...amplitudeData, scaledAmplitude];
+
+      this.setState({ amplitudeData: newAmplitudeData });
+    }
+
     window.addEventListener("resize", this.resize);
   }
 
@@ -184,11 +190,50 @@ class OpenSheetMusicDisplay extends Component {
 
   render() {
     const { amplitude } = this.props;
+    const scaledAmplitude = ((amplitude - 0.0078125) / (1 - 0.0078125)) * 10;
+
     const currentTop = this.osmd?.cursor?.cursorElement?.style.top;
     const currentLeft = this.osmd?.cursor?.cursorElement?.style.left;
 
     // console.log("churrosTop", currentTop);
     // console.log("churrosLeft", currentLeft);
+    const options = {
+      plugin: {
+        legend: true,
+      },
+    };
+
+    // dummy data for line chart
+    // const data = {
+    //   labels: ["Amplitude"],
+    //   datasets: [
+    //     {
+    //       label: "Amplitude Points",
+    //       data: this.state.amplitudeData,
+    //       backgroundColor: "aqua",
+    //       borderColor: "black",
+    //       pointBorderColor: "aqua",
+    //     },
+    //   ],
+    // };
+
+    const dataset = {
+      label: "Amplitude Points",
+      data: this.state.amplitudeData,
+      backgroundColor: "aqua",
+      borderColor: "black",
+      pointBorderColor: "aqua",
+    };
+
+    const data = {
+      labels: Array.from(Array(this.state.amplitudeData.length).keys()).map(
+        String
+      ), // Use index as labels
+      datasets: [dataset],
+    };
+
+    // console.log("datadatadata", data);
+
     return (
       <div>
         <div ref={this.divRef} />
@@ -204,6 +249,7 @@ class OpenSheetMusicDisplay extends Component {
             transformOrigin: "left",
           }}
         />
+        <Line data={data} options={options}></Line>
       </div>
     );
   }

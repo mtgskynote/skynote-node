@@ -5,7 +5,10 @@ import { makeCrepeScriptNode } from "./pitch/crepeScriptNode.js";
 import Meyda from "meyda";
 
 // Create an audio context
-const audioContext = new AudioContext(); // must be audioContext.resumed()'d by a user before mic will work.
+const audioContext = new AudioContext({
+  latencyHint: "interactive",
+  sampleRate: 22050,
+}); // must be audioContext.resumed()'d by a user before mic will work.
 
 var makeAudioStreamer = function (pitchCallback, pitchVectorCallback) {
   var audioStreamer = {
@@ -29,7 +32,7 @@ var makeAudioStreamer = function (pitchCallback, pitchVectorCallback) {
             const analyzer = Meyda.createMeydaAnalyzer({
               audioContext: audioContext,
               source: sourceNode,
-              bufferSize: 512,
+              bufferSize: 4096, //512
               featureExtractors: meydaFeatures,
               callback: (features) => {
                 //console.log(features);
@@ -40,10 +43,10 @@ var makeAudioStreamer = function (pitchCallback, pitchVectorCallback) {
           }
 
           // // analyserNode defined in object
-          // this.analyserNode.fftSize = 2048;
+          this.analyserNode.fftSize = 2048;
 
           // // Connect the source node to the analyser node
-          // sourceNode.connect(this.analyserNode);
+          sourceNode.connect(this.analyserNode);
 
           // We need the buffer size that is a power of two and is longer than 1024 samples when resampled to 16000 Hz.
           // In most platforms where the sample rate is 44.1 kHz or 48 kHz, this will be 4096, giving 10-12 updates/sec.
@@ -89,18 +92,18 @@ var makeAudioStreamer = function (pitchCallback, pitchVectorCallback) {
 
     // Define a function to get the amplitude level of the first channel
     getAmplitude: function () {
-      // const bufferLength = this.analyserNode.frequencyBinCount;
-      // const dataArray = new Uint8Array(bufferLength);
-      // this.analyserNode.getByteTimeDomainData(dataArray);
-      // let maxAmplitude = 0;
-      // for (let i = 0; i < bufferLength; i++) {
-      //   const amplitude = Math.abs((dataArray[i] - 128) / 128);
-      //   if (amplitude > maxAmplitude) {
-      //     maxAmplitude = amplitude;
-      //   }
-      // }
-      // return maxAmplitude;
-      return 0;
+      const bufferLength = this.analyserNode.frequencyBinCount;
+      const dataArray = new Uint8Array(bufferLength);
+      this.analyserNode.getByteTimeDomainData(dataArray);
+      let maxAmplitude = 0;
+      for (let i = 0; i < bufferLength; i++) {
+        const amplitude = Math.abs((dataArray[i] - 128) / 128);
+        if (amplitude > maxAmplitude) {
+          maxAmplitude = amplitude;
+        }
+      }
+      return maxAmplitude;
+      // return 0;
     },
 
     setAnalyzerCallback: function (myfunc) {
