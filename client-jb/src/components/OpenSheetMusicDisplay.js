@@ -23,9 +23,14 @@ Chartjs.register(LineElement, CategoryScale, LinearScale, PointElement);
 class OpenSheetMusicDisplay extends Component {
   constructor(props) {
     super(props);
-    this.state = { dataReady: false };
+    this.state = {
+      dataReady: false,
+      amplitudeData: [],
+    };
+
     this.osmd = undefined;
     this.divRef = React.createRef();
+    // this.chartRef = React.createRef();
   }
 
   playbackOsmd(osmd) {
@@ -167,6 +172,15 @@ class OpenSheetMusicDisplay extends Component {
       this.osmd.followCursor = this.props.followCursor;
     }
 
+    if (this.props.amplitude !== prevProps.amplitude) {
+      const { amplitudeData } = this.state;
+      const scaledAmplitude =
+        ((this.props.amplitude - 0.0078125) / (1 - 0.0078125)) * 10;
+      const newAmplitudeData = [...amplitudeData, scaledAmplitude];
+
+      this.setState({ amplitudeData: newAmplitudeData });
+    }
+
     window.addEventListener("resize", this.resize);
   }
 
@@ -176,42 +190,52 @@ class OpenSheetMusicDisplay extends Component {
 
   render() {
     const { amplitude } = this.props;
+    const scaledAmplitude = ((amplitude - 0.0078125) / (1 - 0.0078125)) * 10;
+
     const currentTop = this.osmd?.cursor?.cursorElement?.style.top;
     const currentLeft = this.osmd?.cursor?.cursorElement?.style.left;
 
-    console.log("churrosTop", currentTop);
-    console.log("churrosLeft", currentLeft);
-
-    const data = {
-      labels: [
-        "amplitude",
-        "February",
-        "March",
-        "April",
-        "May",
-        "June",
-        "July",
-      ],
-      datasets: [
-        {
-          label: "amplitude points",
-          data: [amplitude, 19, 3, 5, 2, 3, 15],
-          backgroundColor: "aqua",
-          borderColor: "black",
-          PointBorderColor: "aqua",
-        },
-      ],
-    };
+    // console.log("churrosTop", currentTop);
+    // console.log("churrosLeft", currentLeft);
     const options = {
       plugin: {
         legend: true,
       },
     };
 
+    // dummy data for line chart
+    // const data = {
+    //   labels: ["Amplitude"],
+    //   datasets: [
+    //     {
+    //       label: "Amplitude Points",
+    //       data: this.state.amplitudeData,
+    //       backgroundColor: "aqua",
+    //       borderColor: "black",
+    //       pointBorderColor: "aqua",
+    //     },
+    //   ],
+    // };
+
+    const dataset = {
+      label: "Amplitude Points",
+      data: this.state.amplitudeData,
+      backgroundColor: "aqua",
+      borderColor: "black",
+      pointBorderColor: "aqua",
+    };
+
+    const data = {
+      labels: Array.from(Array(this.state.amplitudeData.length).keys()).map(
+        String
+      ), // Use index as labels
+      datasets: [dataset],
+    };
+
+    // console.log("datadatadata", data);
+
     return (
       <div>
-        <Line data={data} options={options}></Line>
-
         <div ref={this.divRef} />
         <div
           style={{
@@ -225,6 +249,7 @@ class OpenSheetMusicDisplay extends Component {
             transformOrigin: "left",
           }}
         />
+        <Line data={data} options={options}></Line>
       </div>
     );
   }
