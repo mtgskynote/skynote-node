@@ -5,15 +5,16 @@ This document contains steps for setting up the project and navigating around so
 In order to execute the entire project there are setup processes that need to be done like installing the related npm modules required at both the front-end part and the back-end part which inturn results in creation of node_modules folder in the respective directory. package.json file under the "skynote-node" parent directory contains the npm commands to execute in the terminal such that the setup processes can be done before launching the application. 
 
 For example the package.json under 'skynote-node' directory consists of below snippet 
-"scripts": {
-    "install-dependencies": "npm run install-client && npm install",
-    "setup-production": "npm run install-client && npm run build-client && npm install",
-    "install-client": "cd client-jb && npm install",
-    "build-client": "cd client-jb && npm run build",
-    "server": "nodemon server",
-    "client": "npm start --prefix client-jb",
-    "start": "concurrently  --kill-others-on-fail  \"npm run server\" \"npm run client\" "
-  },
+
+    "scripts": {
+        "install-dependencies": "npm run install-client && npm install",
+        "setup-production": "npm run install-client && npm run build-client && npm install",
+        "install-client": "cd client-jb && npm install",
+        "build-client": "cd client-jb && npm run build",
+        "server": "nodemon server",
+        "client": "npm start --prefix client-jb",
+        "start": "concurrently  --kill-others-on-fail  \"npm run server\" \"npm run client\" "
+      }
 
 Each of these 'keys' in the scripts json can be executed by running 
    
