@@ -38,6 +38,7 @@ export async function makeCrepeScriptNode(audioContext, bufferSize, pitchCallbac
     }
     function process_microphone_buffer(event) {
         //console.log(`process_mic_buffer`)
+        //console.log(`..   baseLatency: ${audioContext.baseLatency} and outputLatency: ${audioContext.outputLatency}) `)
         resample(event.inputBuffer, function(resampled) {
           tf.tidy(() => {
             // run the prediction on the model
