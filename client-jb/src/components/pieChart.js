@@ -128,9 +128,14 @@ const PieChart = React.forwardRef(({
 // }) => {
   const svgRef = useRef(null);
 
+
+
+
 //-----------   for parent component usage
 //console.log(`recreate PieChart`)
 const [segments, setSegments] = useState([.2, .5, .8, 1]);
+
+
 
 const updateData = (updatedData) => {
   // Perform the update logic here
@@ -140,6 +145,7 @@ const updateData = (updatedData) => {
 React.useImperativeHandle(ref, () => ({
   updateData: updateData
 }));
+
 
 //----------------------------------------
 
@@ -188,6 +194,12 @@ React.useImperativeHandle(ref, () => ({
     });
   }
   //}, [segments]);
+
+  const d = new Date();
+  //console.log(`-------------  Return new PIECHART at ${d.toISOString()}`)
+
+
+  //if (segments[0] > .6) {console.log(`000000000000000000000000000000000`)}
 
   return (
     <div>

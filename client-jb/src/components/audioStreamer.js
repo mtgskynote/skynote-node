@@ -5,7 +5,9 @@ import { makeCrepeScriptNode } from "./pitch/crepeScriptNode.js";
 import Meyda from "meyda";
 
 // Create an audio context
-const audioContext = new AudioContext(); // must be audioContext.resumed()'d by a user before mic will work.
+const audioContext = new AudioContext({
+  latencyHint: "interactive",
+  sampleRate: 22050}); // must be audioContext.resumed()'d by a user before mic will work.
 
 var makeAudioStreamer = function (pitchCallback, pitchVectorCallback) {
   var audioStreamer = {
@@ -29,7 +31,7 @@ var makeAudioStreamer = function (pitchCallback, pitchVectorCallback) {
             const analyzer = Meyda.createMeydaAnalyzer({
               audioContext: audioContext,
               source: sourceNode,
-              bufferSize: 512,
+              bufferSize: 4096, //512
               featureExtractors: meydaFeatures,
               callback: (features) => {
                 //console.log(features);
