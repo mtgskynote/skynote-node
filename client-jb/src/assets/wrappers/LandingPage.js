@@ -1,6 +1,12 @@
 import styled from 'styled-components'
 
 const Wrapper = styled.main`
+  .center {
+  position: flex;
+  right: 50%;
+  left: 50%;
+  align-items: center;
+}
   nav {
     width: var(--fluid-width);
     max-width: var(--max-width);
@@ -27,16 +33,14 @@ const Wrapper = styled.main`
   .main-img {
     display: none;
   }
-  /* @media (min-width: 992px) {
-    .page {
-      grid-template-columns: 1fr 1fr;
-      column-gap: 3rem;
-    }
-    .main-img {
-      display: block;
-    }
-    
-  } */
+  
+  .addspace{
+    margin-top: 5rem;
+  }
+
+ a{
+    color: black;
+  }
 
   @media screen and (min-width: 768px){
     section: {
@@ -89,10 +93,12 @@ const Wrapper = styled.main`
   max-width: 700px !important;
 }
 .work-section-top {
+  margin-top: 10rem;
   display: flex;
   justify-content: center;
   align-items: center;
   flex-direction: column;
+  text-align: center;
 }
 .work-section-info {
   width: 500px;

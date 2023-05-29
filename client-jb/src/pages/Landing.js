@@ -120,8 +120,8 @@ const Landing = () => {
   return (
     <Wrapper>
      
-      <div className="container page">
-        <div className="info">
+      <div className = "work-section-top">
+        <div>
         <Logo />
           <h1>
             Instrument <span> Learning </span> App
@@ -132,9 +132,13 @@ const Landing = () => {
           <Link to="/register" className="btn btn-hero">
             Login/Register
           </Link>
-        </div>
+      </div>
        
-        {/* <img src={main} alt="look-ahead" className="img-main-img" /> */}
+        <div className="addspace">
+          <a href="https://docs.google.com/forms/d/e/1FAIpQLSdE6QIt2Xfno67jWjBi2SJOB1dImKhmvJYr9Mzi9Qbo1BGHuw/viewform" class="btn-link">
+          Fill this form to show your interest in SkyNote and receive an email about updates!
+          </a>
+        </div>
       </div>
 
       <div className="work-section-wrapper">
@@ -169,7 +173,9 @@ const Landing = () => {
         position: 'relative',
         overflow: 'hidden',
       }}>
-                <iframe src={data.videolink} title="YouTube video"  autoplay="0" allowfullscreen ></iframe>
+                <video controls>
+                <source src={data.videolink}/> 
+                </video>
               </div>
               <p>{data.text}</p>
             </div>
