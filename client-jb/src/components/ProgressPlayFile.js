@@ -20,18 +20,30 @@ const ProgressPlayFile = (props) => {
 
   const controlbar = useControlBar(cursorRef);
 
-  const audioStreamer = makeAudioStreamer();
   const [amplitude, setAmplitude] = useState(0);
+  const [pitch, setPitch] = useState(null);
+
+  // Define pitch callback function
+  const handlePitchCallback = (pitchData) => {
+    // Process pitch data here
+    if (pitchData.confidence > 0.6) {
+      // console.log(`pitch is ${pitchData.pitch}`);
+      setPitch(pitchData.pitch);
+    }
+  };
+
+  const audioStreamer = makeAudioStreamer(handlePitchCallback);
 
   useEffect(() => {
-    // cursor position and amplitude
     //--------------------------------------------------------------------------------
+    //  amplitude
     audioStreamer.init();
+
     const intervalId1 = setInterval(async () => {
       let a = audioStreamer.getAmplitude();
-      console.log(`amplitude is ${a}`);
+      // console.log(`amplitude is ${a}`);
       setAmplitude(a);
-    }, 150);
+    }, 200);
 
     //--------------------------------------------------------------------------------
 
@@ -230,6 +242,7 @@ const ProgressPlayFile = (props) => {
         zoom={zoom}
         followCursor={true}
         amplitude={amplitude}
+        pitch={pitch}
       />
     </div>
   );

@@ -193,6 +193,8 @@ class OpenSheetMusicDisplay extends Component {
     const { amplitude } = this.props;
     const scaledAmplitude = ((amplitude - 0.0078125) / (1 - 0.0078125)) * 10;
 
+    const { pitch } = this.props;
+    console.log("pitch hello pitch", pitch);
     const currentTop = this.osmd?.cursor?.cursorElement?.style.top;
     const currentLeft = this.osmd?.cursor?.cursorElement?.style.left;
 
