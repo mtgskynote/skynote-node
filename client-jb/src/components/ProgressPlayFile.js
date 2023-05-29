@@ -29,9 +29,9 @@ const ProgressPlayFile = (props) => {
     audioStreamer.init();
     const intervalId1 = setInterval(async () => {
       let a = audioStreamer.getAmplitude();
-      // console.log(`amplitude is ${a}`);
+      console.log(`amplitude is ${a}`);
       setAmplitude(a);
-    }, 200);
+    }, 150);
 
     //--------------------------------------------------------------------------------
 

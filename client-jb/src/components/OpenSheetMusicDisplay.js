@@ -113,6 +113,7 @@ class OpenSheetMusicDisplay extends Component {
       this.osmd.zoom = this.props.zoom;
       this.playbackControl = this.playbackOsmd(this.osmd);
       this.playbackControl.initialize();
+
       this.props.playbackRef.current = this.playbackManager;
 
       // setup cursor position tracking
@@ -198,24 +199,10 @@ class OpenSheetMusicDisplay extends Component {
     // console.log("churrosTop", currentTop);
     // console.log("churrosLeft", currentLeft);
     const options = {
-      plugin: {
+      plugins: {
         legend: true,
       },
     };
-
-    // dummy data for line chart
-    // const data = {
-    //   labels: ["Amplitude"],
-    //   datasets: [
-    //     {
-    //       label: "Amplitude Points",
-    //       data: this.state.amplitudeData,
-    //       backgroundColor: "aqua",
-    //       borderColor: "black",
-    //       pointBorderColor: "aqua",
-    //     },
-    //   ],
-    // };
 
     const dataset = {
       label: "Amplitude Points",
