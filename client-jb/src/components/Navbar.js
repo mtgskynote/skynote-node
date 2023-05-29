@@ -22,7 +22,7 @@ const Navbar = () => {
           </IconButton>
         </Box>
         <div>
-          <Logo />
+          <Logo width={175} height={75}/>
           <h3 className="logo-text">Dashboard</h3>
         </div>
         <div className="btn-container">
