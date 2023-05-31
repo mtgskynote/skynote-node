@@ -25,7 +25,6 @@ const ProgressPlayFile = (props) => {
 
   // Define pitch callback function
   const handlePitchCallback = (pitchData) => {
-    // Process pitch data here
     if (pitchData.confidence > 0.6) {
       // console.log(`pitch is ${pitchData.pitch}`);
       setPitch(pitchData.pitch);
