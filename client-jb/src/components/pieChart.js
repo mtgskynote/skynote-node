@@ -1,4 +1,4 @@
-import React, { useRef, useEffect, useState } from "react";
+import React, { useRef,  useState } from "react";
 const static_xmlns = "http://www.w3.org/2000/svg";
 
 // ---------  Constants  --------------------------//
@@ -119,13 +119,6 @@ const PieChart = React.forwardRef(({
   m_height = 200,
 //  segments = def_segments
 }, ref) => {
-//   const PieChart = ({
-//   labels = def_labels,
-//   radius = 100,
-//   m_width = 200,
-//   m_height = 200,
-//   segments = def_segments
-// }) => {
   const svgRef = useRef(null);
 
 
@@ -133,7 +126,7 @@ const PieChart = React.forwardRef(({
 
 //-----------   for parent component usage
 //console.log(`recreate PieChart`)
-const [segments, setSegments] = useState([.2, .5, .8, 1]);
+const [segments, setSegments] = useState([0, 0, 0, 0]);
 
 
 
@@ -195,7 +188,7 @@ React.useImperativeHandle(ref, () => ({
   }
   //}, [segments]);
 
-  const d = new Date();
+  //const d = new Date();
   //console.log(`-------------  Return new PIECHART at ${d.toISOString()}`)
 
 

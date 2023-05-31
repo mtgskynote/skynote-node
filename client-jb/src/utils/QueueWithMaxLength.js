@@ -23,7 +23,7 @@ class QueueWithMaxLength {
     return this.queue.length;
   }
 
-  // returns element at the BEGINNING of the array (the oldest pushed value)
+  // returns element at the END of the array (the newest pushed value)
   last = function() {
     if (this.queue.length === 0) return 0;
     return this.lastitem;
