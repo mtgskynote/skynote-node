@@ -230,7 +230,7 @@ class OpenSheetMusicDisplay extends Component {
 
     // // for pitch
     const dataset = {
-      label: "Pitch Points",
+      label: "Frequency",
       data: this.state.pitchData,
       backgroundColor: "aqua",
       borderColor: "black",
