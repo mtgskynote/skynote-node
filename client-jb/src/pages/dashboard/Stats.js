@@ -1,22 +1,22 @@
 import { ListItem, ListItemText, List, Grid, Box } from "@mui/material";
-import { makeStyles } from '@material-ui/styles'
+import { makeStyles } from "@material-ui/styles";
 import { Rating } from "@mui/material";
 import { Chart as ChartJS, ArcElement, Tooltip, Legend } from "chart.js";
 import { Doughnut } from "react-chartjs-2";
 // import Header and LineChart from components/Header.js
 import Header from "../../components/Header";
 import LineChart from "../../components/LineChart";
+import Wrapper from "../../assets/wrappers/StatsContainer";
 
 ChartJS.register(ArcElement, Tooltip, Legend);
 
 const useStyles = makeStyles((theme) => ({
   gridClassName: {
     boxShadow: "1px 10px 5px",
-    position: 'relative'
+    position: "relative",
   },
- // other classes here
+  // other classes here
 }));
-
 
 const lineChartOptions = {
   scales: {
@@ -85,62 +85,63 @@ const Stats = () => {
   const classes = useStyles();
 
   return (
-    <Grid container spacing={6}>
-      <Grid item xs={12}>
-        <Box p={2} border={1} textAlign="center">
-          Continue Learning.. Big Puppy
-          <div>
-            <Rating name="read-only" value={3} readOnly />
-          </div>
-        </Box>
-      </Grid>
-      <Grid
-        item
-        xs={3}
-      >
+    <Wrapper>
+      <>
+        <Grid>
+          <h3 className="logo-text2">Dashboard</h3>
+        </Grid>
+        <Grid container spacing={6}>
+          <Grid item xs={12}>
+            <Box p={2} border={1} textAlign="center">
+              Continue Learning.. Big Puppy
+              <div>
+                <Rating name="read-only" value={3} readOnly />
+              </div>
+            </Box>
+          </Grid>
+          <Grid item xs={3}>
+            <div container className={`${classes.gridClassName} grid-tile`}>
+              <Box p={2}>Total Progress</Box>
+              <Box p={2} sx={{ textAlign: "left" }}>
+                <List sx={{ listStyleType: "disc", pl: 4 }}>
+                  <ListItem sx={{ display: "list-item" }}>
+                    <ListItemText primary="5 Star Scores" />
+                  </ListItem>
+                  <ListItem sx={{ display: "list-item" }}>
+                    <ListItemText primary="3 Star Scores" />
+                  </ListItem>
+                  <ListItem sx={{ display: "list-item" }}>
+                    <ListItemText primary="Not Started" />
+                  </ListItem>
+                </List>
+              </Box>
+            </div>
+          </Grid>
+          <Grid item xs={3}>
+            <div className="grid-tile">
+              <Doughnut
+                data={dataset}
+                options={{
+                  responsive: true,
+                  maintainAspectRatio: true,
+                }}
+              />
+            </div>
+          </Grid>
 
-        <div container className={`${classes.gridClassName} grid-tile`}>
-          <Box p={2}>Total Progress</Box>
-          <Box p={2} sx={{ textAlign: "left" }}>
-            <List sx={{ listStyleType: "disc", pl: 4 }}>
-              <ListItem sx={{ display: "list-item" }}>
-                <ListItemText primary="5 Star Scores" />
-              </ListItem>
-              <ListItem sx={{ display: "list-item" }}>
-                <ListItemText primary="3 Star Scores" />
-              </ListItem>
-              <ListItem sx={{ display: "list-item" }}>
-                <ListItemText primary="Not Started" />
-              </ListItem>
-            </List>
-          </Box>
-        </div>
-      </Grid>
-      <Grid item xs={3}>
-        <div className="grid-tile">
-         
-            <Doughnut
-              data={dataset}
-              options={{
-                responsive: true,
-                maintainAspectRatio: true,
-              }}
-            />
-         
-        </div>
-      </Grid>
-     
-      <Grid item xs={6}>
-        <div className="grid-tile">
-          <Box height="400px" width="800px" m="-20px 0 0 0">
-            <LineChart isDashboard={true} />
-          </Box>
-        </div>
-      </Grid>
-      <Grid item xs={12}>
-        <div className="grid-tile">Tile 3</div>
-      </Grid>
-    </Grid>
+          <Grid item xs={6}>
+            <div className="grid-tile">
+              <Box height="400px" width="800px" m="-20px 0 0 0">
+                <LineChart isDashboard={true} />
+              </Box>
+            </div>
+          </Grid>
+          <Grid item xs={12}>
+            <div className="grid-tile">Tile 3</div>
+          </Grid>
+        </Grid>
+      </>
+    </Wrapper>
   );
 };
 

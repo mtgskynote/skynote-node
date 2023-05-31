@@ -20,7 +20,7 @@ const Progress = () => {
                 src={require("../assets/images/violinDisplay.jpg")}
                 style={{ width: "100%", height: "50%", objectFit: "contain" }}
               />
-              <Card.Body style={{ height: "100px", marginBottom: "0" }}>
+              <Card.Body style={{ height: "100px" }}>
                 <Card.Title>
                   <div className="center">
                     <Button

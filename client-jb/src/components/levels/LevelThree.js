@@ -54,7 +54,7 @@ const LevelThree = () => {
     <Row xs={1} md={4} className="g-4">
       {files.map((name, index) => (
         <Col key={index}>
-          <Card style={{ width: "500px" }}>
+          <Card style={{ width: "300px" }}>
             <Card.Img
               variant="top"
               src={require("../../assets/images/violinDisplay.jpg")}
