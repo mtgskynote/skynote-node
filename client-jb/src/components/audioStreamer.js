@@ -17,15 +17,19 @@ USAGE:
 import { makeCrepeScriptNode } from "./pitch/crepeScriptNode.js";
 import Meyda from "meyda"; //https://meyda.js.org
 
-const meyda_buff_fft_length=1024 // fft length and buf size are the same for Meyda
+const meyda_buff_fft_length = 1024; // fft length and buf size are the same for Meyda
 
 // Create an audio context
 const audioContext = new AudioContext({
   latencyHint: "interactive",
-  sampleRate: 22050, 
+  sampleRate: 22050,
 }); // must be audioContext.resumed()'d by a user before mic will work.
 
-var makeAudioStreamer = function (pitchCallback, pitchVectorCallback, analysisCb) {
+var makeAudioStreamer = function (
+  pitchCallback,
+  pitchVectorCallback,
+  analysisCb
+) {
   var audioStreamer = {
     // Create an analyser node to extract amplitude data
     analyserNode: audioContext.createAnalyser(),
@@ -46,9 +50,9 @@ var makeAudioStreamer = function (pitchCallback, pitchVectorCallback, analysisCb
             const analyzer = Meyda.createMeydaAnalyzer({
               audioContext: audioContext,
               source: sourceNode,
-                // The docs (https://meyda.js.org/guides/online-web-audio) imply this can be anything, and also that it 
-                //     determines not just the buffer size, but in fact the rate at which the analyzer gets called.
-              bufferSize: meyda_buff_fft_length, 
+              // The docs (https://meyda.js.org/guides/online-web-audio) imply this can be anything, and also that it
+              //     determines not just the buffer size, but in fact the rate at which the analyzer gets called.
+              bufferSize: meyda_buff_fft_length,
               featureExtractors: meydaFeatures,
               callback: (features) => {
                 //console.log(features);
@@ -58,7 +62,7 @@ var makeAudioStreamer = function (pitchCallback, pitchVectorCallback, analysisCb
             analyzer.start();
           }
           // // analyserNode defined in object
-          this.analyserNode.fftSize = meyda_buff_fft_length;  
+          this.analyserNode.fftSize = meyda_buff_fft_length;
 
           // // Connect the source node to the analyser node
           sourceNode.connect(this.analyserNode);
@@ -89,24 +93,7 @@ var makeAudioStreamer = function (pitchCallback, pitchVectorCallback, analysisCb
           scriptNode.connect(gain);
 
           gain.connect(audioContext.destination);
-
         });
-    },
-
-    // // Define a function to get the amplitude level of the first channel
-    getAmplitude: function () {
-      const bufferLength = this.analyserNode.frequencyBinCount;
-      const dataArray = new Uint8Array(bufferLength);
-      this.analyserNode.getByteTimeDomainData(dataArray);
-      let maxAmplitude = 0;
-      for (let i = 0; i < bufferLength; i++) {
-        const amplitude = Math.abs((dataArray[i] - 128) / 128);
-        if (amplitude > maxAmplitude) {
-          maxAmplitude = amplitude;
-        }
-      }
-      return maxAmplitude;
-      // return 0;
     },
   };
 

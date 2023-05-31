@@ -26,7 +26,6 @@ class OpenSheetMusicDisplay extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      amplitudeData: [], // amplitude data
       pitchData: [], // pitch data
       lineChartVisible: true, // chart visibility
     };
@@ -78,6 +77,9 @@ class OpenSheetMusicDisplay extends Component {
 
     // define a new class instance of opensheetmusicdisplay
     this.osmd = new OSMD(this.divRef.current, options);
+
+    // check the current divref
+    console.log("bon dia bon dia bon dia", this.divRef.current);
 
     //define the osmd features to be included
     this.osmd.load(this.props.file).then(() => {
@@ -149,15 +151,6 @@ class OpenSheetMusicDisplay extends Component {
       this.osmd.followCursor = this.props.followCursor;
     }
 
-    // for amplitude changes
-    if (this.props.amplitude !== prevProps.amplitude) {
-      const { amplitudeData } = this.state;
-      const scaledAmplitude =
-        ((this.props.amplitude - 0.0078125) / (1 - 0.0078125)) * 10;
-      const newAmplitudeData = [...amplitudeData, scaledAmplitude];
-      this.setState({ amplitudeData: newAmplitudeData });
-    }
-
     // for pitch changes
     if (this.props.pitch !== prevProps.pitch) {
       const { pitchData } = this.state;
@@ -181,9 +174,6 @@ class OpenSheetMusicDisplay extends Component {
 
   render() {
     //----------line chart calculations----------------//
-    //amplitude
-    const { amplitude } = this.props;
-    const scaledAmplitude = ((amplitude - 0.0078125) / (1 - 0.0078125)) * 10;
 
     //pitch
     const { pitch } = this.props;
@@ -211,22 +201,6 @@ class OpenSheetMusicDisplay extends Component {
         legend: true,
       },
     };
-
-    // // for amplitude
-    // const dataset = {
-    //   label: "Amplitude Points",
-    //   data: this.state.amplitudeData,
-    //   backgroundColor: "aqua",
-    //   borderColor: "black",
-    //   pointBorderColor: "aqua",
-    // };
-
-    // const data = {
-    //   labels: Array.from(Array(this.state.amplitudeData.length).keys()).map(
-    //     String
-    //   ),
-    //   datasets: [dataset],
-    // };
 
     // // for pitch
     const dataset = {

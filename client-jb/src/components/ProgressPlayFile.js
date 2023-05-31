@@ -19,8 +19,6 @@ const ProgressPlayFile = (props) => {
   const [zoom, setZoom] = useState(1.0);
 
   const controlbar = useControlBar(cursorRef);
-
-  const [amplitude, setAmplitude] = useState(0);
   const [pitch, setPitch] = useState(null);
 
   // Define pitch callback function
@@ -37,13 +35,6 @@ const ProgressPlayFile = (props) => {
     //--------------------------------------------------------------------------------
     //  amplitude
     audioStreamer.init();
-
-    const intervalId1 = setInterval(async () => {
-      let a = audioStreamer.getAmplitude();
-      // console.log(`amplitude is ${a}`);
-      setAmplitude(a);
-    }, 200);
-
     //--------------------------------------------------------------------------------
 
     // cursor show
@@ -206,8 +197,6 @@ const ProgressPlayFile = (props) => {
     visualizeButton.addEventListener("click", handleVisualizeButtonClick);
 
     return () => {
-      clearInterval(intervalId1);
-
       visualizeButton.removeEventListener("click", handleVisualizeButtonClick);
       cursorShowButton.removeEventListener(
         "click",
@@ -240,7 +229,6 @@ const ProgressPlayFile = (props) => {
         bpm={bpmChange}
         zoom={zoom}
         followCursor={true}
-        amplitude={amplitude}
         pitch={pitch}
       />
     </div>
