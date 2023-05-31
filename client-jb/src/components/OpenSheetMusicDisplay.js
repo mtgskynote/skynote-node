@@ -28,7 +28,7 @@ class OpenSheetMusicDisplay extends Component {
     this.state = {
       amplitudeData: [], // amplitude data
       pitchData: [], // pitch data
-      lineChartVisible: false, // chart visibility
+      lineChartVisible: true, // chart visibility
     };
 
     this.osmd = undefined;
@@ -187,6 +187,17 @@ class OpenSheetMusicDisplay extends Component {
 
     //pitch
     const { pitch } = this.props;
+
+    function normalizeFrequency(frequency) {
+      const minFrequency = 20;
+      const maxFrequency = 20000;
+      let normalizedPitch =
+        (frequency - minFrequency) / (maxFrequency - minFrequency);
+      return normalizedPitch;
+    }
+
+    const normalizedPitch = normalizeFrequency(pitch);
+
     // console.log("pitch hello pitch", pitch);
     const currentTop = this.osmd?.cursor?.cursorElement?.style.top;
     const currentLeft = this.osmd?.cursor?.cursorElement?.style.left;
@@ -241,7 +252,7 @@ class OpenSheetMusicDisplay extends Component {
             width: "100%",
             height: "2px",
             background: "black",
-            transform: `scaleX(${amplitude})`,
+            transform: `scaleX(${normalizedPitch * 10})`,
             transformOrigin: "left",
           }}
         />
