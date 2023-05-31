@@ -1,5 +1,5 @@
 /* 
-    Create a script node for analyzinestimating pitch from the audio stream.
+    Create a script node for estimating pitch from the audio stream.
     Parameters:
         audioContext
         bufferSize
@@ -19,7 +19,7 @@ export async function makeCrepeScriptNode(audioContext, bufferSize, pitchCallbac
       // perform resampling the audio to 16000 Hz, on which the model is trained.
     // setting a sample rate in AudioContext is not supported by most browsers at the moment.
     function resample(audioBuffer, onComplete) {
-        const interpolate = (audioBuffer.sampleRate % 16000 != 0);
+        const interpolate = (audioBuffer.sampleRate % 16000 !== 0);
         const multiplier = audioBuffer.sampleRate / 16000;
         const original = audioBuffer.getChannelData(0);
         const subsamples = new Float32Array(1024);
