@@ -171,7 +171,7 @@ class OpenSheetMusicDisplay extends Component {
   render() {
     //----------line chart calculations----------------//
 
-    //pitch
+    //pitch for making the (pitch tracking line)
     const { pitch } = this.props;
     function normalizeFrequency(frequency) {
       const minFrequency = 20;
@@ -183,33 +183,26 @@ class OpenSheetMusicDisplay extends Component {
     const normalizedPitch = normalizeFrequency(pitch);
 
     // cursor position
-    let adjustedTop = "";
-    let adjustedLeft = "";
-    const osmdCanvasPage1 = document.getElementById("osmdCanvasPage1");
-    const cursorElement = this.osmd?.cursor?.cursorElement;
-    if (cursorElement && osmdCanvasPage1) {
-      const cursorRect = cursorElement.getBoundingClientRect();
-      const osmdCanvasRect = osmdCanvasPage1.getBoundingClientRect();
 
-      const offsetTop = cursorRect.top - osmdCanvasRect.top;
-      const offsetLeft = cursorRect.left - osmdCanvasRect.left;
+    let currentTop = this.osmd?.cursor?.cursorElement?.style.top;
+    let currentLeft = this.osmd?.cursor?.cursorElement?.style.left;
+    // console.log("currentTop", currentTop);
+    // console.log("currentLeft", currentLeft);
 
-      adjustedTop = offsetTop + parseFloat(cursorElement.style.top) + "px";
-      adjustedLeft = offsetLeft + parseFloat(cursorElement.style.left) + "px";
-      console.log("adjustedTop", adjustedTop);
-      console.log("adjustedLeft", adjustedLeft);
-    }
+    const cursorPosition = {
+      currentTop,
+      currentLeft,
+      normalizedPitch,
+    };
 
     return (
-      <div>
+      <div style={{ position: "relative" }}>
         <div ref={this.divRef} />
 
         {this.state.lineChartVisible && (
           <LineChart
             pitchData={this.state.pitchData}
-            adjustedTop={adjustedTop}
-            adjustedLeft={adjustedLeft}
-            normalizedPitch={normalizedPitch}
+            cursorPosition={cursorPosition}
           />
         )}
       </div>

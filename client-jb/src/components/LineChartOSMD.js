@@ -1,19 +1,13 @@
 import React from "react";
 import { Line } from "react-chartjs-2";
 
-const LineChart = ({
-  pitchData,
-  adjustedTop,
-  adjustedLeft,
-  normalizedPitch,
-}) => {
+const LineChart = ({ pitchData, cursorPosition }) => {
   const options = {
     plugins: {
       legend: true,
     },
   };
 
-  // linechart data
   const dataset = {
     label: "Frequency",
     data: pitchData,
@@ -27,11 +21,12 @@ const LineChart = ({
     datasets: [dataset],
   };
 
-  // pitch tracking line
+  let { currentTop, currentLeft, normalizedPitch } = cursorPosition;
+
   const lineStyle = {
     position: "absolute",
-    top: adjustedTop,
-    left: adjustedLeft,
+    top: currentTop,
+    left: currentLeft,
     width: "100%",
     height: "2px",
     background: "black",
@@ -40,7 +35,7 @@ const LineChart = ({
   };
 
   return (
-    <div style={{ position: "relative" }}>
+    <div>
       <div style={lineStyle} />
       <Line data={data} options={options} />
     </div>
