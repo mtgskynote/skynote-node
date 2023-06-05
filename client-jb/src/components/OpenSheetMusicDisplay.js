@@ -10,7 +10,7 @@ import {
   IAudioMetronomePlayer,
 } from "opensheetmusicdisplay";
 
-import { Line } from "react-chartjs-2";
+import LineChart from "./LineChartOSMD";
 import {
   Chart as Chartjs,
   LineElement,
@@ -33,7 +33,7 @@ class OpenSheetMusicDisplay extends Component {
     this.osmd = undefined;
     this.divRef = React.createRef();
   }
-
+  np;
   // defining the playback manager for playing music and cursor controls
   // you first define and then initialize the playback manager
   playbackOsmd(osmd) {
@@ -93,10 +93,6 @@ class OpenSheetMusicDisplay extends Component {
 
       this.props.playbackRef.current = this.playbackManager;
     });
-  }
-
-  resize() {
-    this.forceUpdate();
   }
 
   componentWillUnmount() {
@@ -177,7 +173,6 @@ class OpenSheetMusicDisplay extends Component {
 
     //pitch
     const { pitch } = this.props;
-
     function normalizeFrequency(frequency) {
       const minFrequency = 20;
       const maxFrequency = 20000;
@@ -185,55 +180,37 @@ class OpenSheetMusicDisplay extends Component {
         (frequency - minFrequency) / (maxFrequency - minFrequency);
       return normalizedPitch;
     }
-
     const normalizedPitch = normalizeFrequency(pitch);
 
-    // console.log("pitch hello pitch", pitch);
-    const currentTop = this.osmd?.cursor?.cursorElement?.style.top;
-    const currentLeft = this.osmd?.cursor?.cursorElement?.style.left;
+    // cursor position
+    let adjustedTop = "";
+    let adjustedLeft = "";
+    const osmdCanvasPage1 = document.getElementById("osmdCanvasPage1");
+    const cursorElement = this.osmd?.cursor?.cursorElement;
+    if (cursorElement && osmdCanvasPage1) {
+      const cursorRect = cursorElement.getBoundingClientRect();
+      const osmdCanvasRect = osmdCanvasPage1.getBoundingClientRect();
 
-    // console.log("Top", currentTop);
-    // console.log("Left", currentLeft);
+      const offsetTop = cursorRect.top - osmdCanvasRect.top;
+      const offsetLeft = cursorRect.left - osmdCanvasRect.left;
 
-    // line chart options and data
-    const options = {
-      plugins: {
-        legend: true,
-      },
-    };
-
-    // // for pitch
-    const dataset = {
-      label: "Frequency",
-      data: this.state.pitchData,
-      backgroundColor: "aqua",
-      borderColor: "black",
-      pointBorderColor: "aqua",
-    };
-
-    const data = {
-      labels: Array.from(Array(this.state.pitchData.length).keys()).map(String),
-      datasets: [dataset],
-    };
+      adjustedTop = offsetTop + parseFloat(cursorElement.style.top) + "px";
+      adjustedLeft = offsetLeft + parseFloat(cursorElement.style.left) + "px";
+      console.log("adjustedTop", adjustedTop);
+      console.log("adjustedLeft", adjustedLeft);
+    }
 
     return (
       <div>
-        <div
-          style={{
-            position: "absolute",
-            top: currentTop,
-            left: currentLeft,
-            width: "100%",
-            height: "2px",
-            background: "black",
-            transform: `scaleX(${normalizedPitch * 10})`,
-            transformOrigin: "left",
-          }}
-        />
         <div ref={this.divRef} />
 
         {this.state.lineChartVisible && (
-          <Line data={data} options={options}></Line>
+          <LineChart
+            pitchData={this.state.pitchData}
+            adjustedTop={adjustedTop}
+            adjustedLeft={adjustedLeft}
+            normalizedPitch={normalizedPitch}
+          />
         )}
       </div>
     );
