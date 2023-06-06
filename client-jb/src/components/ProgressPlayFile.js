@@ -21,6 +21,8 @@ const ProgressPlayFile = (props) => {
   const controlbar = useControlBar(cursorRef);
   const [pitch, setPitch] = useState(null);
 
+  const [startPitchTrack, setStartPitchTrack] = useState(false);
+
   // Define pitch callback function
   const handlePitchCallback = (pitchData) => {
     if (pitchData.confidence > 0.6) {
@@ -33,9 +35,17 @@ const ProgressPlayFile = (props) => {
 
   useEffect(() => {
     //--------------------------------------------------------------------------------
-    //  amplitude
     audioStreamer.init();
     //--------------------------------------------------------------------------------
+
+    // record
+
+    const recordButton = document.getElementById("record");
+    const handleRecordButtonClick = () => {
+      // console.log("recording");
+      setStartPitchTrack((prevStartPitchTrack) => !prevStartPitchTrack);
+    };
+    recordButton.addEventListener("click", handleRecordButtonClick);
 
     // cursor show
     const cursorShowButton = document.getElementById("cursorShow");
@@ -197,6 +207,7 @@ const ProgressPlayFile = (props) => {
     visualizeButton.addEventListener("click", handleVisualizeButtonClick);
 
     return () => {
+      recordButton.removeEventListener("click", handleRecordButtonClick);
       visualizeButton.removeEventListener("click", handleVisualizeButtonClick);
       cursorShowButton.removeEventListener(
         "click",
@@ -230,6 +241,7 @@ const ProgressPlayFile = (props) => {
         zoom={zoom}
         followCursor={true}
         pitch={pitch}
+        startPitchTrack={startPitchTrack}
       />
     </div>
   );

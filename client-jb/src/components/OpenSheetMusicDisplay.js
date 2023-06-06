@@ -27,13 +27,12 @@ class OpenSheetMusicDisplay extends Component {
     super(props);
     this.state = {
       pitchData: [], // pitch data
-      lineChartVisible: true, // chart visibility
+      newStartPitchTrack: false, // start pitch track
     };
 
     this.osmd = undefined;
     this.divRef = React.createRef();
   }
-  np;
   // defining the playback manager for playing music and cursor controls
   // you first define and then initialize the playback manager
   playbackOsmd(osmd) {
@@ -154,10 +153,10 @@ class OpenSheetMusicDisplay extends Component {
       this.setState({ pitchData: newPitchData });
     }
 
-    // to draw the line chart when the play button is clicked
-    if (this.props.playClicked && !prevProps.playClicked) {
-      this.setState({ lineChartVisible: true });
-      console.log("chartVisible", this.state.lineChartVisible);
+    if (this.props.startPitchTrack !== prevProps.startPitchTrack) {
+      // Access the updated value of startPitchTrack prop
+      const newStartPitchTrack = this.props.startPitchTrack;
+      console.log("startPitchTrack hello hello", newStartPitchTrack);
     }
 
     // resize the osmd when the window is resized
@@ -169,6 +168,8 @@ class OpenSheetMusicDisplay extends Component {
   }
 
   render() {
+    const { startPitchTrack } = this.props;
+    console.log("newStartPitchTrack bon diaaaaaaa", startPitchTrack);
     //----------line chart calculations----------------//
 
     //pitch for making the (pitch tracking line)
@@ -198,9 +199,9 @@ class OpenSheetMusicDisplay extends Component {
     return (
       <div style={{ position: "relative" }}>
         <div ref={this.divRef} />
-
-        {this.state.lineChartVisible && (
+        {startPitchTrack && ( // Conditionally render the line chart based on newStartPitchTrack
           <LineChart
+            lineVisible={this.state.lineChartVisible}
             pitchData={this.state.pitchData}
             cursorPosition={cursorPosition}
           />
