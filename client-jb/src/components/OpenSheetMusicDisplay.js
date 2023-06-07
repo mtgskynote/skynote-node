@@ -77,9 +77,6 @@ class OpenSheetMusicDisplay extends Component {
     // define a new class instance of opensheetmusicdisplay
     this.osmd = new OSMD(this.divRef.current, options);
 
-    // check the current divref
-    console.log("bon dia bon dia bon dia", this.divRef.current);
-
     //define the osmd features to be included
     this.osmd.load(this.props.file).then(() => {
       this.osmd.render();
@@ -153,12 +150,6 @@ class OpenSheetMusicDisplay extends Component {
       this.setState({ pitchData: newPitchData });
     }
 
-    if (this.props.startPitchTrack !== prevProps.startPitchTrack) {
-      // Access the updated value of startPitchTrack prop
-      const newStartPitchTrack = this.props.startPitchTrack;
-      console.log("startPitchTrack hello hello", newStartPitchTrack);
-    }
-
     // resize the osmd when the window is resized
     window.addEventListener("resize", this.resize);
   }
@@ -169,22 +160,8 @@ class OpenSheetMusicDisplay extends Component {
 
   render() {
     const { startPitchTrack } = this.props;
-    console.log("newStartPitchTrack bon diaaaaaaa", startPitchTrack);
-    //----------line chart calculations----------------//
-
-    //pitch for making the (pitch tracking line)
-    const { pitch } = this.props;
-    function normalizeFrequency(frequency) {
-      const minFrequency = 20;
-      const maxFrequency = 20000;
-      let normalizedPitch =
-        (frequency - minFrequency) / (maxFrequency - minFrequency);
-      return normalizedPitch;
-    }
-    const normalizedPitch = normalizeFrequency(pitch);
 
     // cursor position
-
     let currentTop = this.osmd?.cursor?.cursorElement?.style.top;
     let currentLeft = this.osmd?.cursor?.cursorElement?.style.left;
     // console.log("currentTop", currentTop);
@@ -193,7 +170,6 @@ class OpenSheetMusicDisplay extends Component {
     const cursorPosition = {
       currentTop,
       currentLeft,
-      normalizedPitch,
     };
 
     return (
