@@ -93,9 +93,9 @@ class OpenSheetMusicDisplay extends Component {
     });
   }
 
-  resize() {
-    this.forceUpdate();
-  }
+  // resize() {
+  //   this.forceUpdate();
+  // }
 
   componentWillUnmount() {
     const playbackManager = this.props.playbackRef.current;

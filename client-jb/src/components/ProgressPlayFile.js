@@ -47,18 +47,18 @@ const ProgressPlayFile = (props) => {
     //--------------------------------------------------------------------------------
 
     // cursor show
-    const cursorShowButton = document.getElementById("cursorShow");
-    const handleCursorShowButtonClick = () => {
-      cursorRef.current.show();
-    };
-    cursorShowButton.addEventListener("click", handleCursorShowButtonClick);
+    // const cursorShowButton = document.getElementById("cursorShow");
+    // const handleCursorShowButtonClick = () => {
+    //   cursorRef.current.show();
+    // };
+    // cursorShowButton.addEventListener("click", handleCursorShowButtonClick);
 
     // cursor hide
-    const cursorHideButton = document.getElementById("cursorHide");
-    const handleCursorHideButtonClick = () => {
-      cursorRef.current.hide();
-    };
-    cursorHideButton.addEventListener("click", handleCursorHideButtonClick);
+    // const cursorHideButton = document.getElementById("cursorHide");
+    // const handleCursorHideButtonClick = () => {
+    //   cursorRef.current.hide();
+    // };
+    // cursorHideButton.addEventListener("click", handleCursorHideButtonClick);
 
     // cursor beginning (reset)
     const beginningButton = document.getElementById("beginning");
@@ -74,11 +74,11 @@ const ProgressPlayFile = (props) => {
     beginningButton.addEventListener("click", handleBeginningButtonClick);
 
     // cursor backward
-    const backwardButton = document.getElementById("backward");
-    const handleBackwardButtonClick = () => {
-      cursorRef.current.previous();
-    };
-    backwardButton.addEventListener("click", handleBackwardButtonClick);
+    // const backwardButton = document.getElementById("backward");
+    // const handleBackwardButtonClick = () => {
+    //   cursorRef.current.previous();
+    // };
+    // backwardButton.addEventListener("click", handleBackwardButtonClick);
 
     // cursor play
     // gets the playback manager and sets the start time to the current time
@@ -89,7 +89,12 @@ const ProgressPlayFile = (props) => {
       const cursor = cursorRef.current;
       const currentTime = cursor.Iterator.currentTimeStamp;
       playbackManager.setPlaybackStart(currentTime);
-      playbackManager.play();
+      if(playbackManager.isPlaying) {
+        playbackManager.pause();
+      }else{
+        playbackManager.play();
+      }
+
     };
 
     playButton.addEventListener("click", handlePlayButtonClick);
@@ -97,23 +102,23 @@ const ProgressPlayFile = (props) => {
     // cursor pause
     // gets the playback manager and sets the start time to the current time, pauses the music where the cursor is
     // replays the music from where the cursor is paused.
-    const pauseButton = document.getElementById("pause");
-    const handlePauseButtonClick = () => {
-      const playbackManager = playbackRef.current;
-      const cursor = cursorRef.current;
-      const currentTime = cursor.Iterator.currentTimeStamp;
-      playbackManager.setPlaybackStart(currentTime);
-      playbackManager.pause();
-    };
+    // const pauseButton = document.getElementById("pause");
+    // const handlePauseButtonClick = () => {
+    //   const playbackManager = playbackRef.current;
+    //   const cursor = cursorRef.current;
+    //   const currentTime = cursor.Iterator.currentTimeStamp;
+    //   playbackManager.setPlaybackStart(currentTime);
+    //   playbackManager.pause();
+    // };
 
-    pauseButton.addEventListener("click", handlePauseButtonClick);
+    // pauseButton.addEventListener("click", handlePauseButtonClick);
 
     //cursor forward
-    const forwardButton = document.getElementById("forward");
-    const handleForwardButtonClick = () => {
-      cursorRef.current.next();
-    };
-    forwardButton.addEventListener("click", handleForwardButtonClick);
+    // const forwardButton = document.getElementById("forward");
+    // const handleForwardButtonClick = () => {
+    //   cursorRef.current.next();
+    // };
+    // forwardButton.addEventListener("click", handleForwardButtonClick);
 
     //metronome
     const metronomeButton = document.getElementById("metronome");
@@ -209,19 +214,19 @@ const ProgressPlayFile = (props) => {
       clearInterval(intervalId1);
 
       visualizeButton.removeEventListener("click", handleVisualizeButtonClick);
-      cursorShowButton.removeEventListener(
-        "click",
-        handleCursorShowButtonClick
-      );
-      cursorHideButton.removeEventListener(
-        "click",
-        handleCursorHideButtonClick
-      );
+      // cursorShowButton.removeEventListener(
+      //   "click",
+      //   handleCursorShowButtonClick
+      // );
+      // cursorHideButton.removeEventListener(
+      //   "click",
+      //   handleCursorHideButtonClick
+      // );
       beginningButton.removeEventListener("click", handleBeginningButtonClick);
-      backwardButton.removeEventListener("click", handleBackwardButtonClick);
+      // backwardButton.removeEventListener("click", handleBackwardButtonClick);
       playButton.removeEventListener("click", handlePlayButtonClick);
-      pauseButton.removeEventListener("click", handlePauseButtonClick);
-      forwardButton.removeEventListener("click", handleForwardButtonClick);
+      // pauseButton.removeEventListener("click", handlePauseButtonClick);
+      // forwardButton.removeEventListener("click", handleForwardButtonClick);
       metronomeButton.removeEventListener("click", handleMetronomeButtonClick);
       zoomInButton.removeEventListener("click", handleZoomInButtonClick);
       zoomOutButton.removeEventListener("click", handleZoomOutButtonClick);
