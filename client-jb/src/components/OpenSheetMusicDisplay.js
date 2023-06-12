@@ -55,6 +55,11 @@ class OpenSheetMusicDisplay extends Component {
       this.playbackManager.addListener(osmd.cursor);
       this.playbackManager.reset();
       this.osmd.PlaybackManager = this.playbackManager;
+
+      // for (const instrument of this.playbackManager.InstrumentIdMapping.values()) {
+      //   instrument.Volume = ;
+      //   console.log("instrument.Volume", instrument.Volume);
+      // }
     };
 
     return {
@@ -148,6 +153,16 @@ class OpenSheetMusicDisplay extends Component {
       const { pitchData } = this.state;
       const newPitchData = [...pitchData, this.props.pitch];
       this.setState({ pitchData: newPitchData });
+    }
+
+    if (this.props.recordVol !== prevProps.recordVol) {
+      const playbackManager = this.props.playbackRef.current;
+      if (playbackManager) {
+        for (const instrument of playbackManager.InstrumentIdMapping.values()) {
+          instrument.Volume = this.props.recordVol;
+          console.log("instrument.Volume in osmd", instrument.Volume);
+        }
+      }
     }
 
     // resize the osmd when the window is resized

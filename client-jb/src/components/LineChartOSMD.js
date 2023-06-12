@@ -3,18 +3,6 @@ import { Line } from "react-chartjs-2";
 // import { useState } from "react";
 
 const LineChart = ({ pitchData, cursorPosition }) => {
-  // const [pitchData, setPitchData] = useState([]);
-
-  // // Simulating dynamic updates to pitchData
-  // useEffect(() => {
-  //   const interval = setInterval(() => {
-  //     const newPitchValue = Math.random() * 100; // Generate a random value for demonstration
-  //     setPitchData((prevData) => [...prevData, newPitchValue]);
-  //   }, 1000); // Update every 1 second
-
-  //   return () => clearInterval(interval);
-  // }, []);
-
   const options = {
     plugins: {
       legend: true,
@@ -29,7 +17,7 @@ const LineChart = ({ pitchData, cursorPosition }) => {
     pointBorderColor: "aqua",
   };
 
-  console.log("picth data in line chart", pitchData);
+  // console.log("picth data in line chart", pitchData);
 
   const data = {
     labels: Array.from(Array(pitchData.length).keys()).map(String),
@@ -61,17 +49,23 @@ const LineChart = ({ pitchData, cursorPosition }) => {
 
   // Calculate the polyline points
   const polylinePoints = normalizedData
-    .map((value, index) => `${index * 10},${300 - value * 300}`)
+    .map((value, index) => `${index * 10},${100 - value * 100}`)
     .join(" ");
 
+  const svgWidth = pitchData.length * 10;
+
   return (
-    <div>
-      <svg width="5000" height="300">
+    <div style={{ overflowX: "auto" }}>
+      <svg width={svgWidth} height="100">
         <polyline
           points={polylinePoints}
           fill="none"
           stroke="black"
           strokeDasharray="2"
+          transform={`translate(${currentLeft}, ${currentTop})`}
+          // style={{
+          //   transform: `translate(${currentTop}px, ${currentLeft}px)`,
+          // }}
         />
       </svg>
       {/* <div style={lineStyle} /> */}

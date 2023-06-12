@@ -16,6 +16,8 @@ const ProgressPlayFile = (props) => {
   const [metroVol, setMetroVol] = React.useState(0.5);
   const [bpmChange, setBpm] = React.useState(null);
 
+  const [recordVol, setRecordVol] = React.useState(0.0);
+
   const [zoom, setZoom] = useState(1.0);
 
   const controlbar = useControlBar(cursorRef);
@@ -39,11 +41,17 @@ const ProgressPlayFile = (props) => {
     //--------------------------------------------------------------------------------
 
     // record
-
     const recordButton = document.getElementById("record");
     const handleRecordButtonClick = () => {
       // console.log("recording");
       setStartPitchTrack((prevStartPitchTrack) => !prevStartPitchTrack);
+      const playbackManager = playbackRef.current;
+      const cursor = cursorRef.current;
+      const currentTime = cursor.Iterator.currentTimeStamp;
+      playbackManager.setPlaybackStart(currentTime);
+      playbackManager.play();
+      setRecordVol(0.0);
+      console.log("recordVol in record", recordVol);
     };
     recordButton.addEventListener("click", handleRecordButtonClick);
 
@@ -91,8 +99,9 @@ const ProgressPlayFile = (props) => {
       const currentTime = cursor.Iterator.currentTimeStamp;
       playbackManager.setPlaybackStart(currentTime);
       playbackManager.play();
+      setRecordVol(1.0);
+      console.log("recordVol in playButton", recordVol);
     };
-
     playButton.addEventListener("click", handlePlayButtonClick);
 
     // cursor pause
@@ -226,7 +235,11 @@ const ProgressPlayFile = (props) => {
       zoomInButton.removeEventListener("click", handleZoomInButtonClick);
       zoomOutButton.removeEventListener("click", handleZoomOutButtonClick);
     };
-  }, [zoom]);
+  }, [zoom, recordVol]);
+
+  useEffect(() => {
+    console.log("recordVol changed to", recordVol);
+  }, [recordVol]);
 
   return (
     <div style={{ overflow: "scroll", height: "800px" }}>
@@ -242,6 +255,8 @@ const ProgressPlayFile = (props) => {
         followCursor={true}
         pitch={pitch}
         startPitchTrack={startPitchTrack}
+        recordVol={recordVol}
+        onRecord={setRecordVol}
       />
     </div>
   );
