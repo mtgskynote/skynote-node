@@ -44,13 +44,13 @@ const ProgressPlayFile = (props) => {
     const recordButton = document.getElementById("record");
     const handleRecordButtonClick = () => {
       // console.log("recording");
+      setRecordVol(0.0);
       setStartPitchTrack((prevStartPitchTrack) => !prevStartPitchTrack);
       const playbackManager = playbackRef.current;
       const cursor = cursorRef.current;
       const currentTime = cursor.Iterator.currentTimeStamp;
       playbackManager.setPlaybackStart(currentTime);
       playbackManager.play();
-      setRecordVol(0.0);
       console.log("recordVol in record", recordVol);
     };
     recordButton.addEventListener("click", handleRecordButtonClick);
@@ -94,12 +94,12 @@ const ProgressPlayFile = (props) => {
     // plays the music where the cursor is
     const playButton = document.getElementById("play");
     const handlePlayButtonClick = () => {
+      setRecordVol(1.0);
       const playbackManager = playbackRef.current;
       const cursor = cursorRef.current;
       const currentTime = cursor.Iterator.currentTimeStamp;
       playbackManager.setPlaybackStart(currentTime);
       playbackManager.play();
-      setRecordVol(1.0);
       console.log("recordVol in playButton", recordVol);
     };
     playButton.addEventListener("click", handlePlayButtonClick);
@@ -242,7 +242,7 @@ const ProgressPlayFile = (props) => {
   }, [recordVol]);
 
   return (
-    <div style={{ overflow: "scroll", height: "800px" }}>
+    <div style={{ overflow: "scroll", height: "750px" }}>
       {controlbar}
       <OpenSheetMusicDisplay
         file={`${folderBasePath}/${params.file}`}

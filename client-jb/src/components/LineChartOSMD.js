@@ -48,28 +48,22 @@ const LineChart = ({ pitchData, cursorPosition }) => {
   );
 
   // Calculate the polyline points
-  const polylinePoints = normalizedData
-    .map((value, index) => `${index * 10},${100 - value * 100}`)
-    .join(" ");
+  const polylinePoints = [
+    ...normalizedData.map((value, index) => [index * 10, 100 - value * 100]),
+  ];
 
-  const svgWidth = pitchData.length * 10;
+  const svgWidth = (pitchData.length + 1) * 10; // Increase the width to accommodate the starting position
 
   return (
     <div style={{ overflowX: "auto" }}>
       <svg width={svgWidth} height="100">
         <polyline
-          points={polylinePoints}
+          points={polylinePoints.map(([x, y]) => `${x},${y}`).join(" ")}
           fill="none"
           stroke="black"
           strokeDasharray="2"
-          transform={`translate(${currentLeft}, ${currentTop})`}
-          // style={{
-          //   transform: `translate(${currentTop}px, ${currentLeft}px)`,
-          // }}
         />
       </svg>
-      {/* <div style={lineStyle} /> */}
-      {/* <Line data={data} options={options} /> */}
     </div>
   );
 };
