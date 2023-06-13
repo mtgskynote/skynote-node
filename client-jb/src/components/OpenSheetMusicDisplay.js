@@ -10,7 +10,7 @@ import {
   IAudioMetronomePlayer,
 } from "opensheetmusicdisplay";
 
-import { Line } from "react-chartjs-2";
+import LineChart from "./LineChartOSMD";
 import {
   Chart as Chartjs,
   LineElement,
@@ -26,15 +26,13 @@ class OpenSheetMusicDisplay extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      amplitudeData: [], // amplitude data
       pitchData: [], // pitch data
-      lineChartVisible: true, // chart visibility
+      newStartPitchTrack: false, // start pitch track
     };
 
     this.osmd = undefined;
     this.divRef = React.createRef();
   }
-
   // defining the playback manager for playing music and cursor controls
   // you first define and then initialize the playback manager
   playbackOsmd(osmd) {
@@ -57,6 +55,11 @@ class OpenSheetMusicDisplay extends Component {
       this.playbackManager.addListener(osmd.cursor);
       this.playbackManager.reset();
       this.osmd.PlaybackManager = this.playbackManager;
+
+      for (const instrument of this.playbackManager.InstrumentIdMapping.values()) {
+        instrument.Volume = 0;
+        console.log("instrument.Volume", instrument.Volume);
+      }
     };
 
     return {
@@ -92,10 +95,6 @@ class OpenSheetMusicDisplay extends Component {
       this.props.playbackRef.current = this.playbackManager;
     });
   }
-
-  // resize() {
-  //   this.forceUpdate();
-  // }
 
   componentWillUnmount() {
     const playbackManager = this.props.playbackRef.current;
@@ -149,15 +148,6 @@ class OpenSheetMusicDisplay extends Component {
       this.osmd.followCursor = this.props.followCursor;
     }
 
-    // for amplitude changes
-    if (this.props.amplitude !== prevProps.amplitude) {
-      const { amplitudeData } = this.state;
-      const scaledAmplitude =
-        ((this.props.amplitude - 0.0078125) / (1 - 0.0078125)) * 10;
-      const newAmplitudeData = [...amplitudeData, scaledAmplitude];
-      this.setState({ amplitudeData: newAmplitudeData });
-    }
-
     // for pitch changes
     if (this.props.pitch !== prevProps.pitch) {
       const { pitchData } = this.state;
@@ -165,10 +155,14 @@ class OpenSheetMusicDisplay extends Component {
       this.setState({ pitchData: newPitchData });
     }
 
-    // to draw the line chart when the play button is clicked
-    if (this.props.playClicked && !prevProps.playClicked) {
-      this.setState({ lineChartVisible: true });
-      console.log("chartVisible", this.state.lineChartVisible);
+    if (this.props.recordVol !== prevProps.recordVol) {
+      const playbackManager = this.props.playbackRef.current;
+      if (playbackManager) {
+        for (const instrument of playbackManager.InstrumentIdMapping.values()) {
+          instrument.Volume = this.props.recordVol;
+          console.log("instrument.Volume in osmd", instrument.Volume);
+        }
+      }
     }
 
     // resize the osmd when the window is resized
@@ -180,86 +174,28 @@ class OpenSheetMusicDisplay extends Component {
   }
 
   render() {
-    //----------line chart calculations----------------//
-    //amplitude
-    const { amplitude } = this.props;
-    const scaledAmplitude = ((amplitude - 0.0078125) / (1 - 0.0078125)) * 10;
+    const { startPitchTrack } = this.props;
 
-    //pitch
-    const { pitch } = this.props;
+    // cursor position
+    let currentTop = this.osmd?.cursor?.cursorElement?.style.top;
+    let currentLeft = this.osmd?.cursor?.cursorElement?.style.left;
+    // console.log("currentTop", currentTop);
+    // console.log("currentLeft", currentLeft);
 
-    function normalizeFrequency(frequency) {
-      const minFrequency = 20;
-      const maxFrequency = 20000;
-      let normalizedPitch =
-        (frequency - minFrequency) / (maxFrequency - minFrequency);
-      return normalizedPitch;
-    }
-
-    const normalizedPitch = normalizeFrequency(pitch);
-
-    // console.log("pitch hello pitch", pitch);
-    const currentTop = this.osmd?.cursor?.cursorElement?.style.top;
-    const currentLeft = this.osmd?.cursor?.cursorElement?.style.left;
-
-    // console.log("Top", currentTop);
-    // console.log("Left", currentLeft);
-
-    // line chart options and data
-    const options = {
-      plugins: {
-        legend: true,
-      },
-    };
-
-    // // for amplitude
-    // const dataset = {
-    //   label: "Amplitude Points",
-    //   data: this.state.amplitudeData,
-    //   backgroundColor: "aqua",
-    //   borderColor: "black",
-    //   pointBorderColor: "aqua",
-    // };
-
-    // const data = {
-    //   labels: Array.from(Array(this.state.amplitudeData.length).keys()).map(
-    //     String
-    //   ),
-    //   datasets: [dataset],
-    // };
-
-    // // for pitch
-    const dataset = {
-      label: "Frequency",
-      data: this.state.pitchData,
-      backgroundColor: "aqua",
-      borderColor: "black",
-      pointBorderColor: "aqua",
-    };
-
-    const data = {
-      labels: Array.from(Array(this.state.pitchData.length).keys()).map(String),
-      datasets: [dataset],
+    const cursorPosition = {
+      currentTop,
+      currentLeft,
     };
 
     return (
-      <div>
-        <div
-          style={{
-            position: "absolute",
-            top: currentTop,
-            left: currentLeft,
-            width: "100%",
-            height: "2px",
-            background: "black",
-            transform: `scaleX(${normalizedPitch * 10})`,
-            transformOrigin: "left",
-          }}
-        />
+      <div style={{ position: "relative" }}>
         <div ref={this.divRef} />
-
-        {this.state.lineChartVisible && (
-          <Line data={data} options={options}></Line>
+        {startPitchTrack && ( // Conditionally render the line chart based on newStartPitchTrack
+          <LineChart
+            lineVisible={this.state.lineChartVisible}
+            pitchData={this.state.pitchData}
+            cursorPosition={cursorPosition}
+          />
         )}
       </div>
     );

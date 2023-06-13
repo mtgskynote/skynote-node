@@ -16,12 +16,14 @@ const ProgressPlayFile = (props) => {
   const [metroVol, setMetroVol] = React.useState(0.5);
   const [bpmChange, setBpm] = React.useState(null);
 
+  const [recordVol, setRecordVol] = React.useState(0.0);
+
   const [zoom, setZoom] = useState(1.0);
 
   const controlbar = useControlBar(cursorRef);
-
-  const [amplitude, setAmplitude] = useState(0);
   const [pitch, setPitch] = useState(null);
+
+  const [startPitchTrack, setStartPitchTrack] = useState(false);
 
   // Define pitch callback function
   const handlePitchCallback = (pitchData) => {
@@ -35,16 +37,23 @@ const ProgressPlayFile = (props) => {
 
   useEffect(() => {
     //--------------------------------------------------------------------------------
-    //  amplitude
     audioStreamer.init();
-
-    const intervalId1 = setInterval(async () => {
-      let a = audioStreamer.getAmplitude();
-      // console.log(`amplitude is ${a}`);
-      setAmplitude(a);
-    }, 200);
-
     //--------------------------------------------------------------------------------
+
+    // record
+    const recordButton = document.getElementById("record");
+    const handleRecordButtonClick = () => {
+      // console.log("recording");
+      setRecordVol(0.0);
+      setStartPitchTrack((prevStartPitchTrack) => !prevStartPitchTrack);
+      const playbackManager = playbackRef.current;
+      const cursor = cursorRef.current;
+      const currentTime = cursor.Iterator.currentTimeStamp;
+      playbackManager.setPlaybackStart(currentTime);
+      playbackManager.play();
+      console.log("recordVol in record", recordVol);
+    };
+    recordButton.addEventListener("click", handleRecordButtonClick);
 
     // cursor show
     // const cursorShowButton = document.getElementById("cursorShow");
@@ -85,6 +94,7 @@ const ProgressPlayFile = (props) => {
     // plays the music where the cursor is
     const playButton = document.getElementById("play");
     const handlePlayButtonClick = () => {
+      setRecordVol(1.0);
       const playbackManager = playbackRef.current;
       const cursor = cursorRef.current;
       const currentTime = cursor.Iterator.currentTimeStamp;
@@ -95,7 +105,6 @@ const ProgressPlayFile = (props) => {
         playbackManager.play();
       }
     };
-
     playButton.addEventListener("click", handlePlayButtonClick);
 
     const volSlider = document.getElementById("settings");
@@ -219,8 +228,7 @@ const ProgressPlayFile = (props) => {
     visualizeButton.addEventListener("click", handleVisualizeButtonClick);
 
     return () => {
-      clearInterval(intervalId1);
-
+      recordButton.removeEventListener("click", handleRecordButtonClick);
       visualizeButton.removeEventListener("click", handleVisualizeButtonClick);
       // cursorShowButton.removeEventListener(
       //   "click",
@@ -239,10 +247,14 @@ const ProgressPlayFile = (props) => {
       // zoomInButton.removeEventListener("click", handleZoomInButtonClick);
       // zoomOutButton.removeEventListener("click", handleZoomOutButtonClick);
     };
-  }, [zoom]);
+  }, [zoom, recordVol]);
+
+  useEffect(() => {
+    console.log("recordVol changed to", recordVol);
+  }, [recordVol]);
 
   return (
-    <div style={{ overflow: "scroll", height: "800px" }}>
+    <div style={{ overflow: "scroll", height: "750px" }}>
       {controlbar}
       <OpenSheetMusicDisplay
         file={`${folderBasePath}/${params.file}`}
@@ -253,8 +265,10 @@ const ProgressPlayFile = (props) => {
         bpm={bpmChange}
         zoom={zoom}
         followCursor={true}
-        amplitude={amplitude}
         pitch={pitch}
+        startPitchTrack={startPitchTrack}
+        recordVol={recordVol}
+        onRecord={setRecordVol}
       />
     </div>
   );
