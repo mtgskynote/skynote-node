@@ -12,6 +12,7 @@ source_folder="/Users/dilipharish/software-projects/opensheetmusicdisplay"
 # Specify the destination folder (node_modules within client_jb)
 destination_folder="/Users/dilipharish/software-projects/skynote-17042023/skynote-node/client-jb/node_modules"
 
+# new changes
 # Modify the "opensheetmusicdisplay" value in package.json
 if [[ -f $package_json_path ]]; then
     sed -i "s/\"opensheetmusicdisplay\": \"1\.7\.5\"/\"opensheetmusicdisplay\": \"$new_value\"/g" $package_json_path
