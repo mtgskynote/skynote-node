@@ -189,7 +189,6 @@ class OpenSheetMusicDisplay extends Component {
 
     return (
       <div style={{ position: "relative" }}>
-        <div ref={this.divRef} />
         {startPitchTrack && ( // Conditionally render the line chart based on newStartPitchTrack
           <LineChart
             lineVisible={this.state.lineChartVisible}
@@ -197,6 +196,7 @@ class OpenSheetMusicDisplay extends Component {
             cursorPosition={cursorPosition}
           />
         )}
+        <div ref={this.divRef} />
       </div>
     );
   }
