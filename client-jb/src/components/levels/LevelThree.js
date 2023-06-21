@@ -36,7 +36,7 @@ const getTitle = async (fileName) => {
 const LevelThree = () => {
   const navigate = useNavigate();
   const navigateToFile = (filename) => {
-    return navigate(`/progress/${filename}`);
+    return navigate(`/all-lessons/${filename}`);
   };
 
   const [titles, setTitles] = React.useState([]);

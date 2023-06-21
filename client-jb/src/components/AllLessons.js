@@ -5,7 +5,7 @@ import Col from "react-bootstrap/Col";
 import Row from "react-bootstrap/Row";
 import { Button } from "react-bootstrap";
 
-const Progress = () => {
+const AllLessons = () => {
   return (
     <>
       <div className="center" style={{ marginTop: "2rem" }}>
@@ -91,4 +91,4 @@ const Progress = () => {
   );
 };
 
-export default Progress;
+export default AllLessons;

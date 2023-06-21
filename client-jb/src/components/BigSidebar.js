@@ -9,12 +9,12 @@ const BigSidebar = () => {
     <Wrapper>
       <div
         className={
-          showSidebar ? "sidebar-container " : "sidebar-container show-sidebar"
+          showSidebar ? "sidebar-container" : "sidebar-container show-sidebar"
         }
       >
         <div className="content">
           <header>
-            <Logo width={175} height={75}/>
+            <Logo width={175} height={75} />
           </header>
           <NavLinks />
         </div>

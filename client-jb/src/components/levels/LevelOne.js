@@ -39,7 +39,7 @@ const getTitle = async (fileName) => {
 const LevelOne = () => {
   const navigate = useNavigate();
   const navigateToFile = (filename) => {
-    return navigate(`/progress/${filename}`);
+    return navigate(`/all-lessons/${filename}`);
   };
 
   const [titles, setTitles] = React.useState([]);
@@ -57,7 +57,7 @@ const LevelOne = () => {
     <Row xs={1} md={4} className="g-4">
       {files.map((name, index) => (
         <Col key={index}>
-          <Card style={{ width: "300px"}}>
+          <Card style={{ width: "300px" }}>
             <Card.Img
               variant="top"
               src={require("../../assets/images/violinDisplay.jpg")}

@@ -1,15 +1,9 @@
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { Register, Landing, Error, ProtectedRoute } from "./pages";
 
-import {
-  AllLessons,
-  AddLesson,
-  Profile,
-  Stats,
-  SharedLayout,
-} from "./pages/dashboard";
+import { Profile, Stats, SharedLayout } from "./pages/dashboard";
 
-import Progress from "./components/Progress";
+import AllLessons from "./components/AllLessons";
 import ProgressPlayFile from "./components/ProgressPlayFile";
 
 import LevelOne from "./components/levels/LevelOne";
@@ -29,17 +23,18 @@ function App() {
               <Route
                 path="/"
                 element={
-                  <ProtectedRoute>
-                    <SharedLayout />
-                  </ProtectedRoute>
+                  // <ProtectedRoute>
+                  <SharedLayout />
+                  // </ProtectedRoute>
                 }
               >
                 <Route index element={<Stats />} />
-                <Route path="all-lessons" element={<AllLessons />} />
-                <Route path="add-lesson" element={<AddLesson />} />
                 <Route path="profile" element={<Profile />} />
-                <Route path="/progress" element={<Progress />} />
-                <Route path="/progress/:file" element={<ProgressPlayFile />} />
+                <Route path="all-lessons" element={<AllLessons />} />
+                <Route
+                  path="all-lessons/:file"
+                  element={<ProgressPlayFile />}
+                />
                 <Route path="/levels/levelone" element={<LevelOne />} />
                 <Route path="/levels/leveltwo" element={<LevelTwo />} />
                 <Route path="/levels/levelthree" element={<LevelThree />} />
@@ -48,11 +43,6 @@ function App() {
                   element={<TimbreVisualization />}
                 />
               </Route>
-              {/* <Route path="/progress" element={<Progress />} />
-              <Route path="/progress/:file" element={<ProgressPlayFile />} />
-              <Route path="/levels/levelone" element={<LevelOne />} />
-              <Route path="/levels/leveltwo" element={<LevelTwo />} />
-              <Route path="/levels/levelthree" element={<LevelThree />} /> */}
 
               <Route path="/register" element={<Register />} />
               <Route path="/landing" element={<Landing />} />

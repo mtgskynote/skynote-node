@@ -9,10 +9,10 @@ const SharedLayout = () => {
         <SmallSidebar />
         <BigSidebar />
         <div>
-          <Navbar />
+          {/* <Navbar /> */}
           <div className="dashboard-page">
             <Outlet />
-        </div>
+          </div>
         </div>
       </main>
     </Wrapper>
