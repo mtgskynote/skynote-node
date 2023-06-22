@@ -21,17 +21,19 @@ import {
 
 Chartjs.register(LineElement, CategoryScale, LinearScale, PointElement);
 
-// opsnsheetmusicdisplay class component
 class OpenSheetMusicDisplay extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      pitchData: [], // pitch data
-      newStartPitchTrack: false, // start pitch track
+      pitchData: [],
+      initialCursorTop: 0,
+      initialCursorLeft: 0,
+      currentNoteinScorePitch: null,
     };
 
     this.osmd = undefined;
     this.divRef = React.createRef();
+    this.cursorInterval = null;
   }
   // defining the playback manager for playing music and cursor controls
   // you first define and then initialize the playback manager
@@ -88,11 +90,21 @@ class OpenSheetMusicDisplay extends Component {
       const cursor = this.osmd.cursor;
       this.props.cursorRef.current = cursor;
       cursor.show();
+      this.setState({
+        initialCursorTop: cursor.cursorElement.style.top,
+        initialCursorLeft: cursor.cursorElement.style.left,
+      });
+
+      // let gNotes = this.osmd.cursor.GNotesUnderCursor();
+      // console.log("gNotes", gNotes);
+
       this.osmd.zoom = this.props.zoom;
       this.playbackControl = this.playbackOsmd(this.osmd);
       this.playbackControl.initialize();
 
       this.props.playbackRef.current = this.playbackManager;
+
+      this.cursorInterval = setInterval(this.checkCursorChange, 100);
     });
   }
 
@@ -106,6 +118,9 @@ class OpenSheetMusicDisplay extends Component {
       }
       playbackManager.pause();
     }
+
+    clearInterval(this.cursorInterval);
+    // clearInterval(this.cursorInterval);
     window.removeEventListener("resize", this.resize);
   }
 
@@ -119,7 +134,63 @@ class OpenSheetMusicDisplay extends Component {
     this.osmd.PlaybackManager.setBpm(newBpm);
   }
 
+  //function to check cursor change
+  checkCursorChange = () => {
+    const notePitch = this.osmd.cursor.NotesUnderCursor()[0]?.Pitch.frequency;
+    // if (this.state.currentNoteinScorePitch !== pitch) {
+    this.setState({ currentNoteinScorePitch: notePitch });
+    // console.log("Current pitch: ", notePitch);
+    // console.log(
+    //   "half tone pitch: ",
+    //   this.osmd.cursor.NotesUnderCursor()[0]?.Pitch.halfTone
+    // );
+
+    // console log pitchdata array
+    // console.log("pitchData", this.state.pitchData);
+    // }
+    //check if pitch data is equal to the current note in score pitch
+    // Get the last pitch in the pitchData array
+    const lastPitchData = this.state.pitchData[this.state.pitchData.length - 1];
+    // Compare the last pitch in the pitchData array with the current pitch
+    // Check if the absolute difference between them is less than or equal to 5
+    if (
+      lastPitchData !== undefined &&
+      Math.abs(lastPitchData - notePitch) <= 3
+    ) {
+      console.log(
+        "pitch data is equal to current note in score pitch, scoreNotePitch: ",
+        notePitch,
+        "detectedPitch:",
+        lastPitchData
+      );
+
+      //change color if pitch is close enough
+      const colorPitchMatched = "#00FF00"; //green
+      const gNote = this.osmd.cursor.GNotesUnderCursor()[0];
+      gNote.getSVGGElement().children[0].children[0].children[0].style.stroke =
+        colorPitchMatched; // stem
+      gNote.getSVGGElement().children[0].children[1].children[0].style.fill =
+        colorPitchMatched; // notehead
+    } else {
+      console.log(
+        "pitch data is not equal to current note in score, scoreNotePitch:",
+        notePitch,
+        "detectedPitch:",
+        lastPitchData
+      );
+      //change color to red
+      const colorPitchNotMatched = "#FF0000"; //red
+      const gNote = this.osmd.cursor.GNotesUnderCursor()[0];
+      gNote.getSVGGElement().children[0].children[0].children[0].style.stroke =
+        colorPitchNotMatched; // stem
+      gNote.getSVGGElement().children[0].children[1].children[0].style.fill =
+        colorPitchNotMatched; // notehead
+    }
+  };
+
   componentDidUpdate(prevProps) {
+    // const pitch = this.osmd.cursor.NotesUnderCursor()[0].Pitch;
+    // console.log("Current pitch: in didupdate ", pitch);
     // for title and file changes
     if (this.props.drawTitle !== prevProps.drawTitle) {
       this.setupOsmd();
@@ -154,13 +225,17 @@ class OpenSheetMusicDisplay extends Component {
       const newPitchData = [...pitchData, this.props.pitch];
       this.setState({ pitchData: newPitchData });
     }
+    // if (this.props.pitch !== prevProps.pitch) {
+    //   this.setState({ currentPitch: this.props.pitch });
+    //   console.log("currentPitch", this.state.currentPitch);
+    // }
 
+    // if record is clicked, put volume to 0, else put volume to 1
     if (this.props.recordVol !== prevProps.recordVol) {
       const playbackManager = this.props.playbackRef.current;
       if (playbackManager) {
         for (const instrument of playbackManager.InstrumentIdMapping.values()) {
           instrument.Volume = this.props.recordVol;
-          console.log("instrument.Volume in osmd", instrument.Volume);
         }
       }
     }
@@ -171,30 +246,29 @@ class OpenSheetMusicDisplay extends Component {
 
   componentDidMount() {
     this.setupOsmd();
+
+    // Add a listener for cursor change events
   }
 
   render() {
     const { startPitchTrack } = this.props;
 
-    // cursor position
-    let currentTop = this.osmd?.cursor?.cursorElement?.style.top;
-    let currentLeft = this.osmd?.cursor?.cursorElement?.style.left;
-    // console.log("currentTop", currentTop);
-    // console.log("currentLeft", currentLeft);
-
-    const cursorPosition = {
-      currentTop,
-      currentLeft,
+    const lineChartStyle = {
+      position: "relative",
+      top: this.state.initialCursorTop,
+      left: this.state.initialCursorLeft, // keep the line chart 1px behind the cursor
+      pointerEvents: "none",
     };
 
     return (
       <div style={{ position: "relative" }}>
-        {startPitchTrack && ( // Conditionally render the line chart based on newStartPitchTrack
-          <LineChart
-            lineVisible={this.state.lineChartVisible}
-            pitchData={this.state.pitchData}
-            cursorPosition={cursorPosition}
-          />
+        {startPitchTrack && (
+          <div style={lineChartStyle}>
+            <LineChart
+              lineVisible={this.state.lineChartVisible}
+              pitchData={this.state.pitchData}
+            />
+          </div>
         )}
         <div ref={this.divRef} />
       </div>

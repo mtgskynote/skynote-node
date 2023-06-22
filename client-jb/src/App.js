@@ -29,9 +29,9 @@ function App() {
               <Route
                 path="/"
                 element={
-                  <ProtectedRoute>
-                    <SharedLayout />
-                  </ProtectedRoute>
+                  // <ProtectedRoute>
+                  <SharedLayout />
+                  // </ProtectedRoute>
                 }
               >
                 <Route index element={<Stats />} />

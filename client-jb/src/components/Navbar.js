@@ -1,15 +1,12 @@
 import { useState } from "react";
 import Wrapper from "../assets/wrappers/Navbar";
-import { InputBase, Box, IconButton} from "@mui/material";
+import { InputBase, Box, IconButton } from "@mui/material";
 import { FaAlignLeft, FaUserCircle, FaCaretDown } from "react-icons/fa";
 import { useAppContext } from "../context/appContext";
 import Logo from "./Logo";
 import SearchIcon from "@mui/icons-material/Search";
 
-
-
 const Navbar = () => {
-
   const { user, logoutUser, toggleSidebar } = useAppContext();
   const [showLogout, setShowLogout] = useState(false);
   return (
@@ -25,7 +22,7 @@ const Navbar = () => {
           </IconButton>
         </Box>
         <div>
-          <Logo width={175} height={75}/>
+          <Logo width={175} height={75} />
         </div>
         <div className="btn-container">
           <button
@@ -34,7 +31,7 @@ const Navbar = () => {
             onClick={() => setShowLogout(!showLogout)}
           >
             <FaUserCircle />
-            {user.name && user.name}
+            {/* {user.name && user.name} */}
             <FaCaretDown />
           </button>
           <div className={showLogout ? "dropdown show-dropdown" : "dropdown"}>
