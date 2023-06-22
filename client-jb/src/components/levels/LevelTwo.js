@@ -4,6 +4,7 @@ import Card from "react-bootstrap/Card";
 import Col from "react-bootstrap/Col";
 import Row from "react-bootstrap/Row";
 import XMLParser from "react-xml-parser";
+import violinImg from "../../assets/images/violin/violinDisplay.jpg";
 
 const files = [
   "6_Cuerdas_Al_Aire_2_(Suelta)_D.xml",
@@ -57,7 +58,7 @@ const LevelTwo = () => {
           <Card style={{ width: "300px" }}>
             <Card.Img
               variant="top"
-              src={require("../../assets/images/violinDisplay.jpg")}
+              src={violinImg}
               style={{ width: "100%", height: "50%", objectFit: "contain" }}
             />
             <Card.Body>
