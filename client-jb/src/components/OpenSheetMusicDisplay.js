@@ -137,22 +137,21 @@ class OpenSheetMusicDisplay extends Component {
   //function to check cursor change
   checkCursorChange = () => {
     const notePitch = this.osmd.cursor.NotesUnderCursor()[0]?.Pitch.frequency;
-    // if (this.state.currentNoteinScorePitch !== pitch) {
     this.setState({ currentNoteinScorePitch: notePitch });
-    // console.log("Current pitch: ", notePitch);
-    // console.log(
-    //   "half tone pitch: ",
-    //   this.osmd.cursor.NotesUnderCursor()[0]?.Pitch.halfTone
-    // );
 
-    // console log pitchdata array
-    // console.log("pitchData", this.state.pitchData);
-    // }
     //check if pitch data is equal to the current note in score pitch
     // Get the last pitch in the pitchData array
     const lastPitchData = this.state.pitchData[this.state.pitchData.length - 1];
+
     // Compare the last pitch in the pitchData array with the current pitch
-    // Check if the absolute difference between them is less than or equal to 5
+    // Check if the absolute difference between them is less than or equal to 3hz
+    const colorPitchMatched = "#00FF00"; //green
+    const colorPitchNotMatched = "#FF0000"; //red
+    const gNote = this.osmd.cursor.GNotesUnderCursor()[0];
+    // const NotesUnderCursor = this.osmd.cursor.NotesUnderCursor()[0];
+    // console.log("gNote", gNote);
+
+    //for pitch matched
     if (
       lastPitchData !== undefined &&
       Math.abs(lastPitchData - notePitch) <= 3
@@ -164,27 +163,55 @@ class OpenSheetMusicDisplay extends Component {
         lastPitchData
       );
 
-      //change color if pitch is close enough
-      const colorPitchMatched = "#00FF00"; //green
-      const gNote = this.osmd.cursor.GNotesUnderCursor()[0];
-      gNote.getSVGGElement().children[0].children[0].children[0].style.stroke =
-        colorPitchMatched; // stem
-      gNote.getSVGGElement().children[0].children[1].children[0].style.fill =
-        colorPitchMatched; // notehead
-    } else {
-      console.log(
-        "pitch data is not equal to current note in score, scoreNotePitch:",
-        notePitch,
-        "detectedPitch:",
-        lastPitchData
-      );
-      //change color to red
-      const colorPitchNotMatched = "#FF0000"; //red
-      const gNote = this.osmd.cursor.GNotesUnderCursor()[0];
-      gNote.getSVGGElement().children[0].children[0].children[0].style.stroke =
-        colorPitchNotMatched; // stem
-      gNote.getSVGGElement().children[0].children[1].children[0].style.fill =
-        colorPitchNotMatched; // notehead
+      //change color to green if pitch is close enough
+      if (gNote) {
+        const svgElement = gNote.getSVGGElement();
+        const noteheadElement = svgElement.children[0].children[0].children[0];
+
+        noteheadElement.style.stroke = colorPitchMatched;
+        noteheadElement.style.fill = colorPitchMatched;
+        if (
+          svgElement &&
+          svgElement.children[0] &&
+          svgElement.children[0].children[0] &&
+          svgElement.children[0].children[1]
+        ) {
+          svgElement.children[0].children[0].children[0].style.stroke =
+            colorPitchMatched; // stem
+          svgElement.children[0].children[1].children[0].style.fill =
+            colorPitchMatched; // notehead
+        }
+      }
+    }
+
+    //for pitch not matched
+    else {
+      // console.log(
+      //   "pitch data is not equal to current note in score, scoreNotePitch:",
+      //   notePitch,
+      //   "detectedPitch:",
+      //   lastPitchData
+      // );
+
+      //change color to red if pitch is not close enough
+      if (gNote) {
+        const svgElement = gNote.getSVGGElement();
+        const noteheadElement = svgElement.children[0].children[0].children[0];
+        svgElement.children[0].children[0].children[0].style.fill =
+          colorPitchNotMatched; // notehead
+
+        if (
+          svgElement &&
+          svgElement.children[0] &&
+          svgElement.children[0].children[0] &&
+          svgElement.children[0].children[1]
+        ) {
+          svgElement.children[0].children[0].children[0].style.fill =
+            colorPitchNotMatched; // stem
+          svgElement.children[0].children[1].children[0].style.fill =
+            colorPitchNotMatched; // notehead
+        }
+      }
     }
   };
 
