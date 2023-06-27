@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import { useParams } from "react-router-dom";
 import OpenSheetMusicDisplay from "./OpenSheetMusicDisplay";
 import { useControlBar } from "./controlbar";
@@ -24,6 +24,7 @@ const ProgressPlayFile = (props) => {
   const [pitch, setPitch] = useState(null);
 
   const [startPitchTrack, setStartPitchTrack] = useState(false);
+  const startPitchTrackRef = useRef(startPitchTrack);
 
   // Define pitch callback function
   const handlePitchCallback = (pitchData) => {
@@ -49,16 +50,28 @@ const ProgressPlayFile = (props) => {
     // record
     const recordButton = document.getElementById("record");
     const handleRecordButtonClick = () => {
-      // console.log("recording");
       setRecordVol(0.0);
-      setStartPitchTrack((prevStartPitchTrack) => !prevStartPitchTrack);
+      setStartPitchTrack((prevStartPitchTrack) => {
+        startPitchTrackRef.current = !prevStartPitchTrack;
+        return !prevStartPitchTrack;
+      });
+      console.log("startPitchTrackRef.current", startPitchTrackRef.current);
+
       const playbackManager = playbackRef.current;
       const cursor = cursorRef.current;
       const currentTime = cursor.Iterator.currentTimeStamp;
       playbackManager.setPlaybackStart(currentTime);
-      playbackManager.play();
+
+      if (startPitchTrackRef.current) {
+        console.log("blblblblbl", startPitchTrackRef.current);
+        playbackManager.play();
+      } else {
+        playbackManager.pause();
+      }
+
       console.log("recordVol in record", recordVol);
     };
+
     recordButton.addEventListener("click", handleRecordButtonClick);
 
     // cursor show

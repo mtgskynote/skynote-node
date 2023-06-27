@@ -1,19 +1,6 @@
 import React from "react";
 
 const LineChart = ({ pitchData }) => {
-  const dataset = {
-    label: "Frequency",
-    data: pitchData,
-    backgroundColor: "aqua",
-    borderColor: "black",
-    pointBorderColor: "aqua",
-  };
-
-  const data = {
-    labels: Array.from(Array(pitchData.length).keys()).map(String),
-    datasets: [dataset],
-  };
-
   // Normalize pitch data between 0 and 1
   const normalizedData = pitchData.map(
     (value) =>
