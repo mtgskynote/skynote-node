@@ -6,7 +6,6 @@ import BigSidebar from "./BigSidebar";
 import SmallSidebar from "./SmallSidebar";
 import Header from "./Header";
 import LineChart from "./LineChart";
-import violinImageCard from "./violinImageCard";
 
 export {
   Logo,
@@ -17,5 +16,4 @@ export {
   SmallSidebar,
   Header,
   LineChart,
-  violinImageCard,
 };

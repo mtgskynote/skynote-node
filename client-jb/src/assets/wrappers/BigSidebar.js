@@ -10,16 +10,20 @@ const Wrapper = styled.aside`
       min-height: 100vh;
       height: 100%;
       width: 250px;
-      margin-left: -250px;
+      margin-left: -200px;
       transition: var(--transition);
     }
+
+    .show-sidebar {
+      margin-left: 0;
+      transition: var(--transition);
+    }
+
     .content {
       position: sticky;
       top: 0;
     }
-    .show-sidebar {
-      margin-left: 0;
-    }
+
     header {
       height: 6rem;
       display: flex;
@@ -60,6 +64,19 @@ const Wrapper = styled.aside`
     }
     .active .icon {
       color: var(--primary-500);
+    }
+
+    .menuBtn {
+      align-self: center;
+      align-self: flex-start;
+      justify-self: flex-end;
+      color: black;
+      background-color: transparent;
+      border: none;
+      cursor: pointer;
+      padding-left: 5px;
+      padding-top: 10px;
+      padding-right: 10px;
     }
   }
 `;
