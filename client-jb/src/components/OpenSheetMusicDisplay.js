@@ -222,17 +222,60 @@ class OpenSheetMusicDisplay extends Component {
 
   resetNotesColor = () => {
     const colorBlack = "#000000"; // black color
+    const colorBlue = "#0000FF"; // blue color
 
-    //get all the notes in the score
-    const notes = [];
-    const voices = this.osmd.cursor.voicesInOrder;
+    // Select all elements with class "vf-notehead"
+    var noteheads = document.getElementsByClassName("vf-notehead");
 
-    // Iterate over each voice in the scor
+    // Iterate through all the notehead elements
+    for (var i = 0; i < noteheads.length; i++) {
+      var notehead = noteheads[i];
 
-    console.log("voices", voices);
+      // Select the inner <path> element
+      var path = notehead.querySelector("path");
 
-    //reset the color of all the notes to black
+      // Set the fill attribute to blue
+      path.setAttribute("fill", colorBlack);
+    }
+
+    // Reset the color of all the notes to black
+    var gNotes = this.osmd.cursor.GNotesUnderCursor();
+    for (var j = 0; j < gNotes.length; j++) {
+      var gNote = gNotes[j];
+      var svgElement = gNote.getSVGGElement();
+
+      // This is for all the notes except the quarter and whole notes
+      if (svgElement.children[0].children[0].children[0]) {
+        svgElement.children[0].children[0].children[0].style.fill = colorBlack; // notehead
+      }
+
+      // This is for all the quarter and whole notes
+      if (
+        svgElement.children[0].children[1] &&
+        svgElement.children[0].children[1].children[0]
+      ) {
+        svgElement.children[0].children[1].children[0].style.fill = colorBlack; // notehead
+      }
+    }
   };
+
+  // resetNotesColor = () => {
+  //   const colorBlack = "#000000"; // black color
+
+  //   // Select all elements with class "vf-notehead"
+  //   var noteheads = document.getElementsByClassName("vf-notehead");
+
+  //   // Iterate through all the notehead elements
+  //   for (var i = 0; i < noteheads.length; i++) {
+  //     var notehead = noteheads[i];
+
+  //     // Select the inner <path> element
+  //     var path = notehead.querySelector("path");
+
+  //     // Set the fill attribute to black
+  //     path.setAttribute("fill", colorBlack);
+  //   }
+  // };
 
   componentDidUpdate(prevProps) {
     // for title and file changes
@@ -280,8 +323,17 @@ class OpenSheetMusicDisplay extends Component {
       }
     }
 
-    if (prevProps.startPitchTrack && !this.props.startPitchTrack) {
+    // if (prevProps.startPitchTrack && !this.props.startPitchTrack) {
+    //   console.log("startPitchTrack");
+    // }
+
+    if (
+      prevProps.isResetButtonPressed !== this.props.isResetButtonPressed &&
+      this.props.isResetButtonPressed
+    ) {
       this.resetNotesColor();
+      // console.log("resetting");
+      this.props.onResetDone(); // call the function passed from the parent component
     }
 
     // resize the osmd when the window is resized
@@ -296,6 +348,8 @@ class OpenSheetMusicDisplay extends Component {
 
   render() {
     const { startPitchTrack } = this.props;
+
+    const { isResetButtonPressed } = this.state;
 
     const lineChartStyle = {
       position: "relative",
