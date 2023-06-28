@@ -21,17 +21,19 @@ import {
 
 Chartjs.register(LineElement, CategoryScale, LinearScale, PointElement);
 
-// opsnsheetmusicdisplay class component
 class OpenSheetMusicDisplay extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      pitchData: [], // pitch data
-      newStartPitchTrack: false, // start pitch track
+      pitchData: [],
+      initialCursorTop: 0,
+      initialCursorLeft: 0,
+      currentNoteinScorePitch: null,
     };
 
     this.osmd = undefined;
     this.divRef = React.createRef();
+    this.cursorInterval = null;
   }
   // defining the playback manager for playing music and cursor controls
   // you first define and then initialize the playback manager
@@ -84,15 +86,27 @@ class OpenSheetMusicDisplay extends Component {
 
     //define the osmd features to be included
     this.osmd.load(this.props.file).then(() => {
-      this.osmd.render();
-      const cursor = this.osmd.cursor;
-      this.props.cursorRef.current = cursor;
-      cursor.show();
+      if (this.osmd.Sheet) {
+        this.osmd.render();
+        const cursor = this.osmd.cursor;
+        this.props.cursorRef.current = cursor;
+        cursor.show();
+        this.setState({
+          initialCursorTop: cursor.cursorElement.style.top,
+          initialCursorLeft: cursor.cursorElement.style.left,
+        });
+      }
+
+      // let gNotes = this.osmd.cursor.GNotesUnderCursor();
+      // console.log("gNotes", gNotes);
+
       this.osmd.zoom = this.props.zoom;
       this.playbackControl = this.playbackOsmd(this.osmd);
       this.playbackControl.initialize();
 
       this.props.playbackRef.current = this.playbackManager;
+
+      this.cursorInterval = setInterval(this.checkCursorChange, 100);
     });
   }
 
@@ -106,6 +120,9 @@ class OpenSheetMusicDisplay extends Component {
       }
       playbackManager.pause();
     }
+
+    clearInterval(this.cursorInterval);
+    // clearInterval(this.cursorInterval);
     window.removeEventListener("resize", this.resize);
   }
 
@@ -118,6 +135,147 @@ class OpenSheetMusicDisplay extends Component {
   updateBpm(newBpm) {
     this.osmd.PlaybackManager.setBpm(newBpm);
   }
+
+  //function to check cursor change
+  checkCursorChange = () => {
+    if (this.props.startPitchTrack) {
+      const notePitch = this.osmd.cursor.NotesUnderCursor()[0]?.Pitch.frequency;
+      this.setState({ currentNoteinScorePitch: notePitch });
+
+      //check if pitch data is equal to the current note in score pitch
+      // Get the last pitch in the pitchData array
+      const lastPitchData =
+        this.state.pitchData[this.state.pitchData.length - 1];
+
+      // Compare the last pitch in the pitchData array with the current pitch
+      // Check if the absolute difference between them is less than or equal to 3hz
+      const colorPitchMatched = "#00FF00"; //green
+      const colorPitchNotMatched = "#FF0000"; //red
+      const gNote = this.osmd.cursor.GNotesUnderCursor()[0];
+
+      //for pitch matched
+      if (
+        lastPitchData !== undefined &&
+        Math.abs(lastPitchData - notePitch) <= 3
+      ) {
+        // console.log(
+        //   "played pitch is equal to current note in score, scoreNotePitch: ",
+        //   notePitch,
+        //   "detectedPitch:",
+        //   lastPitchData
+        // );
+
+        //change color to green if pitch is close enough
+        if (gNote) {
+          // this is for all the notes except the quarter and whole notes
+          const svgElement = gNote.getSVGGElement();
+          svgElement.children[0].children[0].children[0].style.fill =
+            colorPitchMatched; // notehead
+
+          if (
+            svgElement &&
+            svgElement.children[0] &&
+            svgElement.children[0].children[0] &&
+            svgElement.children[0].children[1]
+          ) {
+            //this is for all the quarter and whole notes
+            svgElement.children[0].children[0].children[0].style.fill =
+              colorPitchMatched; // notehead
+            svgElement.children[0].children[1].children[0].style.fill =
+              colorPitchMatched; // notehead
+          }
+        }
+      }
+
+      //for pitch not matched
+      else {
+        // console.log(
+        //   "played pitch is not equal to current note in score, scoreNotePitch:",
+        //   notePitch,
+        //   "detectedPitch:",
+        //   lastPitchData
+        // );
+
+        //change color to red if pitch is not close enough
+        if (gNote) {
+          // this is for all the notes except the quarter and whole notes
+          const svgElement = gNote.getSVGGElement();
+          svgElement.children[0].children[0].children[0].style.fill =
+            colorPitchNotMatched; // notehead
+
+          if (
+            svgElement &&
+            svgElement.children[0] &&
+            svgElement.children[0].children[0] &&
+            svgElement.children[0].children[1]
+          ) {
+            //this is for all the quarter and whole notes
+            svgElement.children[0].children[0].children[0].style.fill =
+              colorPitchNotMatched; // notehead
+            svgElement.children[0].children[1].children[0].style.fill =
+              colorPitchNotMatched; // notehead
+          }
+        }
+      }
+    }
+  };
+
+  resetNotesColor = () => {
+    const colorBlack = "#000000"; // black color
+    const colorBlue = "#0000FF"; // blue color
+
+    // Select all elements with class "vf-notehead"
+    var noteheads = document.getElementsByClassName("vf-notehead");
+
+    // Iterate through all the notehead elements
+    for (var i = 0; i < noteheads.length; i++) {
+      var notehead = noteheads[i];
+
+      // Select the inner <path> element
+      var path = notehead.querySelector("path");
+
+      // Set the fill attribute to blue
+      path.setAttribute("fill", colorBlack);
+    }
+
+    // Reset the color of all the notes to black
+    var gNotes = this.osmd.cursor.GNotesUnderCursor();
+    for (var j = 0; j < gNotes.length; j++) {
+      var gNote = gNotes[j];
+      var svgElement = gNote.getSVGGElement();
+
+      // This is for all the notes except the quarter and whole notes
+      if (svgElement.children[0].children[0].children[0]) {
+        svgElement.children[0].children[0].children[0].style.fill = colorBlack; // notehead
+      }
+
+      // This is for all the quarter and whole notes
+      if (
+        svgElement.children[0].children[1] &&
+        svgElement.children[0].children[1].children[0]
+      ) {
+        svgElement.children[0].children[1].children[0].style.fill = colorBlack; // notehead
+      }
+    }
+  };
+
+  // resetNotesColor = () => {
+  //   const colorBlack = "#000000"; // black color
+
+  //   // Select all elements with class "vf-notehead"
+  //   var noteheads = document.getElementsByClassName("vf-notehead");
+
+  //   // Iterate through all the notehead elements
+  //   for (var i = 0; i < noteheads.length; i++) {
+  //     var notehead = noteheads[i];
+
+  //     // Select the inner <path> element
+  //     var path = notehead.querySelector("path");
+
+  //     // Set the fill attribute to black
+  //     path.setAttribute("fill", colorBlack);
+  //   }
+  // };
 
   componentDidUpdate(prevProps) {
     // for title and file changes
@@ -155,14 +313,27 @@ class OpenSheetMusicDisplay extends Component {
       this.setState({ pitchData: newPitchData });
     }
 
+    // if record is clicked, put volume to 0, else put volume to 1
     if (this.props.recordVol !== prevProps.recordVol) {
       const playbackManager = this.props.playbackRef.current;
       if (playbackManager) {
         for (const instrument of playbackManager.InstrumentIdMapping.values()) {
           instrument.Volume = this.props.recordVol;
-          console.log("instrument.Volume in osmd", instrument.Volume);
         }
       }
+    }
+
+    // if (prevProps.startPitchTrack && !this.props.startPitchTrack) {
+    //   console.log("startPitchTrack");
+    // }
+
+    if (
+      prevProps.isResetButtonPressed !== this.props.isResetButtonPressed &&
+      this.props.isResetButtonPressed
+    ) {
+      this.resetNotesColor();
+      // console.log("resetting");
+      this.props.onResetDone(); // call the function passed from the parent component
     }
 
     // resize the osmd when the window is resized
@@ -171,32 +342,33 @@ class OpenSheetMusicDisplay extends Component {
 
   componentDidMount() {
     this.setupOsmd();
+
+    // Add a listener for cursor change events
   }
 
   render() {
     const { startPitchTrack } = this.props;
 
-    // cursor position
-    let currentTop = this.osmd?.cursor?.cursorElement?.style.top;
-    let currentLeft = this.osmd?.cursor?.cursorElement?.style.left;
-    // console.log("currentTop", currentTop);
-    // console.log("currentLeft", currentLeft);
+    const { isResetButtonPressed } = this.state;
 
-    const cursorPosition = {
-      currentTop,
-      currentLeft,
+    const lineChartStyle = {
+      position: "relative",
+      top: this.state.initialCursorTop,
+      left: this.state.initialCursorLeft,
+      pointerEvents: "none",
     };
 
     return (
       <div style={{ position: "relative" }}>
-        <div ref={this.divRef} />
-        {startPitchTrack && ( // Conditionally render the line chart based on newStartPitchTrack
-          <LineChart
-            lineVisible={this.state.lineChartVisible}
-            pitchData={this.state.pitchData}
-            cursorPosition={cursorPosition}
-          />
+        {startPitchTrack && (
+          <div style={lineChartStyle}>
+            <LineChart
+              lineVisible={this.state.lineChartVisible}
+              pitchData={this.state.pitchData}
+            />
+          </div>
         )}
+        <div ref={this.divRef} />
       </div>
     );
   }

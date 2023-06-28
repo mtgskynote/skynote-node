@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import { useParams } from "react-router-dom";
 import OpenSheetMusicDisplay from "./OpenSheetMusicDisplay";
 import { useControlBar } from "./controlbar";
@@ -24,14 +24,27 @@ const ProgressPlayFile = (props) => {
   const [pitch, setPitch] = useState(null);
 
   const [startPitchTrack, setStartPitchTrack] = useState(false);
+  const startPitchTrackRef = useRef(startPitchTrack);
+
+  const [isResetButtonPressed, setIsResetButtonPressed] = useState(false);
+
+  const onResetDone = () => {
+    setIsResetButtonPressed(false);
+  };
 
   // Define pitch callback function
   const handlePitchCallback = (pitchData) => {
     if (pitchData.confidence > 0.6) {
-      // console.log(`pitch is ${pitchData.pitch}`);
       setPitch(pitchData.pitch);
     }
   };
+
+  // if (startPitchTrack) {
+  //   // console.log("startPitchTrack", startPitchTrack);
+
+  //   const audioStreamer = makeAudioStreamer(handlePitchCallback);
+  //   audioStreamer.init();
+  // }
 
   const audioStreamer = makeAudioStreamer(handlePitchCallback);
 
@@ -43,35 +56,34 @@ const ProgressPlayFile = (props) => {
     // record
     const recordButton = document.getElementById("record");
     const handleRecordButtonClick = () => {
-      // console.log("recording");
       setRecordVol(0.0);
-      setStartPitchTrack((prevStartPitchTrack) => !prevStartPitchTrack);
+      setStartPitchTrack((prevStartPitchTrack) => {
+        startPitchTrackRef.current = !prevStartPitchTrack;
+        return !prevStartPitchTrack;
+      });
+      console.log("startPitchTrackRef.current", startPitchTrackRef.current);
+
       const playbackManager = playbackRef.current;
       const cursor = cursorRef.current;
       const currentTime = cursor.Iterator.currentTimeStamp;
       playbackManager.setPlaybackStart(currentTime);
-      playbackManager.play();
+
+      if (startPitchTrackRef.current) {
+        console.log("blblblblbl", startPitchTrackRef.current);
+        playbackManager.play();
+      } else {
+        playbackManager.pause();
+      }
+
       console.log("recordVol in record", recordVol);
     };
+
     recordButton.addEventListener("click", handleRecordButtonClick);
-
-    // cursor show
-    // const cursorShowButton = document.getElementById("cursorShow");
-    // const handleCursorShowButtonClick = () => {
-    //   cursorRef.current.show();
-    // };
-    // cursorShowButton.addEventListener("click", handleCursorShowButtonClick);
-
-    // cursor hide
-    // const cursorHideButton = document.getElementById("cursorHide");
-    // const handleCursorHideButtonClick = () => {
-    //   cursorRef.current.hide();
-    // };
-    // cursorHideButton.addEventListener("click", handleCursorHideButtonClick);
 
     // cursor beginning (reset)
     const beginningButton = document.getElementById("beginning");
     const handleBeginningButtonClick = () => {
+      setIsResetButtonPressed(true);
       const playbackManager = playbackRef.current;
       const cursor = cursorRef.current;
       playbackManager.pause();
@@ -81,13 +93,6 @@ const ProgressPlayFile = (props) => {
     };
 
     beginningButton.addEventListener("click", handleBeginningButtonClick);
-
-    // cursor backward
-    // const backwardButton = document.getElementById("backward");
-    // const handleBackwardButtonClick = () => {
-    //   cursorRef.current.previous();
-    // };
-    // backwardButton.addEventListener("click", handleBackwardButtonClick);
 
     // cursor play
     // gets the playback manager and sets the start time to the current time
@@ -115,27 +120,6 @@ const ProgressPlayFile = (props) => {
       setZoom(event.target.value);
     };
     volSlider.addEventListener("change", handleVolSlider);
-
-    // cursor pause
-    // gets the playback manager and sets the start time to the current time, pauses the music where the cursor is
-    // replays the music from where the cursor is paused.
-    // const pauseButton = document.getElementById("pause");
-    // const handlePauseButtonClick = () => {
-    //   const playbackManager = playbackRef.current;
-    //   const cursor = cursorRef.current;
-    //   const currentTime = cursor.Iterator.currentTimeStamp;
-    //   playbackManager.setPlaybackStart(currentTime);
-    //   playbackManager.pause();
-    // };
-
-    // pauseButton.addEventListener("click", handlePauseButtonClick);
-
-    //cursor forward
-    // const forwardButton = document.getElementById("forward");
-    // const handleForwardButtonClick = () => {
-    //   cursorRef.current.next();
-    // };
-    // forwardButton.addEventListener("click", handleForwardButtonClick);
 
     //metronome
     // const metronomeButton = document.getElementById("metronome");
@@ -230,19 +214,8 @@ const ProgressPlayFile = (props) => {
     return () => {
       recordButton.removeEventListener("click", handleRecordButtonClick);
       visualizeButton.removeEventListener("click", handleVisualizeButtonClick);
-      // cursorShowButton.removeEventListener(
-      //   "click",
-      //   handleCursorShowButtonClick
-      // );
-      // cursorHideButton.removeEventListener(
-      //   "click",
-      //   handleCursorHideButtonClick
-      // );
       beginningButton.removeEventListener("click", handleBeginningButtonClick);
-      // backwardButton.removeEventListener("click", handleBackwardButtonClick);
       playButton.removeEventListener("click", handlePlayButtonClick);
-      // pauseButton.removeEventListener("click", handlePauseButtonClick);
-      // forwardButton.removeEventListener("click", handleForwardButtonClick);
       // metronomeButton.removeEventListener("click", handleMetronomeButtonClick);
       // zoomInButton.removeEventListener("click", handleZoomInButtonClick);
       // zoomOutButton.removeEventListener("click", handleZoomOutButtonClick);
@@ -269,6 +242,8 @@ const ProgressPlayFile = (props) => {
         startPitchTrack={startPitchTrack}
         recordVol={recordVol}
         onRecord={setRecordVol}
+        isResetButtonPressed={isResetButtonPressed}
+        onResetDone={onResetDone}
       />
     </div>
   );
