@@ -61,7 +61,7 @@ const ProgressPlayFile = (props) => {
         startPitchTrackRef.current = !prevStartPitchTrack;
         return !prevStartPitchTrack;
       });
-      console.log("startPitchTrackRef.current", startPitchTrackRef.current);
+      // console.log("startPitchTrackRef.current", startPitchTrackRef.current);
 
       const playbackManager = playbackRef.current;
       const cursor = cursorRef.current;
@@ -69,13 +69,13 @@ const ProgressPlayFile = (props) => {
       playbackManager.setPlaybackStart(currentTime);
 
       if (startPitchTrackRef.current) {
-        console.log("blblblblbl", startPitchTrackRef.current);
+        // console.log("blblblblbl", startPitchTrackRef.current);
         playbackManager.play();
       } else {
         playbackManager.pause();
       }
 
-      console.log("recordVol in record", recordVol);
+      // console.log("recordVol in record", recordVol);
     };
 
     recordButton.addEventListener("click", handleRecordButtonClick);
