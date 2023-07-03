@@ -14,6 +14,13 @@ import ErrorBoundary from "./components/ErrorBoundary";
 import TimbreVisualization from "./components/TimbreVisualization";
 
 function App() {
+  const [showLogout, setShowLogout] = useState(false);
+  <div className={showLogout ? "dropdown show-dropdown" : "dropdown"}>
+    <button type="button" className="dropdown-btn" onClick={logoutUser}>
+      Logout
+    </button>
+  </div>;
+
   return (
     <div>
       <ErrorBoundary>
@@ -31,6 +38,7 @@ function App() {
                 <Route index element={<Stats />} />
                 <Route path="profile" element={<Profile />} />
                 <Route path="all-lessons" element={<AllLessons />} />
+
                 <Route
                   path="all-lessons/:file"
                   element={<ProgressPlayFile />}
