@@ -1,5 +1,4 @@
 // opensheetmusicdisplay.js
-
 // necessary imports
 import React, { Component } from "react";
 import { OpenSheetMusicDisplay as OSMD } from "opensheetmusicdisplay";
@@ -30,7 +29,6 @@ class OpenSheetMusicDisplay extends Component {
       initialCursorLeft: 0,
       currentNoteinScorePitch: null,
     };
-
     this.osmd = undefined;
     this.divRef = React.createRef();
     this.cursorInterval = null;
@@ -222,60 +220,32 @@ class OpenSheetMusicDisplay extends Component {
 
   resetNotesColor = () => {
     const colorBlack = "#000000"; // black color
-    const colorBlue = "#0000FF"; // blue color
 
-    // Select all elements with class "vf-notehead"
-    var noteheads = document.getElementsByClassName("vf-notehead");
+    // Get the SVG container element
+    var svgContainer = this.osmd.container;
 
-    // Iterate through all the notehead elements
-    for (var i = 0; i < noteheads.length; i++) {
-      var notehead = noteheads[i];
+    // Select all SVG elements within the container
+    var svgElements = svgContainer.getElementsByTagName("svg");
 
-      // Select the inner <path> element
-      var path = notehead.querySelector("path");
+    // Iterate through each SVG element
+    for (var i = 0; i < svgElements.length; i++) {
+      var svgElement = svgElements[i];
 
-      // Set the fill attribute to blue
-      path.setAttribute("fill", colorBlack);
-    }
+      // Select all elements with class "vf-notehead" within the SVG element
+      var noteheads = svgElement.getElementsByClassName("vf-notehead");
 
-    // Reset the color of all the notes to black
-    var gNotes = this.osmd.cursor.GNotesUnderCursor();
-    for (var j = 0; j < gNotes.length; j++) {
-      var gNote = gNotes[j];
-      var svgElement = gNote.getSVGGElement();
+      // Iterate through all the notehead elements
+      for (var j = 0; j < noteheads.length; j++) {
+        let notehead = noteheads[j];
 
-      // This is for all the notes except the quarter and whole notes
-      if (svgElement.children[0].children[0].children[0]) {
-        svgElement.children[0].children[0].children[0].style.fill = colorBlack; // notehead
-      }
+        // Select the inner <path> element
+        let path = notehead.querySelector("path");
 
-      // This is for all the quarter and whole notes
-      if (
-        svgElement.children[0].children[1] &&
-        svgElement.children[0].children[1].children[0]
-      ) {
-        svgElement.children[0].children[1].children[0].style.fill = colorBlack; // notehead
+        // Set the fill attribute to black
+        path.setAttribute("style", "fill: " + colorBlack + " !important");
       }
     }
   };
-
-  // resetNotesColor = () => {
-  //   const colorBlack = "#000000"; // black color
-
-  //   // Select all elements with class "vf-notehead"
-  //   var noteheads = document.getElementsByClassName("vf-notehead");
-
-  //   // Iterate through all the notehead elements
-  //   for (var i = 0; i < noteheads.length; i++) {
-  //     var notehead = noteheads[i];
-
-  //     // Select the inner <path> element
-  //     var path = notehead.querySelector("path");
-
-  //     // Set the fill attribute to black
-  //     path.setAttribute("fill", colorBlack);
-  //   }
-  // };
 
   componentDidUpdate(prevProps) {
     // for title and file changes
