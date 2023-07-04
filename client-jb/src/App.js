@@ -23,16 +23,16 @@ function App() {
               <Route
                 path="/"
                 element={
-                  // <ProtectedRoute>
-                  <SharedLayout />
-                  // </ProtectedRoute>
+                  <ProtectedRoute>
+                    <SharedLayout />
+                  </ProtectedRoute>
                 }
               >
                 <Route index element={<Stats />} />
                 <Route path="profile" element={<Profile />} />
                 <Route path="all-lessons" element={<AllLessons />} />
                 <Route
-                  path="all-lessons/:file"
+                  path="all-lessons/:files"
                   element={<ProgressPlayFile />}
                 />
                 <Route path="/levels/levelone" element={<LevelOne />} />
