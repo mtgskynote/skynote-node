@@ -6,9 +6,11 @@ import {
   KeyboardDoubleArrowLeft,
   KeyboardDoubleArrowRight,
 } from "@mui/icons-material";
+import { Button } from "react-bootstrap";
 
 const BigSidebar = () => {
-  const { showSidebar, toggleSidebar } = useAppContext();
+  const { showSidebar, toggleSidebar, logoutUser } = useAppContext();
+
   return (
     <Wrapper>
       <div
@@ -27,6 +29,24 @@ const BigSidebar = () => {
             </button>
           </header>
           <NavLinks />
+          <div className="logout-container">
+            <Button
+              variant="dark"
+              className="rounded-circle"
+              onClick={logoutUser}
+              style={{
+                display: "flex",
+                width: "70px",
+                height: "70px",
+                borderRadius: "80%",
+                display: "flex",
+                justifyContent: "center",
+                alignItems: "center",
+              }}
+            >
+              Logout
+            </Button>
+          </div>
         </div>
       </div>
     </Wrapper>

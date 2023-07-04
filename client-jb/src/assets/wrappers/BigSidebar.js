@@ -14,14 +14,24 @@ const Wrapper = styled.aside`
       transition: var(--transition);
     }
 
+    .logout-container {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 4rem;
+      position: absolute;
+      bottom: 0;
+    }
+
     .show-sidebar {
       margin-left: 0;
       transition: var(--transition);
     }
 
     .content {
-      position: sticky;
-      top: 0;
+      display: flex;
+      flex-direction: column;
+      height: 100%;
     }
 
     header {
