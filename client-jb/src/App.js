@@ -1,5 +1,5 @@
 import { BrowserRouter, Routes, Route } from "react-router-dom";
-import { Register, Landing, Error, ProtectedRoute } from "./pages";
+import { Register, OurTeam, Demos, Research, Landing, Error, ProtectedRoute } from "./pages";
 
 import { Profile, Stats, SharedLayout } from "./pages/dashboard";
 
@@ -45,6 +45,9 @@ function App() {
               </Route>
 
               <Route path="/register" element={<Register />} />
+              <Route path="/ourteam" element={<OurTeam />} />
+              <Route path="/research" element={<Research />} />
+              <Route path="/demos" element={<Demos />} />
               <Route path="/landing" element={<Landing />} />
               <Route path="*" element={<Error />} />
             </Routes>

@@ -3,6 +3,10 @@ import { useNavigate } from "react-router-dom";
 import { Logo, FormRow, Alert } from "../components";
 import Wrapper from "../assets/wrappers/RegisterPage";
 import { useAppContext } from "../context/appContext";
+import { Link } from "react-router-dom";
+import WhiteLogo from "../components/WhiteLogo";
+import "bootstrap/dist/css/bootstrap.min.css";
+
 // import { useGoogleLogin } from "@react-oauth/google";
 // import { useDispatch } from "react-redux";
 
@@ -68,6 +72,24 @@ function Register() {
 
   return (
     <Wrapper className="full-page">
+      <div className="site-header">
+        <div className="tab-row-container">
+          <div className="tab-row">
+              <div className="tab-login"><Link to="/landing" className="tab-link"> Home </Link></div>
+              <div className="tab-login"><Link to="/demos" className="tab-link"> Demos </Link></div>
+              <div className="tab-login"><Link to="/ourteam" className="tab-link"> Our Team </Link></div>
+              <div className="tab-login"><Link to="/research" className="tab-link"> Research </Link></div>
+              <div className="tab-login"><Link to="https://docs.google.com/forms/d/e/1FAIpQLSdE6QIt2Xfno67jWjBi2SJOB1dImKhmvJYr9Mzi9Qbo1BGHuw/viewform" className="tab-link"> Interest Form </Link></div>
+              <div className="tab-login"><Link to="/register" className="tab-link"> Login/Register </Link></div>
+          </div>
+        </div>
+        <div className="logo-container"> 
+          <WhiteLogo/>
+        </div>
+        <div className="skynote-container">
+          SkyNote
+        </div>
+      </div>
       <form className="form" onSubmit={onSubmit}>
         <Logo width={175} height={75}/>
         <h3>{values.isMember ? "Login" : "Register"}</h3>
@@ -120,5 +142,6 @@ function Register() {
     </Wrapper>
   );
 }
+
 
 export default Register;
