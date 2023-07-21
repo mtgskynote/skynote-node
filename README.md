@@ -54,16 +54,19 @@ c) Once you have cloned the osmd-extended repo and built the minified version, a
 
 Then replace the build folder in your Node modules OSMD folder.
 
-**_ If you already have the build folder (folder with minified build) and want to use it in the Skynote project_**
+**_ If you already have the opensheetmusicdisplay folder (folder with minified build) and want to use it in the Skynote project_**
 
-if you are building the skynote webapp for production or want to use OSMD extended locally.
+a) Get the the zipped version of 'opensheetmusicdisplay.zip' available in skynote google drive, and unzip it. (https://drive.google.com/drive/folders/19KW-vd0flJ-TkBLdoPlNgcyEafIthyyk)
 
-a) Get the the zipped version of 'build.zip' available in skynote google drive, and unzip it. (https://drive.google.com/drive/folders/19KW-vd0flJ-TkBLdoPlNgcyEafIthyyk)
-
-b) npm i opensheetmusicdisplay
-c) Replace the opensheetmusicdisplay dependency in package.json with:
+b) Replace the opensheetmusicdisplay dependency in package.json with:
 
 "dependencies": {
 "opensheetmusicdisplay": "file:opensheetmusicdisplay.min.js",
 }
-d) Finally, replace the 'build' folder in your node_modules/opensheetmusicdisplay folder with the build folder unzipped from previous step.
+c) Finally, replace the opensheetmusicdisplay folder in your node_modules folder with the unzipped folder from step a  (be sure to grab the inner most folder named opensheetmusicdisplay).
+
+++++++++++++++++++
+
+4. To run "in development:
+
+   a. Put your .env file into the main appskynote directory 
