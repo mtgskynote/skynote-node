@@ -1,5 +1,21 @@
 This document contains steps for setting up the project and navigating around some common dependency issues.
 
+appskynote.com   (143.110.164.154, hosted on DigitalOcean, must have an account with ssh access (ask lonce)
+
+**MongoDB**
+
+​     If you use Compass of Studio3T GUIs to access, your credentials should look like this:
+
+- General/Host - localhost:27017
+- Username/Password - your database usename and password and the database your credentials are associated with. Authentification Mechansm: SCRAM-SHA-256
+- Proxy/SSH - SSH Hostname: appskynote.com, SSH Port: 22, SSH Username: login name for appskynote.com, SSH Identity File: browse to your private key file (e.g. ~.ssh/id_rsa)
+
+------------------------------------------------
+
+
+
+**Code Base** (stored on GitHub)
+
 1. There are two .env files one at the nodeJs(Backend) and another .env for the front-end(client-jb folder). (.env files contain credentials in key-value format for services used by the program they’re building. They’re meant to be stored locally and not be uploaded to code repositories online for everyone to read. Each developer in a team typically carries one or more .env files for each environment.) These .env files must be manually setup each time the github repository is newly setup. Further, this .env file is also ignored in the gitignore file so that it doesn't uploaded to the remote repository.
 
 In order to execute the entire project there are setup processes that need to be done like installing the related npm modules required at both the front-end part and the back-end part which inturn results in creation of node_modules folder in the respective directory. package.json file under the "skynote-node" parent directory contains the npm commands to execute in the terminal such that the setup processes can be done before launching the application.
