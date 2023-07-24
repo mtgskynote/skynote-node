@@ -230,20 +230,20 @@ const ProgressPlayFile = (props) => {
     <div style={{ overflow: "scroll", height: "750px" }}>
       {controlbar}
       <OpenSheetMusicDisplay
-        file={`${folderBasePath}/${params.files}`}
-        autoResize={true}
-        cursorRef={cursorRef}
-        playbackRef={playbackRef}
-        metroVol={metroVol}
-        bpm={bpmChange}
-        zoom={zoom}
-        followCursor={true}
-        pitch={pitch}
-        startPitchTrack={startPitchTrack}
-        recordVol={recordVol}
-        onRecord={setRecordVol}
-        isResetButtonPressed={isResetButtonPressed}
-        onResetDone={onResetDone}
+        file={`${folderBasePath}/${params.files}`} // file path
+        autoResize={true} // automatically resizes the music sheet
+        cursorRef={cursorRef} //cursor referece for doing the cursor manipulation
+        playbackRef={playbackRef} //playback reference for doing the playback manipulation
+        metroVol={metroVol} //metronome volume
+        bpm={bpmChange} //bpm change
+        zoom={zoom} // zoom in and out values
+        followCursor={true} //follows the cursor
+        pitch={pitch} //pitch values
+        startPitchTrack={startPitchTrack} //start pitch track
+        recordVol={recordVol} // record volume, that is put the volume to zero when record is clicked
+        onRecord={setRecordVol} // function that sets record volume to zero
+        isResetButtonPressed={isResetButtonPressed} // reset button pressed
+        onResetDone={onResetDone} // reset done
       />
     </div>
   );
