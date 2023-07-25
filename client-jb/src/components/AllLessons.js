@@ -1,8 +1,8 @@
 import { React, useState } from "react";
-import { useHistory, useLocation } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import Box from "@mui/material/Box";
 import { Link } from "react-router-dom";
-import { Col, Row, Card, Button } from "react-bootstrap";
+import { Col, Row } from "react-bootstrap";
 
 import ViolinCard from "./violinImageCard";
 
@@ -29,6 +29,28 @@ const levelOneData = {
     {
       id: "11",
       name: "Basic Bowing I",
+      children: [
+        {
+          id: "111",
+          name: "Cuerdas AI Aire 1 (Suelta) A",
+          path: "/all-lessons/Cuerdas_Al_Aire_1_(Suelta)_A.xml",
+        },
+        {
+          id: "112",
+          name: "Cuerdas AI Aire 1 (Suelta) D",
+          path: "/all-lessons/5_Cuerdas_Al_Aire_2_(Suelta)_A.xml",
+        },
+        {
+          id: "113",
+          name: "Cuerdas AI Aire 1 (Suelta) G",
+          path: "/all-lessons/Cuerdas_Al_Aire_1_(Suelta)_D.xml",
+        },
+        {
+          id: "114",
+          name: "Cuerdas AI Aire 1 (Suelta) E",
+          path: "/all-lessons/Cuerdas_Al_Aire_1_(Suelta)_E.xml",
+        },
+      ],
     },
     {
       id: "12",
@@ -40,7 +62,7 @@ const levelOneData = {
     },
     {
       id: "14",
-      name: "Easy Rhymes",
+      name: "2nd Finger",
       children: [
         {
           id: "15",
@@ -53,6 +75,38 @@ const levelOneData = {
           path: "/all-lessons/Row.xml",
         },
       ],
+    },
+    {
+      id: "17",
+      name: "Half Bows I",
+    },
+    {
+      id: "18",
+      name: "2nd String Changing",
+    },
+    {
+      id: "19",
+      name: "1st Finger",
+    },
+    {
+      id: "20",
+      name: "2nd Finger Pieces",
+    },
+    {
+      id: "21",
+      name: "Basic Bowing II",
+    },
+    {
+      id: "22",
+      name: "3rd String Changing",
+    },
+    {
+      id: "23",
+      name: "1st Finger/Changing String",
+    },
+    {
+      id: "24",
+      name: "3rd Finger",
     },
   ],
 };
@@ -116,21 +170,21 @@ const levelThreeData = {
 };
 
 const AllLessons = () => {
-  // const [expanded, setExpanded] = useState([]);
-  // const [selected, setSelected] = useState([]);
+  const navigate = useNavigate();
 
-  // const handleToggle = (event, nodeIds) => {
-  //   setExpanded(nodeIds);
+  // // State to keep track of expanded nodes
+  // const [expandedNodes, setExpandedNodes] = useState([]);
+
+  // // Function to handle node expansion
+  // const handleNodeToggle = (nodeIds) => {
+  //   setExpandedNodes(nodeIds);
   // };
 
-  // const handleSelect = (event, nodeIds) => {
-  //   setSelected(nodeIds);
-  // };
-
-  // const handleExpandClick = () => {
-  //   setExpanded((oldExpanded) =>
-  //     oldExpanded.length === 0 ? ["11", "12", "13", "14", "15", "16"] : []
-  //   );
+  // // Function to navigate to the new page and preserve the expanded state
+  // const handleNavigate = (navpath) => {
+  //   // Save the expanded state to localStorage before navigating to the new page
+  //   // localStorage.setItem("expandedNodes", JSON.stringify(expandedNodes));
+  //   navigate(navpath);
   // };
 
   const renderTree = (nodes) => (
@@ -142,14 +196,18 @@ const AllLessons = () => {
 
       label={
         <div style={{ display: "flex", alignItems: "center" }}>
-          <div style={{ marginRight: "10px", fontSize: 20 }}>{nodes.name}</div>
           {nodes.path ? (
+            // onClick={handleNavigate(`${nodes.path}`)
             <Link to={nodes.path}>
-              <Button variant="primary">
-                {nodes.path.split("/").pop().split(".")[0]}
-              </Button>
+              <div style={{ marginRight: "10px", fontSize: 20 }}>
+                {nodes.name}
+              </div>
             </Link>
-          ) : null}
+          ) : (
+            <div style={{ marginRight: "10px", fontSize: 20 }}>
+              {nodes.name}
+            </div>
+          )}
           <div
             style={{
               width: "100px",
@@ -191,6 +249,8 @@ const AllLessons = () => {
           defaultExpandIcon={<ChevronRightIcon />}
           sx={sxStyles}
           style={{ fontSize: 30 }}
+          // expanded={expandedNodes}
+          // onNodeToggle={handleNodeToggle}
         >
           {renderTree(levelOneData)}
         </TreeView>
@@ -215,6 +275,7 @@ const AllLessons = () => {
           {renderTree(levelThreeData)}
         </TreeView>
       </Box>
+
       <div className="center" style={{ marginTop: "2rem" }}>
         <h2>Level One</h2>
       </div>

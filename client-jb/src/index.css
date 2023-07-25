@@ -7,14 +7,14 @@
 /* fonts */
 @import url("https://fonts.googleapis.com/css2?family=Cabin&family=Roboto+Condensed:wght@400;700&display=swap");
 @import url("https://fonts.googleapis.com/css2?family=Poppins:wght@300&display=swap");
-@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@500&display=swap');
-@import url('https://fonts.googleapis.com/css2?family=Schibsted+Grotesk:wght@500&display=swap');
-@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@800&family=Schibsted+Grotesk:wght@500&display=swap');
-@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@100;500&display=swap');
-@import url('https://fonts.googleapis.com/css2?family=Open+Sans:wght@500&display=swap');
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@600&display=swap');
-@import url('https://fonts.googleapis.com/css2?family=Lato&display=swap');
-@import url('https://fonts.googleapis.com/css2?family=Nunito:wght@300&display=swap');
+@import url("https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@500&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Schibsted+Grotesk:wght@500&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Montserrat:wght@800&family=Schibsted+Grotesk:wght@500&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Roboto:wght@100;500&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Open+Sans:wght@500&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Inter:wght@600&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Lato&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Nunito:wght@300&display=swap");
 
 html {
   font-size: 100%;
@@ -35,9 +35,9 @@ html {
 
   --blue-100: #58b9ed;
   --blue-200: #2da8eb;
-  --blue-300: #2d88eb; 
+  --blue-300: #2d88eb;
 
-  --off-white:#F3F7F7; 
+  --off-white: #f3f7f7;
 
   /* grey */
   --grey-50: #f0f4f8;
@@ -50,7 +50,7 @@ html {
   --grey-700: #334e68;
   --grey-800: #243b53;
   --grey-900: #102a43;
-  --grey-1000: #23292B;
+  --grey-1000: #23292b;
   /* rest of the colors */
   --black: #222;
   --white: #fff;
@@ -62,13 +62,13 @@ html {
   /* fonts  */
   --headingFont: "Poppins", Sans-Serif;
   --bodyFont: "Poppins", Sans-Serif;
-  --newFont: 'Noto Sans JP', sans-serif;
+  /* --newFont: 'Noto Sans JP', sans-serif;
   --overlayFont:'Schibsted Grotesk', sans-serif;
   --otherFont: 'Montserrat', sans-serif;
   --openSans: 'Open Sans', sans-serif;
   --inter:  'Inter', sans-serif;
   --lato: 'Lato', sans-serif;
-  --nunito: 'Nunito', sans-serif;
+  --nunito: 'Nunito', sans-serif; */
 
   --small-text: 0.875rem;
   --extra-small-text: 0.7em;
@@ -345,7 +345,6 @@ ul {
     margin-right: 0.5rem;
   }
 }
-
 
 .volume-slider {
   position: absolute;
