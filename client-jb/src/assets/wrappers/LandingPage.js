@@ -8,6 +8,7 @@ const Wrapper = styled.main`
   left: 50%;
   align-items: center;
 }
+
   nav {
     width: var(--fluid-width);
     max-width: var(--max-width);
@@ -44,13 +45,13 @@ const Wrapper = styled.main`
     color: black;
   }
 
-  @media screen and (min-width: 768px){
+  /* @media screen and (min-width: 768px){
     section: {
       padding: 1em 7em;
     }
-  }
+  } */
 
-  @media screen  and (min-width: 992px){
+  /* @media screen  and (min-width: 992px){
 
     .page {
       grid-template-columns: 1fr 1fr;
@@ -72,7 +73,8 @@ const Wrapper = styled.main`
       max-width: 33.33%;
       padding: 0 1em;
     }
-  }
+  } */
+
   .primary-text {
     text-align: center;
     max-width: 80%;
@@ -163,7 +165,7 @@ const Wrapper = styled.main`
 .tab-row-container{
   display: flex; 
   justify-content: flex-end; 
-  width: min-width; 
+  width: 70%; 
   position: absolute; 
   margin-right: 20px;
   margin-top: 5px; 
@@ -184,6 +186,7 @@ const Wrapper = styled.main`
   cursor: pointer; 
   font-size: 16px;
 }
+
 .logo-container{
   position: absolute; 
   width: 20%; 
@@ -213,7 +216,7 @@ const Wrapper = styled.main`
 }
 .background-image{ 
   width: 100%; 
-  height: 100%
+  height: 100%;
 }
 
 .background-image-container{ 
@@ -227,7 +230,7 @@ const Wrapper = styled.main`
 }
 .background-image-overlay{
   position: absolute; 
-  top: 70px; 
+  top: 70px;
   left: 0; 
   width: 50%; 
   height: 600px; 
@@ -246,7 +249,7 @@ const Wrapper = styled.main`
   line-height: 1.2;
   padding: 0;
   margin-left: 5rem;
-  width: 500px;
+  width: 70%;
 }
 .background-image-overlay p{
   color: #23292B; 
@@ -259,7 +262,7 @@ const Wrapper = styled.main`
   line-height: 1.8;
   padding: 0;
   top: 0;
-  width: 500px;
+  width: 70%;
 }
 .interest-link{
   font-size: 18px;
@@ -296,16 +299,16 @@ const Wrapper = styled.main`
 
 
 .iphone-container{
-  position: absolute; 
-  top: 680px;
+  position: relative; 
+  top: 710px;
   left: 50%; 
   transform: translate(-50%, -50%);
   width: 50%;
-  height: 365px;
+  height: 360px;
   z-index: 1;
   background-color: black;
   border-radius: 40px;
-  margin-bottom: 50px;
+  margin-bottom: 10%;
 }
 
 .background-video-container {
@@ -320,12 +323,11 @@ const Wrapper = styled.main`
 
 .background-video {
   object-fit: cover;
-  width: 700px; 
+  width: 98%; 
   height: 345px;
-  margin-top: 10px;
+  margin-top: 7px;
   border-radius: 33px;
 }
-
 
 .iphone-notch{
   position: absolute; 
@@ -369,7 +371,7 @@ const Wrapper = styled.main`
   display: flex; 
   flex-direction: column;
   align-items: left; 
-  margin-top: 1200px;
+  margin-top: 48%;
   position: relative; 
   left: 5%; 
   top: 50%; 
@@ -396,7 +398,7 @@ const Wrapper = styled.main`
 }
 
 .info-container-1 {
-  position: relative;
+  position: absolute;
   margin-top: 950px; 
   width: 100%;
   height: 500px;
@@ -408,12 +410,12 @@ const Wrapper = styled.main`
   display: flex; 
   flex-direction: column;
   align-items: flex-end;
-  margin-top: 1700px; 
+  margin-top: 1670px; 
   position: absolute; 
   right: 5%; 
   top: 10%;
   transform: translateY(-50%);
-  width: 575px;
+  width: 35%;
 }
 .text-container-2 h2 {
   font-family: var(--inter);
@@ -442,19 +444,20 @@ const Wrapper = styled.main`
   width: 45%; 
   height: 45%; 
   z-index: 1;
-  margin-top: 230px;
+  margin-top: 14%;
   left: 5%; 
 }
 .text-container-3{
   display: flex; 
   flex-direction: column;
   align-items: left; 
-  margin-top: 125px;
+  margin-top: 10%;
   position: relative; 
   left: 5%; 
   top: 50%; 
   transform: translateY(-50%);
   margin-right: 55%;
+  margin-bottom: 2%;
 }
 
 .text-container-3 h2{
@@ -651,10 +654,161 @@ p {
   display: flex;
   align-items: right;
 }
+
+@media screen and (max-width: 600px) {
+  .background-image{
+    display: none;
+  }
+
+  .logo-container{
+    width: 30%;
+  }
+
+  .skynote-container{
+    margin-left: 12%
+  }
+
+  .tab-link{
+    font-size: 1rem;
+    width: 5rem;
+  }
+
+  .background-image-overlay{
+    width: 250%;
+    height: 500px;
+  }
+
+  .background-image-overlay h2{
+    width: 80%;
+    margin-right: 5rem;
+    font-size: 50px;
+  }
+  .background-image-overlay p{
+    font-size: 25px;
+    width: 180%;
+  }
+
+  .iphone-container{
+    width: 80%; 
+    height: auto; 
+    margin-bottom: 20px;
+    position: relative
+  }
+
+  .background-video-container {
+    margin-top: 200px; 
+    height: 50vh 
+  }
+
+  .background-video{
+    display: none;
+  }
+
+  .iphone-notch{
+    display: none;
+  }
+  
+  .tab-row{
+    margin-right: 30px;
+  }
+
+  .text-container-1{
+    margin-top: 480px;
+    width: 150%;
+  }
+
+  .image-container{
+    left: 160%;
+    width: 80%;
+    position: relative;
+    top: 630px;
+  }
+
+  .text-container-2{
+    position: relative;
+    right: 0;
+    margin-top: 120px;
+    left: 130%;
+    width: 110%;
+  }
+
+  .image-container-2{
+    position: relative; 
+    bottom: 760px;
+    width: 100%;
+    height: 100%;
+    left: 30px;
+  }
+
+  @media screen and (max-width: 768px) {
+    .tab-row-container {
+      justify-content: center;
+    }
+
+    .background-image-overlay h2 {
+      width: 100%;
+      margin-right: 0;
+      text-align: center;
+      font-size: 36px;
+    }
+
+    .background-image-overlay p {
+      font-size: 18px;
+      width: 100%;
+    }
+
+    .iphone-container {
+      width: 90%;
+      height: auto;
+      margin-bottom: 20px;
+    }
+
+    .background-video-container {
+      margin-top: 200px;
+      height: 50vh;
+    }
+
+    .image-container {
+      display: none;
+    }
+
+    .text-container-1 {
+      margin-top: 200px;
+      width: 100%;
+      align-items: center;
+      text-align: center;
+    }
+
+    .text-container-2 {
+      width: 100%;
+      text-align: center;
+      margin-top: 50px;
+    }
+
+    .image-container-2 {
+      display: none;
+    }
+
+    .text-container-3 {
+      margin-top: 50px;
+      width: 100%;
+      align-items: center;
+      text-align: center;
+    }
+
+    .work-section-bottom {
+      flex-direction: column;
+    }
+
+    .card {
+      width: 100%;
+      padding: 1em;
+      margin: 1rem 0;
+    }
+
+
+}
+
+
 `
 export default Wrapper
-
-/*.work-section-top h1 {
-  white-space: nowrap;
-  margin-top: 550px;
-} */

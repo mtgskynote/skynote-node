@@ -8,8 +8,6 @@ import Violinist from "../components/Violinist";
 import Violinist2 from "../components/Violinist-2";
 import Violinist3 from "../components/Violinist-3";
 
-
-
 const Landing = () => {
   return (
     <Wrapper>
@@ -115,78 +113,8 @@ const Landing = () => {
           </div>
         </div>
       </div>
-    
-      <div className="work-section-wrapper">
-        <div className="work-section-top">
-          <div className="app-info-container">
-            <div className="info-container-right">
-              <h2> Sound Quality</h2>
-              <p>
-              In music, quality sound production is one of the first skills you acquire. With the help of AI and Audio Analysis, SkyNote helps to improve sound quality.
-              </p>
-            </div>
-            <div className="info-container-left">
-              <video controls>
-                <source src="https://appskynote.com/skynote-media/videos/Skynote1-SoundQuality.mp4#t=15" />
-              </video>
-            </div>
-          </div>
-          </div> 
-      </div>
-    
-
-      <div className="work-section-wrapper">
-        <div className="work-section-top">
-          <div className="app-info-container">
-          <div className="info-container-right">
-              <video controls>
-                <source src="https://appskynote.com/skynote-media/videos/Skynote2-Pitch:TimingQuality.mp4#t=11" />
-              </video>
-            </div>
-            <div className="info-container-left">
-              <h2>Pitch and Rhythm</h2>
-              <p>Playing the right note at the right time is important. SkyNote provides pitch and rhythm accuracy with visual feedback.</p>
-            </div>
-          </div>
-          </div> 
-      </div>
-
-      <div className="work-section-wrapper">
-        <div className="work-section-top">
-          <div className="app-info-container">
-            <div className="info-container-right-posture">
-              <h2> Posture </h2>
-              <p> SkyNote gives students real-time feedback on their gestures using AI and motion capture techniques. </p>
-            </div>
-            <div className="info-container-left">
-              <video controls>
-                <source src="https://appskynote.com/skynote-media/videos/Skynote3-BowTechnique.mp4#t=7" />
-              </video>
-            </div>
-          </div>
-          </div> 
-      </div>
-
-      <div className="work-section-wrapper">
-        <div className="work-section-top">
-          <div className="app-info-container">
-          <div className="info-container-right">
-              <video controls>
-                <source src="https://appskynote.com/skynote-media/videos/Skynote4-Gestures.mp4#t=25"/>
-              </video>
-            </div>
-            <div className="info-container-left">
-              <h2>Bowing Technique</h2>
-              <p>Using AI And audio analysis, SkyNote produces feedback about your accuracy of bow stroke techniques.</p>
-            </div>
-          </div>
-          </div> 
-      </div>
-      
-
     </Wrapper>
   );
 };
 
 export default Landing;
-
