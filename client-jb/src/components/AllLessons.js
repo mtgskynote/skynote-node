@@ -1,13 +1,13 @@
 import { React, useState, useEffect } from "react";
-import { useHistory, useLocation } from "react-router-dom";
+// import { useHistory, useLocation } from "react-router-dom";
 import Box from "@mui/material/Box";
-import { Link } from "react-router-dom";
+// import { Link } from "react-router-dom";
 import { Col, Row, Card, Button } from "react-bootstrap";
 
-import ViolinCard from "./violinImageCard";
+// import ViolinCard from "./violinImageCard";
 
-import violinImg from "../assets/images/violin/violinDisplay.jpg";
-import violinImg2 from "../assets/images/violin/violin1.jpeg";
+// import violinImg from "../assets/images/violin/violinDisplay.jpg";
+// import violinImg2 from "../assets/images/violin/violin1.jpeg";
 
 import TreeView from "@mui/lab/TreeView";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
@@ -16,8 +16,10 @@ import TreeItem from "@mui/lab/TreeItem";
 
 import OpenSheetMusicDisplayPreview from "./OpenSheetMusicDisplayPreview";
 import XMLParser from "react-xml-parser";
+import { Table } from "react-bootstrap";
 
 const folderBasePath = "/musicXmlFiles";
+const routePath = "/all-lessons";
 
 const levelOnefiles = [
   // "Row.xml",
@@ -131,10 +133,16 @@ const levelThreeData = {
 
 const AllLessons = () => {
   const [titles, setTitles] = useState({});
+  const [selectedNode, setSelectedNode] = useState(null);
+
   useEffect(() => {
     const allFiles = [...levelOnefiles, ...levelTwofiles, ...levelThreefiles];
     fetchAllTitles(allFiles).then(setTitles);
   }, []);
+
+  const handleNodeSelect = (event, nodeId) => {
+    setSelectedNode(nodeId);
+  };
   // const [expanded, setExpanded] = useState([]);
   // const [selected, setSelected] = useState([]);
 
@@ -152,171 +160,52 @@ const AllLessons = () => {
   //   );
   // };
 
-  // const renderTree = (nodes) => (
-  //   <TreeItem
-  //     key={nodes.id}
-  //     nodeId={nodes.id}
-  //     nodePath={nodes.path}
-  //     label={
-  //       <div
-  //         style={{
-  //           display: "flex",
-  //           flexDirection: "column",
-  //           alignItems: "flex-start",
-  //         }}
-  //       >
-  //         <div style={{ marginRight: "10px", fontSize: 20 }}>{nodes.name}</div>
-  //         {nodes.path ? (
-  //           <div
-  //             style={{
-  //               display: "flex",
-  //               flexDirection: "column",
-  //               alignItems: "flex-start",
-  //             }}
-  //           >
-  //             <div style={{ marginRight: "10px" }}>
-  //               <Button variant="primary">
-  //                 {nodes.path.split("/").pop().split(".")[0]}
-  //               </Button>
-  //             </div>
-  //             <div style={{ marginRight: "10px" }}>
-  //               <span>{titles[nodes.path.split("/").pop()]}</span>
-  //             </div>
-  //             <div
-  //               style={{
-  //                 marginTop: "20px",
-  //                 maxWidth: "100px",
-  //                 maxHeight: "100px",
-  //               }}
-  //             >
-  //               <OpenSheetMusicDisplayPreview file={nodes.path} />
-  //             </div>
-  //           </div>
-  //         ) : null}
-  //       </div>
-  //     }
-  //   >
-  //     {Array.isArray(nodes.children)
-  //       ? nodes.children.map((node) =>
-  //           node.children ? (
-  //             renderTree(node)
-  //           ) : (
-  //             <TreeItem
-  //               key={node.id}
-  //               nodeId={node.id}
-  //               label={
-  //                 <div
-  //                   style={{
-  //                     display: "flex",
-  //                     flexDirection: "column",
-  //                     alignItems: "flex-start",
-  //                   }}
-  //                 >
-  //                   <div style={{ marginRight: "10px" }}>
-  //                     <Button variant="primary">
-  //                       {node.path.split("/").pop().split(".")[0]}
-  //                     </Button>
-  //                   </div>
-  //                   <div style={{ marginRight: "10px" }}>
-  //                     <span>{titles[node.path.split("/").pop()]}</span>
-  //                   </div>
-  //                   <div
-  //                     style={{
-  //                       marginTop: "20px",
-  //                       maxWidth: "200px",
-  //                       maxHeight: "200px",
-  //                     }}
-  //                   >
-  //                     <OpenSheetMusicDisplayPreview file={node.path} />
-  //                   </div>
-  //                 </div>
-  //               }
-  //             />
-  //           )
-  //         )
-  //       : null}
-  //   </TreeItem>
-  // );
-
+  //fjadslkfjalskdjflkasdf
   const renderTree = (nodes) => (
     <TreeItem
       key={nodes.id}
       nodeId={nodes.id}
       nodePath={nodes.path}
-      label={
-        <div
-          style={{
-            display: "flex",
-            flexDirection: "column",
-            alignItems: "flex-start",
-          }}
-        >
-          <div style={{ marginRight: "10px", fontSize: 20 }}>{nodes.name}</div>
-          {nodes.path ? (
-            <div
-              style={{
-                display: "flex",
-                flexDirection: "column",
-                alignItems: "flex-start",
-              }}
-            >
-              <div style={{ marginRight: "10px" }}>
-                <Button variant="primary">
-                  {nodes.path.split("/").pop().split(".")[0]}
-                </Button>
-              </div>
-              <div style={{ marginRight: "10px" }}>
-                <span>{titles[nodes.path.split("/").pop()]}</span>
-              </div>
-            </div>
-          ) : null}
-        </div>
-      }
+      label={nodes.name}
     >
       {Array.isArray(nodes.children)
-        ? nodes.children.map((node) =>
-            node.children ? (
-              renderTree(node)
-            ) : (
-              <TreeItem
-                key={node.id}
-                nodeId={node.id}
-                label={
-                  <div
-                    style={{
-                      display: "flex",
-                      flexDirection: "column",
-                      alignItems: "flex-start",
-                    }}
-                  >
-                    <div style={{ marginRight: "10px" }}>
-                      <Button variant="primary">
-                        {node.path.split("/").pop().split(".")[0]}
-                      </Button>
-                    </div>
-                    <div style={{ marginRight: "10px" }}>
-                      <span>{titles[node.path.split("/").pop()]}</span>
-                    </div>
-                  </div>
-                }
-              >
-                <TreeItem
-                  nodeId={`${node.id}-score`}
-                  label={
-                    <div
-                      style={{
-                        marginTop: "0px",
-                        // maxWidth: "600px",
-                        // maxHeight: "400px",
-                      }}
-                    >
-                      <OpenSheetMusicDisplayPreview file={node.path} />
-                    </div>
-                  }
-                />
-              </TreeItem>
-            )
-          )
+        ? nodes.children.map((node) => (
+            <TreeItem key={node.id} nodeId={node.id} label={node.name}>
+              {node.children
+                ? node.children.map((childNode) => (
+                    <TreeItem
+                      key={childNode.id}
+                      nodeId={childNode.id}
+                      label={
+                        <div
+                          style={{
+                            display: "flex",
+                            justifyContent: "space-between",
+                            width: "100%",
+                          }}
+                        >
+                          <div>
+                            <Button variant="primary">
+                              {childNode.path.split("/").pop().split(".")[0]}
+                            </Button>
+                            <span>
+                              {titles[childNode.path.split("/").pop()]}
+                            </span>
+                          </div>
+                          {selectedNode === childNode.id && (
+                            <div style={{ flexShrink: 0, width: "50%" }}>
+                              <OpenSheetMusicDisplayPreview
+                                file={childNode.path}
+                              />
+                            </div>
+                          )}
+                        </div>
+                      }
+                    />
+                  ))
+                : null}
+            </TreeItem>
+          ))
         : null}
     </TreeItem>
   );
@@ -325,16 +214,10 @@ const AllLessons = () => {
     <>
       <div>
         <h1 style={{ fontSize: 25, fontFamily: "cursive", margin: "2rem" }}>
-          {" "}
           All Lessons
         </h1>
       </div>
       <Box sx={{ flexGrow: 1, overflowY: "auto" }}>
-        {/* <Box sx={{ mb: 1 }}>
-          <Button onClick={handleExpandClick}>
-            {expanded.length === 0 ? "Expand all" : "Collapse all"}
-          </Button>
-        </Box> */}
         <TreeView
           aria-label="rich object"
           defaultCollapseIcon={<ExpandMoreIcon />}
@@ -342,6 +225,7 @@ const AllLessons = () => {
           defaultExpandIcon={<ChevronRightIcon />}
           sx={sxStyles}
           style={{ fontSize: 30 }}
+          onNodeSelect={handleNodeSelect}
         >
           {renderTree(levelOneData)}
         </TreeView>
@@ -352,6 +236,7 @@ const AllLessons = () => {
           defaultExpandIcon={<ChevronRightIcon />}
           sx={sxStyles}
           style={{ fontSize: 30 }}
+          onNodeSelect={handleNodeSelect}
         >
           {renderTree(levelTwoData)}
         </TreeView>
@@ -362,6 +247,7 @@ const AllLessons = () => {
           defaultExpandIcon={<ChevronRightIcon />}
           sx={sxStyles}
           style={{ fontSize: 30 }}
+          onNodeSelect={handleNodeSelect}
         >
           {renderTree(levelThreeData)}
         </TreeView>

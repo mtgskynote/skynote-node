@@ -29,13 +29,13 @@ const OpenSheetMusicDisplayPreview = ({ file }) => {
   }, [file]);
 
   const containerStyle = {
-    maxWidth: "40%", // Adjust the percentage to the desired width
-    maxHeight: "auto", // This will maintain the aspect ratio and shrink the height accordingly
+    maxWidth: "50%", // Adjust the percentage to the desired width
+    maxHeight: "50%", // This will maintain the aspect ratio and shrink the height accordingly
     // You can also add other styles here if needed
   };
 
-  return <div id="osmd-container" style={containerStyle} />;
-  // return <div id="osmd-container" />;
+  // return <div id="osmd-container" style={containerStyle} />;
+  return <div id="osmd-container" />;
 };
 
 export default OpenSheetMusicDisplayPreview;
