@@ -51,13 +51,10 @@ const OurTeam = () => {
                     <h3>Dr. Lonce Wyse</h3>
                     <p>
                     Lonce Wyse (Research Fellow, Music Technology Group, UPF) holds a PhD in
-                    Cognitive and Neural Systems (Boston University, 1994), and was a
-                    Fulbright Scholar at Taiwan National University (1995). He developed
+                    Cognitive and Neural Systems (Boston University, 1994). He developed
                     audio technology for research and industry in Singapore for 28 years,
                     most recently as an Associate Professor of Communications at the 
-                    National University of Singapore. He serves on the editorial boards of
-                    the Computer Music Journal (MIT Press), and Organized Sound (Cambridge
-                    University Press). Research topics include  deep learning neural
+                    National University of Singapore. Research topics include  deep learning neural
                     networks as interactive  sound synthesis models, sound perception,
                     real-time musical  communication and notation, and audio technologies
                     for music education.
@@ -99,7 +96,7 @@ const OurTeam = () => {
                     </div>
                     <h3>Dr.George Waddell</h3>
                     <p>
-                    PhD in Music Performance, Research Associate, Royal College of Music
+                    Dr. George Waddell is Performance Research and Innovation Fellow and BMus Area Leader in Performance Science at the Royal College of Music. He is also a Module Leader and Honorary Research Associate in the Faculty of Medicine at Imperial College London. His research focusses on the evaluation of performance, including decision-making among judges and audiences and the development of evaluative skills, as well as how technology can be used to feed analytics data back to performers to enhance their practice.
                     </p>
                     <div class="icons">
                     <a

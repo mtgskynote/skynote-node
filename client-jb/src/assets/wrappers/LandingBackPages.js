@@ -44,8 +44,8 @@ const Wrapper = styled.main`
   }
   
   .violinipad{ 
-    width: 100%; 
-    height: 100%;
+    // width: 100%; 
+    // height: 600px;
     flex-shrink: 0;
     object-fit: cover;
   }
@@ -106,6 +106,8 @@ const Wrapper = styled.main`
     z-index: 1;
   }
 
+  
+
   .about-app{
     margin-top: 35rem;
     margin-left: 5rem;
@@ -114,10 +116,11 @@ const Wrapper = styled.main`
   
   .about-app h1{
     color: var(--grey-900);
-    font-size: 50px;
+    font-size: 45px;
     text-align: center;
     justify-content: center;
     margin: 0;
+    font-weight: normal;
     font-style: normal;
     line-height: 150%;
     font-family: var(--inter);
@@ -138,7 +141,7 @@ const Wrapper = styled.main`
     margin-top: 40rem;
   }
   .addspace4{
-    margin-top: 30rem;
+    margin-top: 34rem;
   }
   .addspace5{
     margin-top: 37rem;
@@ -613,10 +616,11 @@ p {
   font-weight: 300; 
   text-align: center;
   margin: 2em 0 2em 0;
-  text-transform: capitalize;
+  //text-transform: capitalize;
   letter-spacing: 1px;
   color: --grey-900;
 }
+
 .card a{
   text-decoration: none;
   color: inherit;
@@ -647,12 +651,33 @@ p {
   cursor: pointer;
 }
 
-.publicationbtn{
+.icons a{
+  color: var(--grey-900);
+}
+
+.publicationbtn {
   margin: auto;
   display: flex;
-  align-items: right;
-  color: --grey-900;
+  justify-content: center; 
+  align-items: center;
+  color: var(--grey-900);
 }
+
+.publicationbtn p {
+  margin: 0;
+  padding: 0.5rem 1rem; 
+  border: 1px solid var(--grey-900); 
+  border-radius: 5px; 
+  cursor: pointer; 
+  transition: background-color 0.3s ease; 
+}
+
+.publicationbtn p:hover {
+  background-color: var(--grey-900);
+  color: white;
+}
+
+
 
 .posts {
   display: grid;

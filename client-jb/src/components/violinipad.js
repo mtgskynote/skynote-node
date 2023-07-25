@@ -5,8 +5,7 @@ const ViolinIpad = ({ height, width }) => {
       src={Violin_Ipad}
       className="violinipad"
       altprop="violinipad"
-      height={height}
-      width={width}
+      style={{ width: '100vw', height: '600px' }}
     />
   );
 };
