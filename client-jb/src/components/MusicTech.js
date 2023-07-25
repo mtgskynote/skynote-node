@@ -5,8 +5,7 @@ const MusicTech = ({ height, width }) => {
       src={musictech}
       className="music-tech"
       altprop="music-tech"
-      height={height}
-      width={width}
+      style={{ width: '100vw', height: '600px' }}
     />
   );
 };

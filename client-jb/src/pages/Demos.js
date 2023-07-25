@@ -46,7 +46,7 @@
 
       <div className="about-app">
       <div className="addspace5"></div>
-       <h1>The SkyNote app provides multiple levels of excercises, ranging from beginner to well rehearsed, and it aims to aid in learning to play the violin. </h1>
+       <h1>The SkyNote app provides multiple levels of excercises, ranging from beginner to well rehearsed, and it aims to aid in the process of learning to play the violin. </h1>
       </div>
 
         <div className="addspace1"></div>

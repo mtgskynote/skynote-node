@@ -17,6 +17,7 @@ const publications = [
     publicationlink: "https://dl.acm.org/doi/pdf/10.1145/3125571.3125588",
     imagelink: pub1_img,
     text: "A multimodal corpus for technology-enhanced learning of violin playing",
+
   },
   {
     publicationlink: "https://dl.acm.org/doi/pdf/10.1145/3212721.3212886",
@@ -83,54 +84,14 @@ const Research = () => {
         </div>
         <div className="addspace"></div>
         
-        <div className="work-section-bottom">
-          {/* {workInfoData.map((data) => (
-            <div className="work-section-info">
-              {data.image}
-              <h2>{data.title}</h2>
-              <p>{data.text}</p>
-            </div>
-          ))} */}
-        </div>
 
      <div className="work-section-wrapper">
         <div className="work-section-top">
-          {/* <h1 className="primary-heading">Artificial Intelligence</h1>
-          <div></div>
-          <br></br>
-          <h2 className="primary-subheading">
-            Sound quality, posture, intonation, pitch, rhythm and expression in
-            music performance
-          </h2> */}
           <div className="addspace2"></div>
       </div> 
-        <div className="work-section-bottom">
-          {/* {videoInfoData.map((data) => (
-            <div class="column">
-              <div class="card">
-                <div>
-                  <h3>{data.title}</h3>
-                  <div
-                    class="ratio ratio-1x1"
-                    style={{
-                      position: "relative",
-                      overflow: "hidden",
-                    }}
-                  >
-                    <video controls>
-                      <source src={data.videolink} />
-                    </video>
-                  </div>
-                  <p>{data.text}</p>
-                </div>
-              </div>
-            </div>
-          ))} */}
-        </div>
+      
        </div> 
-
-      <div className="work-section-wrapper">
-        <div className="work-section-top">
+      <div className="work-section-top">
         <div className="violinipad-container">
            <div className="violinipad">
            <MusicTech/>
@@ -139,41 +100,36 @@ const Research = () => {
           <div className="violinipad-overlay">
             <h1>Research</h1>
             <h2>Discover whats current in Music Technology</h2>
-            <div></div>
-            <br></br>
           </div>
           </div>
-          {/* <div class="top-p-container"> */}
-          
-        {/* </h3>
-        </div> */}
-        {/* </div> */}
+      <div className="work-section-wrapper">
         <div className="addspace4"></div>
         <div className="work-section-bottom">
-          {publications.map((data) => (
-              <div class="posts">
+          {publications.map((data) => (  
+            <div class="posts">
               <div class="card">
                 <div>
                   <div>
                     <img src={data.imagelink} class="img2" />
                   </div>
                   <p>{data.text}</p>
-                  <div class="publicationbtn">
-                    <button
-                      class="btn btn-outline-dark"
-                      href={data.publicationlink}
+                  <div>
+                  <Link
+                      // class="btn btn-outline-dark"
+                      to={data.publicationlink}
                       target="_blank"
-                      a
                     >
-                      Publication
-                    </button>
-                    </div>
+                     <div class="publicationbtn">
+                      <p>Link</p>
+                     </div> 
+                    </Link>
                   </div>
                 </div>
-             </div>
-         ))}
+              </div>
+            </div>
+          ))}
         </div>
-          </div> 
+      </div> 
           </Wrapper>
           );
       };
