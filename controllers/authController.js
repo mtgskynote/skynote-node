@@ -19,12 +19,12 @@ const register = async (req, res) => {
   const token = user.createJWT();
   //attachCookie({ res, token });
 
-  res.status(StatusCodes.OK).json({
+  res.status(StatusCodes.CREATED).json({
     user: {
       email: user.email,
+      name: user.name,
       lastName: user.lastName,
       location: user.location,
-      name: user.name,
     },
     token,
   });
@@ -36,7 +36,7 @@ const login = async (req, res) => {
     throw new BadRequestError("Please provide all values");
   }
   const user = await User.findOne({ email }).select("+password");
-
+  console.log("user.name", user.name);
   if (!user) {
     throw new UnAuthenticatedError("Invalid Credentials");
   }
@@ -46,11 +46,33 @@ const login = async (req, res) => {
   }
   const token = user.createJWT();
   user.password = undefined;
-  res.status(StatusCodes.OK).json({ user, token, location: user.location });
+  res.status(StatusCodes.OK).json({
+    user: {
+      email: user.email,
+      name: user.name,
+    },
+    token,
+  });
 };
 
 const updateUser = async (req, res) => {
-  res.send("updateUser");
+  console.log("req.body", req.body);
+  const { email, name } = req.body;
+  if (!email || !name) {
+    throw new BadRequestError("Please provide all values");
+  }
+  const user = await User.findOne({ _id: req.user.userId });
+  user.email = email;
+  user.name = name;
+
+  await user.save();
+
+  const token = user.createJWT();
+  res.status(StatusCodes.OK).json({
+    user,
+    token,
+    location: user.location,
+  });
 };
 const getCurrentUser = async (req, res) => {
   const user = await User.findOne({ _id: req.user.userId });

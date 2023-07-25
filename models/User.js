@@ -4,14 +4,14 @@ import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 
 const UserSchema = new mongoose.Schema({
-  name: {
-    type: String,
-    required: [true, "Please provide name"],
-    minlength: 3,
-    maxlength: 20,
-    trim: true, // trims extra space.
-    select: false,
-  },
+  // name: {
+  //   type: String,
+  //   required: [true, "Please provide name"],
+  //   minlength: 3,
+  //   maxlength: 20,
+  //   trim: true, // trims extra space.
+  //   select: false,
+  // },
   email: {
     type: String,
     required: [true, "Please provide email"],
@@ -27,8 +27,16 @@ const UserSchema = new mongoose.Schema({
     minlength: 6,
     select: false,
   },
+  name: {
+    type: String,
+    required: [true, "Please provide name"],
+    minlength: 3,
+    maxlength: 20,
+    trim: true, // trims extra space.
+  },
   lastName: {
     type: String,
+    minlength: 3,
     maxlength: 20,
     trim: true, // trims extra space.
     default: "lastName",
@@ -42,12 +50,12 @@ const UserSchema = new mongoose.Schema({
 });
 
 UserSchema.pre("save", async function () {
+  if (!this.isModified("password")) return;
   const salt = await bcrypt.genSalt(10);
   this.password = await bcrypt.hash(this.password, salt);
 });
 
 UserSchema.methods.createJWT = function () {
-  console.log(this);
   return jwt.sign({ userId: this._id }, process.env.JWT_SECRET, {
     expiresIn: process.env.JWT_EXPIRES_IN,
   });
@@ -58,4 +66,4 @@ UserSchema.methods.comparePassword = async function (candidatePassword) {
   return isMatch;
 };
 
-export default mongoose.model("User", UserSchema);
+export default mongoose.model("Users", UserSchema);

@@ -3,6 +3,12 @@ import { useNavigate } from "react-router-dom";
 import { Logo, FormRow, Alert } from "../components";
 import Wrapper from "../assets/wrappers/RegisterPage";
 import { useAppContext } from "../context/appContext";
+import { Link } from "react-router-dom";
+import WhiteLogo from "../components/WhiteLogo";
+import "bootstrap/dist/css/bootstrap.min.css";
+
+// import { useGoogleLogin } from "@react-oauth/google";
+// import { useDispatch } from "react-redux";
 
 // global context and useNavigate later
 
@@ -18,7 +24,8 @@ const initialState = {
 function Register() {
   const [values, setValues] = useState(initialState);
   const navigate = useNavigate();
-  const { user, isLoading, showAlert, displayAlert, registerUser, loginUser } =
+
+  const { user, isLoading, showAlert, displayAlert, setupUser } =
     useAppContext();
 
   const toggleMember = () => {
@@ -38,10 +45,19 @@ function Register() {
       return;
     }
     const currentUser = { name, email, password };
+
     if (isMember) {
-      loginUser(currentUser);
+      setupUser({
+        currentUser,
+        endPoint: "login",
+        alertText: "Login Successful! Redirecting...",
+      });
     } else {
-      registerUser(currentUser);
+      setupUser({
+        currentUser,
+        endPoint: "register",
+        alertText: "User Created! Redirecting...",
+      });
     }
     console.log(values);
   };
@@ -53,10 +69,29 @@ function Register() {
       }, 3000);
     }
   }, [user, navigate]);
+
   return (
     <Wrapper className="full-page">
+      <div className="site-header">
+        <div className="tab-row-container">
+          <div className="tab-row">
+              <div className="tab-login"><Link to="/landing" className="tab-link"> Home </Link></div>
+              <div className="tab-login"><Link to="/demos" className="tab-link"> Demos </Link></div>
+              <div className="tab-login"><Link to="/ourteam" className="tab-link"> Our Team </Link></div>
+              <div className="tab-login"><Link to="/research" className="tab-link"> Research </Link></div>
+              <div className="tab-login"><Link to="https://docs.google.com/forms/d/e/1FAIpQLSdE6QIt2Xfno67jWjBi2SJOB1dImKhmvJYr9Mzi9Qbo1BGHuw/viewform" className="tab-link"> Interest Form </Link></div>
+              <div className="tab-login"><Link to="/register" className="tab-link"> Login/Register </Link></div>
+          </div>
+        </div>
+        <div className="logo-container"> 
+          <WhiteLogo/>
+        </div>
+        <div className="skynote-container">
+          SkyNote
+        </div>
+      </div>
       <form className="form" onSubmit={onSubmit}>
-        <Logo />
+        <Logo width={175} height={75}/>
         <h3>{values.isMember ? "Login" : "Register"}</h3>
         {showAlert && <Alert />}
 
@@ -94,9 +129,19 @@ function Register() {
             {values.isMember ? "Register" : "Login"}
           </button>
         </p>
+        <div className="g-signin2" data-onsuccess="onSignIn">
+          <button
+            type="button"
+            onClick={() => "login()"}
+            className="google-btn"
+          >
+            <i className="fa-brands fa-google btn"></i> Sign up with google
+          </button>
+        </div>
       </form>
     </Wrapper>
   );
 }
+
 
 export default Register;

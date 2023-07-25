@@ -6,6 +6,15 @@
 
 /* fonts */
 @import url("https://fonts.googleapis.com/css2?family=Cabin&family=Roboto+Condensed:wght@400;700&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Poppins:wght@300&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@500&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Schibsted+Grotesk:wght@500&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Montserrat:wght@800&family=Schibsted+Grotesk:wght@500&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Roboto:wght@100;500&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Open+Sans:wght@500&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Inter:wght@600&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Lato&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Nunito:wght@300&display=swap");
 
 html {
   font-size: 100%;
@@ -24,6 +33,12 @@ html {
   --primary-800: #0a6c74;
   --primary-900: #044e54;
 
+  --blue-100: #58b9ed;
+  --blue-200: #2da8eb;
+  --blue-300: #2d88eb;
+
+  --off-white: #f3f7f7;
+
   /* grey */
   --grey-50: #f0f4f8;
   --grey-100: #d9e2ec;
@@ -35,6 +50,7 @@ html {
   --grey-700: #334e68;
   --grey-800: #243b53;
   --grey-900: #102a43;
+  --grey-1000: #23292b;
   /* rest of the colors */
   --black: #222;
   --white: #fff;
@@ -44,8 +60,16 @@ html {
   --green-dark: #0f5132;
 
   /* fonts  */
-  --headingFont: "Roboto Condensed", Sans-Serif;
-  --bodyFont: "Cabin", Sans-Serif;
+  --headingFont: "Poppins", Sans-Serif;
+  --bodyFont: "Poppins", Sans-Serif;
+  /* --newFont: 'Noto Sans JP', sans-serif;
+  --overlayFont:'Schibsted Grotesk', sans-serif;
+  --otherFont: 'Montserrat', sans-serif;
+  --openSans: 'Open Sans', sans-serif;
+  --inter:  'Inter', sans-serif;
+  --lato: 'Lato', sans-serif;
+  --nunito: 'Nunito', sans-serif; */
+
   --small-text: 0.875rem;
   --extra-small-text: 0.7em;
   /* rest of the vars */
@@ -177,7 +201,7 @@ ul {
 }
 .btn-hero {
   font-size: 1.25rem;
-  padding: 0.5rem 1.25rem;
+  padding: 0.5rem 0.5rem;
 }
 .btn-danger {
   background: var(--red-light);
@@ -321,3 +345,44 @@ ul {
     margin-right: 0.5rem;
   }
 }
+
+.volume-slider {
+  position: absolute;
+  top: 45px;
+  right: 35px;
+  /* background-color: gray; */
+  width: 100px;
+  height: 5px;
+  border-radius: 5px;
+  padding: 5px;
+}
+
+.volume-slider input[type="range"] {
+  width: 100%;
+  height: 5px;
+  border-radius: 5px;
+}
+
+/* 
+.volume-slider {
+    width: 100px;
+      height: 50px;
+      background-color: rgb(51, 51, 51);
+      border: 1px solid gray;
+      padding: 10px;
+}
+
+.bpm-slider {
+  width: 100px;
+  height: 50px;
+  background-color: rgb(51, 51, 51);
+  border: 1px solid gray;
+  padding: 10px;
+}
+
+.slider-label {
+  display: block;
+  font-size: 12px;
+  font-weight: bold;
+  margin-bottom: 5px;
+} */

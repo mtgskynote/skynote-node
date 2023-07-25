@@ -1,23 +1,59 @@
-import { BrowserRouter, Routes, Route, Link } from "react-router-dom";
-import { Register, Dashboard, Landing, Error } from "./pages";
+import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { Register, OurTeam, Demos, Research, Landing, Error, ProtectedRoute } from "./pages";
+
+import { Profile, Stats, SharedLayout } from "./pages/dashboard";
+
+import AllLessons from "./components/AllLessons";
+import ProgressPlayFile from "./components/ProgressPlayFile";
+
+import LevelOne from "./components/levels/LevelOne";
+import LevelTwo from "./components/levels/LevelTwo";
+import LevelThree from "./components/levels/LevelThree";
+import ErrorBoundary from "./components/ErrorBoundary";
+
+import TimbreVisualization from "./components/TimbreVisualization";
 
 function App() {
   return (
-    <div className="App">
-      <BrowserRouter>
-        <nav>
-          <Link to="/">Dashboard</Link>
-          <Link to="/register">Register</Link>
-          <Link to="/landing">Landing</Link>
-        </nav>
+    <div>
+      <ErrorBoundary>
+        <div className="App">
+          <BrowserRouter>
+            <Routes>
+              <Route
+                path="/"
+                element={
+                  <ProtectedRoute>
+                    <SharedLayout />
+                  </ProtectedRoute>
+                }
+              >
+                <Route index element={<Stats />} />
+                <Route path="profile" element={<Profile />} />
+                <Route path="all-lessons" element={<AllLessons />} />
+                <Route
+                  path="all-lessons/:files"
+                  element={<ProgressPlayFile />}
+                />
+                <Route path="/levels/levelone" element={<LevelOne />} />
+                <Route path="/levels/leveltwo" element={<LevelTwo />} />
+                <Route path="/levels/levelthree" element={<LevelThree />} />
+                <Route
+                  path="/TimbreVisualization"
+                  element={<TimbreVisualization />}
+                />
+              </Route>
 
-        <Routes>
-          <Route path="/" element={<Dashboard />} />
-          <Route path="/register" element={<Register />} />
-          <Route path="/landing" element={<Landing />} />
-          <Route path="*" element={<Error />} />
-        </Routes>
-      </BrowserRouter>
+              <Route path="/register" element={<Register />} />
+              <Route path="/ourteam" element={<OurTeam />} />
+              <Route path="/research" element={<Research />} />
+              <Route path="/demos" element={<Demos />} />
+              <Route path="/landing" element={<Landing />} />
+              <Route path="*" element={<Error />} />
+            </Routes>
+          </BrowserRouter>
+        </div>
+      </ErrorBoundary>
     </div>
   );
 }
