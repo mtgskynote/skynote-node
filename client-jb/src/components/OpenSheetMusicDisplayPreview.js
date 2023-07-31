@@ -27,10 +27,20 @@ const OpenSheetMusicDisplayPreview = ({ file }) => {
 
       // Hide the cursor after the OpenSheetMusicDisplay instance is fully loaded
       osmdRef.current.cursor.hide();
+      osmdRef.current.SheetMaximumWidth = 100;
+      //   osmdRef.current.zoom = 1.0;
     });
   }, [file]);
 
-  return <div id="osmd-container" />;
+  const containerStyle = {
+    maxWidth: "50%", // Adjust the percentage to the desired width
+    maxHeight: "50%", // This will maintain the aspect ratio and shrink the height accordingly
+    // You can also add other styles here if needed
+    flexshrink: 1,
+  };
+
+  return <div id="osmd-container" style={containerStyle} />;
+  // return <div id="osmd-container" />;
 };
 
 export default OpenSheetMusicDisplayPreview;
