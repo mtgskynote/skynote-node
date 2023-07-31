@@ -18,50 +18,61 @@ const folderBasePath2 = "/musicXmlFiles/violin-musicXML";
 const levelOnefiles = [
   "Row.xml",
   // "74_Minuet_2.xml",
-  // "50_Tercer_dedo_Ejercicios_2.xml",x
-  "11_Cuerdas_Al_Aire_3_(Suelta)_G.xml",
+  "001_Cuerdas_Al_Aire_1_Suelta_A.xml",
   "2_Cuerdas_Al_Aire_1_(Suelta)_D.xml",
+  "02_Cuerdas_Al_Aire_1_(Suelta)_D.xml",
   "3_Cuerdas_Al_Aire_1_(Suelta)_G.xml",
   "4_Cuerdas_Al_Aire_1_(Suelta)_E.xml",
   "5_Cuerdas_Al_Aire_2_(Suelta)_A.xml",
+  "077_The_Happy_Farmer.xml",
 ];
 const levelTwofiles = [
+  "006_Cuerdas_Al_Aire_2_(Suelta)_D.xml",
   "6_Cuerdas_Al_Aire_2_(Suelta)_D.xml",
+  "007_Cuerdas_Al_Aire_2_(Suelta)_G.xml",
   "7_Cuerdas_Al_Aire_2_(Suelta)_G.xml",
+  "008_Cuerdas_Al_Aire_2_(Suelta)_E.xml",
   "8_Cuerdas_Al_Aire_2_(Suelta)_E.xml",
+  "009_Cuerdas_Al_Aire_3_(Suelta)_A.xml",
   "9_Cuerdas_Al_Aire_3_(Suelta)_A.xml",
+  "010_Cuerdas_Al_Aire_3_(Suelta)_D.xml",
   "10_Cuerdas_Al_Aire_3_(Suelta)_D.xml",
 ];
 const levelThreefiles = [
-  "11_Cuerdas_Al_Aire_3_(Suelta)_G.xml",
-  "12_Cuerdas_Al_Aire_3_(Suelta)_E.xml",
-  "13_Cuerdas_Al_Aire_4_(Suelta)_A.xml",
-  "14_Cuerdas_Al_Aire_4_(Suelta)_D.xml",
-  "15_Cuerdas_Al_Aire_4_(Suelta)_G.xml",
+  "011_Cuerdas_Al_Aire_3_(Suelta)_G.xml",
+  "012_Cuerdas_Al_Aire_3_(Suelta)_E.xml",
+  "013_Cuerdas_Al_Aire_4_(Suelta)_A.xml",
+  "014_Cuerdas_Al_Aire_4_(Suelta)_D.xml",
+  "015_Cuerdas_Al_Aire_4_(Suelta)_G.xml",
 ];
 const getTitle = async (fileName) => {
   try {
     const response = await fetch(`${folderBasePath}/${fileName}`);
     const xmlFileData = await response.text();
-    const arr = new XMLParser()
-      .parseFromString(xmlFileData)
-      .getElementsByTagName("movement-title");
-    if (arr && arr.length > 0) {
+    const arr = Array.from(
+      new XMLParser()
+        .parseFromString(xmlFileData)
+        .getElementsByTagName("movement-title")
+    );
+    if (arr.length > 0) {
       return arr[0].value;
     } else {
-      return fileName; // write filename here (fileName) if want to display the file name. or a string like "No title"
+      return fileName;
+      // Use the filename as the title if "movement-title" element is not found.
     }
   } catch (err) {
     console.log(err.message);
     return fileName;
   }
 };
+
 const fetchAllTitles = async (files) => {
   const titles = {};
   for (let file of files) {
-    titles[file] = await getTitle(file);
+    const encodedFileName = encodeURIComponent(file);
+    titles[file] = await getTitle(encodedFileName);
+    console.log("fielname: ", titles[file]);
   }
-  console.log(titles);
   return titles;
 };
 
@@ -72,95 +83,6 @@ const sxStyles = {
   margin: "2rem",
   fontSize: 30,
 };
-
-// const levelOneData = {
-//   id: "root",
-//   name: "Level One",
-//   children: [
-//     {
-//       id: "11",
-//       name: "Basic Bowing I",
-//       children: [
-//         {
-//           id: "111",
-//           name: "Cuerdas AI Aire 1 (Suelta) A",
-//           path: "/all-lessons/Cuerdas_Al_Aire_1_(Suelta)_A.xml",
-//         },
-//         {
-//           id: "112",
-//           name: "Cuerdas AI Aire 1 (Suelta) D",
-//           path: "/all-lessons/5_Cuerdas_Al_Aire_2_(Suelta)_A.xml",
-//         },
-//         {
-//           id: "113",
-//           name: "Cuerdas AI Aire 1 (Suelta) G",
-//           path: "/all-lessons/Cuerdas_Al_Aire_1_(Suelta)_D.xml",
-//         },
-//         {
-//           id: "114",
-//           name: "Cuerdas AI Aire 1 (Suelta) E",
-//           path: "/all-lessons/Cuerdas_Al_Aire_1_(Suelta)_E.xml",
-//         },
-//       ],
-//     },
-//     {
-//       id: "12",
-//       name: "Half Bows II",
-//     },
-//     {
-//       id: "13",
-//       name: "Little Pieces",
-//     },
-//     {
-//       id: "14",
-//       name: "2nd Finger",
-//       children: [
-//         {
-//           id: "15",
-//           name: "Row Row Row Your Boat",
-//           path: "/all-lessons/Row.xml",
-//         },
-//         {
-//           id: "16",
-//           name: "Twinkle Twinkle",
-//           path: "/all-lessons/Row.xml",
-//         },
-//       ],
-//     },
-//     {
-//       id: "17",
-//       name: "Half Bows I",
-//     },
-//     {
-//       id: "18",
-//       name: "2nd String Changing",
-//     },
-//     {
-//       id: "19",
-//       name: "1st Finger",
-//     },
-//     {
-//       id: "20",
-//       name: "2nd Finger Pieces",
-//     },
-//     {
-//       id: "21",
-//       name: "Basic Bowing II",
-//     },
-//     {
-//       id: "22",
-//       name: "3rd String Changing",
-//     },
-//     {
-//       id: "23",
-//       name: "1st Finger/Changing String",
-//     },
-//     {
-//       id: "24",
-//       name: "3rd Finger",
-//     },
-//   ],
-// };
 
 const levelOneData = {
   id: "root",
@@ -181,29 +103,17 @@ const levelOneData = {
 
 const levelTwoData = {
   id: "root",
-  name: "Level Two",
+  name: "Level One",
   children: [
     {
       id: "21",
       name: "Basic Bowing I",
-    },
-    {
-      id: "22",
-      name: "Half Bows II",
-    },
-    {
-      id: "23",
-      name: "Little Pieces",
-    },
-    {
-      id: "24",
-      name: "2nd Finger",
-      children: [
-        {
-          id: "25",
-          name: "Xml File Path",
-        },
-      ],
+      children: levelTwofiles.map((file, index) => ({
+        id: `210${index}`,
+        name: file,
+        path: `${folderBasePath}/${file}`,
+        route_path: `/all-lessons/${file}`,
+      })),
     },
   ],
 };
@@ -247,6 +157,7 @@ const AllLessons = () => {
   const handleNodeSelect = (event, nodeId) => {
     setSelectedNode(nodeId);
   };
+  console.log("titles ajskdfjaskldjflaksdjflk", titles);
 
   const renderTree = (nodes) => (
     <TreeItem
@@ -322,7 +233,7 @@ const AllLessons = () => {
                           <div></div>
 
                           {selectedNode === childNode.id && (
-                            <div style={{ flexShrink: 0, width: "50%" }}>
+                            <div style={{ flexShrink: 1, width: "60%" }}>
                               <OpenSheetMusicDisplayPreview
                                 file={childNode.path}
                               />
@@ -373,6 +284,7 @@ const AllLessons = () => {
           defaultExpandIcon={<ChevronRightIcon />}
           sx={sxStyles}
           style={{ fontSize: 30 }}
+          onNodeSelect={handleNodeSelect}
         >
           {renderTree(levelTwoData)}
         </TreeView>
@@ -383,6 +295,7 @@ const AllLessons = () => {
           defaultExpandIcon={<ChevronRightIcon />}
           sx={sxStyles}
           style={{ fontSize: 30 }}
+          onNodeSelect={handleNodeSelect}
         >
           {renderTree(levelThreeData)}
         </TreeView>
