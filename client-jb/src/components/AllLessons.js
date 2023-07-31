@@ -14,12 +14,12 @@ import OpenSheetMusicDisplayPreview from "./OpenSheetMusicDisplayPreview";
 import XMLParser from "react-xml-parser";
 
 const folderBasePath = "/musicXmlFiles";
-const routePath = "/all-lessons";
+const folderBasePath2 = "/musicXmlFiles/violin-musicXML";
 const levelOnefiles = [
-  // "Row.xml",
+  "Row.xml",
   // "74_Minuet_2.xml",
-  // "50_Tercer_dedo_Ejercicios_2.xml",
-  "1_Cuerdas_Al_Aire_1_(Suelta)_A.xml",
+  // "50_Tercer_dedo_Ejercicios_2.xml",x
+  "11_Cuerdas_Al_Aire_3_(Suelta)_G.xml",
   "2_Cuerdas_Al_Aire_1_(Suelta)_D.xml",
   "3_Cuerdas_Al_Aire_1_(Suelta)_G.xml",
   "4_Cuerdas_Al_Aire_1_(Suelta)_E.xml",
@@ -49,7 +49,7 @@ const getTitle = async (fileName) => {
     if (arr && arr.length > 0) {
       return arr[0].value;
     } else {
-      return "movement-title"; // write filename here (fileName) if want to display the file name.
+      return fileName; // write filename here (fileName) if want to display the file name. or a string like "No title"
     }
   } catch (err) {
     console.log(err.message);
@@ -302,11 +302,14 @@ const AllLessons = () => {
                           <div>
                             {childNode.route_path ? (
                               <Link to={childNode.route_path}>
-                                <div
+                                {/* <div
                                   style={{ marginRight: "10px", fontSize: 20 }}
                                 >
                                   {childNode.name}
-                                </div>
+                                </div> */}
+                                <span>
+                                  {titles[childNode.path.split("/").pop()]}
+                                </span>
                               </Link>
                             ) : (
                               <div
@@ -316,6 +319,8 @@ const AllLessons = () => {
                               </div>
                             )}
                           </div>
+                          <div></div>
+
                           {selectedNode === childNode.id && (
                             <div style={{ flexShrink: 0, width: "50%" }}>
                               <OpenSheetMusicDisplayPreview
@@ -385,64 +390,6 @@ const AllLessons = () => {
 
       <div className="center" style={{ marginTop: "2rem" }}>
         <h2>Level One</h2>
-      </div>
-      <div className="center">
-        <Row xs={1} md={3} className="g-4" style={{ marginTop: "2rem" }}>
-          <Col>
-            <ViolinCard
-              violinImg={violinImg2}
-              subfolder="/levels/levelone"
-              ButtonText="Basic Bowing"
-            />
-          </Col>
-          <Col>
-            <ViolinCard
-              violinImg={violinImg2}
-              subfolder="/levels/leveltwo"
-              ButtonText="Level Two"
-            />
-          </Col>
-          <Col>
-            <ViolinCard
-              violinImg={violinImg2}
-              subfolder="/levels/levelthree"
-              ButtonText="Level Three"
-            />
-          </Col>
-        </Row>
-      </div>
-
-      <div className="center" style={{ marginTop: "2rem" }}>
-        <h2>Level Two</h2>
-      </div>
-      <div className="center">
-        <Row xs={1} md={3} className="g-4" style={{ marginTop: "2rem" }}>
-          <Col>
-            <ViolinCard
-              violinImg={violinImg2}
-              subfolder="/levels/levelone"
-              ButtonText="Advanced Bowing"
-            />
-          </Col>
-          <Col>
-            <ViolinCard
-              violinImg={violinImg2}
-              subfolder="/levels/leveltwo"
-              ButtonText="Level Two"
-            />
-          </Col>
-          <Col>
-            <ViolinCard
-              violinImg={violinImg2}
-              subfolder="/levels/levelthree"
-              ButtonText="Level Three"
-            />
-          </Col>
-        </Row>
-      </div>
-
-      <div className="center" style={{ marginTop: "2rem" }}>
-        <h2>Level Three</h2>
       </div>
       <div className="center">
         <Row xs={1} md={3} className="g-4" style={{ marginTop: "2rem" }}>
