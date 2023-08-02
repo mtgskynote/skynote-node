@@ -1,6 +1,6 @@
 import express from "express";
 const scoreRouter = express.Router();
-import { names, levels, skills } from "../controllers/scoreController.js";
+import { names, levels, skills, xml } from "../controllers/scoreController.js";
 
 
 // since authrouter contains routes that are post methods
@@ -9,5 +9,6 @@ import { names, levels, skills } from "../controllers/scoreController.js";
 scoreRouter.route("/names").get(names);
 scoreRouter.route("/levels").get(levels);
 scoreRouter.route("/skills").get(skills);
+scoreRouter.route("/xml").get(xml);
 
 export default scoreRouter;

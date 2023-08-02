@@ -2,23 +2,35 @@ import xmlScores from "../models/xmlScoreModel.js";
 import { StatusCodes } from "http-status-codes";
 import { BadRequestError, UnAuthenticatedError } from "../errors/index.js";
 
-console.log("loading scoreController with the function getScores !!!!!!!!!!!!!")
 
+import { dirname } from "path";
+import { fileURLToPath } from "url";
+const pathname = "/xmlScores/violin"
+
+
+/*
+  Requester may want just the name, a URL, or the path to the file (from /public) for their convenience
+*/
+const formatName = function(fname, format){
+  if (format && format == "URL") {return "https://appskynote.com" + pathname + "/" + fname + ".xml"}
+  if (format && format == "path") {return pathname+ "/" + fname+".xml"}
+  return fname;
+}
 /*
   Get a list of all the file names with 'level' and/or 'skill' (provided in the req.body)
 */
 const names = async (req, res) => {
   console.log(`in score name function, req.body is ${JSON.stringify(req.body)}`)
-  const { level, skill } = req.body;
+  const { level, skill, format } = req.body; //(integer) level, (string) skill, format = "name" || "URL" || "path"
   let match = {}
   if (level) {match.level = level} 
   if (skill) {match.skill = skill}
 
-  console.log(`about to get score names with match params = ${JSON.stringify(match)}`)
-  //throw new BadRequestError("no level or skill, so returnin entire list of scores");
   let docs = await xmlScores.find(match); //({level: level, skill: skill})
   let docnames=[];
-  for(let i=0;i<docs.length;i++) {docnames.push(docs[i].fname);}
+  for(let i=0;i<docs.length;i++) {
+    docnames.push(formatName(docs[i].fname, format));
+  }
   res.status(StatusCodes.OK).json(docnames);
 };
 
@@ -41,5 +53,22 @@ const levels = async (req, res) => {
   res.status(StatusCodes.OK).json(levellist);
 }
 
+/*
+  return xml of file
+*/
+const __dirname = dirname(fileURLToPath(import.meta.url));
+const scoreLocation= __dirname+"/../client-jb/public"+pathname
+const xml = async (req, res) => {
+  let { fname } = req.body;  
+  if (! fname) {
+    throw new BadRequestError("need a score name to retrieve");
+  }
+  let extname=fname + ".xml"
+  // should check for existance
+  res.sendFile(extname, { root: scoreLocation });
+ 
+  //res.sendFile(extname, { root: scoreLocation });
+  // https://appskynote.com/musicXmlFiles/74_Minuet_2.xml
+}
 
-export { names, levels, skills };
+export { names, levels, skills, xml };

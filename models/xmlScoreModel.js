@@ -1,5 +1,5 @@
 import mongoose from "mongoose";
-console.log(`loading xmlScoreModels!!!!!!!!!!!!!!`);
+
 const xmlScoreSchema = new mongoose.Schema({
     fname: {
         type: String,
