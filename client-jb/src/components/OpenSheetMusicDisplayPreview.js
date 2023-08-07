@@ -39,8 +39,8 @@ const OpenSheetMusicDisplayPreview = ({ file }) => {
     flexshrink: 1,
   };
 
-  return <div id="osmd-container" style={containerStyle} />;
-  // return <div id="osmd-container" />;
+  // return <div id="osmd-container" style={containerStyle} />;
+  return <div id="osmd-container" />;
 };
 
 export default OpenSheetMusicDisplayPreview;
