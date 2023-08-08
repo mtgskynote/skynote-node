@@ -44,7 +44,7 @@ As a way to use legacy-peer-deps always you can configure it using the below lin
 
 3. OSMD Extended (Open sheet music display - Extended)
 
-[Opensheetmusicdisplay(OSMD)](https://opensheetmusicdisplay.org/) is the library based on vexflow that is used to render sheet music (music scores). The standard for displaying and sharing sheet music display is using MusicXML files, and OSMD can render these files along with xml files. The free version of OSMD that can be installed using "npm i opensheetmusicdisplay" is limited to displaying the scores, and doing some basic interaction with it, like showing a cursor, zoom in out, show score names etc. However, the need of this project is beyond that as we also need to playback the music scores. To do that an audio player is needed, the free version of OSMD doesnt support that.
+[Opensheetmusicdisplay(OSMD)](https://opensheetmusicdisplay.org/) is the library based on vexflow that is used to render sheet music (music scores). The standard for displaying and sharing sheet music display is using MusicXML files, and OSMD can render these files along with xml files. The free version of OSMD that can be installed using "npm i opensheetmusicdisplay" which is limited to displaying the scores, and doing some basic interaction with it, like showing a cursor, zoom in out, show score names etc. However, the need of this project is beyond that as we also need to playback the music scores. To do that an audio player is needed, which is included in the paid version.
 
 Therefore, this project uses a paid version of the OSMD software and hence the usual version of the npm package for opensheetmusicdisplay will not fully support the functionalities implemented in this project. In order to use the opensheetmusicdisplay extended version you will need access to the github repository of the osmd-extended. The [osmd-extended](https://github.com/opensheetmusicdisplay/osmd-extended) repository is not available to everyone, they give access only to sponsors (currently Abhishek, Lonce and Rafael have access to the extended repo).
 
@@ -56,7 +56,7 @@ NOTE THAT: You dont need to always build osmd-extended from scratch, since we on
 a) Clone the OSMD-Extended repository: https://github.com/opensheetmusicdisplay/osmd-extended in a separate directory
 
 b) To build the minified version go to your clone directory and run in your terminal:
-cd <cloned directory path>
+cd "cloned directory path"
 npm run build
 
 You will find a minified opensheetmusicdisplay.min.js in the build/ folder. If you want to test the official version of osmd-extended provided by the developers of OSMD, you can also run the local demo of osmd-extended by using the command: npm start
@@ -65,7 +65,9 @@ If you need more detailed instructions to build, they can be found here: https:/
 \*the link is for Open source OSMD, however the steps to build for OSMD-Extended are same, instead of cloning the public OSMD, you clone the OSMD-Extended repo.
 
 d) Once you have cloned the osmd-extended repo and built the minified version,
+
 i) first do npm i opensheetmusicdisplay
+
 ii) then go to your skynote-node/cñient-jb folder and in your package.json file under dependencies and:
 
         replace:
