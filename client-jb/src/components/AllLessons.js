@@ -12,38 +12,41 @@ import ChevronRightIcon from "@mui/icons-material/ChevronRight";
 import TreeItem from "@mui/lab/TreeItem";
 import OpenSheetMusicDisplayPreview from "./OpenSheetMusicDisplayPreview";
 import XMLParser from "react-xml-parser";
+import axios from "axios";
 
 const folderBasePath = "/musicXmlFiles";
-const folderBasePath2 = "/musicXmlFiles/violin-musicXML";
+const folderBasePath2 = "/xmlScores/violin";
 const levelOnefiles = [
   "Row.xml",
   // "74_Minuet_2.xml",
-  "001_Cuerdas_Al_Aire_1_Suelta_A.xml",
-  "2_Cuerdas_Al_Aire_1_(Suelta)_D.xml",
-  "02_Cuerdas_Al_Aire_1_(Suelta)_D.xml",
-  "3_Cuerdas_Al_Aire_1_(Suelta)_G.xml",
-  "4_Cuerdas_Al_Aire_1_(Suelta)_E.xml",
-  "5_Cuerdas_Al_Aire_2_(Suelta)_A.xml",
-  "77_The_Happy_Farmer.xml",
+  // "001_Cuerdas_Al_Aire_1_Suelta_A.xml",
+  // "2_Cuerdas_Al_Aire_1_(Suelta)_D.xml",
+  // "02_Cuerdas_Al_Aire_1_(Suelta)_D.xml",
+  // "3_Cuerdas_Al_Aire_1_(Suelta)_G.xml",
+  // "4_Cuerdas_Al_Aire_1_(Suelta)_E.xml",
+  // "5_Cuerdas_Al_Aire_2_(Suelta)_A.xml",
+  // "77_The_Happy_Farmer.xml",
 ];
 const levelTwofiles = [
-  "006_Cuerdas_Al_Aire_2_(Suelta)_D.xml",
-  "6_Cuerdas_Al_Aire_2_(Suelta)_D.xml",
-  "007_Cuerdas_Al_Aire_2_(Suelta)_G.xml",
-  "7_Cuerdas_Al_Aire_2_(Suelta)_G.xml",
-  "008_Cuerdas_Al_Aire_2_(Suelta)_E.xml",
-  "8_Cuerdas_Al_Aire_2_(Suelta)_E.xml",
-  "009_Cuerdas_Al_Aire_3_(Suelta)_A.xml",
-  "9_Cuerdas_Al_Aire_3_(Suelta)_A.xml",
-  "010_Cuerdas_Al_Aire_3_(Suelta)_D.xml",
-  "10_Cuerdas_Al_Aire_3_(Suelta)_D.xml",
+  "Row.xml",
+  // "006_Cuerdas_Al_Aire_2_(Suelta)_D.xml",
+  // "6_Cuerdas_Al_Aire_2_(Suelta)_D.xml",
+  // "007_Cuerdas_Al_Aire_2_(Suelta)_G.xml",
+  // "7_Cuerdas_Al_Aire_2_(Suelta)_G.xml",
+  // "008_Cuerdas_Al_Aire_2_(Suelta)_E.xml",
+  // "8_Cuerdas_Al_Aire_2_(Suelta)_E.xml",
+  // "009_Cuerdas_Al_Aire_3_(Suelta)_A.xml",
+  // "9_Cuerdas_Al_Aire_3_(Suelta)_A.xml",
+  // "010_Cuerdas_Al_Aire_3_(Suelta)_D.xml",
+  // "10_Cuerdas_Al_Aire_3_(Suelta)_D.xml",
 ];
 const levelThreefiles = [
-  "011_Cuerdas_Al_Aire_3_(Suelta)_G.xml",
-  "012_Cuerdas_Al_Aire_3_(Suelta)_E.xml",
-  "013_Cuerdas_Al_Aire_4_(Suelta)_A.xml",
-  "014_Cuerdas_Al_Aire_4_(Suelta)_D.xml",
-  "015_Cuerdas_Al_Aire_4_(Suelta)_G.xml",
+  "Row.xml",
+  // "011_Cuerdas_Al_Aire_3_(Suelta)_G.xml",
+  // "012_Cuerdas_Al_Aire_3_(Suelta)_E.xml",
+  // "013_Cuerdas_Al_Aire_4_(Suelta)_A.xml",
+  // "014_Cuerdas_Al_Aire_4_(Suelta)_D.xml",
+  // "015_Cuerdas_Al_Aire_4_(Suelta)_G.xml",
 ];
 const getTitle = async (fileName) => {
   try {
@@ -66,12 +69,21 @@ const getTitle = async (fileName) => {
   }
 };
 
+const getAllSkills = async () => {
+  try {
+    const response = await axios.get("/api/v1/scores/names", { level: 2 });
+    console.log(response.data);
+  } catch (error) {
+    console.error("Error fetching file names:", error);
+  }
+};
+
 const fetchAllTitles = async (files) => {
   const titles = {};
   for (let file of files) {
     const encodedFileName = encodeURIComponent(file);
     titles[file] = await getTitle(encodedFileName);
-    console.log("fielname: ", titles[file]);
+    // console.log("fielname: ", titles[file]);
   }
   return titles;
 };
@@ -150,14 +162,38 @@ const levelThreeData = {
 const AllLessons = () => {
   const [titles, setTitles] = useState({});
   const [selectedNode, setSelectedNode] = useState(null);
+  const [skills, setSkills] = useState([]);
+  // const [levels, setLevels] = useState([]);
+
+  // const fetchLevels = async () => {
+  //   try {
+  //     const response = await axios.get("api/v1/scores/levels");
+  //     setLevels(response.data); // Assuming the API returns an array of levels in the response
+  //   } catch (error) {
+  //     console.error("Error fetching levels:", error);
+  //   }
+  // };
+
+  const fetchSkills = async () => {
+    try {
+      const response = await axios.get("/api/v1/scores/skills");
+      setSkills(response.data); // Assuming the API returns an array of skills in the response
+    } catch (error) {
+      console.error("Error fetching skills:", error);
+    }
+  };
+
   useEffect(() => {
+    // fetchLevels();
+    getAllSkills();
+    // fetchSkills();
     const allFiles = [...levelOnefiles, ...levelTwofiles, ...levelThreefiles];
     fetchAllTitles(allFiles).then(setTitles);
   }, []);
   const handleNodeSelect = (event, nodeId) => {
     setSelectedNode(nodeId);
   };
-  console.log("titles ajskdfjaskldjflaksdjflk", titles);
+  // console.log("titles ajskdfjaskldjflaksdjflk", titles);
 
   const renderTree = (nodes) => (
     <TreeItem
