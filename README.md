@@ -1,18 +1,16 @@
 This document contains steps for setting up the project and navigating around some common dependency issues.
 
-appskynote.com   (143.110.164.154, hosted on DigitalOcean, must have an account with ssh access (ask lonce)
+appskynote.com (143.110.164.154, hosted on DigitalOcean, must have an account with ssh access (ask lonce)
 
 **MongoDB**
 
-​     If you use Compass of Studio3T GUIs to access, your credentials should look like this:
+​ If you use Compass of Studio3T GUIs to access, your credentials should look like this:
 
 - General/Host - localhost:27017
 - Username/Password - your database usename and password and the database your credentials are associated with. Authentification Mechansm: SCRAM-SHA-256
 - Proxy/SSH - SSH Hostname: appskynote.com, SSH Port: 22, SSH Username: login name for appskynote.com, SSH Identity File: browse to your private key file (e.g. ~.ssh/id_rsa)
 
-------------------------------------------------
-
-
+---
 
 **Code Base** (stored on GitHub)
 
@@ -79,10 +77,16 @@ b) Replace the opensheetmusicdisplay dependency in package.json with:
 "dependencies": {
 "opensheetmusicdisplay": "file:opensheetmusicdisplay.min.js",
 }
-c) Finally, replace the opensheetmusicdisplay folder in your node_modules folder with the unzipped folder from step a  (be sure to grab the inner most folder named opensheetmusicdisplay).
+c) Finally, replace the opensheetmusicdisplay folder in your node_modules folder with the unzipped folder from step a (be sure to grab the inner most folder named opensheetmusicdisplay).
 
 ++++++++++++++++++
 
 4. To run "in development:
 
-   a. Put your .env file into the main appskynote directory 
+   a. Put your .env file into the main appskynote directory
+
+5. ** Production deployment steps**
+   1. Once all packages are installed in your production server folder, To copy the opensheetmusicdisplay related contents to client-jb/node_modules
+   2. Create a .env file and set the necessary values inside of it.
+   3. To start process using 'pm2'
+      - run 'pm2 start server.js' (https://pm2.keymetrics.io/docs/usage/process-management/)
