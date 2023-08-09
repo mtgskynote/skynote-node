@@ -69,7 +69,7 @@ d) Once you have cloned the osmd-extended repo and built the minified version,
 
 i) first do: npm i opensheetmusicdisplay
 
-ii) then go to your skynote-node/cñient-jb folder and in your package.json file under dependencies and:
+ii) then go to your skynote-node/client-jb folder and in your package.json file under dependencies and:
 
         replace:
 
@@ -92,7 +92,7 @@ a) Get the the zipped version of 'opensheetmusicdisplay.zip' available in skynot
 b) Replace the opensheetmusicdisplay dependency in package.json with:
 
         "dependencies": {
-            "opensheetmusicdisplay": "opensheetmusicdisplay": "^0.6.8",
+            "opensheetmusicdisplay": "^0.6.8",
         }
 
         with:
@@ -160,6 +160,7 @@ This is a very basic setup of OSMD. The basic idea of using and settip us OSMD i
 The OpenSheetMusicDisplayPreview component is designed to display a preview of musical scores using the OpenSheetMusicDisplay library. This component is separate from the main OSMD component, which is used to display the full score with features like a cursor, audioplayer etc. The purpose of this separation is to allow for reusability and to avoid potential conflicts.
 
 _Setup_
+
 The OpenSheetMusicDisplayPreview component accepts a file prop, which should be the musicXML file you wish to display.
 
 _Inside the component:_
@@ -168,6 +169,7 @@ _Inside the component:_
 - The useEffect hook initializes the OSMD instance with specific options and loads the musicXML file. It then renders the first 4 bars of the score and hides the cursor.
 
 _OSMD Options_
+
 The options for the OSMD instance are basically the particulars you want your OSMD render to follow, they are defined in this component for this reasons:
 
 - The display auto-resizes: autoResize: true,
@@ -176,23 +178,31 @@ The options for the OSMD instance are basically the particulars you want your OS
 - Only the first 4 bars (measures) of the score are displayed: drawFromMeasureNumber: 0, drawUpToMeasureNumber: 4,
 
 _Rendering_
+
 The component renders a div with the id osmd-container. This is where the OSMD instance will render the score preview.
 
 _Usage_
+
 To use the OpenSheetMusicDisplayPreview component at other places in the application:
 
-import OpenSheetMusicDisplayPreview from './path-to-component';
-// ...
-<OpenSheetMusicDisplayPreview file={yourMusicXMLFile} />
+        import OpenSheetMusicDisplayPreview from './path-to-component';
+
+        <OpenSheetMusicDisplayPreview file={yourMusicXMLFile} />
 
 #### Main OSMD (OpenSheetMusicDisplay.js)
 
 This is the component that actually displays the full music xml scores. The overall outline of this component is the same as it was in the OpenSheetMusicDisplayPreview component. That is you create a construtor, define options, create instance, load the file in it and render the instance.
 
-However, Since along with displaying the score we are also creating additional interactions with the score, this particular component is bit more complex in comparison to the other one. Some of the additional interactions are cursor display, audio playback, pitch detection and comparison etc.
+However, Since along with displaying the score we are also creating additional interactions with the score, this particular component is bit more complex in comparison to the preview file. Some of the additional interactions are cursor display, audio playback, pitch detection and comparison etc.
 
 This component's options and other properties such as cursor position, audio playback etc are setup to be controlled from other components wherever the OpenSheetMusicDisplay is imported, by sending values and controls as props to OpenSheetMusicDisplay. In this project its done by importing the OpenSheetMusicDisplay in the ProgressPlayFile.js component.
 
-The ProgressPlayFile.js component is the component which is called when we click on the score in all-lessons page(the routes are defined in the app.js file). Therefore its ProgressPlayFile component that loads the music score. In progressplayfile, the control bar is also defined, and the action to be taken when a button is clicked on the control bar is linked with what happens in the osmd component. For example, when the play button is clicked, the prop is send from progressplayfile to osmd component and in the osmd component, playback is set to play.
+The ProgressPlayFile.js component is the component which is called when we click on the score in all-lessons page(the routes are defined in the app.js file). Therefore it is the ProgressPlayFile component that sends data to osmd to load the music score. In ProgressPlayFile, the control bar is also defined, and the action to be taken when a button is clicked on the control bar is linked with what happens in the osmd component. For example, when the play button is clicked, a prop is sent from ProgressPlayFile to OpenSheetMusicDisplay component and in the OpenSheetMusicDisplay component, playback is set to play.
 
-Similarly, for creating the linechart, the initial position of cursor is calculated in the opensheetmusicsdisplay.js component and then is sent to LinechartOsmd.js component. Therefore, opensheetmusicsdisplay.js plays a central role in the rendering and interaction with the score and sheets.
+Similarly, for creating the linechart, the initial position of cursor is calculated in the OpenSheetMusicDisplay.js component and then is sent to LinechartOsmd.js component. Therefore, OpenSheetMusicDisplay.js plays a central role in the rendering and interaction with the score and sheets.
+
+Additionally, there are some functions like metronome volume, bpm etc that are already implemented but commented out in the code. They can be used again by adjusting the code according to the current version. For example, the slider for adjusting bpm is already implemented (in ProgressPlayFile) but the code is commented out. So it can be uncommented and implemented again.
+
+The related code and specific details can be found in the respective .js files.
+
+One additional thing, Osmd developer are very active on the Discord channel, so if you need any help they can be contacted on the same are generally very responsive.
