@@ -53,6 +53,7 @@ Once you get access to the extended repo, you need to build it locally to get th
 NOTE THAT: You dont need to always build osmd-extended from scratch, since we only need the opensheetmusicdisplay.min.js file, we have built it and stored it in Google drive folder. To use that prebuild file please follow the steps given after the scratch buid process.
 
 **_ If you are starting from scratch or want an updated version of the osmd-extended _**
+
 a) Clone the OSMD-Extended repository: https://github.com/opensheetmusicdisplay/osmd-extended in a separate directory
 
 b) To build the minified version go to your clone directory and run in your terminal:
@@ -113,6 +114,34 @@ c) Then go to the "build/" folder you got after unzipping, copy it and paste it 
    2. Create a .env file and set the necessary values inside of it.
    3. To start process using 'pm2'
       - run 'pm2 start server.js' (https://pm2.keymetrics.io/docs/usage/process-management/)
-   a. Put your .env file into the main appskynote directory
+        a. Put your .env file into the main appskynote directory
 
-#### How OSMD works:
+### How OSMD works:
+
+Before explaining how OSMD works and how it is setup in the context of this app, Here are some useful links that will help in exploring the functionalities of OSMD.
+
+Basic links:
+
+- OSMD website: https://opensheetmusicdisplay.org/
+- OSMD Github: https://github.com/opensheetmusicdisplay/opensheetmusicdisplay
+- OSMD Extended Github: https://github.com/opensheetmusicdisplay/osmd-extended
+- OSMD Public Demo: https://opensheetmusicdisplay.github.io/demo/
+- OSMD Extended Public Demo: https://opensheetmusicdisplay.org/demos/sponsors-ts-demo/
+
+* OSMD Exploring the demo: https://github.com/opensheetmusicdisplay/opensheetmusicdisplay/wiki/Exploring-the-Demo
+
+The wiki and class documentation of the opensheetmusicdisplay:
+
+- OSMD WIKI: https://github.com/opensheetmusicdisplay/opensheetmusicdisplay/wiki
+- OSMD Class Documentation: https://opensheetmusicdisplay.github.io/classdoc/
+
+The class documentation has extensive information about the specifics of setting up osmd, like its constructor, options, different methods etc.
+
+Additionally, to understand the basics of OSMD-Extended, the developers have provided an informational issue (62) that gives information about how OSMD extended works and the link to the same is: https://github.com/opensheetmusicdisplay/osmd-extended/issues/62
+
+In this project the OSMD as said before is used to render scores. We are rendering the scores in two places in the project as of now.
+One is to preview the scores in the all-lessons page. The second place is to actually render the whole score according to whichever score is selected. The next section defines how the OSMD is setup for both these scenarios.
+
+#### OSMDPreview
+
+The setup
