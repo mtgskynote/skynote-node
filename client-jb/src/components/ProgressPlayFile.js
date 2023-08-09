@@ -34,7 +34,7 @@ const ProgressPlayFile = (props) => {
 
   // Define pitch callback function
   const handlePitchCallback = (pitchData) => {
-    if (pitchData.confidence > 0.6) {
+    if (pitchData.confidence > 0.5) {
       setPitch(pitchData.pitch);
     }
   };
@@ -185,24 +185,6 @@ const ProgressPlayFile = (props) => {
     // };
 
     // metronomeButton.addEventListener("click", handleMetronomeButtonClick);
-
-    // // zoom in
-    // const zoomInButton = document.getElementById("zoomIn");
-    // const handleZoomInButtonClick = () => {
-    //   setZoom(zoom + 0.25);
-    //   // console.log("hello zoom1", zoom2);
-    // };
-
-    // zoomInButton.addEventListener("click", handleZoomInButtonClick);
-
-    // zoom out
-    // const zoomOutButton = document.getElementById("zoomOut");
-    // const handleZoomOutButtonClick = () => {
-    //   setZoom();
-    //   // console.log("hellooo zoom2", zoom2);
-    // };
-
-    // zoomOutButton.addEventListener("click", handleZoomOutButtonClick);
 
     // cursor Timbre Visualization
     const visualizeButton = document.getElementById("visualize");

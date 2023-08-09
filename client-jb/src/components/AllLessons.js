@@ -39,7 +39,6 @@ const fetchAllTitles = async (files) => {
     titles[file.name] = await getTitle(file.name);
   }
   return titles;
-  console.log("titles  fklk  dfsasdfasd", titles);
 };
 
 const sxStyles = {
@@ -140,7 +139,7 @@ const AllLessons = () => {
                   {selectedNode &&
                     selectedNode.id === `${nameObj.name}-${index}` && (
                       <div style={{ flexShrink: 1, width: "60%" }}>
-                        {console.log("Rendering file with path:", nameObj.path)}
+                        {/* {console.log("Rendering file with path:", nameObj.path)} */}
                         <OpenSheetMusicDisplayPreview file={nameObj.path} />
                       </div>
                     )}
