@@ -98,6 +98,45 @@ const AppProvider = ({ children }) => {
     removeUserFromLocalStorage();
   };
 
+  // functions for getting the names of the scores from the database
+
+  const getAllLevels = async (level) => {
+    try {
+      const response = await axios.post("/api/v1/scores/levels", {
+        level: level,
+      });
+      // console.log(response.data);
+      return response.data;
+    } catch (error) {
+      console.error("Error fetching file names:", error);
+    }
+  };
+
+  const getAllSkills = async (level) => {
+    try {
+      const response = await axios.post("/api/v1/scores/skills", {
+        level: level,
+      });
+      // console.log(response.data);
+      return response.data;
+    } catch (error) {
+      console.error("Error fetching file names:", error);
+    }
+  };
+
+  const getAllNames = async (level, skill) => {
+    try {
+      const response = await axios.post("/api/v1/scores/names", {
+        level: level,
+        skill: skill,
+      });
+      return response.data;
+      // console.log("names:", response.data);
+    } catch (error) {
+      console.error("Error fetching file names:", error);
+    }
+  };
+
   return (
     <AppContext.Provider
       value={{
@@ -106,6 +145,9 @@ const AppProvider = ({ children }) => {
         setupUser,
         toggleSidebar,
         logoutUser,
+        getAllLevels,
+        getAllSkills,
+        getAllNames,
       }}
     >
       {children}

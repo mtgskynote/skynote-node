@@ -4,7 +4,7 @@ import OpenSheetMusicDisplay from "./OpenSheetMusicDisplay";
 import { useControlBar } from "./controlbar";
 import { makeAudioStreamer } from "./audioStreamer.js";
 
-const folderBasePath = "/musicXmlFiles";
+const folderBasePath = "/xmlScores/violin";
 
 const ProgressPlayFile = (props) => {
   const params = useParams();

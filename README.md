@@ -66,7 +66,7 @@ If you need more detailed instructions to build, they can be found here: https:/
 
 d) Once you have cloned the osmd-extended repo and built the minified version,
 
-i) first do npm i opensheetmusicdisplay
+i) first do: npm i opensheetmusicdisplay
 
 ii) then go to your skynote-node/cñient-jb folder and in your package.json file under dependencies and:
 
@@ -106,10 +106,10 @@ ii) then go to your skynote-node/cñient-jb folder and in your package.json file
 
 c) Then go to the "build/" folder you got after unzipping, copy it and paste it in your Node modules folder under the skynote-node/client-jb/node-modules/opensheetmusicdisplay/.
 
-#### How OSMD works:
-
 ++++++++++++++++++
 
 4. To run "in development:
 
    a. Put your .env file into the main appskynote directory
+
+#### How OSMD works:
