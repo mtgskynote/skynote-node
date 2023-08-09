@@ -3,6 +3,7 @@ import { StatusCodes } from "http-status-codes";
 import { BadRequestError, UnAuthenticatedError } from "../errors/index.js";
 import attachCookie from "../utils/attachCookie.js";
 
+// Register is used to register the user
 const register = async (req, res) => {
   const { name, email, password } = req.body;
 
@@ -30,6 +31,7 @@ const register = async (req, res) => {
   });
 };
 
+// Login is used to login the user
 const login = async (req, res) => {
   const { email, password } = req.body;
   if (!email || !password) {
@@ -55,6 +57,7 @@ const login = async (req, res) => {
   });
 };
 
+// Update user is used to update the user's email and name
 const updateUser = async (req, res) => {
   console.log("req.body", req.body);
   const { email, name } = req.body;
@@ -74,11 +77,14 @@ const updateUser = async (req, res) => {
     location: user.location,
   });
 };
+
+// getCurrentUser is used to get the user's email and name
 const getCurrentUser = async (req, res) => {
   const user = await User.findOne({ _id: req.user.userId });
   res.status(StatusCodes.OK).json({ user, location: user.location });
 };
 
+// logout is used to logout the user
 const logout = async (req, res) => {
   res.cookie("token", "logout", {
     httpOnly: true,
