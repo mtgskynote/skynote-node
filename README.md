@@ -205,4 +205,4 @@ Additionally, there are some functions like metronome volume, bpm etc that are a
 
 The related code and specific details can be found in the respective .js files.
 
-One additional thing, Osmd developer are very active on the Discord channel, so if you need any help they can be contacted on the same are generally very responsive.
+\*OSMD developer are very active on the Discord channel, so if you need any help they can be contacted on the same are generally very responsive.
