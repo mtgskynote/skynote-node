@@ -112,4 +112,14 @@ c) Then go to the "build/" folder you got after unzipping, copy it and paste it 
 
    a. Put your .env file into the main appskynote directory
 
-#### How OSMD works:
+### How OSMD works:
+
+In this project the OSMD as said before is used to render scores. We are rendering the scores in two places in the project as of now. Here are some useful links that will help in exploring the functionalities of OSMD.
+
+OSMD website: https://opensheetmusicdisplay.org/
+
+One is to preview the scores in the all-lessons page. The second place is to actually render the whole score according to whichever score is selected. The next section defines how the OSMD is setup for both these scenarios.
+
+#### OSMDPreview
+
+The setup
