@@ -88,11 +88,7 @@ e) Then go to the "build/" folder you got after building the osmd-extended, copy
 
 a) Get the the zipped version of 'opensheetmusicdisplay.zip' available in skynote google drive, and unzip it. (https://drive.google.com/drive/folders/19KW-vd0flJ-TkBLdoPlNgcyEafIthyyk)
 
-b) Once unzipped and have the folder "build" with the minified file in it:
-i) first do npm i opensheetmusicdisplay
-ii) then go to your skynote-node/cñient-jb folder and in your package.json file under dependencies and:
-
-        replace:
+b) Replace the opensheetmusicdisplay dependency in package.json with:
 
         "dependencies": {
             "opensheetmusicdisplay": "opensheetmusicdisplay": "^0.6.8",
@@ -110,6 +106,13 @@ c) Then go to the "build/" folder you got after unzipping, copy it and paste it 
 
 4. To run "in development:
 
+   a. Put your .env file into the main appskynote directory
+
+5. ** Production deployment steps**
+   1. Once all packages are installed in your production server folder, To copy the opensheetmusicdisplay related contents to client-jb/node_modules
+   2. Create a .env file and set the necessary values inside of it.
+   3. To start process using 'pm2'
+      - run 'pm2 start server.js' (https://pm2.keymetrics.io/docs/usage/process-management/)
    a. Put your .env file into the main appskynote directory
 
 #### How OSMD works:
