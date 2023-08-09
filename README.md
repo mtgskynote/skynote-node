@@ -139,9 +139,60 @@ The class documentation has extensive information about the specifics of setting
 
 Additionally, to understand the basics of OSMD-Extended, the developers have provided an informational issue (62) that gives information about how OSMD extended works and the link to the same is: https://github.com/opensheetmusicdisplay/osmd-extended/issues/62
 
-In this project the OSMD as said before is used to render scores. We are rendering the scores in two places in the project as of now.
-One is to preview the scores in the all-lessons page. The second place is to actually render the whole score according to whichever score is selected. The next section defines how the OSMD is setup for both these scenarios.
+##### Setup process
 
-#### OSMDPreview
+In this project the OSMD as said before is used to render scores. The basic process of setting up OSMD is:
 
-The setup
+1. First make the constructor
+2. Define the options
+3. Create a new instance of the osmd constructor
+4. load the file in the osmd instance and render it.
+   This process is discussed in detail in the next sections.
+
+We are rendering the scores in two places in the project as of now. One is to preview the scores in the all-lessons page (OpenSheetMusicDisplayPreview.js). The second place is to actually render the whole score according to whichever score is selected (OpenSheetMusicDisplay.js).
+
+The next section defines how the OSMD is setup for both these scenarios.
+
+#### OSMDPreview (OpenSheetMusicDisplayPreview.js)
+
+This is a very basic setup of OSMD. The basic idea of using and settip us OSMD is that
+
+The OpenSheetMusicDisplayPreview component is designed to display a preview of musical scores using the OpenSheetMusicDisplay library. This component is separate from the main OSMD component, which is used to display the full score with features like a cursor, audioplayer etc. The purpose of this separation is to allow for reusability and to avoid potential conflicts.
+
+_Setup_
+The OpenSheetMusicDisplayPreview component accepts a file prop, which should be the musicXML file you wish to display.
+
+_Inside the component:_
+
+- A reference (osmdRef) is created to hold the OSMD instance.
+- The useEffect hook initializes the OSMD instance with specific options and loads the musicXML file. It then renders the first 4 bars of the score and hides the cursor.
+
+_OSMD Options_
+The options for the OSMD instance are basically the particulars you want your OSMD render to follow, they are defined in this component for this reasons:
+
+- The display auto-resizes: autoResize: true,
+- The title of the score is not drawn: drawTitle: false,
+- The display parameters are set to "compacttight": drawingParameters: "compacttight",
+- Only the first 4 bars (measures) of the score are displayed: drawFromMeasureNumber: 0, drawUpToMeasureNumber: 4,
+
+_Rendering_
+The component renders a div with the id osmd-container. This is where the OSMD instance will render the score preview.
+
+_Usage_
+To use the OpenSheetMusicDisplayPreview component at other places in the application:
+
+import OpenSheetMusicDisplayPreview from './path-to-component';
+// ...
+<OpenSheetMusicDisplayPreview file={yourMusicXMLFile} />
+
+#### Main OSMD (OpenSheetMusicDisplay.js)
+
+This is the component that actually displays the full music xml scores. The overall outline of this component is the same as it was in the OpenSheetMusicDisplayPreview component. That is you create a construtor, define options, create instance, load the file in it and render the instance.
+
+However, Since along with displaying the score we are also creating additional interactions with the score, this particular component is bit more complex in comparison to the other one. Some of the additional interactions are cursor display, audio playback, pitch detection and comparison etc.
+
+This component's options and other properties such as cursor position, audio playback etc are setup to be controlled from other components wherever the OpenSheetMusicDisplay is imported, by sending values and controls as props to OpenSheetMusicDisplay. In this project its done by importing the OpenSheetMusicDisplay in the ProgressPlayFile.js component.
+
+The ProgressPlayFile.js component is the component which is called when we click on the score in all-lessons page(the routes are defined in the app.js file). Therefore its ProgressPlayFile component that loads the music score. In progressplayfile, the control bar is also defined, and the action to be taken when a button is clicked on the control bar is linked with what happens in the osmd component. For example, when the play button is clicked, the prop is send from progressplayfile to osmd component and in the osmd component, playback is set to play.
+
+Similarly, for creating the linechart, the initial position of cursor is calculated in the opensheetmusicsdisplay.js component and then is sent to LinechartOsmd.js component. Therefore, opensheetmusicsdisplay.js plays a central role in the rendering and interaction with the score and sheets.
