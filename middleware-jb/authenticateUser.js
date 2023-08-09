@@ -1,3 +1,10 @@
+/**
+ * Middleware function to authenticate user using JWT token.
+ * @param {Object} req - Express request object.
+ * @param {Object} res - Express response object.
+ * @param {Function} next - Express next middleware function.
+ * @throws {UnAuthenticatedError} If authentication fails.
+ */
 import jwt from "jsonwebtoken";
 import { UnAuthenticatedError } from "../errors/index.js";
 

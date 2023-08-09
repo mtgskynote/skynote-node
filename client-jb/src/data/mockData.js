@@ -1219,65 +1219,65 @@ export const mockGeographyData = [
   {
     id: "TWN",
     value: 878213,
-  },
-  {
-    id: "TZA",
-    value: 442174,
-  },
-  {
-    id: "UGA",
-    value: 720710,
-  },
-  {
-    id: "UKR",
-    value: 74172,
-  },
-  {
-    id: "URY",
-    value: 753177,
-  },
-  {
-    id: "USA",
-    value: 658725,
-  },
-  {
-    id: "UZB",
-    value: 550313,
-  },
-  {
-    id: "VEN",
-    value: 707492,
-  },
-  {
-    id: "VNM",
-    value: 538907,
-  },
-  {
-    id: "VUT",
-    value: 650646,
-  },
-  {
-    id: "PSE",
-    value: 476078,
-  },
-  {
-    id: "YEM",
-    value: 957751,
-  },
-  {
-    id: "ZAF",
-    value: 836949,
-  },
-  {
-    id: "ZMB",
-    value: 714503,
-  },
-  {
-    id: "ZWE",
-    value: 405217,
-  },
-  {
-    id: "KOR",
-    value: 171135,
-  },
+},
+{
+  id: "TZA",
+  value: 442174,
+},
+{
+  id: "UGA",
+  value: 720710,
+},
+{
+  id: "UKR",
+  value: 74172,
+},
+{
+  id: "URY",
+  value: 753177,
+},
+{
+  id: "USA",
+  value: 658725,
+},
+{
+  id: "UZB",
+  value: 550313,
+},
+{
+  id: "VEN",
+  value: 707492,
+},
+{
+  id: "VNM",
+  value: 538907,
+},
+{
+  id: "VUT",
+  value: 650646,
+},
+{
+  id: "PSE",
+  value: 476078,
+},
+{
+  id: "YEM",
+  value: 957751,
+},
+{
+  id: "ZAF",
+  value: 836949,
+},
+{
+  id: "ZMB",
+  value: 714503,
+},
+{
+  id: "ZWE",
+  value: 405217,
+},
+{
+  id: "KOR",
+  value: 171135,
+},
 ];

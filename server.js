@@ -10,7 +10,6 @@ import connectDB from "./db/connect.js";
 
 //routers
 import authRouter from "./routes/authRoutes.js";
-import jobsRouter from "./routes/jobRoutes.js";
 import scoreRouter from "./routes/scoreRoutes.js";
 
 // middleware
@@ -43,7 +42,6 @@ app.get("/api/v1", (req, res) => {
 
 // app.use is a method that allows us to use middleware
 app.use("/api/v1/auth", authRouter);
-app.use("/api/v1/jobs", authenticateUser, jobsRouter);
 app.use("/api/v1/scores", scoreRouter);
 
 // only when ready to deploy

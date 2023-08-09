@@ -12,10 +12,12 @@ import {
 import reducer from "./reducer";
 import axios from "axios";
 
+// Get user, token, and userLocation from local storage
 const user = localStorage.getItem("user");
 const token = localStorage.getItem("token");
 const userLocation = localStorage.getItem("location");
 
+// Set initial state
 const initialState = {
   isLoading: false,
   showAlert: false,
@@ -27,13 +29,20 @@ const initialState = {
   jobLocation: userLocation || "",
   showSidebar: false,
 };
+
+// Create context
 const AppContext = React.createContext();
+
+// Create provider component
 const AppProvider = ({ children }) => {
   // children is a prop that is passed to the component
   // children is the component that is wrapped by the AppProvider
   // in this case, the component is App.js
+
+  // Use reducer hook to manage state
   const [state, dispatch] = useReducer(reducer, initialState);
 
+  // Display alert message
   const displayAlert = () => {
     dispatch({
       type: DISPLAY_ALERT,
@@ -41,6 +50,7 @@ const AppProvider = ({ children }) => {
     clearAlert();
   };
 
+  // Clear alert message after 3 seconds
   const clearAlert = () => {
     setTimeout(() => {
       dispatch({
@@ -49,18 +59,21 @@ const AppProvider = ({ children }) => {
     }, 3000);
   };
 
+  // Add user, token, and location to local storage
   const addUserToLocalStorage = (user, token, location) => {
     localStorage.setItem("user", JSON.stringify(user));
     localStorage.setItem("token", token);
     localStorage.setItem("location", location);
   };
 
+  // Remove user, token, and location from local storage
   const removeUserFromLocalStorage = (user, token, location) => {
     localStorage.removeItem("user");
     localStorage.removeItem("token");
     localStorage.removeItem("location");
   };
 
+  // Set up user with current user, endpoint, and alert text
   const setupUser = async ({ currentUser, endPoint, alertText }) => {
     dispatch({ type: SETUP_USER_BEGIN });
     try {
@@ -89,15 +102,57 @@ const AppProvider = ({ children }) => {
     clearAlert();
   };
 
+  // Toggle sidebar
   const toggleSidebar = () => {
     dispatch({ type: TOGGLE_SIDEBAR });
   };
 
+  // Logout user
   const logoutUser = () => {
     dispatch({ type: LOGOUT_USER });
     removeUserFromLocalStorage();
   };
 
+  // functions for getting the names of the scores from the database
+
+  const getAllLevels = async (level) => {
+    try {
+      const response = await axios.post("/api/v1/scores/levels", {
+        level: level,
+      });
+      // console.log(response.data);
+      return response.data;
+    } catch (error) {
+      console.error("Error fetching file names:", error);
+    }
+  };
+
+  const getAllSkills = async (level) => {
+    try {
+      const response = await axios.post("/api/v1/scores/skills", {
+        level: level,
+      });
+      // console.log(response.data);
+      return response.data;
+    } catch (error) {
+      console.error("Error fetching file names:", error);
+    }
+  };
+
+  const getAllNames = async (level, skill) => {
+    try {
+      const response = await axios.post("/api/v1/scores/names", {
+        level: level,
+        skill: skill,
+      });
+      return response.data;
+      // console.log("names:", response.data);
+    } catch (error) {
+      console.error("Error fetching file names:", error);
+    }
+  };
+
+  // Return provider component with context value
   return (
     <AppContext.Provider
       value={{
@@ -106,17 +161,20 @@ const AppProvider = ({ children }) => {
         setupUser,
         toggleSidebar,
         logoutUser,
+        getAllLevels,
+        getAllSkills,
+        getAllNames,
       }}
     >
       {children}
     </AppContext.Provider>
   );
 };
-// useContext is a hook that allows us to access the context. It takes the context object (AppContext) as an argument
-//and returns the context value. The context value is determined by the value prop of the nearest <AppContext.Provider> above the calling component in the tree.
 
+// Create custom hook to use AppContext
 const useAppContext = () => {
   return useContext(AppContext);
 };
 
+// Export AppProvider, initialState, and useAppContext
 export { AppProvider, initialState, useAppContext };

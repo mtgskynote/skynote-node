@@ -1,6 +1,8 @@
 import React from "react";
 
 const LineChart = ({ pitchData }) => {
+  if (!pitchData || pitchData.length === 0) return null;
+
   // Normalize pitch data between 0 and 1
   const normalizedData = pitchData.map(
     (value) =>
@@ -8,16 +10,17 @@ const LineChart = ({ pitchData }) => {
       (Math.max(...pitchData) - Math.min(...pitchData))
   );
 
+  const spacing = 10; // Spacing between points
+  const svgWidth = pitchData.length * spacing;
+
   // Calculate the polyline points
   const polylinePoints = normalizedData
-    .map((value, index) => `${index * 10},${100 - value * 100}`)
+    .map((value, index) => `${index * spacing},${100 - value * 100}`)
     .join(" ");
-
-  const svgWidth = pitchData.length;
 
   return (
     <div style={{ overflowX: "auto" }}>
-      <svg width={svgWidth} height="100">
+      <svg>
         <polyline
           points={polylinePoints}
           fill="none"

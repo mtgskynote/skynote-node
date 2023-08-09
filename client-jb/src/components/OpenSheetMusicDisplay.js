@@ -20,6 +20,7 @@ import {
 
 Chartjs.register(LineElement, CategoryScale, LinearScale, PointElement);
 
+// creating the class component
 class OpenSheetMusicDisplay extends Component {
   constructor(props) {
     super(props);
