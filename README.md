@@ -74,7 +74,7 @@ ii) then go to your skynote-node/client-jb folder and in your package.json file 
         replace:
 
         "dependencies": {
-            "opensheetmusicdisplay": "opensheetmusicdisplay": "^0.6.8",
+            "opensheetmusicdisplay": "^0.6.8",
         }
 
         with:
