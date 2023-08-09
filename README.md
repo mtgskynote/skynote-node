@@ -113,3 +113,5 @@ c) Then go to the "build/" folder you got after unzipping, copy it and paste it 
    a. Put your .env file into the main appskynote directory
 
 #### How OSMD works:
+
+So to make the OSMD work
