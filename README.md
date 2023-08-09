@@ -114,10 +114,28 @@ c) Then go to the "build/" folder you got after unzipping, copy it and paste it 
 
 ### How OSMD works:
 
-In this project the OSMD as said before is used to render scores. We are rendering the scores in two places in the project as of now. Here are some useful links that will help in exploring the functionalities of OSMD.
+Before explaining how OSMD works and how it is setup in the context of this app, Here are some useful links that will help in exploring the functionalities of OSMD.
 
-OSMD website: https://opensheetmusicdisplay.org/
+Basic links:
 
+- OSMD website: https://opensheetmusicdisplay.org/
+- OSMD Github: https://github.com/opensheetmusicdisplay/opensheetmusicdisplay
+- OSMD Extended Github: https://github.com/opensheetmusicdisplay/osmd-extended
+- OSMD Public Demo: https://opensheetmusicdisplay.github.io/demo/
+- OSMD Extended Public Demo: https://opensheetmusicdisplay.org/demos/sponsors-ts-demo/
+
+* OSMD Exploring the demo: https://github.com/opensheetmusicdisplay/opensheetmusicdisplay/wiki/Exploring-the-Demo
+
+The wiki and class documentation of the opensheetmusicdisplay:
+
+- OSMD WIKI: https://github.com/opensheetmusicdisplay/opensheetmusicdisplay/wiki
+- OSMD Class Documentation: https://opensheetmusicdisplay.github.io/classdoc/
+
+The class documentation has extensive information about the specifics of setting up osmd, like its constructor, options, different methods etc.
+
+Additionally, to understand the basics of OSMD-Extended, the developers have provided an informational issue (62) that gives information about how OSMD extended works and the link to the same is: https://github.com/opensheetmusicdisplay/osmd-extended/issues/62
+
+In this project the OSMD as said before is used to render scores. We are rendering the scores in two places in the project as of now.
 One is to preview the scores in the all-lessons page. The second place is to actually render the whole score according to whichever score is selected. The next section defines how the OSMD is setup for both these scenarios.
 
 #### OSMDPreview
