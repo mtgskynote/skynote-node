@@ -125,8 +125,9 @@ function Register() {
         </button>
         <p>
           {values.isMember ? "Not a Member yet?" : "Already a Member?"}
-          <button type="button" onClick={toggleMember} className="member-btn">
-            {values.isMember ? "Register" : "Login"}
+          {/* <button type="button" onClick={toggleMember} className="member-btn"> */}
+          <button type="button" className="member-btn">
+            {values.isMember ? "We're sorry, new registrations are temporarily disabled " : "Login"}
           </button>
         </p>
         <div className="g-signin2" data-onsuccess="onSignIn">
