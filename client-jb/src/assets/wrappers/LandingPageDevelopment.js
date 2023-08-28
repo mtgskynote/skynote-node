@@ -81,21 +81,7 @@ const Wrapper = styled.main`
   height: 100%; 
   background-color: rgba(45, 136, 235, .85);
   align-items: center;
-  text-align: left;
-}
-.background-image-overlay h2{
-  color: #23292B; 
-  margin-top: 1rem;  
-  margin-left: 4%;
-  text-align: left;
-  font-family: var(--lato);
-  font-style: normal;
-}
-
-.background-image-overlay p{
-  color: white; 
-  margin-left: 2%;
-  margin-right: 20%;
+  text-align: center;
 }
 
 #overlay-signup-button{
@@ -107,8 +93,7 @@ const Wrapper = styled.main`
   font-size: 18px;
   margin-left: 10%;
   margin-right: 30%;
-  margin-bottom: 0%; 
-  bottom: 0;
+  margin-top: 1rem;
   font-family: var(--lato);
 }
 
@@ -151,7 +136,7 @@ const Wrapper = styled.main`
   z-index: 1;
   text-align: center;
   align-items: center;
-  border: 1px solid black;
+  border: 1px solid black;;
 }
 
 .bottom-container h2{ 
@@ -225,10 +210,6 @@ a{
     max-height: 100%;
   }
   
-  .grid-item video {
-    max-width: 100%;
-    max-height: 100%;
-  }
   
   .grid-text-container{
     align-items: left; 
@@ -288,8 +269,7 @@ a{
   }
 
   .dropdown-content a {
-    color: var(--blue-300); 
-    text-decoration: none;
+    color: var(--blue-300);
   }
 
   /* Show the dropdown content when checkbox is checked */

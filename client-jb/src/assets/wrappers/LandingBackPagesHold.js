@@ -1,61 +1,36 @@
 import styled from 'styled-components'
+//import BackgroundImage from '../../components/BackgroundImage'
+
 
 
 const Wrapper = styled.main`
-.site-header{
-  background-color: #23292B; 
-  height: 70px; 
-  width: 100%; 
-  position: fixed; 
-  top: 0;
-  z-index: 9999; 
+  .center {
+  position: flex;
+  right: 50%;
+  left: 50%;
+  align-items: center;
 }
-
-.tab-row-container{
-  display: flex; 
-  justify-content: flex-end; 
-  width: 70%; 
-  position: absolute; 
-  margin-right: 20px;
-  margin-top: 5px; 
-  margin-bottom: 10px; 
-  top: 0;
-  right: 0;
-  padding: 5px 5px;
-}
-
-
-.logo-container{
-  position: absolute; 
-  width: 180px; 
-  height: 20%; 
-  top: 20%; 
-  left: 10px;
-  align-items: center; 
-  justify-content: flex-start;
-}
-
-.skynote-container{
-  position: absolute; 
-  height: 60px;
-  top: 0;
-  left: 0; 
-  margin-left: 80px; 
-  margin-top: 3px;
-  text-align: left;
-  color: var(--blue-300); 
-  text-align: center;
-  font-size: 50px;
-  font-family: var(--lato);
-  font-style: normal;
-  font-weight: 400;
-  line-height: normal;
-
-}
-
-
-/*==========================================================*/
-
+  .nav {
+    width: var(--fluid-width);
+    max-width: var(--max-width);
+    margin: 0 auto;
+    height: var(--nav-height);
+    display: flex;
+    align-items: center;
+  }
+  .page {
+    min-height: calc(100vh - var(--nav-height));
+    display: grid;
+    align-items: center;
+    margin-top: -3rem;
+  }
+  h1 {
+    font-weight: 700;
+    span {
+      color: white;
+    }
+    z-index: 0;
+  }
 
   
   p {
@@ -156,7 +131,7 @@ const Wrapper = styled.main`
   }
 
   .addspace1{
-    margin-top: 5rem;
+    margin-top: 7rem;
   }
 
   .addspace2{
@@ -204,10 +179,22 @@ const Wrapper = styled.main`
     .card {
       padding: 10em 1em;
     }
-
+    .column{
+      flex: 0 0 33.33%;
+      max-width: 33.33%;
+      padding: 0 1em;
+    }
   }
 
- 
+  .site-header{
+    background-color: #23292B; 
+    height: 70px; 
+    width: 100%; 
+    position: fixed; 
+    top: 0; 
+    left: 0; 
+    z-index: 9999; 
+  }
 
   .primary-text {
     text-align: center;
@@ -242,7 +229,7 @@ const Wrapper = styled.main`
   }
 .top-p-container { 
   display: flex; 
-  width: 100%; 
+  width: 1000px; 
   height: 346px; 
   flex-direction: column; 
   justify-content: center; 
@@ -273,6 +260,7 @@ const Wrapper = styled.main`
   align-items: center;
   flex-direction: column;
   text-align: center;
+ // background-color:white;
 }
 
 .tab-row{
@@ -298,6 +286,18 @@ const Wrapper = styled.main`
   transition: 1;
 }
 
+.tab-row-container{
+  display: flex; 
+  justify-content: flex-end; 
+  width: min-width; 
+  position: absolute; 
+  margin-right: 20px;
+  margin-top: 5px;
+  margin-bottom: 10px;
+  top: 0;
+  right: 0; 
+  padding: 5px 5px;
+}
 
 .tab-link{
   margin: 0 0.5rem; 
@@ -310,6 +310,17 @@ const Wrapper = styled.main`
   text-decoration: none; 
   cursor: pointer; 
   font-size: 16px;
+}
+
+.logo-container{
+  position: absolute;
+  width: 20%;
+  height: 20%; 
+  top: 20%; 	
+  left: 10px;
+  align-items: center; 
+  justify-content: flex-start;
+  //padding: 20px; 
 }
 
 
@@ -337,7 +348,23 @@ const Wrapper = styled.main`
   height: auto;
 }
 
-
+.skynote-container{
+  position: absolute; 
+  height: 60px;
+  top: 0;
+  left: 0; 
+  margin-left: 8%;
+  margin-top: 3px;
+  text-align: left;
+  color: var(--blue-300); 
+  text-align: center;
+  font-size: 50px;
+  font-family: var(--lato);
+  font-style: normal;
+  font-weight: 400;
+  line-height: normal;
+  z-index: 1;
+}
 
 .centered{
   position: absolute; 
@@ -533,7 +560,11 @@ p {
   padding: 0.5em 0.625em;
 }
 
-
+.column{
+  width: 50%;
+  padding: 3em;
+   
+  }
 
 
 .card{
@@ -558,8 +589,9 @@ p {
 
 .card .img2{
   padding: 1em;
-  height: 100%;
-  /* height: 400px; */
+  //border-radius: 0em;
+  width: 600px;
+  height: 400px;
 }
 
 .card a{
@@ -596,7 +628,10 @@ p {
   text-align: center;
   
 }
-
+// colors
+// #2D88EB: --mainblue
+// --grey-900
+// --white
 
 .card:hover{
   background: var(--blue-300);
@@ -649,258 +684,8 @@ p {
   grid: repeat(auto-fit,minmax(0,1fr))/1fr;
   grid-gap: 5rem 1.5rem;
   margin-top: calc(0.25rem * 10);
-
 }
 
-
-/* --------------------------- */
-/*     image/text pairs */
-
-
-.grid-container {
-  position: relative;
-  display: grid;
-  /* grid-template-columns: repeat(2, 1fr); */
-  grid-template-rows: none /* repeat(2, 1fr); */ /* I cant believe this 'none' works. */
-  gap: 10px;
-  max-width: 100%;
-  margin: 60 auto;
-}
-
-.grid-container:hover {
-  background: var(--blue-300);
-  color: #ffffff;
-  transition: 1s;
-}
-
-.grid-item {
-  padding: 10px; 
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  text-align: center;
-  font-size: 12px;
-  max-width: 100%;
-  max-height: 100%;
-}
-
-.grid-item img {
-  max-width: 100%;
-  max-height: 100%;
-}
-
-.grid-item video {
-  max-width: 100%;
-  max-height: 100%;
-}
-
-.grid-text-container{
-  align-items: left; 
-}
-
-.grid-text-container h2{
-  font-family: var(--inter);
-  font-size: 4vw;
-  color: var(--grey-900);
-  text-align: left;
-  padding-left: 2em;
-  padding-right: 3em;
-}
-
-
-
-.grid-text-container p{
-  font-family: var(--inter);
-  font-size: 2vw;
-  color: var(--grey-900);
-  text-align: left;
-  padding-left: 2em;
-  padding-right: 3em;
-}
-
-/* if item is on the left, push it right */
-.grid-text-container-left {
-
-  font-family: var(--inter);
-  font-size: 2vw;
-  color: var(--grey-900);
-  text-align: right;
-  padding-left: 10em;
-  padding-right: 2em;
-}
-
-/* if the item is on the right, push it left */
-.grid-text-container-right {
-
-  font-family: var(--inter);
-  font-size: 2vw;
-  color: var(--grey-900);
-  text-align: left;
-  padding-left: 2em;
-  padding-right: 10em;
-}
-/* ---------------------------------------------- */
-@media screen and (min-width: 320px) { 
-
-  .dropdown {
-    position: relative;
-    display: inline-block;
-  }
-
-  /* Style the dropdown button (label) */
-  .dropbtn {
-    background-color: #23292B; 
-    font-family: var(--lato);
-    border: none; 
-    color: var(--blue-300);
-    padding: 10px;
-    border: none;
-    cursor: pointer;
-  }
-
-
-  /* Hide the checkbox input */
-  .dropdown-toggle {
-    display: none;
-  }
-
-  .dropdown-content {
-    display: none;
-    background-color: #23292B; 
-    position: absolute;
-    left: -6em;
-    width: 14em;
-    color: white;
-  }
-
-  .dropdown-content a {
-    color: var(--blue-300);
-    text-decoration: none;
-  }
-
-  /* Show the dropdown content when checkbox is checked */
-  .dropdown-toggle:checked + .dropbtn + .dropdown-content {
-    display: block;
-  }
-
-
-  .tab-row{
-    display: none;
-  }
-
-  .column{
-    flex: 100%;
-    max-width:100%;
-    padding: 0 1em;
-  }
-}
-
-
-/* ---------------------------------------------- */
-@media screen and (min-width: 800px) {
-
-  .dropdown {
-    display: none;
-  }
-
-  .tab-row{
-    display: flex;
-    justify-content: right; 
-    align-items: right; 
-    height: 3rem; 
-    background-color: transparent;
-    border-radius: 25px;
-  }
-
-
-  .tab-login{
-    color: white;
-    display: flex; 
-    justify-content: center; 
-    align-items: center; 
-    height: 2.5rem; 
-    background-color: transparent;
-    border-radius: 14px;
-    margin-right:0;
-    width: 13%; 
-  }
-
-  .tab-login:hover{
-    background-color:white;
-    transition: 1s;
-  }
-
-
-  .tab-link{
-    margin: 0 0.5rem; 
-    padding: 0.5rem 1rem; 
-    background-color: transparent; 
-    font-family: var(--lato);
-    border: none; 
-    color: var(--blue-300);
-    font-weight: 400; 
-    text-decoration: none; 
-    cursor: pointer; 
-    font-size: 16px;
-  }
-  /* ---------------------------------------------- */
-
-  .grid-container {
-    position: relative;
-    display: grid;
-    grid-template-columns: repeat(2, 1fr);  /* luxury! */
-    /* grid-template-rows: repeat(3, 1fr); */
-    gap: 10px;
-    max-width: 100%;
-    margin: 60 auto;
-  }
-
-  /* -------------------------------------------------*/
-  .center {
-    position: flex;
-    right: 50%;
-    left: 50%;
-    align-items: center;
-  }
-
-  nav {
-    width: var(--fluid-width);
-    max-width: var(--max-width);
-    margin: 0 auto;
-    height: var(--nav-height);
-    display: flex;
-    align-items: center;
-  }
-
-  .page {
-    min-height: calc(100vh - var(--nav-height));
-    display: grid;
-    align-items: center;
-    margin-top: -3rem;
-  }
-
-  h1 {
-    font-weight: 700;
-    span {
-      color: var(--blue-300);
-    }
-
-
-  }
-
-  .column{
-    flex: 0 0 33.33%;
-    max-width: 33.33%;
-    padding: 0 1em;
-  }
-}
-
-.centercontainer{
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  width: 100%; /* Set a width for the container */
-}
 
 `
 export default Wrapper

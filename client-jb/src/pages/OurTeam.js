@@ -19,8 +19,26 @@ const OurTeam = () => {
               <div className="tab-login"><Link to="/ourteam" className="tab-link"> Our Team </Link></div>
               <div className="tab-login"><Link to="/research" className="tab-link"> Research </Link></div>
               <div className="tab-login"><Link to="https://docs.google.com/forms/d/e/1FAIpQLSdE6QIt2Xfno67jWjBi2SJOB1dImKhmvJYr9Mzi9Qbo1BGHuw/viewform" className="tab-link"> Interest Form </Link></div>
-              <div className="tab-login"><Link to="/register" className="tab-link"> Login/Register </Link></div>
+              <div className="tab-login"><Link to="/register" className="tab-link"> Login Register </Link></div>
             </div>
+
+
+          <div class="dropdown">
+            <input type="checkbox" id="dropdown-toggle" class="dropdown-toggle"></input>
+            <label class="dropbtn" for="dropdown-toggle">Menu</label>
+            <div class="dropdown-content">
+              <ul>
+                <li><Link to="/landing" className="tab-link"> Home </Link></li>
+                <li><Link to="/demos" className="tab-link"> Demos </Link></li>
+                <li><Link to="/ourteam" className="tab-link"> Our Team </Link></li>
+                <li><Link to="/research" className="tab-link"> Research </Link></li>
+                <li><Link to="https://docs.google.com/forms/d/e/1FAIpQLSdE6QIt2Xfno67jWjBi2SJOB1dImKhmvJYr9Mzi9Qbo1BGHuw/viewform" className="tab-link"> Interest Form </Link></li>
+                <li><Link to="/register" className="tab-link"> Login Register </Link></li>
+              </ul>
+            </div>
+          </div> 
+
+
           </div>
             <div className="logo-container"> 
               <WhiteLogo/>
