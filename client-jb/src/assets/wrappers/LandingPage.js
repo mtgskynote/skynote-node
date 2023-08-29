@@ -101,7 +101,7 @@ const Wrapper = styled.main`
 #overlay-signup-button{
   margin-left: 10%;
   margin-right: 50%;
-  margin-bottom: 3%; 
+  margin-bottom: 2%; 
 }
 
 .interest-link{
