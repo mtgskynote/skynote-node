@@ -77,7 +77,7 @@ const Wrapper = styled.main`
 
 .background-image-overlay{
   position: absolute; 
-  width: 50%; 
+  width: 70%; 
   height: 100%; 
   background-color: rgba(45, 136, 235, .85);
   align-items: center;
@@ -95,18 +95,19 @@ const Wrapper = styled.main`
 .background-image-overlay p{
   color: white; 
   margin-left: 2%;
-  margin-right: 20%;
+  margin-right: 50%;
 }
 
 #overlay-signup-button{
   margin-left: 10%;
-  margin-right: 30%;
+  margin-right: 50%;
+  margin-bottom: 3%; 
 }
 
 .interest-link{
-  font-size: 18px;
+  font-size: 14px;
   margin-left: 10%;
-  margin-right: 30%;
+  margin-right: 50%;
   margin-bottom: 0%; 
   bottom: 0;
   font-family: var(--lato);
