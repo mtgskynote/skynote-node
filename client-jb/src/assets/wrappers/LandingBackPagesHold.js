@@ -62,10 +62,10 @@ const Wrapper = styled.main`
 
   .violinipad-overlay{
     position: absolute; 
-    top: 50px; 
+    top: 15%; 
     left: 0; 
     width: 100%; 
-    height: 600px; 
+    height: 75%; 
     z-index: 0; 
     justify-content: center;
     
@@ -73,7 +73,7 @@ const Wrapper = styled.main`
 
   .violinipad-overlay h1{
     position: absolute; 
-    top: 50%;
+    top: 40%;
     left: 50%; 
     transform: translate(-50%, -50%); 
     text-align: center;
@@ -89,14 +89,13 @@ const Wrapper = styled.main`
   }
 
   .violinipad-overlay h2{
-    margin-top: 85px;
+    margin-top: 60%;
     position: absolute; 
     top: 50%;
     left: 50%; 
     transform: translate(-50%, -50%); 
     text-align: center;
     color: var(--white); 
-    text-align: center;
     text-shadow: 0px 4px 4px 0px rgba(0, 0, 0, 0.25);
     font-size: 30px;
     font-family: var(--titleFont);

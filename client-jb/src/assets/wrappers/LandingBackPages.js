@@ -98,7 +98,7 @@ const Wrapper = styled.main`
 
   .violinipad-overlay h1{
     position: absolute; 
-    top: 50%;
+    top: 40%;
     left: 50%; 
     transform: translate(-50%, -50%); 
     text-align: center;
