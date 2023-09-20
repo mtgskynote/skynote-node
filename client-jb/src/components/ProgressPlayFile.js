@@ -88,7 +88,6 @@ const ProgressPlayFile = (props) => {
       const cursor = cursorRef.current;
       //update icon
       const playButton = document.getElementById("play");
-      setPlayIconOn(true) //show true button
       playbackManager.pause();
       playbackManager.setPlaybackStart(0);
       playbackManager.reset();
@@ -109,10 +108,8 @@ const ProgressPlayFile = (props) => {
       playbackManager.setPlaybackStart(currentTime);
       if (playbackManager.isPlaying) {
         playbackManager.pause();
-        setPlayIconOn(true); //show play button
       } else {
         playbackManager.play();
-        setPlayIconOn(false); //show pause button
       }
     };
     playButton.addEventListener("click", handlePlayButtonClick);
@@ -215,7 +212,6 @@ const ProgressPlayFile = (props) => {
 
   return (
     <div style={{ overflow: "scroll", height: "750px" }}>
-      {controlbar}
       <OpenSheetMusicDisplay
         file={`${folderBasePath}/${params.files}`}
         autoResize={true}
@@ -232,6 +228,7 @@ const ProgressPlayFile = (props) => {
         isResetButtonPressed={isResetButtonPressed}
         onResetDone={onResetDone}
       />
+      {controlbar}
     </div>
   );
 };
