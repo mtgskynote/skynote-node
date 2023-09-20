@@ -34,7 +34,7 @@ const useControlBar = (cursorRef) => {
   ];
 
   //Volume, bpm and zoom variables
-  const [volume, setVolume] = useState(1);
+  const [volume, setVolume] = useState(0.5);
   const [bpm, setBPM] = useState(120);
   const [zoom, setZoom] = useState(1);
 
