@@ -137,7 +137,8 @@ const useControlBar = (cursorRef) => {
                             id="volume-slider"
                             type="range"
                             min="0"
-                            max="100"
+                            max="1"
+                            step="0.1"
                             value={volume}
                             onChange={handleVolumeChange}
                           />
