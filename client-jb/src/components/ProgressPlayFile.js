@@ -118,10 +118,15 @@ const ProgressPlayFile = (props) => {
 
     const handleVolSlider = (event) => {
       const sliderId = event.target.id;
-      console.log("Slider ID:", event.target.value);
-      setRecordVol(event.target.value);
+      if (sliderId === "volume-slider") {
+        console.log("Volume slider ID:", event.target.value);
+        setRecordVol(event.target.value);
+      }
+      //console.log("sliderId, ", sliderId)
+      //console.log("Slider ID:", event.target.value);
+      //setRecordVol(event.target.value);
     };
-    volSlider.addEventListener("change", handleVolSlider);
+    volSlider.addEventListener("click", handleVolSlider);
 
     //metronome
     // const metronomeButton = document.getElementById("metronome");
