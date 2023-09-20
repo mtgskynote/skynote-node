@@ -16,7 +16,7 @@ const ProgressPlayFile = (props) => {
   const [metroVol, setMetroVol] = React.useState(0.5);
   const [bpmChange, setBpm] = React.useState(null);
 
-  const [recordVol, setRecordVol] = React.useState(0.0);
+  const [recordVol, setRecordVol] = React.useState(0.5);
 
   const [zoom, setZoom] = useState(1.0);
 
@@ -101,7 +101,7 @@ const ProgressPlayFile = (props) => {
     // plays the music where the cursor is
     const playButton = document.getElementById("play");
     const handlePlayButtonClick = () => {
-      setRecordVol(1.0);
+      setRecordVol(recordVol);
       const playbackManager = playbackRef.current;
       const cursor = cursorRef.current;
       const currentTime = cursor.Iterator.currentTimeStamp;
