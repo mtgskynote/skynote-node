@@ -49,6 +49,7 @@ const ProgressPlayFile = (props) => {
   const audioStreamer = makeAudioStreamer(handlePitchCallback);
 
   useEffect(() => {
+    console.log("use effect executed")
     //--------------------------------------------------------------------------------
     audioStreamer.init();
     //--------------------------------------------------------------------------------
@@ -101,7 +102,7 @@ const ProgressPlayFile = (props) => {
     // plays the music where the cursor is
     const playButton = document.getElementById("play");
     const handlePlayButtonClick = () => {
-      setRecordVol(recordVol);
+
       const playbackManager = playbackRef.current;
       const cursor = cursorRef.current;
       const currentTime = cursor.Iterator.currentTimeStamp;
@@ -114,19 +115,24 @@ const ProgressPlayFile = (props) => {
     };
     playButton.addEventListener("click", handlePlayButtonClick);
 
-    const volSlider = document.getElementById("settings");
+    //Settings sliders
+    const settingsSliders = document.getElementById("settings");
 
     const handleVolSlider = (event) => {
+      //Check which setting slider has been clicked
       const sliderId = event.target.id;
       if (sliderId === "volume-slider") {
-        console.log("Volume slider ID:", event.target.value);
         setRecordVol(event.target.value);
+      }else if(sliderId === "zoom-slider"){
+        setZoom(event.target.value)
+      }else if(sliderId==="bpm-slider"){
+        setBpm(event.target.value)
       }
       //console.log("sliderId, ", sliderId)
       //console.log("Slider ID:", event.target.value);
       //setRecordVol(event.target.value);
     };
-    volSlider.addEventListener("click", handleVolSlider);
+    settingsSliders.addEventListener("click", handleVolSlider);
 
     //metronome
     // const metronomeButton = document.getElementById("metronome");
@@ -209,7 +215,7 @@ const ProgressPlayFile = (props) => {
       // zoomInButton.removeEventListener("click", handleZoomInButtonClick);
       // zoomOutButton.removeEventListener("click", handleZoomOutButtonClick);
     };
-  }, [zoom, recordVol]);
+  }, [recordVol, zoom]);
 
   useEffect(() => {
     console.log("recordVol changed to", recordVol);
@@ -229,7 +235,7 @@ const ProgressPlayFile = (props) => {
         pitch={pitch}
         startPitchTrack={startPitchTrack}
         recordVol={recordVol}
-        onRecord={setRecordVol}
+        //onRecord={setRecordVol} What is this for??
         isResetButtonPressed={isResetButtonPressed}
         onResetDone={onResetDone}
       />
