@@ -86,6 +86,9 @@ const ProgressPlayFile = (props) => {
       setIsResetButtonPressed(true);
       const playbackManager = playbackRef.current;
       const cursor = cursorRef.current;
+      //update icon
+      const playButton = document.getElementById("play");
+      setPlayIconOn(true) //show true button
       playbackManager.pause();
       playbackManager.setPlaybackStart(0);
       playbackManager.reset();
@@ -106,8 +109,10 @@ const ProgressPlayFile = (props) => {
       playbackManager.setPlaybackStart(currentTime);
       if (playbackManager.isPlaying) {
         playbackManager.pause();
+        setPlayIconOn(true); //show play button
       } else {
         playbackManager.play();
+        setPlayIconOn(false); //show pause button
       }
     };
     playButton.addEventListener("click", handlePlayButtonClick);
@@ -117,7 +122,7 @@ const ProgressPlayFile = (props) => {
     const handleVolSlider = (event) => {
       const sliderId = event.target.id;
       console.log("Slider ID:", event.target.value);
-      setZoom(event.target.value);
+      setRecordVol(event.target.value);
     };
     volSlider.addEventListener("change", handleVolSlider);
 

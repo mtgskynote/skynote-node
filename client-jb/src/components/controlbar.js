@@ -13,6 +13,7 @@ import {
   faPause,
   faForward,
   faRecordVinyl,
+  faBullseye,
   faVolumeHigh,
   faGauge,
   faMagnifyingGlassPlus,
@@ -46,7 +47,7 @@ const useControlBar = (cursorRef) => {
     faPlay,
     // faPause,
     // faForward,
-    faRecordVinyl,
+    faBullseye,
     // faVolumeHigh,
     // faGauge,
     // faMagnifyingGlassPlus,
@@ -55,37 +56,58 @@ const useControlBar = (cursorRef) => {
     faGear,
   ];
 
+  //Volume, bpm and zoom variables
   const [volume, setVolume] = useState(50);
   const [bpm, setBPM] = useState(120);
   const [zoom, setZoom] = useState(1);
 
+  //PLAY/PAUSE variable
   const [isPlayingOn, setIsPlaying] = useState(true);
   const handlePlayPause = () => {
     setIsPlaying(!isPlayingOn);
     // Add logic to handle the play/pause action here
   };
 
+  
+  //record variable
+  const [recordingOff, setRecordingOff] = useState(true);
+  const handleRecord = () => {
+    setRecordingOff(!recordingOff);
+    // Add logic to handle the play/pause action here
+  };
+
+  //Settings-visible variable
   const [isSettingsVisible, setIsSettingsVisible] = useState(false);
   const handleToggleSettings = () => {
     // Toggle the visibility of the settings panel
     setIsSettingsVisible(!isSettingsVisible);
   };
 
+  //Volume change
   const handleVolumeChange = (event) => {
     // Handle volume slider change
     setVolume(event.target.value);
     // Update the volume state or perform any other necessary actions
   };
 
+  //BPM change
   const handleBPMChange = (event) => {
     // Handle BPM slider change
     setBPM(event.target.value);
     // Update the BPM state or perform any other necessary actions
   };
 
+  //Zoom change
   const handleZoomChange = (event) => {
     // Handle zoom slider change
     setZoom(event.target.value);
+    // Update the zoom state or perform any other necessary actions
+  };
+
+  //Reset change
+  const handleResetChange = (event) => {
+    // Handle reset button --> show play button, not pause
+    setIsPlaying(true)
     // Update the zoom state or perform any other necessary actions
   };
 
@@ -98,10 +120,20 @@ const useControlBar = (cursorRef) => {
               <div>
                 {icons[i] == faPlay ? (
                   <FontAwesomeIcon
-                    icon={isPlayingOn ? faPlay : faPause}
+                    icon={isPlayingOn ? faPlay : faPause} //Alternate Pause/Play button
                     onClick={handlePlayPause}
                   />
-                ) : icons[i] === faGear ? (
+                ) : icons[i] == faUndoAlt ? ( 
+                  <FontAwesomeIcon
+                    icon={icons[i]}
+                    onClick={handleResetChange} //When reset --> play button
+                  />
+                ) : icons[i] == faBullseye ? (
+                  <FontAwesomeIcon
+                    icon={recordingOff ? faBullseye:faRecordVinyl} //Alternate NotRecoding/Recording button
+                    onClick={handleRecord}
+                  />
+                ): icons[i] === faGear ? (
                   <div>
                     <Dropdown
                       show={isSettingsVisible}
