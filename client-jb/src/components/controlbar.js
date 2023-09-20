@@ -1,22 +1,17 @@
-import { useEffect, useState } from "react";
+import {useState } from "react";
 import Wrapper from "../assets/wrappers/controlBar";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { Button, Icon } from "@material-ui/core";
+import { Button} from "@material-ui/core";
 import { Dropdown } from "react-bootstrap";
 
 import {
-  faEye,
-  faEyeSlash,
   faUndoAlt,
-  faBackward,
   faPlay,
   faPause,
-  faForward,
   faRecordVinyl,
   faBullseye,
   faVolumeHigh,
   faGauge,
-  faMagnifyingGlassPlus,
   faMagnifyingGlassMinus,
   faBoltLightning,
   faGear,
@@ -24,34 +19,16 @@ import {
 
 const useControlBar = (cursorRef) => {
   const titles = [
-    // "cursorShow",
-    // "cursorHide",
     "beginning",
-    // "backward",
     "play",
-    // "pause",
-    // "forward",
     "record",
-    // "volume",
-    // "metronome",
-    // "zoomIn",
-    // "zoomOut",
     "visualize",
     "settings",
   ];
   const icons = [
-    // faEye,
-    // faEyeSlash,
     faUndoAlt,
-    // faBackward,
     faPlay,
-    // faPause,
-    // faForward,
     faBullseye,
-    // faVolumeHigh,
-    // faGauge,
-    // faMagnifyingGlassPlus,
-    // faMagnifyingGlassMinus,
     faBoltLightning,
     faGear,
   ];
@@ -118,17 +95,17 @@ const useControlBar = (cursorRef) => {
           return (
             <Button key={title} className="controlBtn" title={title} id={title}>
               <div>
-                {icons[i] == faPlay ? (
+                {icons[i] === faPlay ? (
                   <FontAwesomeIcon
                     icon={isPlayingOn ? faPlay : faPause} //Alternate Pause/Play button
                     onClick={handlePlayPause}
                   />
-                ) : icons[i] == faUndoAlt ? ( 
+                ) : icons[i] === faUndoAlt ? ( 
                   <FontAwesomeIcon
                     icon={icons[i]}
                     onClick={handleResetChange} //When reset --> play button
                   />
-                ) : icons[i] == faBullseye ? (
+                ) : icons[i] === faBullseye ? (
                   <FontAwesomeIcon
                     icon={recordingOff ? faBullseye:faRecordVinyl} //Alternate NotRecoding/Recording button
                     onClick={handleRecord}
