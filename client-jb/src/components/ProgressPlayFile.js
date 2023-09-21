@@ -76,8 +76,6 @@ const ProgressPlayFile = (props) => {
       } else {
         playbackManager.pause();
       }
-
-      console.log("recordVol in record", recordVol);
     };
 
     recordButton.addEventListener("click", handleRecordButtonClick);
