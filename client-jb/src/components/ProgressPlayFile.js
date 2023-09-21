@@ -3,6 +3,8 @@ import { useParams } from "react-router-dom";
 import OpenSheetMusicDisplay from "./OpenSheetMusicDisplay";
 import { useControlBar } from "./controlbar";
 import { makeAudioStreamer } from "./audioStreamer.js";
+import CountdownTimer from "./MetronomeCountDown.js";
+import { log } from "@tensorflow/tfjs";
 
 const folderBasePath = "/xmlScores/violin";
 
@@ -14,10 +16,12 @@ const ProgressPlayFile = (props) => {
   const playbackRef = React.useRef(null);
 
   const [metroVol, setMetroVol] = React.useState(0);
-  const [bpmChange, setBpm] = React.useState(null);
+  const [bpmChange, setBpm] = React.useState(100);
 
   const [recordVol, setRecordVol] = React.useState(0.5);
   
+  const [showTimer, setShowTimer] = React.useState(false);
+  const [finishedTimer, setFinishedTimer] = React.useState(false);
 
   const [zoom, setZoom] = useState(1.0);
 
@@ -48,6 +52,15 @@ const ProgressPlayFile = (props) => {
   // }
 
   const audioStreamer = makeAudioStreamer(handlePitchCallback);
+  
+  useEffect(() => {
+    if(finishedTimer){
+      const playbackManager = playbackRef.current;
+      playbackManager.play();
+      setShowTimer(false)
+    }
+    setFinishedTimer(false)
+  }, [finishedTimer]);
 
   useEffect(() => {
     console.log("use effect executed")
@@ -102,15 +115,14 @@ const ProgressPlayFile = (props) => {
     // plays the music where the cursor is
     const playButton = document.getElementById("play");
     const handlePlayButtonClick = () => {
-
       const playbackManager = playbackRef.current;
       const cursor = cursorRef.current;
       const currentTime = cursor.Iterator.currentTimeStamp;
-      playbackManager.setPlaybackStart(currentTime);
+      
       if (playbackManager.isPlaying) {
         playbackManager.pause();
       } else {
-        playbackManager.play();
+        setShowTimer(true)
       }
     };
     playButton.addEventListener("click", handlePlayButtonClick);
@@ -145,9 +157,6 @@ const ProgressPlayFile = (props) => {
       visualizeButton.removeEventListener("click", handleVisualizeButtonClick);
       beginningButton.removeEventListener("click", handleBeginningButtonClick);
       playButton.removeEventListener("click", handlePlayButtonClick);
-      // metronomeButton.removeEventListener("click", handleMetronomeButtonClick);
-      // zoomInButton.removeEventListener("click", handleZoomInButtonClick);
-      // zoomOutButton.removeEventListener("click", handleZoomOutButtonClick);
     };
   }, [recordVol, zoom]);
 
@@ -165,10 +174,10 @@ const ProgressPlayFile = (props) => {
         pitch={pitch}
         startPitchTrack={startPitchTrack}
         recordVol={recordVol}
-        //onRecord={setRecordVol} What is this for??
         isResetButtonPressed={isResetButtonPressed}
         onResetDone={onResetDone}
       />
+       {showTimer ? (<CountdownTimer bpm={bpmChange}  onComplete={() => setFinishedTimer(true)} />):(null)}
       {controlbar}
     </div>
   );
