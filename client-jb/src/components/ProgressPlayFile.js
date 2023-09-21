@@ -13,10 +13,11 @@ const ProgressPlayFile = (props) => {
   const cursorRef = React.useRef(null);
   const playbackRef = React.useRef(null);
 
-  const [metroVol, setMetroVol] = React.useState(0.5);
+  const [metroVol, setMetroVol] = React.useState(0);
   const [bpmChange, setBpm] = React.useState(null);
 
   const [recordVol, setRecordVol] = React.useState(0.5);
+  
 
   const [zoom, setZoom] = useState(1.0);
 
@@ -88,7 +89,6 @@ const ProgressPlayFile = (props) => {
       const playbackManager = playbackRef.current;
       const cursor = cursorRef.current;
       //update icon
-      const playButton = document.getElementById("play");
       playbackManager.pause();
       playbackManager.setPlaybackStart(0);
       playbackManager.reset();
@@ -127,6 +127,8 @@ const ProgressPlayFile = (props) => {
         setZoom(event.target.value)
       }else if(sliderId==="bpm-slider"){
         setBpm(event.target.value)
+      }else if(sliderId==="metroVol-slider"){
+        setMetroVol(event.target.value)
       }
       //console.log("sliderId, ", sliderId)
       //console.log("Slider ID:", event.target.value);

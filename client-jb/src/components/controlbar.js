@@ -37,6 +37,7 @@ const useControlBar = (cursorRef) => {
   const [volume, setVolume] = useState(0.5);
   const [bpm, setBPM] = useState(120);
   const [zoom, setZoom] = useState(1);
+  const [metronomeVol, setMetronomeVol] = useState(0);
 
   //PLAY/PAUSE variable
   const [isPlayingOn, setIsPlaying] = useState(true);
@@ -79,6 +80,13 @@ const useControlBar = (cursorRef) => {
     // Handle zoom slider change
     setZoom(event.target.value);
     // Update the zoom state or perform any other necessary actions
+  };
+
+  //Metronome Volume change
+  const handleMetroVolChange = (event) => {
+    // Handle MetroVol slider change
+    setMetronomeVol(event.target.value);
+    // Update the MetroVol state or perform any other necessary actions
   };
 
   //Reset change
@@ -144,6 +152,22 @@ const useControlBar = (cursorRef) => {
                           />
                         </div>
                         <div>
+                          {/* Metronome Volume Slider */}
+                          <FontAwesomeIcon icon={faVolumeHigh} />
+                          <label htmlFor="metroVol-slider" className="slider-label">
+                            Metronome
+                          </label>
+                          <input
+                            id="metroVol-slider"
+                            type="range"
+                            min="0"
+                            max="1"
+                            step="0.1"
+                            value={metronomeVol}
+                            onChange={handleMetroVolChange}
+                          />
+                        </div>
+                        <div>
                           {/* Zoom Slider */}
                           <FontAwesomeIcon icon={faMagnifyingGlassMinus} />
                           <label htmlFor="zoom-slider" className="slider-label">
@@ -174,6 +198,7 @@ const useControlBar = (cursorRef) => {
                             onChange={handleBPMChange}
                           />
                         </div>
+                        
                       </Dropdown.Menu>
                     </Dropdown>
                   </div>
