@@ -58,7 +58,7 @@ class OpenSheetMusicDisplay extends Component {
       this.osmd.PlaybackManager = this.playbackManager;
 
       for (const instrument of this.playbackManager.InstrumentIdMapping.values()) {
-        instrument.Volume = 0.5;
+        instrument.Volume = this.props.recordVol;
       }
     };
 
