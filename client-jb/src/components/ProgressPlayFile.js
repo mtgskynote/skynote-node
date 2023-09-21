@@ -58,7 +58,7 @@ const ProgressPlayFile = (props) => {
     // record
     const recordButton = document.getElementById("record");
     const handleRecordButtonClick = () => {
-      setRecordVol(0.0);
+      //setRecordVol(0.0);
       setStartPitchTrack((prevStartPitchTrack) => {
         startPitchTrackRef.current = !prevStartPitchTrack;
         return !prevStartPitchTrack;
