@@ -217,10 +217,6 @@ const ProgressPlayFile = (props) => {
     };
   }, [recordVol, zoom]);
 
-  useEffect(() => {
-    console.log("recordVol changed to", recordVol);
-  }, [recordVol]);
-
   return (
     <div style={{ overflow: "scroll", height: "750px" }}>
       <OpenSheetMusicDisplay
