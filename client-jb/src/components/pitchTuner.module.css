@@ -1,0 +1,43 @@
+.myContainer {
+    position: relative;
+    border: 1px solid blueviolet; 
+    width:300px;
+}
+
+/* Style for the vertical line */
+.vertical::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 50%; /* Position the line in the center horizontally */
+    width: 2px; /* Adjust the width of the line as needed */
+    background-color: #000; /* Line color */
+    transform: translateX(-50%); /* Center the line on the vertical axis */
+    z-index: -1;
+}
+
+
+.scrollableTextarea {
+    background-color: rgb(206, 237, 206);
+    color: 'green';
+    width: 300px; /* Set the desired width of the textarea */
+    height: 2em; /* Set the desired height of the textarea */
+    overflow: hidden; /* Hide the scrollbar *//*  white-space: nowrap; /* Prevent text from wrapping */
+    white-space: nowrap;
+}
+
+
+  .notesareaDiv {
+    width:300px;
+    height: 50px;
+    overflow: hidden; /* Hide the scrollbar */
+    scroll-behavior: smooth;
+    background-color: #EEE;
+
+}
+.scrollableNotesImage {
+    height: 50px;
+    opacity: .85;
+}
+

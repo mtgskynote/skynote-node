@@ -111,7 +111,7 @@ c) Then go to the "build/" folder you got after unzipping, copy it and paste it 
 
 5. ** Production deployment steps**
    1. Once all packages are installed in your production server folder, To copy the opensheetmusicdisplay related contents to client-jb/node_modules
-   2. Create a .env file and set the necessary values inside of it.
+   2. Create a .env file and set the necessary values inside of it (removing the values for VPS_PRIVATE_KEY and VPS_USERNAME)
    3. To start process using 'pm2'
       - run 'pm2 start server.js' (https://pm2.keymetrics.io/docs/usage/process-management/)
         a. Put your .env file into the main appskynote directory
