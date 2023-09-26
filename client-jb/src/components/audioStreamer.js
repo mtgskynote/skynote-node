@@ -39,7 +39,13 @@ var makeAudioStreamer = function (
 
     init: function (meydaFeatures = []) {
       navigator.mediaDevices
-        .getUserMedia({ audio: true })
+        .getUserMedia({ audio: {
+          echoCancellation: false,
+          autoGainControl: false,
+          noiseSuppression: false,
+          latency: 0,
+          sampleRate: 22050
+        } })
         .then(async (stream) => {
           audioContext.resume();
           const sourceNode = audioContext.createMediaStreamSource(stream);
