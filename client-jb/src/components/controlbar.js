@@ -18,20 +18,7 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 
 const useControlBar = (cursorRef) => {
-  const titles = [
-    "beginning",
-    "play",
-    "record",
-    "visualize",
-    "settings",
-  ];
-  const icons = [
-    faUndoAlt,
-    faPlay,
-    faBullseye,
-    faBoltLightning,
-    faGear,
-  ];
+  
 
   //Volume, bpm and zoom variables
   const [volume, setVolume] = useState(0.5);
@@ -93,30 +80,59 @@ const useControlBar = (cursorRef) => {
   const handleResetChange = (event) => {
     // Handle reset button --> show play button, not pause
     setIsPlaying(true)
+    setRecordingOff(true)
     // Update the zoom state or perform any other necessary actions
   };
+
+  //Visualize button
+  const handleVisualize = (event) => {
+    // None
+  };
+
+  //Generate data to generate buttons
+  const titles = [
+    "beginning",
+    "play",
+    "record",
+    "visualize",
+    "settings",
+  ];
+  const icons = [
+    faUndoAlt,
+    faPlay,
+    faBullseye,
+    faBoltLightning,
+    faGear,
+  ];
+  const handlers = [
+    handleResetChange,
+    handlePlayPause,
+    handleRecord,
+    handleVisualize,
+    handleToggleSettings
+  ]
 
   const controlbar = (
     <Wrapper>
       <div className="myDiv">
         {titles.map((title, i) => {
           return (
-            <Button key={title} className="controlBtn" title={title} id={title}>
+            <Button key={title} className="controlBtn" title={title} id={title} onClick={() => handlers[i](title)}>
               <div>
                 {icons[i] === faPlay ? (
                   <FontAwesomeIcon
                     icon={isPlayingOn ? faPlay : faPause} //Alternate Pause/Play button
-                    onClick={handlePlayPause}
+                    
                   />
                 ) : icons[i] === faUndoAlt ? ( 
                   <FontAwesomeIcon
                     icon={icons[i]}
-                    onClick={handleResetChange} //When reset --> play button
+                    
                   />
                 ) : icons[i] === faBullseye ? (
                   <FontAwesomeIcon
                     icon={recordingOff ? faBullseye:faRecordVinyl} //Alternate NotRecoding/Recording button
-                    onClick={handleRecord}
+                    
                   />
                 ): icons[i] === faGear ? (
                   <div>

@@ -15,13 +15,14 @@ const ProgressPlayFile = (props) => {
   const cursorRef = React.useRef(null);
   const playbackRef = React.useRef(null);
 
-  const [metroVol, setMetroVol] = React.useState(0);
-  const [bpmChange, setBpm] = React.useState(100);
+  const [metroVol, setMetroVol] = useState(0);
+  const [bpmChange, setBpm] = useState(100);
 
-  const [recordVol, setRecordVol] = React.useState(0.5);
+  const [recordVol, setRecordVol] = useState(0.5);
+  const[recordActive, setRecordActive] = useState(true)
   
-  const [showTimer, setShowTimer] = React.useState(false);
-  const [finishedTimer, setFinishedTimer] = React.useState(false);
+  const [showTimer, setShowTimer] = useState(false);
+  const [finishedTimer, setFinishedTimer] = useState(false);
 
   const [zoom, setZoom] = useState(1.0);
 
@@ -44,56 +45,59 @@ const ProgressPlayFile = (props) => {
     }
   };
 
-  // if (startPitchTrack) {
-  //   // console.log("startPitchTrack", startPitchTrack);
-
-  //   const audioStreamer = makeAudioStreamer(handlePitchCallback);
-  //   audioStreamer.init();
-  // }
-
   const audioStreamer = makeAudioStreamer(handlePitchCallback);
   
+  //When countdown timer (previous to start recording) finishes
   useEffect(() => {
     if(finishedTimer){
-      const playbackManager = playbackRef.current;
-      playbackManager.play();
-      setShowTimer(false)
-    }
-    setFinishedTimer(false)
-  }, [finishedTimer]);
-
-  useEffect(() => {
-    console.log("use effect executed")
-    //--------------------------------------------------------------------------------
-    audioStreamer.init();
-    //--------------------------------------------------------------------------------
-
-    // record
-    const recordButton = document.getElementById("record");
-    const handleRecordButtonClick = () => {
-      //setRecordVol(0.0);
-      setStartPitchTrack((prevStartPitchTrack) => {
-        startPitchTrackRef.current = !prevStartPitchTrack;
-        return !prevStartPitchTrack;
-      });
-      console.log("startPitchTrackRef.current", startPitchTrackRef.current);
 
       const playbackManager = playbackRef.current;
       const cursor = cursorRef.current;
       const currentTime = cursor.Iterator.currentTimeStamp;
       playbackManager.setPlaybackStart(currentTime);
 
-      if (startPitchTrackRef.current) {
-        console.log("blblblblbl", startPitchTrackRef.current);
-        playbackManager.play();
-      } else {
+      //Once countdown is finished, activate Pitch tracking
+      setStartPitchTrack(true);
+      //And play file, make cursor start
+      playbackManager.play();
+      //Timer work is done, false until next call
+      setShowTimer(false)
+    }
+    //Finished timer duties done, false until next call
+    setFinishedTimer(false)
+  }, [finishedTimer]);
+
+  //Most important, handles basically any change
+  useEffect(() => {
+    
+    //--------------------------------------------------------------------------------
+    audioStreamer.init();
+    //--------------------------------------------------------------------------------
+
+    // RECORD BUTTON -----------------------------------------------------------------
+    const recordButton = document.getElementById("record");
+    const handleRecordButtonClick = () => {
+
+      //Toggle recording state (FIXME does not work the first time, so recordActive is started with true value)
+      setRecordActive(!recordActive)
+
+      if (recordActive) { //Recoding is wanted
+        console.log("Recording started")
+        setShowTimer(true) //initialize process of countdown, which will then lead to recording
+      } else { //Recording is unwanted
+        console.log("Recording stopped")
+        //Deactivate Pitch tracking
+        setStartPitchTrack(false);
+        //Pause file and therefore, cursor
+        const playbackManager = playbackRef.current;
         playbackManager.pause();
       }
     };
 
     recordButton.addEventListener("click", handleRecordButtonClick);
+    //--------------------------------------------------------------------------------
 
-    // cursor beginning (reset)
+    // RESET BUTTON ------------------------------------------------------------------
     const beginningButton = document.getElementById("beginning");
     const handleBeginningButtonClick = () => {
       setIsResetButtonPressed(true);
@@ -104,11 +108,17 @@ const ProgressPlayFile = (props) => {
       playbackManager.setPlaybackStart(0);
       playbackManager.reset();
       cursor.reset();
+      setStartPitchTrack(false);
+      setRecordActive(true) //Set to true, just like the initial state
+      //FIXME the pitch content should be removed
+      //setPitch([]) //does not work
+
     };
 
     beginningButton.addEventListener("click", handleBeginningButtonClick);
+    //--------------------------------------------------------------------------------
 
-    // cursor play
+    // PLAY/PAUSE BUTTON -------------------------------------------------------------
     // gets the playback manager and sets the start time to the current time
     // plays the music where the cursor is
     const playButton = document.getElementById("play");
@@ -120,12 +130,14 @@ const ProgressPlayFile = (props) => {
       if (playbackManager.isPlaying) {
         playbackManager.pause();
       } else {
-        setShowTimer(true)
+        playbackManager.play();
+        
       }
     };
     playButton.addEventListener("click", handlePlayButtonClick);
+    //--------------------------------------------------------------------------------
 
-    //Settings sliders
+    // SETTINGS SLIDERS --------------------------------------------------------------
     const settingsSliders = document.getElementById("settings");
 
     const handleSettings = (event) => {
@@ -142,13 +154,15 @@ const ProgressPlayFile = (props) => {
       }
     };
     settingsSliders.addEventListener("click", handleSettings);
+    //--------------------------------------------------------------------------------
 
-    // cursor Timbre Visualization
+    // TIMBRE VISUALIZATION ----------------------------------------------------------
     const visualizeButton = document.getElementById("visualize");
     const handleVisualizeButtonClick = () => {
       window.location.href = "/TimbreVisualization";
     };
     visualizeButton.addEventListener("click", handleVisualizeButtonClick);
+    //--------------------------------------------------------------------------------
 
     return () => {
       recordButton.removeEventListener("click", handleRecordButtonClick);
@@ -156,7 +170,7 @@ const ProgressPlayFile = (props) => {
       beginningButton.removeEventListener("click", handleBeginningButtonClick);
       playButton.removeEventListener("click", handlePlayButtonClick);
     };
-  }, [recordVol, zoom]);
+  }, [recordVol, zoom, recordActive]);
 
   return (
     <div style={{ overflow: "scroll", height: "750px" }}>
