@@ -18,11 +18,12 @@ import { makeCrepeScriptNode } from "./pitch/crepeScriptNode.js";
 import Meyda from "meyda"; //https://meyda.js.org
 
 const meyda_buff_fft_length = 1024; // fft length and buf size are the same for Meyda
+const sampleRateValue = 22050;
 
 // Create an audio context
 const audioContext = new AudioContext({
   latencyHint: "interactive",
-  sampleRate: 22050,
+  sampleRate: sampleRateValue,
 }); // must be audioContext.resumed()'d by a user before mic will work.
 
 var makeAudioStreamer = function (
@@ -44,7 +45,7 @@ var makeAudioStreamer = function (
           autoGainControl: false,
           noiseSuppression: false,
           latency: 0,
-          sampleRate: 22050
+          sampleRate: sampleRateValue
         } })
         .then(async (stream) => {
           audioContext.resume();
