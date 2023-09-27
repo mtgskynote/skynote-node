@@ -155,9 +155,7 @@ const AllLessons = () => {
   return (
     <>
       <div>
-        <h1 style={{ fontSize: 25, fontFamily: "cursive", margin: "2rem" }}>
-          All Lessons
-        </h1>
+        <h1>All Lessons</h1>
       </div>
       <Box sx={sxStyles}>
         <TreeView

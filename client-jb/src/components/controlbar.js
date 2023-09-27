@@ -1,107 +1,140 @@
-import { useEffect, useState } from "react";
+import {useState } from "react";
 import Wrapper from "../assets/wrappers/controlBar";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { Button, Icon } from "@material-ui/core";
+import { Button} from "@material-ui/core";
 import { Dropdown } from "react-bootstrap";
 
 import {
-  faEye,
-  faEyeSlash,
   faUndoAlt,
-  faBackward,
   faPlay,
   faPause,
-  faForward,
   faRecordVinyl,
+  faBullseye,
   faVolumeHigh,
   faGauge,
-  faMagnifyingGlassPlus,
   faMagnifyingGlassMinus,
   faBoltLightning,
   faGear,
 } from "@fortawesome/free-solid-svg-icons";
 
 const useControlBar = (cursorRef) => {
-  const titles = [
-    // "cursorShow",
-    // "cursorHide",
-    "beginning",
-    // "backward",
-    "play",
-    // "pause",
-    // "forward",
-    "record",
-    // "volume",
-    // "metronome",
-    // "zoomIn",
-    // "zoomOut",
-    "visualize",
-    "settings",
-  ];
-  const icons = [
-    // faEye,
-    // faEyeSlash,
-    faUndoAlt,
-    // faBackward,
-    faPlay,
-    // faPause,
-    // faForward,
-    faRecordVinyl,
-    // faVolumeHigh,
-    // faGauge,
-    // faMagnifyingGlassPlus,
-    // faMagnifyingGlassMinus,
-    faBoltLightning,
-    faGear,
-  ];
+  
 
-  const [volume, setVolume] = useState(50);
-  const [bpm, setBPM] = useState(120);
+  //Volume, bpm and zoom variables
+  const [volume, setVolume] = useState(0.5);
+  const [bpm, setBPM] = useState(100);
   const [zoom, setZoom] = useState(1);
+  const [metronomeVol, setMetronomeVol] = useState(0);
 
+  //PLAY/PAUSE variable
   const [isPlayingOn, setIsPlaying] = useState(true);
   const handlePlayPause = () => {
     setIsPlaying(!isPlayingOn);
     // Add logic to handle the play/pause action here
   };
 
+  
+  //record variable
+  const [recordingOff, setRecordingOff] = useState(true);
+  const handleRecord = () => {
+    setRecordingOff(!recordingOff);
+    // Add logic to handle the play/pause action here
+  };
+
+  //Settings-visible variable
   const [isSettingsVisible, setIsSettingsVisible] = useState(false);
   const handleToggleSettings = () => {
     // Toggle the visibility of the settings panel
     setIsSettingsVisible(!isSettingsVisible);
   };
 
+  //Volume change
   const handleVolumeChange = (event) => {
     // Handle volume slider change
     setVolume(event.target.value);
     // Update the volume state or perform any other necessary actions
   };
 
+  //BPM change
   const handleBPMChange = (event) => {
     // Handle BPM slider change
     setBPM(event.target.value);
     // Update the BPM state or perform any other necessary actions
   };
 
+  //Zoom change
   const handleZoomChange = (event) => {
     // Handle zoom slider change
     setZoom(event.target.value);
     // Update the zoom state or perform any other necessary actions
   };
 
+  //Metronome Volume change
+  const handleMetroVolChange = (event) => {
+    // Handle MetroVol slider change
+    setMetronomeVol(event.target.value);
+    // Update the MetroVol state or perform any other necessary actions
+  };
+
+  //Reset change
+  const handleResetChange = (event) => {
+    // Handle reset button --> show play button, not pause
+    setIsPlaying(true)
+    setRecordingOff(true)
+    // Update the zoom state or perform any other necessary actions
+  };
+
+  //Visualize button
+  const handleVisualize = (event) => {
+    // None
+  };
+
+  //Generate data to generate buttons
+  const titles = [
+    "beginning",
+    "play",
+    "record",
+    "visualize",
+    "settings",
+  ];
+  const icons = [
+    faUndoAlt,
+    faPlay,
+    faBullseye,
+    faBoltLightning,
+    faGear,
+  ];
+  const handlers = [
+    handleResetChange,
+    handlePlayPause,
+    handleRecord,
+    handleVisualize,
+    handleToggleSettings
+  ]
+
   const controlbar = (
     <Wrapper>
       <div className="myDiv">
         {titles.map((title, i) => {
           return (
-            <Button key={title} className="controlBtn" title={title} id={title}>
+            <Button key={title} className="controlBtn" title={title} id={title} onClick={() => handlers[i](title)}>
               <div>
-                {icons[i] == faPlay ? (
+                {icons[i] === faPlay ? (
                   <FontAwesomeIcon
-                    icon={isPlayingOn ? faPlay : faPause}
-                    onClick={handlePlayPause}
+                    icon={isPlayingOn ? faPlay : faPause} //Alternate Pause/Play button
+                    
                   />
-                ) : icons[i] === faGear ? (
+                ) : icons[i] === faUndoAlt ? ( 
+                  <FontAwesomeIcon
+                    icon={icons[i]}
+                    
+                  />
+                ) : icons[i] === faBullseye ? (
+                  <FontAwesomeIcon
+                    icon={recordingOff ? faBullseye:faRecordVinyl} //Alternate NotRecoding/Recording button
+                    
+                  />
+                ): icons[i] === faGear ? (
                   <div>
                     <Dropdown
                       show={isSettingsVisible}
@@ -128,9 +161,26 @@ const useControlBar = (cursorRef) => {
                             id="volume-slider"
                             type="range"
                             min="0"
-                            max="100"
+                            max="1"
+                            step="0.1"
                             value={volume}
                             onChange={handleVolumeChange}
+                          />
+                        </div>
+                        <div>
+                          {/* Metronome Volume Slider */}
+                          <FontAwesomeIcon icon={faVolumeHigh} />
+                          <label htmlFor="metroVol-slider" className="slider-label">
+                            Metronome
+                          </label>
+                          <input
+                            id="metroVol-slider"
+                            type="range"
+                            min="0"
+                            max="1"
+                            step="0.1"
+                            value={metronomeVol}
+                            onChange={handleMetroVolChange}
                           />
                         </div>
                         <div>
@@ -164,6 +214,7 @@ const useControlBar = (cursorRef) => {
                             onChange={handleBPMChange}
                           />
                         </div>
+                        
                       </Dropdown.Menu>
                     </Dropdown>
                   </div>

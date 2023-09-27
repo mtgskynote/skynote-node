@@ -3,6 +3,8 @@ import { useParams } from "react-router-dom";
 import OpenSheetMusicDisplay from "./OpenSheetMusicDisplay";
 import { useControlBar } from "./controlbar";
 import { makeAudioStreamer } from "./audioStreamer.js";
+import CountdownTimer from "./MetronomeCountDown.js";
+import { log } from "@tensorflow/tfjs";
 
 const folderBasePath = "/xmlScores/violin";
 
@@ -13,10 +15,14 @@ const ProgressPlayFile = (props) => {
   const cursorRef = React.useRef(null);
   const playbackRef = React.useRef(null);
 
-  const [metroVol, setMetroVol] = React.useState(0.5);
-  const [bpmChange, setBpm] = React.useState(null);
+  const [metroVol, setMetroVol] = useState(0);
+  const [bpmChange, setBpm] = useState(100);
 
-  const [recordVol, setRecordVol] = React.useState(0.0);
+  const [recordVol, setRecordVol] = useState(0.5);
+  const[recordActive, setRecordActive] = useState(true)
+  
+  const [showTimer, setShowTimer] = useState(false);
+  const [finishedTimer, setFinishedTimer] = useState(false);
 
   const [zoom, setZoom] = useState(1.0);
 
@@ -39,178 +45,135 @@ const ProgressPlayFile = (props) => {
     }
   };
 
-  // if (startPitchTrack) {
-  //   // console.log("startPitchTrack", startPitchTrack);
-
-  //   const audioStreamer = makeAudioStreamer(handlePitchCallback);
-  //   audioStreamer.init();
-  // }
-
   const audioStreamer = makeAudioStreamer(handlePitchCallback);
-
+  
+  //When countdown timer (previous to start recording) finishes
   useEffect(() => {
-    //--------------------------------------------------------------------------------
-    audioStreamer.init();
-    //--------------------------------------------------------------------------------
-
-    // record
-    const recordButton = document.getElementById("record");
-    const handleRecordButtonClick = () => {
-      setRecordVol(0.0);
-      setStartPitchTrack((prevStartPitchTrack) => {
-        startPitchTrackRef.current = !prevStartPitchTrack;
-        return !prevStartPitchTrack;
-      });
-      console.log("startPitchTrackRef.current", startPitchTrackRef.current);
+    if(finishedTimer){
 
       const playbackManager = playbackRef.current;
       const cursor = cursorRef.current;
       const currentTime = cursor.Iterator.currentTimeStamp;
       playbackManager.setPlaybackStart(currentTime);
 
-      if (startPitchTrackRef.current) {
-        console.log("blblblblbl", startPitchTrackRef.current);
-        playbackManager.play();
-      } else {
+      //Once countdown is finished, activate Pitch tracking
+      setStartPitchTrack(true);
+      //And play file, make cursor start
+      playbackManager.play();
+      //Timer work is done, false until next call
+      setShowTimer(false)
+    }
+    //Finished timer duties done, false until next call
+    setFinishedTimer(false)
+  }, [finishedTimer]);
+
+  //Most important, handles basically any change
+  useEffect(() => {
+    
+    //--------------------------------------------------------------------------------
+    audioStreamer.init();
+    //--------------------------------------------------------------------------------
+
+    // RECORD BUTTON -----------------------------------------------------------------
+    const recordButton = document.getElementById("record");
+    const handleRecordButtonClick = () => {
+
+      //Toggle recording state (FIXME does not work the first time, so recordActive is started with true value)
+      setRecordActive(!recordActive)
+
+      if (recordActive) { //Recoding is wanted
+        console.log("Recording started")
+        setShowTimer(true) //initialize process of countdown, which will then lead to recording
+      } else { //Recording is unwanted
+        console.log("Recording stopped")
+        //Deactivate Pitch tracking
+        setStartPitchTrack(false);
+        //Pause file and therefore, cursor
+        const playbackManager = playbackRef.current;
         playbackManager.pause();
       }
-
-      console.log("recordVol in record", recordVol);
     };
 
     recordButton.addEventListener("click", handleRecordButtonClick);
+    //--------------------------------------------------------------------------------
 
-    // cursor beginning (reset)
+    // RESET BUTTON ------------------------------------------------------------------
     const beginningButton = document.getElementById("beginning");
     const handleBeginningButtonClick = () => {
       setIsResetButtonPressed(true);
       const playbackManager = playbackRef.current;
       const cursor = cursorRef.current;
+      //Reset
       playbackManager.pause();
       playbackManager.setPlaybackStart(0);
       playbackManager.reset();
       cursor.reset();
+      setStartPitchTrack(false);
+      setRecordActive(true) //Set to true, just like the initial state
+      //FIXME the pitch content should be removed
+      //setPitch([]) //does not work
+
     };
 
     beginningButton.addEventListener("click", handleBeginningButtonClick);
+    //--------------------------------------------------------------------------------
 
-    // cursor play
+    // PLAY/PAUSE BUTTON -------------------------------------------------------------
     // gets the playback manager and sets the start time to the current time
     // plays the music where the cursor is
     const playButton = document.getElementById("play");
     const handlePlayButtonClick = () => {
-      setRecordVol(1.0);
       const playbackManager = playbackRef.current;
       const cursor = cursorRef.current;
       const currentTime = cursor.Iterator.currentTimeStamp;
-      playbackManager.setPlaybackStart(currentTime);
+      
       if (playbackManager.isPlaying) {
         playbackManager.pause();
       } else {
         playbackManager.play();
+        
       }
     };
     playButton.addEventListener("click", handlePlayButtonClick);
+    //--------------------------------------------------------------------------------
 
-    const volSlider = document.getElementById("settings");
+    // SETTINGS SLIDERS --------------------------------------------------------------
+    const settingsSliders = document.getElementById("settings");
 
-    const handleVolSlider = (event) => {
+    const handleSettings = (event) => {
+      //Check which setting slider has been clicked
       const sliderId = event.target.id;
-      console.log("Slider ID:", event.target.value);
-      setZoom(event.target.value);
+      if (sliderId === "volume-slider") {
+        setRecordVol(event.target.value);
+      }else if(sliderId === "zoom-slider"){
+        setZoom(event.target.value)
+      }else if(sliderId==="bpm-slider"){
+        setBpm(event.target.value)
+      }else if(sliderId==="metroVol-slider"){
+        setMetroVol(event.target.value)
+      }
     };
-    volSlider.addEventListener("change", handleVolSlider);
+    settingsSliders.addEventListener("click", handleSettings);
+    //--------------------------------------------------------------------------------
 
-    //metronome
-    // const metronomeButton = document.getElementById("metronome");
-    // const handleMetronomeButtonClick = () => {
-    //   const metronomeButton = document.getElementById("metronome");
-
-    //   // to setup the slider relative to the button
-    //   const rect = metronomeButton.getBoundingClientRect();
-
-    //   // create volume slider
-    //   const existingVolumeSlider = document.getElementById(
-    //     "metronome-volume-slider"
-    //   );
-    //   if (existingVolumeSlider) {
-    //     existingVolumeSlider.remove();
-    //   }
-    //   const volumeSlider = document.createElement("div");
-    //   volumeSlider.id = "metronome-volume-slider";
-    //   volumeSlider.className = "volume-slider";
-    //   volumeSlider.innerHTML =
-    //     '<input type="range" min="0" max="1" step="0.01" value="1" />';
-    //   volumeSlider.style.position = "absolute";
-    //   volumeSlider.style.top = rect.bottom + "px";
-    //   volumeSlider.style.left = rect.left - 30 + "px";
-    //   document.body.appendChild(volumeSlider);
-
-    //   // slider input for metronome volume control
-    //   const volumeSliderInput = volumeSlider.querySelector("input");
-    //   volumeSliderInput.addEventListener("input", (event) => {
-    //     setMetroVol(event.target.value);
-    //   });
-
-    //   // create bpm slider
-    //   const existingBpmSlider = document.getElementById("metronome-bpm-slider");
-    //   if (existingBpmSlider) {
-    //     existingBpmSlider.remove();
-    //   }
-    //   const bpmSlider = document.createElement("div");
-    //   bpmSlider.id = "metronome-bpm-slider";
-    //   bpmSlider.className = "bpm-slider";
-    //   bpmSlider.innerHTML =
-    //     '<input type="range" min="60" max="240" step="1" value="120" />';
-    //   // Create label for bpm slider
-    //   const bpmLabel = document.createElement("label");
-    //   bpmLabel.for = "bpm-slider";
-    //   bpmLabel.innerHTML = "BPM";
-    //   bpmLabel.style.display = "inline-block";
-    //   bpmLabel.style.marginBottom = "5px";
-    //   bpmSlider.appendChild(bpmLabel);
-
-    //   bpmSlider.style.position = "absolute";
-    //   bpmSlider.style.top = rect.bottom + "px";
-    //   bpmSlider.style.left = rect.right + 40 + "px";
-
-    //   document.body.appendChild(bpmSlider);
-
-    //   // slider input for bpm control
-    //   const bpmSliderInput = bpmSlider.querySelector("input");
-    //   bpmSliderInput.addEventListener("input", (event) => {
-    //     setBpm(event.target.value);
-    //     console.log(event.target.value);
-    //   });
-    // };
-
-    // metronomeButton.addEventListener("click", handleMetronomeButtonClick);
-
-    // cursor Timbre Visualization
+    // TIMBRE VISUALIZATION ----------------------------------------------------------
     const visualizeButton = document.getElementById("visualize");
     const handleVisualizeButtonClick = () => {
       window.location.href = "/TimbreVisualization";
     };
     visualizeButton.addEventListener("click", handleVisualizeButtonClick);
+    //--------------------------------------------------------------------------------
 
     return () => {
       recordButton.removeEventListener("click", handleRecordButtonClick);
       visualizeButton.removeEventListener("click", handleVisualizeButtonClick);
       beginningButton.removeEventListener("click", handleBeginningButtonClick);
       playButton.removeEventListener("click", handlePlayButtonClick);
-      // metronomeButton.removeEventListener("click", handleMetronomeButtonClick);
-      // zoomInButton.removeEventListener("click", handleZoomInButtonClick);
-      // zoomOutButton.removeEventListener("click", handleZoomOutButtonClick);
     };
-  }, [zoom, recordVol]);
-
-  useEffect(() => {
-    console.log("recordVol changed to", recordVol);
-  }, [recordVol]);
+  }, [recordVol, zoom, recordActive]);
 
   return (
     <div style={{ overflow: "scroll", height: "750px" }}>
-      {controlbar}
       <OpenSheetMusicDisplay
         file={`${folderBasePath}/${params.files}`}
         autoResize={true}
@@ -223,10 +186,11 @@ const ProgressPlayFile = (props) => {
         pitch={pitch}
         startPitchTrack={startPitchTrack}
         recordVol={recordVol}
-        onRecord={setRecordVol}
         isResetButtonPressed={isResetButtonPressed}
         onResetDone={onResetDone}
       />
+       {showTimer ? (<CountdownTimer bpm={bpmChange}  onComplete={() => setFinishedTimer(true)} />):(null)}
+      {controlbar}
     </div>
   );
 };
