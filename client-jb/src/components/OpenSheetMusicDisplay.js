@@ -278,9 +278,8 @@ class OpenSheetMusicDisplay extends Component {
 
     // for pitch changes
     if (this.props.pitch !== prevProps.pitch) {
-      const { pitchData } = this.state;
-      const newPitchData = [...pitchData, this.props.pitch];
-      this.setState({ pitchData: newPitchData });
+      const newPitchData = this.props.pitch;
+      this.setState({ pitchData: newPitchData })
     }
 
     // if record is clicked, put volume to 0, else put volume to 1
@@ -317,7 +316,7 @@ class OpenSheetMusicDisplay extends Component {
   }
 
   render() {
-    const { startPitchTrack } = this.props;
+    const { showPitchTrack } = this.props;
 
     const { isResetButtonPressed } = this.state;
 
@@ -330,10 +329,10 @@ class OpenSheetMusicDisplay extends Component {
 
     return (
       <div style={{ position: "relative" }}>
-        {startPitchTrack && (
+        {showPitchTrack && (
           <div style={lineChartStyle}>
             <LineChart
-              lineVisible={this.state.lineChartVisible}
+              //lineVisible={this.state.lineChartVisible}
               pitchData={this.state.pitchData}
             />
           </div>
