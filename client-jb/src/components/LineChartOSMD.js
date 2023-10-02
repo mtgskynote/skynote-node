@@ -10,6 +10,7 @@ let container;
 //Pitch track line component
 const LineChart = ({ pitchData }) => {
   //if (!pitchData || pitchData.length === 0) return null;
+  
 
   const [previousPitchData, setPreviousPitchData] = useState([]);
   const [polylinePoints, setPolylinePoints] = useState('');
@@ -59,7 +60,7 @@ const LineChart = ({ pitchData }) => {
   }*/
 
   const style = {
-    overflowX: "auto",
+    //overflowX: "auto",
     /*position: "absolute",
     top: topValue, // Ajusta la posición vertical según tus necesidades
     left: leftValue, // Ajusta la posición horizontal según tus necesidades*/
@@ -67,7 +68,7 @@ const LineChart = ({ pitchData }) => {
 
   return (
     <div style={style}>
-      <svg>
+      <svg width={svgWidth}>
         <polyline
           points={polylinePoints}
           fill="none"
