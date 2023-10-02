@@ -101,6 +101,10 @@ var makeAudioStreamer = function (
           gain.connect(audioContext.destination);
         });
     },
+    close: function (){
+      audioContext.suspend();
+    },
+
   };
 
   return audioStreamer;
