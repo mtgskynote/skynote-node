@@ -10,7 +10,6 @@ const folderBasePath = "/xmlScores/violin";
 
 const ProgressPlayFile = (props) => {
   const params = useParams();
-  // console.log(`${folderBasePath}/${params.file}`);
 
   const cursorRef = React.useRef(null);
   const playbackRef = React.useRef(null);
@@ -27,9 +26,12 @@ const ProgressPlayFile = (props) => {
   const [zoom, setZoom] = useState(1.0);
 
   const controlbar = useControlBar(cursorRef);
-  const [pitch, setPitch] = useState(null);
+  const [pitchValue, setPitchValue] = useState(null);
+  const [pitch, setPitch] = useState([]);
+  var pitchCount =0;
 
   const [startPitchTrack, setStartPitchTrack] = useState(false);
+  const [showPitchTrack, setShowPitchTrack] = useState(false);
   const startPitchTrackRef = useRef(startPitchTrack);
 
   const [isResetButtonPressed, setIsResetButtonPressed] = useState(false);
@@ -40,24 +42,31 @@ const ProgressPlayFile = (props) => {
 
   // Define pitch callback function
   const handlePitchCallback = (pitchData) => {
-    if (pitchData.confidence > 0.5) {
-      setPitch(pitchData.pitch);
-    }
+    pitchCount=pitchCount+1;
+    //if (pitchData.confidence > 0.5) {
+      if(pitchCount>0){
+        setPitchValue(pitchData.pitch);
+        pitchCount=0;
+      }
   };
 
-  const audioStreamer = makeAudioStreamer(handlePitchCallback);
+  var audioStreamer = makeAudioStreamer(handlePitchCallback);
   
   //When countdown timer (previous to start recording) finishes
   useEffect(() => {
     if(finishedTimer){
 
+      console.log("TIMER IS FINISHED")
+      
       const playbackManager = playbackRef.current;
       const cursor = cursorRef.current;
       const currentTime = cursor.Iterator.currentTimeStamp;
       playbackManager.setPlaybackStart(currentTime);
-
+      
       //Once countdown is finished, activate Pitch tracking
+      setPitch([])
       setStartPitchTrack(true);
+      setShowPitchTrack(true);
       //And play file, make cursor start
       playbackManager.play();
       //Timer work is done, false until next call
@@ -71,7 +80,7 @@ const ProgressPlayFile = (props) => {
   useEffect(() => {
     
     //--------------------------------------------------------------------------------
-    audioStreamer.init();
+    //audioStreamer.init();
     //--------------------------------------------------------------------------------
 
     // RECORD BUTTON -----------------------------------------------------------------
@@ -82,9 +91,12 @@ const ProgressPlayFile = (props) => {
       setRecordActive(!recordActive)
 
       if (recordActive) { //Recoding is wanted
+        audioStreamer.init()
+        //setShowPitchTrack(true)
         console.log("Recording started")
         setShowTimer(true) //initialize process of countdown, which will then lead to recording
       } else { //Recording is unwanted
+        audioStreamer.close()
         console.log("Recording stopped")
         //Deactivate Pitch tracking
         setStartPitchTrack(false);
@@ -109,9 +121,9 @@ const ProgressPlayFile = (props) => {
       playbackManager.reset();
       cursor.reset();
       setStartPitchTrack(false);
+      setShowPitchTrack(false)
+      setPitch([])
       setRecordActive(true) //Set to true, just like the initial state
-      //FIXME the pitch content should be removed
-      //setPitch([]) //does not work
 
     };
 
@@ -164,15 +176,23 @@ const ProgressPlayFile = (props) => {
     visualizeButton.addEventListener("click", handleVisualizeButtonClick);
     //--------------------------------------------------------------------------------
 
+
+    //Add new pitch value to pitch array
+    if(pitchValue){
+      setPitch([...pitch,pitchValue])
+    }
+
+
     return () => {
       recordButton.removeEventListener("click", handleRecordButtonClick);
       visualizeButton.removeEventListener("click", handleVisualizeButtonClick);
       beginningButton.removeEventListener("click", handleBeginningButtonClick);
       playButton.removeEventListener("click", handlePlayButtonClick);
     };
-  }, [recordVol, zoom, recordActive]);
+  }, [recordVol, zoom, recordActive, pitchValue]);
 
   return (
+    
     <div style={{ overflow: "scroll", height: "750px" }}>
       <OpenSheetMusicDisplay
         file={`${folderBasePath}/${params.files}`}
@@ -185,6 +205,7 @@ const ProgressPlayFile = (props) => {
         followCursor={true}
         pitch={pitch}
         startPitchTrack={startPitchTrack}
+        showPitchTrack={showPitchTrack}
         recordVol={recordVol}
         isResetButtonPressed={isResetButtonPressed}
         onResetDone={onResetDone}
