@@ -17,7 +17,7 @@ import {
   faGear,
 } from "@fortawesome/free-solid-svg-icons";
 
-const useControlBar = (cursorRef) => {
+const useControlBar = () => {
   
 
   //Volume, bpm and zoom variables
