@@ -1,6 +1,6 @@
 // opensheetmusicdisplay.js
 // necessary imports
-import React, { Component } from "react";
+import React, { Component, useEffect } from "react";
 import { OpenSheetMusicDisplay as OSMD } from "opensheetmusicdisplay";
 import {
   PlaybackManager,
@@ -323,7 +323,7 @@ class OpenSheetMusicDisplay extends Component {
 
     const lineChartStyle = {
       position: "relative",
-      top: this.state.initialCursorTop,
+      top: "300px",
       left: this.state.initialCursorLeft,
       pointerEvents: "none",
     };

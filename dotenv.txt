@@ -1,6 +1,6 @@
 PORT = 8001
-MONGO_URL = mongodb://amaia:AmaiaSkyDB01$@127.0.0.1:27017/skynote?serverSelectionTimeoutMS=5000&connectTimeoutMS=10000&authSource=admin&authMechanism=SCRAM-SHA-256
+MONGO_URL = mongodb://alvaro:150234196@127.0.0.1:27017/skynote?serverSelectionTimeoutMS=5000&connectTimeoutMS=10000&authSource=skynote&authMechanism=SCRAM-SHA-256
 JWT_SECRET = /A?D(G+KbPeShVmYq3t6w9z$C&E)H@Mc
 JWT_EXPIRES_IN = 2d
-VPS_PRIVATE_KEY = C:\Users\amaia\.ssh\id_rsa
-VPS_USERNAME = amaia
+VPS_PRIVATE_KEY = C:\Users\alvar\.ssh\id_rsa
+VPS_USERNAME = alvaro
