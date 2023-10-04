@@ -25,7 +25,7 @@ const ProgressPlayFile = (props) => {
 
   const [zoom, setZoom] = useState(1.0);
 
-  const controlbar = useControlBar(cursorRef);
+  const controlbar = useControlBar();
   const [pitchValue, setPitchValue] = useState(null);
   const [pitch, setPitch] = useState([]);
   var pitchCount =0;
@@ -43,12 +43,11 @@ const ProgressPlayFile = (props) => {
   // Define pitch callback function
   const handlePitchCallback = (pitchData) => {
     pitchCount=pitchCount+1;
-    //if (pitchData.confidence > 0.5) {
       if(pitchCount>0){
         if (pitchData.confidence > 0.5) {
           setPitchValue(pitchData.pitch);
         }else{
-          setPitchValue(0);
+          setPitchValue(1);
         }
         pitchCount=0;
       }
