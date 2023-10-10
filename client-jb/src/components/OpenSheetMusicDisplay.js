@@ -26,6 +26,8 @@ class OpenSheetMusicDisplay extends Component {
     super(props);
     this.state = {
       pitchData: [],
+      pitchPositionX:[],
+      pitchPositionY:[],
       initialCursorTop: 0,
       initialCursorLeft: 0,
       currentNoteinScorePitch: null,
@@ -33,7 +35,14 @@ class OpenSheetMusicDisplay extends Component {
     this.osmd = undefined;
     this.divRef = React.createRef();
     this.cursorInterval = null;
+    this.countFinishRecording=25 //if recording is active and cursor doesnt move, stop recording
+    this.previousTimestamp=null; 
+    this.notePositionX=null;
+    this.notePositionY=null;
+    this.index=0;
   }
+
+  
   // defining the playback manager for playing music and cursor controls
   // you first define and then initialize the playback manager
   playbackOsmd(osmd) {
@@ -104,7 +113,13 @@ class OpenSheetMusicDisplay extends Component {
 
       this.props.playbackRef.current = this.playbackManager;
 
-      this.cursorInterval = setInterval(this.checkCursorChange, 100);
+      this.cursorInterval = setInterval(this.checkCursorChange, 200);
+
+      /*if(this.notePositionX!==null){
+        const addedNewPositionX= [...this.state.pitchPositionX, this.notePositionX];
+        this.setState({ pitchPositionX: addedNewPositionX })
+        console.log("sizes ", this.state.pitchData, this.state.pitchPositionX)
+      }*/
     });
   }
 
@@ -136,7 +151,35 @@ class OpenSheetMusicDisplay extends Component {
 
   //function to check cursor change
   checkCursorChange = () => {
+    const cursorCurrent=this.osmd.cursor.Iterator.currentTimeStamp
+    if (this.props.startPitchTrack){
+      if(cursorCurrent===this.previousTimestamp){
+        this.countFinishRecording=this.countFinishRecording-1;
+        if(this.countFinishRecording===0){
+          this.props.cursorActivity(true);
+          console.log("Im done")
+          this.previousTimestamp=null;
+          this.countFinishRecording=25;
+        }
+        
+      }else{
+        this.countFinishRecording=25;
+      }
+      this.previousTimestamp=cursorCurrent;
+
+      
+    }
     if (this.props.startPitchTrack) {
+
+      //Current Note under cursor Absolute Position
+      const notePos=this.osmd.cursor.GNotesUnderCursor()[0].getSVGGElement().getBoundingClientRect();
+      this.notePositionX=notePos.x
+      this.notePositionY=notePos.y
+
+      console.log(notePos.x, notePos.y)
+      console.log(this.state.pitchData.length)
+
+      //Current Note under cursor Pitch
       const notePitch = this.osmd.cursor.NotesUnderCursor()[0]?.Pitch.frequency;
       this.setState({ currentNoteinScorePitch: notePitch });
 
@@ -266,7 +309,6 @@ class OpenSheetMusicDisplay extends Component {
 
     // for zoom changes
     if (this.props.zoom !== prevProps.zoom) {
-      // console.log("zoom2_OSMD", this.props.zoom);
       this.osmd.zoom = this.props.zoom;
       this.osmd.render(); // update the OSMD instance after changing the zoom level
     }
@@ -277,9 +319,28 @@ class OpenSheetMusicDisplay extends Component {
     }
 
     // for pitch changes
-    if (this.props.pitch !== prevProps.pitch) {
-      const newPitchData = this.props.pitch;
-      this.setState({ pitchData: newPitchData })
+    if(this.props.startPitchTrack){
+      if (this.props.pitch !== prevProps.pitch) { //new pitch
+        //if(this.notePositionX!==null){ //Pitch position - x axis
+        console.log("que pasaaaaaaa ", this.notePositionX,(this.state.pitchPositionX[this.state.pitchPositionX.length-1]-this.index) )
+          if(this.notePositionX===(this.state.pitchPositionX[this.state.pitchPositionX.length-1]-this.index)){
+            this.index=this.index+6;
+            //this.index=0;
+          }else{
+            this.index=0;
+          }
+          //Add pitch to array
+          const newPitchData = this.props.pitch;
+          this.setState({ pitchData: newPitchData });
+          //Add X position to array
+          const addedNewPositionX= [...this.state.pitchPositionX, this.notePositionX+this.index];
+          this.setState({ pitchPositionX: addedNewPositionX })
+          //Add Y position to array
+          const addedNewPositionY= [...this.state.pitchPositionY, this.notePositionY];
+          this.setState({ pitchPositionY: addedNewPositionY })
+          console.log("sizes ", this.state.pitchData, this.state.pitchPositionX, this.state.pitchPositionY)
+        //}
+      }
     }
 
     // if record is clicked, put volume to 0, else put volume to 1
@@ -292,16 +353,11 @@ class OpenSheetMusicDisplay extends Component {
       }
     }
 
-    // if (prevProps.startPitchTrack && !this.props.startPitchTrack) {
-    //   console.log("startPitchTrack");
-    // }
-
     if (
       prevProps.isResetButtonPressed !== this.props.isResetButtonPressed &&
       this.props.isResetButtonPressed
     ) {
       this.resetNotesColor();
-      // console.log("resetting");
       this.props.onResetDone(); // call the function passed from the parent component
     }
 
@@ -325,20 +381,24 @@ class OpenSheetMusicDisplay extends Component {
       top: this.state.initialCursorTop,
       left: this.state.initialCursorLeft,
       pointerEvents: "none",
+      //zIndex: 10,
+      
     };
 
     return (
-      <div style={{ position: "relative" }}>
+      <div > 
         {showPitchTrack && (
           <div style={lineChartStyle}>
             <LineChart
               //lineVisible={this.state.lineChartVisible}
               pitchData={this.state.pitchData}
+              pitchDataPosX={this.state.pitchPositionX}
+              pitchDataPosY={this.state.pitchPositionY}
             />
           </div>
         )}
-        <div ref={this.divRef} />
-      </div>
+        <div  ref={this.divRef}  /> 
+      </div> //style={{zIndex: 2 }}
     );
   }
 }

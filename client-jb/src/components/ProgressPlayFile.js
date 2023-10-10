@@ -44,13 +44,27 @@ const ProgressPlayFile = (props) => {
   const handlePitchCallback = (pitchData) => {
     pitchCount=pitchCount+1;
       if(pitchCount>0){
-        if (pitchData.confidence > 0.5) {
+        //if (pitchData.confidence > 0.5) {
           setPitchValue(pitchData.pitch);
-        }else{
-          setPitchValue(1);
-        }
+        //}else{
+        //  setPitchValue(1);
+        //}
         pitchCount=0;
       }
+  };
+
+  // Define recording stop when cursor finishes callback function
+  const handleFinishedCursorCallback = (finishedCursor) => {
+    if (finishedCursor){
+      //Recording is unwanted
+      audioStreamer.close()
+      console.log("Recording stopped because cursor finished")
+      //Deactivate Pitch tracking
+      setStartPitchTrack(false);
+      //Pause file and therefore, cursor
+      const playbackManager = playbackRef.current;
+      playbackManager.pause();
+    }
   };
 
   var audioStreamer = makeAudioStreamer(handlePitchCallback);
@@ -205,13 +219,14 @@ const ProgressPlayFile = (props) => {
         metroVol={metroVol}
         bpm={bpmChange}
         zoom={zoom}
-        followCursor={true}
+        followCursor={false}
         pitch={pitch}
         startPitchTrack={startPitchTrack}
         showPitchTrack={showPitchTrack}
         recordVol={recordVol}
         isResetButtonPressed={isResetButtonPressed}
         onResetDone={onResetDone}
+        cursorActivity={handleFinishedCursorCallback}
       />
        {showTimer ? (<CountdownTimer bpm={bpmChange}  onComplete={() => setFinishedTimer(true)} />):(null)}
       {controlbar}
