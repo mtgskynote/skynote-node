@@ -1,4 +1,4 @@
-import React, {useState, useEffect} from "react";
+import React, {useState, useEffect, useRef} from "react";
 
 //Convert frequency Hertz to MIDI function
 const freq2midipitch = (freq) => {
@@ -8,21 +8,31 @@ let staffBox;
 let container;
 
 //Pitch track line component
-const LineChart = ({ pitchData }) => {
+const LineChart = ({ pitchData, pitchDataPosX, pitchDataPosY }) => {
+  
   //if (!pitchData || pitchData.length === 0) return null;
+  const containerRef = useRef(null);
+
   
 
   const [previousPitchData, setPreviousPitchData] = useState([]);
-  const [polylinePoints, setPolylinePoints] = useState('');
+  const [polylinePoints, setPolylinePoints] = useState([]);
   
   // Normalize pitch data between 0 (A3) and 1 (C6)
   let minimumMIDI=57 //A3
   let maximumMIDI=84 //C6
 
   const spacing = 10; // Spacing between points
-  const svgWidth = pitchData.length * spacing;
+  const svgWidth =1000 ;// pitchData.length * spacing;
 
   useEffect(()=> {
+
+    const containerElement = containerRef.current;
+    console.log(containerElement);
+    const rect = containerElement.getBoundingClientRect();
+    const svgWidth =rect.offsetWidth ;
+    const svgHeight =rect.offsetHeight ;
+
     // New values added to pitchdata
     const newValues = pitchData.filter((value) => !previousPitchData.includes(value));
     const newNormalizedData = newValues.map(
@@ -36,15 +46,36 @@ const LineChart = ({ pitchData }) => {
   
     // Combinar los nuevos datos procesados con los datos anteriores
     setPolylinePoints((prevPolylinePoints) => {
+      console.log("size of newNormalizedData ", newNormalizedData.length);
+    
       // Mapear y agregar las coordenadas de los nuevos valores al estado anterior
       const newPolylinePoints = newNormalizedData.map((value, index) => {
-        const x = (prevPolylinePoints.split(' ').length + index) * spacing;
+        console.log("indez ", pitchData.length - 2);
+    
+        const x = pitchDataPosX[pitchData.length - 1] - rect.left;
+        const y = 100 - value * 100;//pitchDataPosY[pitchData.length - 1] //- rect.top;//100 - value * 100;
+        console.log("X, y", x, y);
+    
+        return [x, y]; // Return a coordinate pair as an array [x, y]
+      });
+    
+      // Combinar las coordenadas anteriores con las nuevas
+      return [...prevPolylinePoints, ...newPolylinePoints]; // Combine arrays
+    });
+
+    /*setPolylinePoints((prevPolylinePoints) => {
+      console.log("size of newNormalizedData ", newNormalizedData.length)
+      // Mapear y agregar las coordenadas de los nuevos valores al estado anterior
+      const newPolylinePoints = newNormalizedData.map((value, index) => {
+        console.log("indez ", pitchData.length-2)
+        const x = pitchDataPosX[pitchData.length-1] - rect.left;//(prevPolylinePoints.split(' ').length + index) * spacing; //
         const y = 100 - value * 100;
+        console.log("X,y", x,y);
         return `${x},${y}`;
         });
       // Combinar las coordenadas anteriores con las nuevas
       return prevPolylinePoints + ' ' + newPolylinePoints.join(' ');
-    });
+    });*/
   
   }, [pitchData, previousPitchData]);
 
@@ -60,6 +91,7 @@ const LineChart = ({ pitchData }) => {
   }*/
 
   const style = {
+    position: "absolute",
     //overflowX: "auto",
     /*position: "absolute",
     top: topValue, // Ajusta la posición vertical según tus necesidades
@@ -67,17 +99,34 @@ const LineChart = ({ pitchData }) => {
   };
 
   return (
-    <div style={style}>
-      <svg width={svgWidth}>
+    <div ref={containerRef}>
+      <svg width={svgWidth} >
+        {polylinePoints.map(([x, y], index) => (
+          <circle
+            key={index}
+            cx={x}
+            cy={y}
+            r={2} // El radio del círculo que representa el punto
+            fill="black" // Color del punto
+          />
+        ))}
+      </svg>
+    </div>
+  );
+
+  /*return (
+    <div ref={containerRef} >
+      <svg  width={svgWidth}>
         <polyline
           points={polylinePoints}
           fill="none"
           stroke="black"
           strokeDasharray="2"
+          style={style}
         />
       </svg>
     </div>
-  );
+  );*/
 };
 
 export default LineChart;
