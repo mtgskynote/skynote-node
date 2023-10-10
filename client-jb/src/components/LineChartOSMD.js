@@ -4,8 +4,8 @@ import React, {useState, useEffect, useRef} from "react";
 const freq2midipitch = (freq) => {
   return(12 * (Math.log2(freq / 440)) + 69)
 }
-let staffBox;
-let container;
+//let staffBox;
+//let container;
 
 //Pitch track line component
 const LineChart = ({ pitchData, pitchDataPosX, pitchDataPosY }) => {
@@ -34,14 +34,14 @@ const LineChart = ({ pitchData, pitchDataPosX, pitchDataPosY }) => {
     const svgHeight =rect.offsetHeight ;
 
     // New values added to pitchdata
-    const newValues = pitchData.filter((value) => !previousPitchData.includes(value));
+    const newValues = props.pitchData.filter((value) => !previousPitchData.includes(value));
     const newNormalizedData = newValues.map(
       (value) =>
         (freq2midipitch(value) - minimumMIDI) /
         (maximumMIDI - minimumMIDI)
     )
     // Actualizar el estado anterior con el nuevo estado
-    setPreviousPitchData(pitchData);
+    setPreviousPitchData(props.pitchData);
     
   
     // Combinar los nuevos datos procesados con los datos anteriores
@@ -77,9 +77,10 @@ const LineChart = ({ pitchData, pitchDataPosX, pitchDataPosY }) => {
       return prevPolylinePoints + ' ' + newPolylinePoints.join(' ');
     });*/
   
-  }, [pitchData, previousPitchData]);
+  }, [props.pitchData, previousPitchData]);
 
   // Style
+  //THIS IS WRONG, THE LOCATION SHOULD BE DEFINED IN OpenSheetMusicDisplay.js
   /*container = document.getElementById('osmdSvgPage1');
   staffBox = container.querySelector('staffline'); 
   let topValue=0
@@ -88,15 +89,15 @@ const LineChart = ({ pitchData, pitchDataPosX, pitchDataPosY }) => {
     const coord = staffBox.getBoundingClientRect();
     topValue=coord.top
     leftValue=coord.left
-  }*/
+  }
 
   const style = {
     position: "absolute",
     //overflowX: "auto",
-    /*position: "absolute",
+    position: "absolute",
     top: topValue, // Ajusta la posición vertical según tus necesidades
-    left: leftValue, // Ajusta la posición horizontal según tus necesidades*/
-  };
+    left: leftValue, // Ajusta la posición horizontal según tus necesidades
+  };*/
 
   return (
     <div ref={containerRef}>
@@ -120,7 +121,7 @@ const LineChart = ({ pitchData, pitchDataPosX, pitchDataPosY }) => {
         <polyline
           points={polylinePoints}
           fill="none"
-          stroke="black"
+          stroke="red"
           strokeDasharray="2"
           style={style}
         />
