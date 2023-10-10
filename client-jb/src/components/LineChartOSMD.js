@@ -8,7 +8,7 @@ const freq2midipitch = (freq) => {
 //let container;
 
 //Pitch track line component
-const LineChart = ({ pitchData, pitchDataPosX, pitchDataPosY }) => {
+const LineChart = (props) => {
   
   //if (!pitchData || pitchData.length === 0) return null;
   const containerRef = useRef(null);
@@ -50,10 +50,10 @@ const LineChart = ({ pitchData, pitchDataPosX, pitchDataPosY }) => {
     
       // Mapear y agregar las coordenadas de los nuevos valores al estado anterior
       const newPolylinePoints = newNormalizedData.map((value, index) => {
-        console.log("indez ", pitchData.length - 2);
+        console.log("indez ", props.pitchData.length - 2);
     
-        const x = pitchDataPosX[pitchData.length - 1] - rect.left;
-        const y = 100 - value * 100;//pitchDataPosY[pitchData.length - 1] //- rect.top;//100 - value * 100;
+        const x = props.pitchDataPosX[props.pitchData.length - 1] - rect.left;
+        const y = 100 - value * 100;//props.pitchDataPosY[pitchData.length - 1] //- rect.top;//100 - value * 100;
         console.log("X, y", x, y);
     
         return [x, y]; // Return a coordinate pair as an array [x, y]
@@ -68,7 +68,7 @@ const LineChart = ({ pitchData, pitchDataPosX, pitchDataPosY }) => {
       // Mapear y agregar las coordenadas de los nuevos valores al estado anterior
       const newPolylinePoints = newNormalizedData.map((value, index) => {
         console.log("indez ", pitchData.length-2)
-        const x = pitchDataPosX[pitchData.length-1] - rect.left;//(prevPolylinePoints.split(' ').length + index) * spacing; //
+        const x = props.pitchDataPosX[pitchData.length-1] - rect.left;//(prevPolylinePoints.split(' ').length + index) * spacing; //
         const y = 100 - value * 100;
         console.log("X,y", x,y);
         return `${x},${y}`;
