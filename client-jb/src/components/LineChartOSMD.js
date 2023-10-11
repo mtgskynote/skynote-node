@@ -23,15 +23,16 @@ const LineChart = (props) => {
   let maximumMIDI=84 //C6
 
   const spacing = 10; // Spacing between points
-  const svgWidth =1000 ;// pitchData.length * spacing;
+  //let svgWidth =1000 ;// pitchData.length * spacing;
+  //let svgHeight = 0;
 
   useEffect(()=> {
-
-    const containerElement = containerRef.current;
-    console.log(containerElement);
-    const rect = containerElement.getBoundingClientRect();
-    const svgWidth =rect.offsetWidth ;
-    const svgHeight =rect.offsetHeight ;
+    //THIS SHOULD NOT BE DONE HERE, IT'S REDUNDANT >:(
+    //const containerElement = containerRef.current;
+    //console.log(containerElement);
+    //const rect = containerElement.getBoundingClientRect();
+    //svgWidth =rect.offsetWidth ;
+    //svgHeight =rect.offsetHeight ;
 
     // New values added to pitchdata
     const newValues = props.pitchData.filter((value) => !previousPitchData.includes(value));
@@ -46,15 +47,15 @@ const LineChart = (props) => {
   
     // Combinar los nuevos datos procesados con los datos anteriores
     setPolylinePoints((prevPolylinePoints) => {
-      console.log("size of newNormalizedData ", newNormalizedData.length);
+      //console.log("size of newNormalizedData ", newNormalizedData.length);
     
       // Mapear y agregar las coordenadas de los nuevos valores al estado anterior
       const newPolylinePoints = newNormalizedData.map((value, index) => {
-        console.log("indez ", props.pitchData.length - 2);
+        //console.log("indez ", props.pitchData.length - 2);
     
         const x = props.pitchDataPosX[props.pitchData.length - 1] - rect.left;
         const y = 100 - value * 100;//props.pitchDataPosY[pitchData.length - 1] //- rect.top;//100 - value * 100;
-        console.log("X, y", x, y);
+        //console.log("X, y", x, y);
     
         return [x, y]; // Return a coordinate pair as an array [x, y]
       });
@@ -101,14 +102,14 @@ const LineChart = (props) => {
 
   return (
     <div ref={containerRef}>
-      <svg width={svgWidth} >
+      <svg width={props.width} height={props.height}>
         {polylinePoints.map(([x, y], index) => (
           <circle
             key={index}
             cx={x}
             cy={y}
             r={2} // El radio del círculo que representa el punto
-            fill="black" // Color del punto
+            fill="red" // Color del punto
           />
         ))}
       </svg>

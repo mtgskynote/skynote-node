@@ -1,6 +1,6 @@
 // opensheetmusicdisplay.js
 // necessary imports
-import React, { Component } from "react";
+import React, { Component, useRef } from "react";
 import { OpenSheetMusicDisplay as OSMD } from "opensheetmusicdisplay";
 import {
   PlaybackManager,
@@ -176,8 +176,8 @@ class OpenSheetMusicDisplay extends Component {
       this.notePositionX=notePos.x
       this.notePositionY=notePos.y
 
-      console.log(notePos.x, notePos.y)
-      console.log(this.state.pitchData.length)
+      //console.log(notePos.x, notePos.y)
+      //console.log(this.state.pitchData.length)
 
       //Current Note under cursor Pitch
       const notePitch = this.osmd.cursor.NotesUnderCursor()[0]?.Pitch.frequency;
@@ -291,6 +291,25 @@ class OpenSheetMusicDisplay extends Component {
   };
 
   componentDidUpdate(prevProps) {
+    //We register the measures where repetitions happen
+    //if (this.osmd.cursor.iterator.CurrentMeasureIndex !== prevProps.osmd.cursor.iterator.CurrentMeasureIndex) {
+      const repetitions = this.osmd.Sheet.Repetitions;
+      var repArray = [];
+      for (let i in repetitions) {
+        repArray.push(repetitions[i].BackwardJumpInstructions[0].measureIndex);
+      }
+      //We remove the last value, since the last measure always gets registered as repetition (we don't want that :S)
+      repArray.pop();
+
+      if (repArray.includes(this.osmd.cursor.iterator.CurrentMeasureIndex)) {
+        console.log("Oi mate, I found a repetition at measure ", this.osmd.cursor.iterator.CurrentMeasureIndex, ", that's bloody bonkers innit?");
+        //this.setState({ pitchData: [] });
+      }
+    //}
+    
+    console.log("Repetition in measures: ", repetitions);
+    //console.log("Cursor is at: ", this.osmd.cursor.iterator.CurrentMeasureIndex);
+
     // for title and file changes
     if (this.props.drawTitle !== prevProps.drawTitle) {
       this.setupOsmd();
@@ -322,7 +341,7 @@ class OpenSheetMusicDisplay extends Component {
     if(this.props.startPitchTrack){
       if (this.props.pitch !== prevProps.pitch) { //new pitch
         //if(this.notePositionX!==null){ //Pitch position - x axis
-        console.log("que pasaaaaaaa ", this.notePositionX,(this.state.pitchPositionX[this.state.pitchPositionX.length-1]-this.index) )
+        //console.log("que pasaaaaaaa ", this.notePositionX,(this.state.pitchPositionX[this.state.pitchPositionX.length-1]-this.index) )
           if(this.notePositionX===(this.state.pitchPositionX[this.state.pitchPositionX.length-1]-this.index)){
             this.index=this.index+6;
             //this.index=0;
@@ -338,7 +357,7 @@ class OpenSheetMusicDisplay extends Component {
           //Add Y position to array
           const addedNewPositionY= [...this.state.pitchPositionY, this.notePositionY];
           this.setState({ pitchPositionY: addedNewPositionY })
-          console.log("sizes ", this.state.pitchData, this.state.pitchPositionX, this.state.pitchPositionY)
+          //console.log("sizes ", this.state.pitchData, this.state.pitchPositionX, this.state.pitchPositionY)
         //}
       }
     }
@@ -377,9 +396,13 @@ class OpenSheetMusicDisplay extends Component {
     const { isResetButtonPressed } = this.state;
 
     const lineChartStyle = {
-      position: "relative",
-      top: this.state.initialCursorTop,
-      left: this.state.initialCursorLeft,
+      ///////////////////////THIS IS ONLY FOR DEBUGGING PURPOSES, PLEASE DELETE WHEN FINISHED/////////////////////
+      backgroundColor: "green",
+      opacity: 0.25,
+      ////////////////////////////////////////////////////////////////////////////////////////////////////////////
+      position: "absolute",
+      //top: parseFloat(this.state.initialCursorTop) + 75,
+      //left: this.state.initialCursorLeft,
       pointerEvents: "none",
       //zIndex: 10,
       
@@ -391,6 +414,8 @@ class OpenSheetMusicDisplay extends Component {
           <div style={lineChartStyle}>
             <LineChart
               //lineVisible={this.state.lineChartVisible}
+              width={1000}
+              height={123}
               pitchData={this.state.pitchData}
               pitchDataPosX={this.state.pitchPositionX}
               pitchDataPosY={this.state.pitchPositionY}
