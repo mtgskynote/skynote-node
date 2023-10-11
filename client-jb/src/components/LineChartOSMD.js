@@ -28,7 +28,7 @@ const LineChart = (props) => {
   useEffect(()=> {
 
     const containerElement = containerRef.current;
-    console.log(containerElement);
+    //console.log(containerElement);
     const rect = containerElement.getBoundingClientRect();
     const svgWidth =rect.offsetWidth ;
     const svgHeight =rect.offsetHeight ;
@@ -46,15 +46,13 @@ const LineChart = (props) => {
   
     // Combinar los nuevos datos procesados con los datos anteriores
     setPolylinePoints((prevPolylinePoints) => {
-      console.log("size of newNormalizedData ", newNormalizedData.length);
+      //console.log("size of newNormalizedData ", newNormalizedData.length);
     
       // Mapear y agregar las coordenadas de los nuevos valores al estado anterior
       const newPolylinePoints = newNormalizedData.map((value, index) => {
-        console.log("indez ", props.pitchData.length - 2);
-    
+       
         const x = props.pitchDataPosX[props.pitchData.length - 1] - rect.left;
-        const y = 100 - value * 100;//props.pitchDataPosY[pitchData.length - 1] //- rect.top;//100 - value * 100;
-        console.log("X, y", x, y);
+        const y = props.pitchDataPosY[props.pitchData.length - 1]- rect.top;
     
         return [x, y]; // Return a coordinate pair as an array [x, y]
       });

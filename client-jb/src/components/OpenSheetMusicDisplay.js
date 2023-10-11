@@ -20,6 +20,12 @@ import {
 
 Chartjs.register(LineElement, CategoryScale, LinearScale, PointElement);
 
+
+//Convert frequency Hertz to MIDI function
+const freq2midipitch = (freq) => {
+  return(12 * (Math.log2(freq / 440)) + 69)
+}
+
 // creating the class component
 class OpenSheetMusicDisplay extends Component {
   constructor(props) {
@@ -31,6 +37,7 @@ class OpenSheetMusicDisplay extends Component {
       initialCursorTop: 0,
       initialCursorLeft: 0,
       currentNoteinScorePitch: null,
+      currentGNoteinScorePitch: null,
     };
     this.osmd = undefined;
     this.divRef = React.createRef();
@@ -40,6 +47,8 @@ class OpenSheetMusicDisplay extends Component {
     this.notePositionX=null;
     this.notePositionY=null;
     this.index=0;
+    this.countGoodNotes=0; 
+    this.countBadNotes=0;
   }
 
   
@@ -152,113 +161,132 @@ class OpenSheetMusicDisplay extends Component {
   //function to check cursor change
   checkCursorChange = () => {
     const cursorCurrent=this.osmd.cursor.Iterator.currentTimeStamp
+
+    //if recording active
     if (this.props.startPitchTrack){
+
+      // STOP RECORDING WHEN CURSOR REACHES THE END /////////////
+      // check if cursor stays in the same position for a long time
       if(cursorCurrent===this.previousTimestamp){
+        //Cursor has not moved
         this.countFinishRecording=this.countFinishRecording-1;
         if(this.countFinishRecording===0){
+          //when countdown reaches zero, stop recording 
           this.props.cursorActivity(true);
-          console.log("Im done")
           this.previousTimestamp=null;
           this.countFinishRecording=25;
         }
-        
       }else{
+        //If cursor keeps moving, reset
         this.countFinishRecording=25;
       }
-      this.previousTimestamp=cursorCurrent;
 
-      
-    }
-    if (this.props.startPitchTrack) {
-
+      //store for next iteration
+      this.previousTimestamp=cursorCurrent; 
+      ////////////////////////////////////////////////////////
+    
+      // EXTRACT POSITION OF NOTE UNDER CURSOR////////////////
       //Current Note under cursor Absolute Position
-      const notePos=this.osmd.cursor.GNotesUnderCursor()[0].getSVGGElement().getBoundingClientRect();
-      this.notePositionX=notePos.x
-      this.notePositionY=notePos.y
+      const svgElement=this.osmd.cursor.GNotesUnderCursor()[0].getSVGGElement()
+      if (
+        svgElement &&
+        svgElement.children[0] &&
+        svgElement.children[0].children[0] &&
+        svgElement.children[0].children[1]
+      ){
+        const notePos=svgElement.children[0].children[1].children[0].getBoundingClientRect();
+        this.notePositionX=notePos.x
+        this.notePositionY=notePos.y
+      }else{
+        const notePos=svgElement.children[0].children[0].children[0].getBoundingClientRect();
+        this.notePositionX=notePos.x
+        this.notePositionY=notePos.y
+      }
+      //this.notePositionX=notePos.x
+      //this.notePositionY=notePos.y
+      ////////////////////////////////////////////////////////
 
-      console.log(notePos.x, notePos.y)
-      console.log(this.state.pitchData.length)
 
-      //Current Note under cursor Pitch
-      const notePitch = this.osmd.cursor.NotesUnderCursor()[0]?.Pitch.frequency;
-      this.setState({ currentNoteinScorePitch: notePitch });
-
-      //check if pitch data is equal to the current note in score pitch
+      // DETERMINE RED/GREEN COLOR OF NOTEHEAD ///////////////
       // Get the last pitch in the pitchData array
       const lastPitchData =
         this.state.pitchData[this.state.pitchData.length - 1];
 
-      // Compare the last pitch in the pitchData array with the current pitch
-      // Check if the absolute difference between them is less than or equal to 3hz
+      //Current Note under cursor
+      const notePitch = this.osmd.cursor.NotesUnderCursor()[0]?.Pitch.frequency;
+      const gNote = this.osmd.cursor.GNotesUnderCursor()[0];
+      
+      //Prepare colors
       const colorPitchMatched = "#00FF00"; //green
       const colorPitchNotMatched = "#FF0000"; //red
-      const gNote = this.osmd.cursor.GNotesUnderCursor()[0];
 
-      //for pitch matched
+      //Check if pitch was matched or not
       if (
         lastPitchData !== undefined &&
         Math.abs(lastPitchData - notePitch) <= 3
       ) {
-        // console.log(
-        //   "played pitch is equal to current note in score, scoreNotePitch: ",
-        //   notePitch,
-        //   "detectedPitch:",
-        //   lastPitchData
-        // );
-
-        //change color to green if pitch is close enough
-        if (gNote) {
-          // this is for all the notes except the quarter and whole notes
-          const svgElement = gNote.getSVGGElement();
-          svgElement.children[0].children[0].children[0].style.fill =
-            colorPitchMatched; // notehead
-
-          if (
-            svgElement &&
-            svgElement.children[0] &&
-            svgElement.children[0].children[0] &&
-            svgElement.children[0].children[1]
-          ) {
-            //this is for all the quarter and whole notes
-            svgElement.children[0].children[0].children[0].style.fill =
-              colorPitchMatched; // notehead
-            svgElement.children[0].children[1].children[0].style.fill =
-              colorPitchMatched; // notehead
-          }
-        }
+        this.countGoodNotes=this.countGoodNotes+1;     
       }
-
-      //for pitch not matched
       else {
-        // console.log(
-        //   "played pitch is not equal to current note in score, scoreNotePitch:",
-        //   notePitch,
-        //   "detectedPitch:",
-        //   lastPitchData
-        // );
+        this.countBadNotes=this.countBadNotes+1;
+      }
 
-        //change color to red if pitch is not close enough
-        if (gNote) {
-          // this is for all the notes except the quarter and whole notes
-          const svgElement = gNote.getSVGGElement();
-          svgElement.children[0].children[0].children[0].style.fill =
-            colorPitchNotMatched; // notehead
-
-          if (
-            svgElement &&
-            svgElement.children[0] &&
-            svgElement.children[0].children[0] &&
-            svgElement.children[0].children[1]
-          ) {
-            //this is for all the quarter and whole notes
+      //When note chanes, set red/green previous note
+      if(gNote!==this.state.currentGNoteinScorePitch){
+        var total=this.countBadNotes+this.countGoodNotes;
+        if(total!==0 && (this.countGoodNotes>= Math.ceil(total*0.5))){
+          //change color to green 
+          if(this.state.currentGNoteinScorePitch){
+            // this is for all the notes except the quarter and whole notes
+            const svgElement = this.state.currentGNoteinScorePitch.getSVGGElement();
+            svgElement.children[0].children[0].children[0].style.fill =
+              colorPitchMatched; // notehead
+            if (
+              svgElement &&
+              svgElement.children[0] &&
+              svgElement.children[0].children[0] &&
+              svgElement.children[0].children[1]
+            ) {
+              //this is for all the quarter and whole notes
+              svgElement.children[0].children[0].children[0].style.fill =
+                colorPitchMatched; // notehead
+              svgElement.children[0].children[1].children[0].style.fill =
+                colorPitchMatched; // notehead
+            }
+          }  
+        }else if(total!==0 && (this.countGoodNotes < Math.ceil(total*0.5))){
+          //change color to red if pitch is not close enough
+          if(this.state.currentGNoteinScorePitch){
+            // this is for all the notes except the quarter and whole notes
+            const svgElement = this.state.currentGNoteinScorePitch.getSVGGElement();
             svgElement.children[0].children[0].children[0].style.fill =
               colorPitchNotMatched; // notehead
-            svgElement.children[0].children[1].children[0].style.fill =
-              colorPitchNotMatched; // notehead
+            if (
+              svgElement &&
+              svgElement.children[0] &&
+              svgElement.children[0].children[0] &&
+              svgElement.children[0].children[1]
+            ) {
+              //this is for all the quarter and whole notes
+              svgElement.children[0].children[0].children[0].style.fill =
+                colorPitchNotMatched; // notehead
+              svgElement.children[0].children[1].children[0].style.fill =
+                colorPitchNotMatched; // notehead
+              }
           }
+          
+        }else{
+          console.log("NOTE Not catched")
         }
+        //Reset for next note checking
+        this.countBadNotes=0;
+        this.countGoodNotes=0;
       }
+      //Update new vales for future comparisons
+      this.setState({ currentNoteinScorePitch: notePitch });
+      this.setState({ currentGNoteinScorePitch: gNote });
     }
+    ////////////////////////////////////////////////////////
   };
 
   resetNotesColor = () => {
@@ -321,25 +349,32 @@ class OpenSheetMusicDisplay extends Component {
     // for pitch changes
     if(this.props.startPitchTrack){
       if (this.props.pitch !== prevProps.pitch) { //new pitch
-        //if(this.notePositionX!==null){ //Pitch position - x axis
-        console.log("que pasaaaaaaa ", this.notePositionX,(this.state.pitchPositionX[this.state.pitchPositionX.length-1]-this.index) )
-          if(this.notePositionX===(this.state.pitchPositionX[this.state.pitchPositionX.length-1]-this.index)){
-            this.index=this.index+6;
-            //this.index=0;
-          }else{
-            this.index=0;
-          }
-          //Add pitch to array
-          const newPitchData = this.props.pitch;
-          this.setState({ pitchData: newPitchData });
-          //Add X position to array
-          const addedNewPositionX= [...this.state.pitchPositionX, this.notePositionX+this.index];
-          this.setState({ pitchPositionX: addedNewPositionX })
-          //Add Y position to array
-          const addedNewPositionY= [...this.state.pitchPositionY, this.notePositionY];
-          this.setState({ pitchPositionY: addedNewPositionY })
-          console.log("sizes ", this.state.pitchData, this.state.pitchPositionX, this.state.pitchPositionY)
-        //}
+
+        //Add index to X coordinates to advance pitch tracker in X axis when new pitch arrives
+        if(this.notePositionX===(this.state.pitchPositionX[this.state.pitchPositionX.length-1]-this.index)){ //we are still on the same note
+          this.index=this.index+6; //6 is the spacing between points
+        }else{ //new note
+          this.index=0; //reset index
+        }
+        ////////////////////////////////////////////////////////
+
+        //Add error done to Y coordinates///////////////////////
+        const newPitchMIDI= freq2midipitch(this.props.pitch[this.props.pitch.length-1]); //played note
+        const currentNoteinScorePitchMIDI= freq2midipitch(this.state.currentNoteinScorePitch); //note under cursor
+        const MIDIdifference=Math.abs(newPitchMIDI-currentNoteinScorePitchMIDI) //error MIDI
+        const errorPixels=MIDIdifference*5-2.5; //5 pixels corresponds to a semitone (1 MIDI value), FIXME
+        ////////////////////////////////////////////////////////
+
+        //Add pitch to array ///////////////////////////////////
+        const newPitchData = this.props.pitch;
+        this.setState({ pitchData: newPitchData });
+        //Add X position to array
+        const addedNewPositionX= [...this.state.pitchPositionX, this.notePositionX+this.index];
+        this.setState({ pitchPositionX: addedNewPositionX })
+        //Add Y position to array
+        const addedNewPositionY= [...this.state.pitchPositionY, this.notePositionY+errorPixels];
+        this.setState({ pitchPositionY: addedNewPositionY })
+        ////////////////////////////////////////////////////////        
       }
     }
 
@@ -378,10 +413,10 @@ class OpenSheetMusicDisplay extends Component {
 
     const lineChartStyle = {
       position: "relative",
-      top: this.state.initialCursorTop,
-      left: this.state.initialCursorLeft,
+      top: parseFloat(this.state.initialCursorTop)+100,
+      left: parseFloat(this.state.initialCursorLeft),
       pointerEvents: "none",
-      //zIndex: 10,
+      background:"blue",
       
     };
 
