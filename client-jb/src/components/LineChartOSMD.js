@@ -23,7 +23,8 @@ const LineChart = (props) => {
   let maximumMIDI=84 //C6
 
   const spacing = 10; // Spacing between points
-  const svgWidth =1000 ;// pitchData.length * spacing;
+  //let svgWidth =1000 ;// pitchData.length * spacing;
+  //let svgHeight = 0;
 
   useEffect(()=> {
 
@@ -99,14 +100,14 @@ const LineChart = (props) => {
 
   return (
     <div ref={containerRef}>
-      <svg width={svgWidth} >
+      <svg width={props.width} height={props.height}>
         {polylinePoints.map(([x, y], index) => (
           <circle
             key={index}
             cx={x}
             cy={y}
             r={2} // El radio del círculo que representa el punto
-            fill="black" // Color del punto
+            fill="red" // Color del punto
           />
         ))}
       </svg>
