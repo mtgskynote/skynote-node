@@ -24,6 +24,7 @@ const Wrapper = styled.aside`
     }
 
     .show-sidebar {
+      border: 10px solid #000; 
       margin-left: 0;
       transition: var(--transition);
     }

@@ -85,6 +85,7 @@ const TimbreVisualization = () => {
           justifyContent: "center",
         }}
       >
+        
         <PieChart
           ref={pieChartRef}
           id="piechart"
@@ -94,10 +95,18 @@ const TimbreVisualization = () => {
 //          segments={segments}
           labels={labels}
         />
-        <PitchTuner ref={pitchTunerRef} m_width={60} m_height={60}/>
+        </div>
 
+        <div
+        style={{
+          textAlign: "center",
+        }}
+      >
+        <h2> Pitch </h2>
+        <PitchTuner ref={pitchTunerRef} m_width={60} m_height={60}/>
+      </div>
       {/* <div>{controlbar}</div>   */}
-    </div>
+
     </div>
   );
 };

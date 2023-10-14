@@ -16,6 +16,7 @@ const Wrapper = styled.aside`
     transition: var(--transition);
   }
   .show-sidebar {
+    border: 10px solid #0F0; 
     z-index: 99;
     opacity: 1;
   }

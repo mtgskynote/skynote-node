@@ -1,7 +1,8 @@
 .myContainer {
     position: relative;
     border: 1px solid blueviolet; 
-    width:300px;
+    width:302px; /* width of the pitch image we contain, plus the border */
+    text-align: center;
 }
 
 /* Style for the vertical line */
@@ -17,6 +18,14 @@
     z-index: -1;
 }
 
+.notesareaDiv {
+    width:300px;
+    height: 50px;
+    overflow: hidden; /* Hide the scrollbar */
+    scroll-behavior: smooth;
+    background-color: #EEEE;
+
+}
 
 .scrollableTextarea {
     background-color: rgb(206, 237, 206);
@@ -28,16 +37,10 @@
 }
 
 
-  .notesareaDiv {
-    width:300px;
-    height: 50px;
-    overflow: hidden; /* Hide the scrollbar */
-    scroll-behavior: smooth;
-    background-color: #EEE;
 
-}
 .scrollableNotesImage {
     height: 50px;
-    opacity: .85;
+    opacity: .45;
+
 }
 

@@ -49,7 +49,7 @@ const PitchTuner = React.forwardRef(({
 
      const setPitch = (freq, conf=0) => {
          let noteobj=freq2note(freq)
-         if (conf<.8) {
+         if (conf<.75) {
             noteobj={note: "-", acc: "-", mistuning: 0}
             return  // don't move the pitch indicator if confidence is low
          } 
@@ -94,10 +94,10 @@ const PitchTuner = React.forwardRef(({
   return (
     <><div className={pitchTunerCSS.myContainer} width={m_width} height={m_height}>
       <div class={pitchTunerCSS.vertical}></div>
-      Pitch
+
       <br />
         <div ref={notesareaRef} className={pitchTunerCSS.notesareaDiv}>
-          <img src={notesimg}  className={pitchTunerCSS.scrollableNotesImage}></img>
+        <img src={notesimg}  className={pitchTunerCSS.scrollableNotesImage}></img>
         </div>
       </div>
       </>
