@@ -11,8 +11,8 @@
       <encoding-date>2023-10-14</encoding-date>
       <supports element="accidental" type="yes"/>
       <supports element="beam" type="yes"/>
-      <supports element="print" attribute="new-page" type="no"/>
-      <supports element="print" attribute="new-system" type="no"/>
+      <supports element="print" attribute="new-page" type="yes" value="yes"/>
+      <supports element="print" attribute="new-system" type="yes" value="yes"/>
       <supports element="stem" type="yes"/>
       </encoding>
     </identification>
@@ -42,7 +42,7 @@
     </defaults>
   <credit page="1">
     <credit-type>title</credit-type>
-    <credit-words default-x="616.935" default-y="1511.2" justify="center" valign="top" font-size="22">G minor scale</credit-words>
+    <credit-words default-x="616.935" default-y="1511.1" justify="center" valign="top" font-size="22">G minor scale</credit-words>
     </credit>
   <part-list>
     <score-part id="P1">
@@ -750,7 +750,7 @@
         <bar-style>light-heavy</bar-style>
         </barline>
       </measure>
-    <measure number="1" width="385.11">
+    <measure number="8" width="385.11">
       <print new-system="yes">
         <system-layout>
           <system-margins>
@@ -760,9 +760,6 @@
           <system-distance>208.82</system-distance>
           </system-layout>
         </print>
-      <attributes>
-        <divisions>2</divisions>
-        </attributes>
       <direction placement="above">
         <direction-type>
           <words relative-y="10.00">G melodic minor</words>
@@ -873,7 +870,7 @@
           </notations>
         </note>
       </measure>
-    <measure number="2" width="316.53">
+    <measure number="9" width="316.53">
       <note default-x="18.76" default-y="-35.00">
         <pitch>
           <step>F</step>
@@ -983,7 +980,7 @@
           </notations>
         </note>
       </measure>
-    <measure number="3" width="310.78">
+    <measure number="10" width="310.78">
       <direction placement="below">
         <direction-type>
           <words default-y="-40.00" relative-y="-25.00" font-style="italic">simile</words>
@@ -1102,7 +1099,7 @@
           </notations>
         </note>
       </measure>
-    <measure number="4" width="355.59">
+    <measure number="11" width="355.59">
       <print new-system="yes">
         <system-layout>
           <system-margins>
@@ -1230,7 +1227,7 @@
         <beam number="1">end</beam>
         </note>
       </measure>
-    <measure number="5" width="284.09">
+    <measure number="12" width="284.09">
       <note default-x="15.84" default-y="0.00">
         <pitch>
           <step>F</step>
@@ -1325,7 +1322,7 @@
         <beam number="1">end</beam>
         </note>
       </measure>
-    <measure number="6" width="285.37">
+    <measure number="13" width="285.37">
       <note default-x="17.12" default-y="-40.00">
         <pitch>
           <step>E</step>
@@ -1418,7 +1415,7 @@
         <beam number="1">end</beam>
         </note>
       </measure>
-    <measure number="7" width="137.37">
+    <measure number="14" width="137.37">
       <note default-x="13.00" default-y="-65.00">
         <pitch>
           <step>G</step>
