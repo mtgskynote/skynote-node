@@ -418,13 +418,11 @@ class OpenSheetMusicDisplay extends Component {
         const newPitchMIDI= freq2midipitch(this.props.pitch[this.props.pitch.length-1]); //played note
         const currentNoteinScorePitchMIDI= freq2midipitch(this.state.currentNoteinScorePitch); //note under cursor
         const midiToStaffStep=midi2StaffGaps(newPitchMIDI) //where to locate the played note in the staff with respect to B4(middle line)
-        //const midFid=currentNoteinScorePitchMIDI-newPitchMIDI;
 
         const staveLines=document.getElementsByClassName("vf-stave")[0]
         const upperLineStave= staveLines.children[0].getBoundingClientRect().top; //upper line
-        const middleLineStave= staveLines.children[2].getBoundingClientRect().top; //middle line
+        const middleLineStave= document.getElementById("cursorImg-0").getBoundingClientRect().top+(document.getElementById("cursorImg-0").getBoundingClientRect().height/2); //middle line
         const lowerLineStave= staveLines.children[4].getBoundingClientRect().top; //lower line
-        console.log("line posicions ",staveLines, upperLineStave, middleLineStave, lowerLineStave)
         const oneStepPixels=Math.abs(upperLineStave-lowerLineStave)/4/2; //steps corresponding to one step in staff
 
         const noteStaffPositionY=middleLineStave + midiToStaffStep*oneStepPixels;
