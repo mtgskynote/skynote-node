@@ -13,8 +13,6 @@ const LineChart = (props) => {
   //if (!pitchData || pitchData.length === 0) return null;
   const containerRef = useRef(null);
 
-  
-
   const [previousPitchData, setPreviousPitchData] = useState([]);
   const [polylinePoints, setPolylinePoints] = useState([]);
   
@@ -29,10 +27,8 @@ const LineChart = (props) => {
   useEffect(()=> {
 
     const containerElement = containerRef.current;
-    //console.log(containerElement);
     const rect = containerElement.getBoundingClientRect();
-    const svgWidth =rect.offsetWidth ;
-    const svgHeight =rect.offsetHeight ;
+    
 
     // New values added to pitchdata
     const newValues = props.pitchData.filter((value) => !previousPitchData.includes(value));
@@ -107,7 +103,7 @@ const LineChart = (props) => {
             cx={x}
             cy={y}
             r={2} // El radio del círculo que representa el punto
-            fill="red" // Color del punto
+            fill="black" // Color del punto
           />
         ))}
       </svg>

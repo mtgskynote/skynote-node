@@ -26,6 +26,49 @@ const freq2midipitch = (freq) => {
   return(12 * (Math.log2(freq / 440)) + 69)
 }
 
+const midi2StaffGaps=(playedNoteMidi)=>{
+
+  // Create a mapping of MIDI note values to staff offsets
+  const midiToStaffMapping = {
+    // Define mappings for specific MIDI notes
+    60: 6,     // C4
+    61: 5.5,   // C#4
+    62: 5,     // D4
+    63: 4.5,   // D#4
+    64:4,      // E4
+    65:3,      // F4
+    66:2.5,    // F#4
+    67:2,      // G4
+    68:1.5,    // G#4
+    69:1,      // A4
+    70:0.5,   // A#4
+    71:0,     // B4 --> middle line of the staff
+    72:-1,     //C5
+    73:-1.5,     //C#5
+    74:-2,     //D5
+    75:-2.5,     //D#5
+    76:-3,     //E5
+    77:-4,     //F5
+    78:-4.5,     //F#5
+    79:-5,     //G5
+    80:-5.5,     //G#5
+    81:-6,     //A5
+    82:-6.5,     //A#5
+    83:-7,     //B5
+    84:-8,     //C6
+  };
+  const playedNoteMidiINT=Math.floor(playedNoteMidi); //integer part of playedNoteMidi
+  const playedNoteMidiDECIMAL=playedNoteMidi-playedNoteMidiINT; //decimal part of playedNoteMidi
+
+  //Assign to staff positions according to dictionary
+  const noteStaffINT= midiToStaffMapping[playedNoteMidiINT]; //integer part of staff step
+  const noteStaffDiff= Math.abs(midiToStaffMapping[playedNoteMidiINT+1]-noteStaffINT); //difference in staff step with consecutive
+  const noteStaffDECIMAL= playedNoteMidiDECIMAL*noteStaffDiff //map decimal part to the step with consecutive
+
+  return (noteStaffINT-noteStaffDECIMAL)
+  
+}
+
 // creating the class component
 class OpenSheetMusicDisplay extends Component {
   constructor(props) {
@@ -49,6 +92,7 @@ class OpenSheetMusicDisplay extends Component {
     this.index=0;
     this.countGoodNotes=0; 
     this.countBadNotes=0;
+    this.coords=[0,0];
   }
 
   
@@ -113,9 +157,6 @@ class OpenSheetMusicDisplay extends Component {
         });
       }
 
-      // let gNotes = this.osmd.cursor.GNotesUnderCursor();
-      // console.log("gNotes", gNotes);
-
       this.osmd.zoom = this.props.zoom;
       this.playbackControl = this.playbackOsmd(this.osmd);
       this.playbackControl.initialize();
@@ -124,11 +165,6 @@ class OpenSheetMusicDisplay extends Component {
 
       this.cursorInterval = setInterval(this.checkCursorChange, 200);
 
-      /*if(this.notePositionX!==null){
-        const addedNewPositionX= [...this.state.pitchPositionX, this.notePositionX];
-        this.setState({ pitchPositionX: addedNewPositionX })
-        console.log("sizes ", this.state.pitchData, this.state.pitchPositionX)
-      }*/
     });
   }
 
@@ -202,8 +238,6 @@ class OpenSheetMusicDisplay extends Component {
         this.notePositionX=notePos.x
         this.notePositionY=notePos.y
       }
-      //this.notePositionX=notePos.x
-      //this.notePositionY=notePos.y
       ////////////////////////////////////////////////////////
 
 
@@ -334,6 +368,9 @@ class OpenSheetMusicDisplay extends Component {
         //this.setState({ pitchData: [] });
       }
     //}
+
+    const container = document.getElementById('osmdSvgPage1')
+    this.coords=[container.getBoundingClientRect().width,container.getBoundingClientRect().height]
     
     console.log("Repetition in measures: ", repetitions);
     //console.log("Cursor is at: ", this.osmd.cursor.iterator.CurrentMeasureIndex);
@@ -377,11 +414,20 @@ class OpenSheetMusicDisplay extends Component {
         }
         ////////////////////////////////////////////////////////
 
-        //Add error done to Y coordinates///////////////////////
+        //Calculate Y coordinate ///////////////////////////////
         const newPitchMIDI= freq2midipitch(this.props.pitch[this.props.pitch.length-1]); //played note
         const currentNoteinScorePitchMIDI= freq2midipitch(this.state.currentNoteinScorePitch); //note under cursor
-        const MIDIdifference=Math.abs(newPitchMIDI-currentNoteinScorePitchMIDI) //error MIDI
-        const errorPixels=MIDIdifference*5-2.5; //5 pixels corresponds to a semitone (1 MIDI value), FIXME
+        const midiToStaffStep=midi2StaffGaps(newPitchMIDI) //where to locate the played note in the staff with respect to B4(middle line)
+        //const midFid=currentNoteinScorePitchMIDI-newPitchMIDI;
+
+        const staveLines=document.getElementsByClassName("vf-stave")[0]
+        const upperLineStave= staveLines.children[0].getBoundingClientRect().top; //upper line
+        const middleLineStave= staveLines.children[2].getBoundingClientRect().top; //middle line
+        const lowerLineStave= staveLines.children[4].getBoundingClientRect().top; //lower line
+        console.log("line posicions ",staveLines, upperLineStave, middleLineStave, lowerLineStave)
+        const oneStepPixels=Math.abs(upperLineStave-lowerLineStave)/4/2; //steps corresponding to one step in staff
+
+        const noteStaffPositionY=middleLineStave + midiToStaffStep*oneStepPixels;
         ////////////////////////////////////////////////////////
 
         //Add pitch to array ///////////////////////////////////
@@ -391,7 +437,7 @@ class OpenSheetMusicDisplay extends Component {
         const addedNewPositionX= [...this.state.pitchPositionX, this.notePositionX+this.index];
         this.setState({ pitchPositionX: addedNewPositionX })
         //Add Y position to array
-        const addedNewPositionY= [...this.state.pitchPositionY, this.notePositionY+errorPixels];
+        const addedNewPositionY= [...this.state.pitchPositionY, noteStaffPositionY];
         this.setState({ pitchPositionY: addedNewPositionY })
         ////////////////////////////////////////////////////////        
       }
@@ -431,16 +477,8 @@ class OpenSheetMusicDisplay extends Component {
     const { isResetButtonPressed } = this.state;
 
     const lineChartStyle = {
-      ///////////////////////THIS IS ONLY FOR DEBUGGING PURPOSES, PLEASE DELETE WHEN FINISHED/////////////////////
-      backgroundColor: "green",
-      opacity: 0.25,
-      ////////////////////////////////////////////////////////////////////////////////////////////////////////////
       position: "absolute",
-      //top: parseFloat(this.state.initialCursorTop) + 75,
-      //left: this.state.initialCursorLeft,
       pointerEvents: "none",
-      background:"blue",
-      
     };
 
     return (
@@ -448,9 +486,8 @@ class OpenSheetMusicDisplay extends Component {
         {showPitchTrack && (
           <div style={lineChartStyle}>
             <LineChart
-              //lineVisible={this.state.lineChartVisible}
-              width={1000}
-              height={123}
+              width={this.coords[0]}
+              height={this.coords[1]}
               pitchData={this.state.pitchData}
               pitchDataPosX={this.state.pitchPositionX}
               pitchDataPosY={this.state.pitchPositionY}
@@ -458,7 +495,7 @@ class OpenSheetMusicDisplay extends Component {
           </div>
         )}
         <div  ref={this.divRef}  /> 
-      </div> //style={{zIndex: 2 }}
+      </div>
     );
   }
 }
