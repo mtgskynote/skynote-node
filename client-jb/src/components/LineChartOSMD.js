@@ -31,14 +31,14 @@ const LineChart = (props) => {
     
 
     // New values added to pitchdata
-    const newValues = props.pitchData.filter((value) => !previousPitchData.includes(value));
+    /*const newValues = props.pitchData.filter((value) => !previousPitchData.includes(value));
     const newNormalizedData = newValues.map(
       (value) =>
         (freq2midipitch(value) - minimumMIDI) /
         (maximumMIDI - minimumMIDI)
     )
     // Actualizar el estado anterior con el nuevo estado
-    setPreviousPitchData(props.pitchData);
+    setPreviousPitchData(props.pitchData);*/
     
   
     // Combinar los nuevos datos procesados con los datos anteriores
@@ -46,10 +46,11 @@ const LineChart = (props) => {
       //console.log("size of newNormalizedData ", newNormalizedData.length);
     
       // Mapear y agregar las coordenadas de los nuevos valores al estado anterior
-      const newPolylinePoints = newNormalizedData.map((value, index) => {
+      const newPolylinePoints = props.pitchDataPosX.map((value, index) => {
        
-        const x = props.pitchDataPosX[props.pitchData.length - 1] - rect.left;
-        const y = props.pitchDataPosY[props.pitchData.length - 1]- rect.top;
+        const x = props.pitchDataPosX[props.pitchDataPosX.length - 1] + props.pitchIndex[props.pitchIndex.length - 1] - rect.left;
+        const y = props.pitchDataRelPosY[props.pitchDataRelPosY.length - 1] + props.pitchDataAbsPosY[props.pitchDataAbsPosY.length - 1] - rect.top;
+        console.log(x,y)
     
         return [x, y]; // Return a coordinate pair as an array [x, y]
       });

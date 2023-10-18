@@ -88,11 +88,16 @@ class OpenSheetMusicDisplay extends Component {
     this.state = {
       pitchData: [],
       pitchPositionX:[],
-      pitchPositionY:[],
+      pitchAbsPositionY:[],
+      pitchRelPositionY:[],
+      recordedNoteIDs:[],
+      recordedNoteIndex:[],
       initialCursorTop: 0,
       initialCursorLeft: 0,
       currentNoteinScorePitch: null,
       currentGNoteinScorePitch: null,
+      
+      
     };
     this.osmd = undefined;
     this.divRef = React.createRef();
@@ -101,7 +106,7 @@ class OpenSheetMusicDisplay extends Component {
     this.previousTimestamp=null; 
     this.notePositionX=null;
     this.notePositionY=null;
-    this.index=0;
+    this.index=null;
     this.countGoodNotes=0; 
     this.countBadNotes=0;
     this.coords=[0,0];
@@ -208,6 +213,19 @@ class OpenSheetMusicDisplay extends Component {
 
   //function to check cursor change
   checkCursorChange = () => {
+    //let staves = this.osmd.graphic.measureList
+    //let stave0= staves[0][0]
+    //let note0=stave0.staffEntries[0].graphicalVoiceEntries[0].notes[0].getSVGId();
+
+    
+    //let stave1= staves[1][0]
+    //let note3=stave1.staffEntries[0].graphicalVoiceEntries[0].notes[0].getSVGId();
+    //let positionNote0=note0.boundingBox.absolutePosition; //.vfNotes{random_key_value}
+    //console.log("obtined fron note1 ", note0)
+    //console.log("obtined fron note3", note3)
+    //console.log("hey", this.osmd.cursor.GNotesUnderCursor()[0].getSVGId())
+
+
     const cursorCurrent=this.osmd.cursor.Iterator.currentTimeStamp
 
     //if recording active
@@ -407,8 +425,24 @@ class OpenSheetMusicDisplay extends Component {
     if (this.props.zoom !== prevProps.zoom) {
       this.osmd.zoom = this.props.zoom;
       this.osmd.render(); // update the OSMD instance after changing the zoom level
-    }
 
+      //Update current position of recorded Notes, both X and Y coordinates
+      ////////////////NOT WORKING!!!!! FIX TOMORROW //////////////////////////////
+      /*
+      let staves = this.osmd.graphic.measureList;
+      for (let stave_index = 0; stave_index < staves.length; stave_index++) {
+        let stave = staves[stave_index][0];
+          for (let note_index = 0; note_index < stave.staffEntries.length; note_index++) {
+              let note = stave.staffEntries[note_index]
+              let noteID= note.graphicalVoiceEntries[0].notes[0].getSVGId();
+              let noteX=note.boundingBox.absolutePosition.x
+              let noteY=note.boundingBox.absolutePosition.y
+              console.log("--- note");
+              console.log(noteID,  noteX);
+              this.state.pitchPositionX.map((value, index) => (this.state.recordedNoteIDs[index] === noteID ? this.state.pitchPositionX[index] : noteX));
+          }
+        }*/
+    }
     // follow cursor changes
     if (this.props.followCursor !== prevProps.followCursor) {
       this.osmd.followCursor = this.props.followCursor;
@@ -419,9 +453,10 @@ class OpenSheetMusicDisplay extends Component {
       if (this.props.pitch !== prevProps.pitch) { //new pitch
 
         //Add index to X coordinates to advance pitch tracker in X axis when new pitch arrives
-        if(this.notePositionX===(this.state.pitchPositionX[this.state.pitchPositionX.length-1]-this.index)){ //we are still on the same note
+        if(this.notePositionX===(this.state.pitchPositionX[this.state.pitchPositionX.length-1])){ //we are still on the same note
           this.index=this.index+6; //6 is the spacing between points
         }else{ //new note
+          console.log("Note change??????")
           this.index=0; //reset index
         }
         ////////////////////////////////////////////////////////
@@ -437,18 +472,34 @@ class OpenSheetMusicDisplay extends Component {
         const lowerLineStave= staveLines.children[4].getBoundingClientRect().top; //lower line
         const oneStepPixels=Math.abs(upperLineStave-lowerLineStave)/4/2; //steps corresponding to one step in staff
 
-        const noteStaffPositionY=middleLineStave + midiToStaffStep*oneStepPixels;
+        const noteAbsStaffPositionY=middleLineStave;
+        const noteRelStaffPositionY=midiToStaffStep*oneStepPixels;
         ////////////////////////////////////////////////////////
 
-        //Add pitch to array ///////////////////////////////////
-        const newPitchData = this.props.pitch;
-        this.setState({ pitchData: newPitchData });
-        //Add X position to array
-        const addedNewPositionX= [...this.state.pitchPositionX, this.notePositionX+this.index];
-        this.setState({ pitchPositionX: addedNewPositionX })
-        //Add Y position to array
-        const addedNewPositionY= [...this.state.pitchPositionY, noteStaffPositionY];
-        this.setState({ pitchPositionY: addedNewPositionY })
+        //Add pitch to array and note identification data///////
+        if(this.state.currentGNoteinScorePitch){
+          //Add note ID
+          const addNewNoteID=[...this.state.recordedNoteIDs, this.state.currentGNoteinScorePitch.getSVGId()];
+          this.setState({ recordedNoteIDs: addNewNoteID });
+          //Add note index
+          const addNoteIndex=[...this.state.recordedNoteIndex, this.index];
+          console.log("indexxxxx", this.state.recordedNoteIndex)
+          this.setState({ recordedNoteIndex:addNoteIndex});
+          //Add pitch position
+          const newPitchData = this.props.pitch;
+          this.setState({ pitchData: newPitchData });
+          //Add X position to array
+          const addedNewPositionX= [...this.state.pitchPositionX, this.notePositionX]; //+this.index
+          this.setState({ pitchPositionX: addedNewPositionX })
+          console.log("pitch XXXXXX ", this.state.pitchPositionX)
+          //Add absolute Y position to array
+          const addedNewAbsPositionY= [...this.state.pitchAbsPositionY, noteAbsStaffPositionY];
+          this.setState({ pitchAbsPositionY: addedNewAbsPositionY })
+          //Add relative Y position to array
+          const addedNewRelPositionY= [...this.state.pitchRelPositionY, noteRelStaffPositionY];
+          this.setState({ pitchRelPositionY: addedNewRelPositionY })
+        }
+        
         ////////////////////////////////////////////////////////        
       }
     }
@@ -500,7 +551,9 @@ class OpenSheetMusicDisplay extends Component {
               height={this.coords[1]}
               pitchData={this.state.pitchData}
               pitchDataPosX={this.state.pitchPositionX}
-              pitchDataPosY={this.state.pitchPositionY}
+              pitchDataAbsPosY={this.state.pitchAbsPositionY}
+              pitchDataRelPosY={this.state.pitchRelPositionY}
+              pitchIndex={this.state.recordedNoteIndex}
             />
           </div>
         )}
