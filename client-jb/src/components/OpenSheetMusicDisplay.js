@@ -479,9 +479,11 @@ class OpenSheetMusicDisplay extends Component {
         const newPitchMIDI= freq2midipitch(this.props.pitch[this.props.pitch.length-1]); //played note
         const currentNoteinScorePitchMIDI= freq2midipitch(this.state.currentNoteinScorePitch); //note under cursor
         const midiToStaffStep=midi2StaffGaps(newPitchMIDI) //where to locate the played note in the staff with respect to B4(middle line)
-        if (midiToStaffStep === 20) {
+        if (midiToStaffStep === 0) {
           this.color = "red";
-          console.log("FJFYTFYFIY: ", this.color);
+          console.log("Pitch value out of bounds");
+        } else {
+          this.color = "black";
         }
         const staveLines=document.getElementsByClassName("vf-stave")[0]
         const upperLineStave= staveLines.children[0].getBoundingClientRect().top; //upper line
