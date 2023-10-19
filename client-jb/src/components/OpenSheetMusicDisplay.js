@@ -77,7 +77,13 @@ const midi2StaffGaps=(playedNoteMidi)=>{
   const noteStaffDiff= Math.abs(midiToStaffMapping[playedNoteMidiINT+1]-noteStaffINT); //difference in staff step with consecutive
   const noteStaffDECIMAL= playedNoteMidiDECIMAL*noteStaffDiff //map decimal part to the step with consecutive
 
-  return (noteStaffINT-noteStaffDECIMAL)
+  let result;
+    if(noteStaffINT-noteStaffDECIMAL){
+      result=noteStaffINT-noteStaffDECIMAL;
+    }else{
+      result=0; //FIXME, value 20 so it goes out of staff, but other solution required (change its color)
+    }
+    return (result)
   
 }
 
@@ -500,6 +506,7 @@ class OpenSheetMusicDisplay extends Component {
           this.setState({ pitchPositionX: addedNewPositionX })
           console.log("pitch XXXXXX ", this.state.pitchPositionX)
           //Add absolute Y position to array
+          console.log(noteAbsStaffPositionY, noteRelStaffPositionY)
           const addedNewAbsPositionY= [...this.state.pitchAbsPositionY, noteAbsStaffPositionY];
           this.setState({ pitchAbsPositionY: addedNewAbsPositionY })
           //Add relative Y position to array
