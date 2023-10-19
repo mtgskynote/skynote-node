@@ -279,6 +279,7 @@ class OpenSheetMusicDisplay extends Component {
       //Current Note under cursor
       const notePitch = this.osmd.cursor.NotesUnderCursor()[0]?.Pitch.frequency;
       const gNote = this.osmd.cursor.GNotesUnderCursor()[0];
+      console.log("note under cursor: ", gNote) //Caca1
       
       //Prepare colors
       const colorPitchMatched = "#00FF00"; //green
@@ -424,24 +425,30 @@ class OpenSheetMusicDisplay extends Component {
     // for zoom changes
     if (this.props.zoom !== prevProps.zoom) {
       this.osmd.zoom = this.props.zoom;
-      this.osmd.render(); // update the OSMD instance after changing the zoom level
+     
 
       //Update current position of recorded Notes, both X and Y coordinates
-      ////////////////NOT WORKING!!!!! FIX TOMORROW //////////////////////////////
-      /*
-      let staves = this.osmd.graphic.measureList;
+      ////////////////NOT WORKING!!!!! FIX TOMORROW /////////////////////////////
+      console.log("before re-rendering ", this.state.pitchPositionX)
+        this.osmd.render(); // update the OSMD instance after changing the zoom level
+        let staves = this.osmd.graphic.measureList;
+      let copy_pitchPositionX=this.state.pitchPositionX.slice();
       for (let stave_index = 0; stave_index < staves.length; stave_index++) {
         let stave = staves[stave_index][0];
           for (let note_index = 0; note_index < stave.staffEntries.length; note_index++) {
               let note = stave.staffEntries[note_index]
               let noteID= note.graphicalVoiceEntries[0].notes[0].getSVGId();
-              let noteX=note.boundingBox.absolutePosition.x
-              let noteY=note.boundingBox.absolutePosition.y
-              console.log("--- note");
-              console.log(noteID,  noteX);
-              this.state.pitchPositionX.map((value, index) => (this.state.recordedNoteIDs[index] === noteID ? this.state.pitchPositionX[index] : noteX));
+              let noteX=note.sourceStaffEntry.voiceEntries[0].notes[0]
+              //.getSVGGElement().getBoundingClientRect().x//SACA ALGOgraphicalVoiceEntries[0].notes[0].getSVGGElement().getBoundingClientRect().x//.getSVGGElement()//.getBoundingClientRect().x
+              console.log("NOTE XXXX", noteX)
+              //let noteY=note.getSVGGElement().getBoundingClientRect().y
+              //console.log("--- note");
+              //console.log(noteID,  noteX);
+              copy_pitchPositionX= this.state.pitchPositionX.map((value, index) => {return this.state.recordedNoteIDs[index] === noteID ? value : noteX});
           }
-        }*/
+        }
+        console.log("changed, copy updated to zoom ",copy_pitchPositionX)
+        this.setState({pitchPositionX: copy_pitchPositionX})
     }
     // follow cursor changes
     if (this.props.followCursor !== prevProps.followCursor) {
