@@ -116,6 +116,7 @@ class OpenSheetMusicDisplay extends Component {
     this.countGoodNotes=0; 
     this.countBadNotes=0;
     this.coords=[0,0];
+    this.color = "green";
   }
 
   
@@ -285,7 +286,7 @@ class OpenSheetMusicDisplay extends Component {
       //Current Note under cursor
       const notePitch = this.osmd.cursor.NotesUnderCursor()[0]?.Pitch.frequency;
       const gNote = this.osmd.cursor.GNotesUnderCursor()[0];
-      console.log("note under cursor: ", gNote) //Caca1
+      //console.log("note under cursor: ", gNote) //Caca1
       
       //Prepare colors
       const colorPitchMatched = "#00FF00"; //green
@@ -347,7 +348,7 @@ class OpenSheetMusicDisplay extends Component {
           }
           
         }else{
-          console.log("NOTE Not catched")
+          //console.log("NOTE Not catched")
         }
         //Reset for next note checking
         this.countBadNotes=0;
@@ -409,7 +410,7 @@ class OpenSheetMusicDisplay extends Component {
     const container = document.getElementById('osmdSvgPage1')
     this.coords=[container.getBoundingClientRect().width,container.getBoundingClientRect().height]
     
-    console.log("Repetition in measures: ", repetitions);
+    //console.log("Repetition in measures: ", repetitions);
     //console.log("Cursor is at: ", this.osmd.cursor.iterator.CurrentMeasureIndex);
 
     // for title and file changes
@@ -478,7 +479,10 @@ class OpenSheetMusicDisplay extends Component {
         const newPitchMIDI= freq2midipitch(this.props.pitch[this.props.pitch.length-1]); //played note
         const currentNoteinScorePitchMIDI= freq2midipitch(this.state.currentNoteinScorePitch); //note under cursor
         const midiToStaffStep=midi2StaffGaps(newPitchMIDI) //where to locate the played note in the staff with respect to B4(middle line)
-
+        if (midiToStaffStep === 20) {
+          this.color = "red";
+          console.log("FJFYTFYFIY: ", this.color);
+        }
         const staveLines=document.getElementsByClassName("vf-stave")[0]
         const upperLineStave= staveLines.children[0].getBoundingClientRect().top; //upper line
         const middleLineStave= document.getElementById("cursorImg-0").getBoundingClientRect().top+(document.getElementById("cursorImg-0").getBoundingClientRect().height/2); //middle line
@@ -496,7 +500,7 @@ class OpenSheetMusicDisplay extends Component {
           this.setState({ recordedNoteIDs: addNewNoteID });
           //Add note index
           const addNoteIndex=[...this.state.recordedNoteIndex, this.index];
-          console.log("indexxxxx", this.state.recordedNoteIndex)
+          //console.log("indexxxxx", this.state.recordedNoteIndex)
           this.setState({ recordedNoteIndex:addNoteIndex});
           //Add pitch position
           const newPitchData = this.props.pitch;
@@ -504,9 +508,9 @@ class OpenSheetMusicDisplay extends Component {
           //Add X position to array
           const addedNewPositionX= [...this.state.pitchPositionX, this.notePositionX]; //+this.index
           this.setState({ pitchPositionX: addedNewPositionX })
-          console.log("pitch XXXXXX ", this.state.pitchPositionX)
+          //console.log("pitch XXXXXX ", this.state.pitchPositionX)
           //Add absolute Y position to array
-          console.log(noteAbsStaffPositionY, noteRelStaffPositionY)
+          //console.log(noteAbsStaffPositionY, noteRelStaffPositionY)
           const addedNewAbsPositionY= [...this.state.pitchAbsPositionY, noteAbsStaffPositionY];
           this.setState({ pitchAbsPositionY: addedNewAbsPositionY })
           //Add relative Y position to array
@@ -563,6 +567,7 @@ class OpenSheetMusicDisplay extends Component {
             <LineChart
               width={this.coords[0]}
               height={this.coords[1]}
+              pitchColor = {this.color}
               pitchData={this.state.pitchData}
               pitchDataPosX={this.state.pitchPositionX}
               pitchDataAbsPosY={this.state.pitchAbsPositionY}
