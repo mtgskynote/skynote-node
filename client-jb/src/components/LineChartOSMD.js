@@ -1,99 +1,21 @@
 import React, {useState, useEffect, useRef} from "react";
 
-//Convert frequency Hertz to MIDI function
-const freq2midipitch = (freq) => {
-  return(12 * (Math.log2(freq / 440)) + 69)
-}
-//let staffBox;
-//let container;
-
 //Pitch track line component
 const LineChart = (props) => {
-  
-  //if (!pitchData || pitchData.length === 0) return null;
   const containerRef = useRef(null);
-
-  const [previousPitchData, setPreviousPitchData] = useState([]);
   const [polylinePoints, setPolylinePoints] = useState([]);
-  
-  // Normalize pitch data between 0 (A3) and 1 (C6)
-  let minimumMIDI=57 //A3
-  let maximumMIDI=84 //C6
-
-  const spacing = 10; // Spacing between points
-  //let svgWidth =1000 ;// pitchData.length * spacing;
-  //let svgHeight = 0;
 
   useEffect(()=> {
-
     const containerElement = containerRef.current;
     const rect = containerElement.getBoundingClientRect();
-    
-
-    // New values added to pitchdata
-    /*const newValues = props.pitchData.filter((value) => !previousPitchData.includes(value));
-    const newNormalizedData = newValues.map(
-      (value) =>
-        (freq2midipitch(value) - minimumMIDI) /
-        (maximumMIDI - minimumMIDI)
-    )
-    // Actualizar el estado anterior con el nuevo estado
-    setPreviousPitchData(props.pitchData);*/
-    
-  
-    // Combinar los nuevos datos procesados con los datos anteriores
-    setPolylinePoints((prevPolylinePoints) => {
-      //console.log("size of newNormalizedData ", newNormalizedData.length);
-    
-      // Mapear y agregar las coordenadas de los nuevos valores al estado anterior
-      const newPolylinePoints = props.pitchDataPosX.map((value, index) => {
-       
-        const x = props.pitchDataPosX[props.pitchDataPosX.length - 1] + props.pitchIndex[props.pitchIndex.length - 1] - rect.left;
-        const y = props.pitchDataRelPosY[props.pitchDataRelPosY.length - 1] + props.pitchDataAbsPosY[props.pitchDataAbsPosY.length - 1] - rect.top;
-        console.log(x,y)
-    
-        return [x, y]; // Return a coordinate pair as an array [x, y]
-      });
-    
-      // Combinar las coordenadas anteriores con las nuevas
-      return [...prevPolylinePoints, ...newPolylinePoints]; // Combine arrays
+    const newPolylinePoints = props.pitchDataPosX.map((value, index) => {
+      const x = props.pitchDataPosX[index] + props.pitchIndex[index] - rect.left;
+      const y = props.pitchDataRelPosY[index] + props.pitchDataAbsPosY[index] - rect.top;
+      return [x, y]; // Return a coordinate pair as an array [x, y]
     });
-
-    /*setPolylinePoints((prevPolylinePoints) => {
-      console.log("size of newNormalizedData ", newNormalizedData.length)
-      // Mapear y agregar las coordenadas de los nuevos valores al estado anterior
-      const newPolylinePoints = newNormalizedData.map((value, index) => {
-        console.log("indez ", pitchData.length-2)
-        const x = props.pitchDataPosX[pitchData.length-1] - rect.left;//(prevPolylinePoints.split(' ').length + index) * spacing; //
-        const y = 100 - value * 100;
-        console.log("X,y", x,y);
-        return `${x},${y}`;
-        });
-      // Combinar las coordenadas anteriores con las nuevas
-      return prevPolylinePoints + ' ' + newPolylinePoints.join(' ');
-    });*/
+    setPolylinePoints(newPolylinePoints);
   
-  }, [props.pitchData, previousPitchData]);
-
-  // Style
-  //THIS IS WRONG, THE LOCATION SHOULD BE DEFINED IN OpenSheetMusicDisplay.js
-  /*container = document.getElementById('osmdSvgPage1');
-  staffBox = container.querySelector('staffline'); 
-  let topValue=0
-  let leftValue=0
-  if (staffBox){
-    const coord = staffBox.getBoundingClientRect();
-    topValue=coord.top
-    leftValue=coord.left
-  }
-
-  const style = {
-    position: "absolute",
-    //overflowX: "auto",
-    position: "absolute",
-    top: topValue, // Ajusta la posición vertical según tus necesidades
-    left: leftValue, // Ajusta la posición horizontal según tus necesidades
-  };*/
+  }, [props.pitchData, props.zoom]); //, previousPitchData
 
   return (
     <div ref={containerRef}>
@@ -103,27 +25,13 @@ const LineChart = (props) => {
             key={index}
             cx={x}
             cy={y}
-            r={2} // El radio del círculo que representa el punto
-            fill="black" // Color del punto
+            r={2}
+            fill="black"
           />
         ))}
       </svg>
     </div>
   );
-
-  /*return (
-    <div ref={containerRef} >
-      <svg  width={svgWidth}>
-        <polyline
-          points={polylinePoints}
-          fill="none"
-          stroke="red"
-          strokeDasharray="2"
-          style={style}
-        />
-      </svg>
-    </div>
-  );*/
 };
 
 export default LineChart;
