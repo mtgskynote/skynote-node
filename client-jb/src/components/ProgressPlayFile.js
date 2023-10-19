@@ -210,7 +210,7 @@ const ProgressPlayFile = (props) => {
 
   return (
     
-    <div style={{ overflow: "scroll", height: "750px" }}>
+    <div>
       <OpenSheetMusicDisplay
         file={`${folderBasePath}/${params.files}`}
         autoResize={true}
@@ -219,7 +219,7 @@ const ProgressPlayFile = (props) => {
         metroVol={metroVol}
         bpm={bpmChange}
         zoom={zoom}
-        followCursor={false}
+        followCursor={true}
         pitch={pitch}
         startPitchTrack={startPitchTrack}
         showPitchTrack={showPitchTrack}
