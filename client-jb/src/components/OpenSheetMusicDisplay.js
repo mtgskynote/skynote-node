@@ -87,7 +87,7 @@ const midi2StaffGaps=(playedNoteMidi)=>{
   
 }
 
-const renderPitchLineZoom=(osmd, state)=>{
+const renderPitchLineZoom=(osmd, state, prevZoom)=>{
   //When zoom happens, coordinates X and Y of pitch tracking points have to be updated
   let staves = osmd.graphic.measureList;
   let copy_pitchPositionX=state.pitchPositionX.slice();
@@ -115,7 +115,10 @@ const renderPitchLineZoom=(osmd, state)=>{
           }
       }
     }
-    return [copy_pitchPositionX, copy_pitchPositionY];
+    let copy_recordedNoteIndex=state.recordedNoteIndex.slice()
+    copy_recordedNoteIndex=copy_recordedNoteIndex.map(item => item * osmd.zoom / prevZoom);
+    console.log("new X indexessss ", osmd.zoom)
+    return [copy_pitchPositionX, copy_pitchPositionY, copy_recordedNoteIndex];
 }
 
 // creating the class component
@@ -144,6 +147,7 @@ class OpenSheetMusicDisplay extends Component {
     this.notePositionX=null;
     this.notePositionY=null;
     this.index=null;
+    this.spacing=4;
     this.countGoodNotes=0; 
     this.countBadNotes=0;
     this.coords=[0,0];
@@ -464,9 +468,10 @@ class OpenSheetMusicDisplay extends Component {
     if (this.props.zoom !== prevProps.zoom) {
       this.osmd.zoom = this.props.zoom;
       this.osmd.render(); // update the OSMD instance after changing the zoom level
-      const [updatedPitchPositionX, updatedPitchPositionY] = renderPitchLineZoom(this.osmd, this.state);
+      const [updatedPitchPositionX, updatedPitchPositionY, updatedNoteIndex] = renderPitchLineZoom(this.osmd, this.state, this.zoom);
       this.setState({pitchPositionX: updatedPitchPositionX});
       this.setState({ pitchPositionY: updatedPitchPositionY});
+      this.setState({recordedNoteIndex:updatedNoteIndex})
       this.zoom=this.props.zoom; // This forces thta LineChart re-renders the points position
     }
     // follow cursor changes
@@ -480,7 +485,7 @@ class OpenSheetMusicDisplay extends Component {
 
         //Add index to X coordinates to advance pitch tracker in X axis when new pitch arrives
         if(this.notePositionX===(this.state.pitchPositionX[this.state.pitchPositionX.length-1])){ //we are still on the same note
-          this.index=this.index+6; //6 is the spacing between points
+          this.index=this.index+this.spacing; //6 is the spacing between points
         }else{ //new note
           console.log("Note change??????")
           this.index=0; //reset index
