@@ -81,10 +81,41 @@ const midi2StaffGaps=(playedNoteMidi)=>{
     if(noteStaffINT-noteStaffDECIMAL){
       result=noteStaffINT-noteStaffDECIMAL;
     }else{
-      result=0; //FIXME, value 20 so it goes out of staff, but other solution required (change its color)
+      result=0; //FIXME, value 0 so it keeps in middle line of staff, but other solution required (change its color)
     }
     return (result)
   
+}
+
+const renderPitchLineZoom=(osmd, state)=>{
+  //When zoom happens, coordinates X and Y of pitch tracking points have to be updated
+  let staves = osmd.graphic.measureList;
+  let copy_pitchPositionX=state.pitchPositionX.slice();
+  let copy_pitchPositionY=state.pitchPositionY.slice();
+  const staveLines=document.getElementsByClassName("vf-stave")
+  for (let stave_index = 0; stave_index < staves.length; stave_index++) {
+    let stave = staves[stave_index][0];
+    const staveLines=document.getElementsByClassName("vf-stave")[stave_index]
+    const upperLineStave= staveLines.children[0].getBoundingClientRect().top; //upper line
+    const middleLineStave= staveLines.children[2].getBoundingClientRect().top; //middle line
+    const lowerLineStave= staveLines.children[4].getBoundingClientRect().top; //lower line
+    const oneStepPixels=Math.abs(upperLineStave-lowerLineStave)/4/2; //steps corresponding to one step in staff
+
+      for (let note_index = 0; note_index < stave.staffEntries.length; note_index++) {
+          let note = stave.staffEntries[note_index]
+          console.log("Note info ",note)
+          let noteID= note.graphicalVoiceEntries[0].notes[0].getSVGId();
+          let noteX=note.graphicalVoiceEntries[0].notes[0].getSVGGElement().getBoundingClientRect().x    
+          for(let index=0; index<copy_pitchPositionX.length; index++){
+            if (state.recordedNoteIDs[index] === noteID) {
+              let midiToStaffStep= midi2StaffGaps(freq2midipitch(state.pitchData[index]))
+              copy_pitchPositionX[index]= noteX;
+              copy_pitchPositionY[index]= middleLineStave+midiToStaffStep*oneStepPixels;
+            }
+          }
+      }
+    }
+    return [copy_pitchPositionX, copy_pitchPositionY];
 }
 
 // creating the class component
@@ -94,8 +125,7 @@ class OpenSheetMusicDisplay extends Component {
     this.state = {
       pitchData: [],
       pitchPositionX:[],
-      pitchAbsPositionY:[],
-      pitchRelPositionY:[],
+      pitchPositionY:[],
       recordedNoteIDs:[],
       recordedNoteIndex:[],
       initialCursorTop: 0,
@@ -230,7 +260,6 @@ class OpenSheetMusicDisplay extends Component {
     //console.log("obtined fron note1 ", note0)
     //console.log("obtined fron note3", note3)
     //console.log("hey", this.osmd.cursor.GNotesUnderCursor()[0].getSVGId())
-
 
     const cursorCurrent=this.osmd.cursor.Iterator.currentTimeStamp
 
@@ -431,30 +460,19 @@ class OpenSheetMusicDisplay extends Component {
     // for zoom changes
     if (this.props.zoom !== prevProps.zoom) {
       this.osmd.zoom = this.props.zoom;
-     
-
-      //Update current position of recorded Notes, both X and Y coordinates
-      ////////////////NOT WORKING!!!!! FIX TOMORROW /////////////////////////////
-      console.log("before re-rendering ", this.state.pitchPositionX)
-        this.osmd.render(); // update the OSMD instance after changing the zoom level
-        let staves = this.osmd.graphic.measureList;
-      let copy_pitchPositionX=this.state.pitchPositionX.slice();
-      for (let stave_index = 0; stave_index < staves.length; stave_index++) {
-        let stave = staves[stave_index][0];
-          for (let note_index = 0; note_index < stave.staffEntries.length; note_index++) {
-              let note = stave.staffEntries[note_index]
-              let noteID= note.graphicalVoiceEntries[0].notes[0].getSVGId();
-              let noteX=note.sourceStaffEntry.voiceEntries[0].notes[0]
-              //.getSVGGElement().getBoundingClientRect().x//SACA ALGOgraphicalVoiceEntries[0].notes[0].getSVGGElement().getBoundingClientRect().x//.getSVGGElement()//.getBoundingClientRect().x
-              console.log("NOTE XXXX", noteX)
-              //let noteY=note.getSVGGElement().getBoundingClientRect().y
-              //console.log("--- note");
-              //console.log(noteID,  noteX);
-              copy_pitchPositionX= this.state.pitchPositionX.map((value, index) => {return this.state.recordedNoteIDs[index] === noteID ? value : noteX});
-          }
+      this.osmd.render(); // update the OSMD instance after changing the zoom level
+      const [updatedPitchPositionX, updatedPitchPositionY] = renderPitchLineZoom(this.osmd, this.state);
+      //this.setState({pitchPositionX: updatedPitchPositionX});
+      //this.setState({ pitchPositionY: updatedPitchPositionY});
+      this.setState(
+        { pitchPositionX: updatedPitchPositionX, pitchPositionY: updatedPitchPositionY },
+        () => {
+          // Code to run after state has been updated
+          console.log("after setstates ", this.state.pitchPositionX);
         }
-        console.log("changed, copy updated to zoom ",copy_pitchPositionX)
-        this.setState({pitchPositionX: copy_pitchPositionX})
+      )
+
+
     }
     // follow cursor changes
     if (this.props.followCursor !== prevProps.followCursor) {
@@ -478,15 +496,15 @@ class OpenSheetMusicDisplay extends Component {
         const newPitchMIDI= freq2midipitch(this.props.pitch[this.props.pitch.length-1]); //played note
         const currentNoteinScorePitchMIDI= freq2midipitch(this.state.currentNoteinScorePitch); //note under cursor
         const midiToStaffStep=midi2StaffGaps(newPitchMIDI) //where to locate the played note in the staff with respect to B4(middle line)
+        //const midiToStaffStep2=midi2StaffGaps(currentNoteinScorePitchMIDI) //where to locate the played note in the staff with respect to B4(middle line)
 
-        const staveLines=document.getElementsByClassName("vf-stave")[0]
+        const staveLines=document.getElementsByClassName("vf-stave")[this.osmd.cursor.Iterator.currentMeasureIndex]
         const upperLineStave= staveLines.children[0].getBoundingClientRect().top; //upper line
-        const middleLineStave= document.getElementById("cursorImg-0").getBoundingClientRect().top+(document.getElementById("cursorImg-0").getBoundingClientRect().height/2); //middle line
+        const middleLineStave= staveLines.children[2].getBoundingClientRect().top; //middle line//document.getElementById("cursorImg-0").getBoundingClientRect().top+(document.getElementById("cursorImg-0").getBoundingClientRect().height/2); //middle line
         const lowerLineStave= staveLines.children[4].getBoundingClientRect().top; //lower line
         const oneStepPixels=Math.abs(upperLineStave-lowerLineStave)/4/2; //steps corresponding to one step in staff
 
-        const noteAbsStaffPositionY=middleLineStave;
-        const noteRelStaffPositionY=midiToStaffStep*oneStepPixels;
+        const noteStaffPositionY=middleLineStave+midiToStaffStep*oneStepPixels;
         ////////////////////////////////////////////////////////
 
         //Add pitch to array and note identification data///////
@@ -496,22 +514,16 @@ class OpenSheetMusicDisplay extends Component {
           this.setState({ recordedNoteIDs: addNewNoteID });
           //Add note index
           const addNoteIndex=[...this.state.recordedNoteIndex, this.index];
-          console.log("indexxxxx", this.state.recordedNoteIndex)
           this.setState({ recordedNoteIndex:addNoteIndex});
-          //Add pitch position
-          const newPitchData = this.props.pitch;
+          //Add pitch data
+          const newPitchData = [...this.state.pitchData, this.props.pitch[this.props.pitch.length-1]];
           this.setState({ pitchData: newPitchData });
           //Add X position to array
-          const addedNewPositionX= [...this.state.pitchPositionX, this.notePositionX]; //+this.index
+          const addedNewPositionX= [...this.state.pitchPositionX, this.notePositionX];
           this.setState({ pitchPositionX: addedNewPositionX })
-          console.log("pitch XXXXXX ", this.state.pitchPositionX)
-          //Add absolute Y position to array
-          console.log(noteAbsStaffPositionY, noteRelStaffPositionY)
-          const addedNewAbsPositionY= [...this.state.pitchAbsPositionY, noteAbsStaffPositionY];
-          this.setState({ pitchAbsPositionY: addedNewAbsPositionY })
-          //Add relative Y position to array
-          const addedNewRelPositionY= [...this.state.pitchRelPositionY, noteRelStaffPositionY];
-          this.setState({ pitchRelPositionY: addedNewRelPositionY })
+          //Add Y position to array
+          const addedNewPositionY= [...this.state.pitchPositionY, noteStaffPositionY];
+          this.setState({ pitchPositionY: addedNewPositionY })
         }
         
         ////////////////////////////////////////////////////////        
@@ -563,10 +575,10 @@ class OpenSheetMusicDisplay extends Component {
             <LineChart
               width={this.coords[0]}
               height={this.coords[1]}
+              zoom={this.props.zoom}
               pitchData={this.state.pitchData}
               pitchDataPosX={this.state.pitchPositionX}
-              pitchDataAbsPosY={this.state.pitchAbsPositionY}
-              pitchDataRelPosY={this.state.pitchRelPositionY}
+              pitchDataPosY={this.state.pitchPositionY}
               pitchIndex={this.state.recordedNoteIndex}
             />
           </div>

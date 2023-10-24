@@ -10,7 +10,7 @@ const LineChart = (props) => {
     const rect = containerElement.getBoundingClientRect();
     const newPolylinePoints = props.pitchDataPosX.map((value, index) => {
       const x = props.pitchDataPosX[index] + props.pitchIndex[index] - rect.left;
-      const y = props.pitchDataRelPosY[index] + props.pitchDataAbsPosY[index] - rect.top;
+      const y =  props.pitchDataPosY[index] - rect.top; 
       return [x, y]; // Return a coordinate pair as an array [x, y]
     });
     setPolylinePoints(newPolylinePoints);
@@ -26,7 +26,8 @@ const LineChart = (props) => {
             cx={x}
             cy={y}
             r={2}
-            fill="black"
+            fill="black" //props.pitchColor
+            
           />
         ))}
       </svg>
