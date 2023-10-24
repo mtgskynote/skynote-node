@@ -74,11 +74,8 @@ const ProgressPlayFile = (props) => {
     if(finishedTimer){
 
       console.log("TIMER IS FINISHED")
-      
       const playbackManager = playbackRef.current;
-      const cursor = cursorRef.current;
-      const currentTime = cursor.Iterator.currentTimeStamp;
-      playbackManager.setPlaybackStart(currentTime);
+      playbackManager.play()
       
       //Once countdown is finished, activate Pitch tracking
       setPitch([])
