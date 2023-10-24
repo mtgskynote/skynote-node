@@ -103,7 +103,6 @@ const renderPitchLineZoom=(osmd, state, prevZoom)=>{
 
       for (let note_index = 0; note_index < stave.staffEntries.length; note_index++) {
           let note = stave.staffEntries[note_index]
-          console.log("Note info ",note)
           let noteID= note.graphicalVoiceEntries[0].notes[0].getSVGId();
           let noteX=note.graphicalVoiceEntries[0].notes[0].getSVGGElement().getBoundingClientRect().x    
           for(let index=0; index<copy_pitchPositionX.length; index++){
@@ -117,7 +116,6 @@ const renderPitchLineZoom=(osmd, state, prevZoom)=>{
     }
     let copy_recordedNoteIndex=state.recordedNoteIndex.slice()
     copy_recordedNoteIndex=copy_recordedNoteIndex.map(item => item * osmd.zoom / prevZoom);
-    console.log("new X indexessss ", osmd.zoom)
     return [copy_pitchPositionX, copy_pitchPositionY, copy_recordedNoteIndex];
 }
 
@@ -256,18 +254,6 @@ class OpenSheetMusicDisplay extends Component {
 
   //function to check cursor change
   checkCursorChange = () => {
-    //let staves = this.osmd.graphic.measureList
-    //let stave0= staves[0][0]
-    //let note0=stave0.staffEntries[0].graphicalVoiceEntries[0].notes[0].getSVGId();
-
-    
-    //let stave1= staves[1][0]
-    //let note3=stave1.staffEntries[0].graphicalVoiceEntries[0].notes[0].getSVGId();
-    //let positionNote0=note0.boundingBox.absolutePosition; //.vfNotes{random_key_value}
-    //console.log("obtined fron note1 ", note0)
-    //console.log("obtined fron note3", note3)
-    //console.log("hey", this.osmd.cursor.GNotesUnderCursor()[0].getSVGId())
-
     const cursorCurrent=this.osmd.cursor.Iterator.currentTimeStamp
 
     //if recording active
@@ -321,7 +307,6 @@ class OpenSheetMusicDisplay extends Component {
       //Current Note under cursor
       const notePitch = this.osmd.cursor.NotesUnderCursor()[0]?.Pitch.frequency;
       const gNote = this.osmd.cursor.GNotesUnderCursor()[0];
-      //console.log("note under cursor: ", gNote) //Caca1
       
       //Prepare colors
       const colorPitchMatched = "#00FF00"; //green
@@ -382,8 +367,6 @@ class OpenSheetMusicDisplay extends Component {
               }
           }
           
-        }else{
-          //console.log("NOTE Not catched")
         }
         //Reset for next note checking
         this.countBadNotes=0;
@@ -445,9 +428,6 @@ class OpenSheetMusicDisplay extends Component {
     const container = document.getElementById('osmdSvgPage1')
     this.coords=[container.getBoundingClientRect().width,container.getBoundingClientRect().height]
     
-    //console.log("Repetition in measures: ", repetitions);
-    console.log("Cursor is at: ", this.osmd.cursor.iterator.CurrentMeasureIndex);
-
     // for title and file changes
     if (this.props.drawTitle !== prevProps.drawTitle) {
       this.setupOsmd();
