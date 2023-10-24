@@ -147,6 +147,7 @@ class OpenSheetMusicDisplay extends Component {
     this.countBadNotes=0;
     this.coords=[0,0];
     this.color = "green";
+    this.zoom=null;
   }
 
   
@@ -440,7 +441,7 @@ class OpenSheetMusicDisplay extends Component {
     this.coords=[container.getBoundingClientRect().width,container.getBoundingClientRect().height]
     
     //console.log("Repetition in measures: ", repetitions);
-    //console.log("Cursor is at: ", this.osmd.cursor.iterator.CurrentMeasureIndex);
+    console.log("Cursor is at: ", this.osmd.cursor.iterator.CurrentMeasureIndex);
 
     // for title and file changes
     if (this.props.drawTitle !== prevProps.drawTitle) {
@@ -463,17 +464,9 @@ class OpenSheetMusicDisplay extends Component {
       this.osmd.zoom = this.props.zoom;
       this.osmd.render(); // update the OSMD instance after changing the zoom level
       const [updatedPitchPositionX, updatedPitchPositionY] = renderPitchLineZoom(this.osmd, this.state);
-      //this.setState({pitchPositionX: updatedPitchPositionX});
-      //this.setState({ pitchPositionY: updatedPitchPositionY});
-      this.setState(
-        { pitchPositionX: updatedPitchPositionX, pitchPositionY: updatedPitchPositionY },
-        () => {
-          // Code to run after state has been updated
-          console.log("after setstates ", this.state.pitchPositionX);
-        }
-      )
-
-
+      this.setState({pitchPositionX: updatedPitchPositionX});
+      this.setState({ pitchPositionY: updatedPitchPositionY});
+      this.zoom=this.props.zoom; // This forces thta LineChart re-renders the points position
     }
     // follow cursor changes
     if (this.props.followCursor !== prevProps.followCursor) {
@@ -503,7 +496,7 @@ class OpenSheetMusicDisplay extends Component {
         } else {
           this.color = "black";
         }
-        const staveLines=document.getElementsByClassName("vf-stave")[0]
+        const staveLines=document.getElementsByClassName("vf-stave")[this.osmd.cursor.Iterator.currentMeasureIndex]
         const upperLineStave= staveLines.children[0].getBoundingClientRect().top; //upper line
         const middleLineStave= staveLines.children[2].getBoundingClientRect().top; //middle line//document.getElementById("cursorImg-0").getBoundingClientRect().top+(document.getElementById("cursorImg-0").getBoundingClientRect().height/2); //middle line
         const lowerLineStave= staveLines.children[4].getBoundingClientRect().top; //lower line
@@ -580,6 +573,7 @@ class OpenSheetMusicDisplay extends Component {
             <LineChart
               width={this.coords[0]}
               height={this.coords[1]}
+              zoom={this.zoom}
               pitchColor = {this.color}
               pitchData={this.state.pitchData}
               pitchDataPosX={this.state.pitchPositionX}
