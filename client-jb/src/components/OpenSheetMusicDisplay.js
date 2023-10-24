@@ -148,7 +148,7 @@ class OpenSheetMusicDisplay extends Component {
     this.countBadNotes=0;
     this.coords=[0,0];
     this.color = "black";
-    this.zoom=null;
+    this.zoom=props.zoom;
   }
 
   
@@ -492,7 +492,7 @@ class OpenSheetMusicDisplay extends Component {
         const currentNoteinScorePitchMIDI= freq2midipitch(this.state.currentNoteinScorePitch); //note under cursor
         const midiToStaffStep=midi2StaffGaps(newPitchMIDI) //where to locate the played note in the staff with respect to B4(middle line)
         if (midiToStaffStep === 0) {
-          this.color = "red";
+          this.color = "#CBCBCB";
           console.log("Pitch value out of bounds");
         } else {
           this.color = "black";

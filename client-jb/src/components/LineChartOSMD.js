@@ -25,7 +25,7 @@ const LineChart = (props) => {
             key={index}
             cx={x}
             cy={y}
-            r={2}
+            r={2*props.zoom}
             fill={props.pitchColor[index]}
             
           />
