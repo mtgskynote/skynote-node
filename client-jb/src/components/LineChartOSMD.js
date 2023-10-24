@@ -26,7 +26,7 @@ const LineChart = (props) => {
             cx={x}
             cy={y}
             r={2}
-            fill="black" //props.pitchColor
+            fill={props.pitchColor}
             
           />
         ))}
