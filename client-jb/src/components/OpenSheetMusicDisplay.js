@@ -132,6 +132,7 @@ class OpenSheetMusicDisplay extends Component {
       initialCursorLeft: 0,
       currentNoteinScorePitch: null,
       currentGNoteinScorePitch: null,
+      pitchColor: [],
       
       
     };
@@ -146,7 +147,7 @@ class OpenSheetMusicDisplay extends Component {
     this.countGoodNotes=0; 
     this.countBadNotes=0;
     this.coords=[0,0];
-    this.color = "green";
+    this.color = "black";
   }
 
   
@@ -529,6 +530,9 @@ class OpenSheetMusicDisplay extends Component {
           //Add Y position to array
           const addedNewPositionY= [...this.state.pitchPositionY, noteStaffPositionY];
           this.setState({ pitchPositionY: addedNewPositionY })
+          //Add note color
+          const addPitchColor = [...this.state.pitchColor, this.color];
+          this.setState({ pitchColor: addPitchColor })
         }
         
         ////////////////////////////////////////////////////////        
@@ -580,7 +584,7 @@ class OpenSheetMusicDisplay extends Component {
             <LineChart
               width={this.coords[0]}
               height={this.coords[1]}
-              pitchColor = {this.color}
+              pitchColor = {this.state.pitchColor}
               pitchData={this.state.pitchData}
               pitchDataPosX={this.state.pitchPositionX}
               pitchDataPosY={this.state.pitchPositionY}
