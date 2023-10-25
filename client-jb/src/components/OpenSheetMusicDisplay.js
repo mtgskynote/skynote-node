@@ -104,7 +104,30 @@ const renderPitchLineZoom=(osmd, state, prevZoom)=>{
       for (let note_index = 0; note_index < stave.staffEntries.length; note_index++) {
           let note = stave.staffEntries[note_index]
           let noteID= note.graphicalVoiceEntries[0].notes[0].getSVGId();
-          let noteX=note.graphicalVoiceEntries[0].notes[0].getSVGGElement().getBoundingClientRect().x    
+          let noteX=note.graphicalVoiceEntries[0].notes[0].getSVGGElement().getBoundingClientRect().x 
+          //check for notehead color
+          const colorsArray=state.colorNotes.slice()
+          const index = colorsArray.findIndex(item => item[0][0] === noteID);
+          if(index!==-1){ 
+            //note has a color assigned--> color notehead
+            // this is for all the notes except the quarter and whole notes
+            const svgElement = note.graphicalVoiceEntries[0].notes[0].getSVGGElement();
+            svgElement.children[0].children[0].children[0].style.fill =
+              colorsArray[index][0][1]; // notehead
+            if (
+              svgElement &&
+              svgElement.children[0] &&
+              svgElement.children[0].children[0] &&
+              svgElement.children[0].children[1]
+            ) {
+              //this is for all the quarter and whole notes
+              svgElement.children[0].children[0].children[0].style.fill =
+                colorsArray[index][0][1]; // notehead
+              svgElement.children[0].children[1].children[0].style.fill =
+                colorsArray[index][0][1]; // notehead
+            }
+          }          
+          //check for pitch tracking line
           for(let index=0; index<copy_pitchPositionX.length; index++){
             if (state.recordedNoteIDs[index] === noteID) {
               let midiToStaffStep= midi2StaffGaps(freq2midipitch(state.pitchData[index]))
@@ -112,6 +135,7 @@ const renderPitchLineZoom=(osmd, state, prevZoom)=>{
               copy_pitchPositionY[index]= middleLineStave+midiToStaffStep*oneStepPixels;
             }
           }
+          
       }
     }
     let copy_recordedNoteIndex=state.recordedNoteIndex.slice()
@@ -129,6 +153,7 @@ class OpenSheetMusicDisplay extends Component {
       pitchPositionY:[],
       recordedNoteIDs:[],
       recordedNoteIndex:[],
+      colorNotes:[],
       initialCursorTop: 0,
       initialCursorLeft: 0,
       currentNoteinScorePitch: null,
@@ -323,12 +348,25 @@ class OpenSheetMusicDisplay extends Component {
         this.countBadNotes=this.countBadNotes+1;
       }
 
-      //When note chanes, set red/green previous note
+      //When note changes, set red/green previous note
       if(gNote!==this.state.currentGNoteinScorePitch){
         var total=this.countBadNotes+this.countGoodNotes;
         if(total!==0 && (this.countGoodNotes>= Math.ceil(total*0.5))){
-          //change color to green 
+          //GOOD NOTE - change color to green 
+          //change note color
           if(this.state.currentGNoteinScorePitch){
+            //Save color data
+            const noteID=this.state.currentGNoteinScorePitch.getSVGId();
+            const colorsArray=this.state.colorNotes.slice()
+            const index = colorsArray.findIndex(item => item[0] === noteID);
+            if(index!==-1){ 
+              //note was already contained and had a color assigned--> overwrite
+              colorsArray[index]=[noteID, "#00FF00"];
+            }else{
+              colorsArray.push([[noteID, "#00FF00"]]);            
+            }
+            this.setState({colorNotes : colorsArray});
+            //
             // this is for all the notes except the quarter and whole notes
             const svgElement = this.state.currentGNoteinScorePitch.getSVGGElement();
             svgElement.children[0].children[0].children[0].style.fill =
@@ -347,8 +385,21 @@ class OpenSheetMusicDisplay extends Component {
             }
           }  
         }else if(total!==0 && (this.countGoodNotes < Math.ceil(total*0.5))){
-          //change color to red if pitch is not close enough
+          //BAD NOTE - change color to red 
+          //change note color
           if(this.state.currentGNoteinScorePitch){
+            //Save color data
+            const noteID=this.state.currentGNoteinScorePitch.getSVGId();
+            const colorsArray=this.state.colorNotes.slice()
+            const index = colorsArray.findIndex(item => item[0] === noteID);
+            if(index!==-1){ 
+              //note was already contained and had a color assigned--> overwrite
+              colorsArray[index]=[noteID, "#FF0000"];
+            }else{
+              colorsArray.push([[noteID, "#FF0000"]]);            
+            }
+            this.setState({colorNotes : colorsArray});
+            //
             // this is for all the notes except the quarter and whole notes
             const svgElement = this.state.currentGNoteinScorePitch.getSVGGElement();
             svgElement.children[0].children[0].children[0].style.fill =
@@ -423,6 +474,7 @@ class OpenSheetMusicDisplay extends Component {
         console.log("Oi mate, I found a repetition at measure ", this.osmd.cursor.iterator.CurrentMeasureIndex, ", that's bloody bonkers innit?");
         //this.setState({ pitchData: [] });
       }
+      //console.log(this.osmd.graphic.MeasureList)
     //}
 
     const container = document.getElementById('osmdSvgPage1')
@@ -467,7 +519,6 @@ class OpenSheetMusicDisplay extends Component {
         if(this.notePositionX===(this.state.pitchPositionX[this.state.pitchPositionX.length-1])){ //we are still on the same note
           this.index=this.index+this.spacing; //6 is the spacing between points
         }else{ //new note
-          console.log("Note change??????")
           this.index=0; //reset index
         }
         ////////////////////////////////////////////////////////
