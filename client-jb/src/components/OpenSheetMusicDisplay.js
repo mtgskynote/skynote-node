@@ -92,7 +92,6 @@ const renderPitchLineZoom=(osmd, state, prevZoom)=>{
   let staves = osmd.graphic.measureList;
   let copy_pitchPositionX=state.pitchPositionX.slice();
   let copy_pitchPositionY=state.pitchPositionY.slice();
-  const staveLines=document.getElementsByClassName("vf-stave")
   for (let stave_index = 0; stave_index < staves.length; stave_index++) {
     let stave = staves[stave_index][0];
     const staveLines=document.getElementsByClassName("vf-stave")[stave_index]
@@ -302,7 +301,11 @@ class OpenSheetMusicDisplay extends Component {
 
       //store for next iteration
       this.previousTimestamp=cursorCurrent; 
+      console.log(this.previousTimestamp)
       ////////////////////////////////////////////////////////
+
+      //////Check for repetitions
+      
     
       // EXTRACT POSITION OF NOTE UNDER CURSOR////////////////
       //Current Note under cursor Absolute Position
@@ -462,7 +465,8 @@ class OpenSheetMusicDisplay extends Component {
   componentDidUpdate(prevProps) {
     //We register the measures where repetitions happen
     //if (this.osmd.cursor.iterator.CurrentMeasureIndex !== prevProps.osmd.cursor.iterator.CurrentMeasureIndex) {
-      const repetitions = this.osmd.Sheet.Repetitions;
+      /*const repetitions = this.osmd.Sheet.Repetitions;
+      console.log("general info ",this.osmd.Sheet )
       var repArray = [];
       for (let i in repetitions) {
         repArray.push(repetitions[i].BackwardJumpInstructions[0].measureIndex);
@@ -476,7 +480,7 @@ class OpenSheetMusicDisplay extends Component {
       }
       //console.log(this.osmd.graphic.MeasureList)
     //}
-
+    */
     const container = document.getElementById('osmdSvgPage1')
     this.coords=[container.getBoundingClientRect().width,container.getBoundingClientRect().height]
     
@@ -506,6 +510,12 @@ class OpenSheetMusicDisplay extends Component {
       this.setState({recordedNoteIndex:updatedNoteIndex})
       this.zoom=this.props.zoom; // This forces thta LineChart re-renders the points position
     }
+
+    //for switch repeats layers changes
+    if (this.props.repeatsIterator !== prevProps.repeatsIterator) {
+      console.log("Switch showing repetition")
+    }
+
     // follow cursor changes
     if (this.props.followCursor !== prevProps.followCursor) {
       this.osmd.followCursor = this.props.followCursor;

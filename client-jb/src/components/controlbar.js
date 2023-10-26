@@ -13,7 +13,7 @@ import {
   faVolumeHigh,
   faGauge,
   faMagnifyingGlassMinus,
-  faBoltLightning,
+  faWater,
   faGear,
 } from "@fortawesome/free-solid-svg-icons";
 
@@ -84,8 +84,8 @@ const useControlBar = () => {
     // Update the zoom state or perform any other necessary actions
   };
 
-  //Visualize button
-  const handleVisualize = (event) => {
+  //RepeatLayers button
+  const handleRepeatLayers = (event) => {
     // None
   };
 
@@ -94,21 +94,21 @@ const useControlBar = () => {
     "beginning",
     "play",
     "record",
-    "visualize",
+    "repeatLayers",
     "settings",
   ];
   const icons = [
     faUndoAlt,
     faPlay,
     faBullseye,
-    faBoltLightning,
+    faWater,
     faGear,
   ];
   const handlers = [
     handleResetChange,
     handlePlayPause,
     handleRecord,
-    handleVisualize,
+    handleRepeatLayers,
     handleToggleSettings
   ]
 
