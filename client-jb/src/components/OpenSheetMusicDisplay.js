@@ -1,7 +1,7 @@
 // opensheetmusicdisplay.js
 // necessary imports
 import React, { Component, useRef } from "react";
-import { OpenSheetMusicDisplay as OSMD } from "opensheetmusicdisplay";
+import { OpenSheetMusicDisplay as OSMD, RepetitionInstruction } from "opensheetmusicdisplay";
 import {
   PlaybackManager,
   LinearTimingSource,
@@ -148,17 +148,18 @@ class OpenSheetMusicDisplay extends Component {
   constructor(props) {
     super(props);
     this.state = {
+      pitchColor: [],
       pitchData: [],
       pitchPositionX:[],
       pitchPositionY:[],
-      recordedNoteIDs:[],
       recordedNoteIndex:[],
+      repetitionNumber:[],
+      recordedNoteIDs:[],
       colorNotes:[],
       initialCursorTop: 0,
       initialCursorLeft: 0,
       currentNoteinScorePitch: null,
       currentGNoteinScorePitch: null,
-      pitchColor: [],
       
       
     };
@@ -176,6 +177,7 @@ class OpenSheetMusicDisplay extends Component {
     this.coords=[0,0];
     this.color = "black";
     this.zoom=props.zoom;
+    this.repetition=0;
   }
 
   
@@ -283,10 +285,21 @@ class OpenSheetMusicDisplay extends Component {
 
     //if recording active
     if (this.props.startPitchTrack){
-
+      if (this.previousTimestamp > cursorCurrent.RealValue) {
+        this.repetition++;
+        /*
+        console.log("SALTOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOO", this.repetition);
+        this.setState({ pitchColor: []});
+        this.setState({ pitchData: []});
+        this.setState({ pitchPositionX: []});
+        this.setState({ pitchPositionY: []});
+        this.setState({ recordedNoteIndex: []});
+        this.setState({ repetitionNumber: []});
+        */
+      }
       // STOP RECORDING WHEN CURSOR REACHES THE END /////////////
       // check if cursor stays in the same position for a long time
-      if(cursorCurrent===this.previousTimestamp){
+      if(cursorCurrent.RealValue===this.previousTimestamp){
         //Cursor has not moved
         this.countFinishRecording=this.countFinishRecording-1;
         if(this.countFinishRecording===0){
@@ -301,7 +314,7 @@ class OpenSheetMusicDisplay extends Component {
       }
 
       //store for next iteration
-      this.previousTimestamp=cursorCurrent; 
+      this.previousTimestamp=cursorCurrent.RealValue; 
       ////////////////////////////////////////////////////////
     
       // EXTRACT POSITION OF NOTE UNDER CURSOR////////////////
@@ -460,25 +473,9 @@ class OpenSheetMusicDisplay extends Component {
   };
 
   componentDidUpdate(prevProps) {
-    //We register the measures where repetitions happen
-    //if (this.osmd.cursor.iterator.CurrentMeasureIndex !== prevProps.osmd.cursor.iterator.CurrentMeasureIndex) {
-      const repetitions = this.osmd.Sheet.Repetitions;
-      var repArray = [];
-      for (let i in repetitions) {
-        repArray.push(repetitions[i].BackwardJumpInstructions[0].measureIndex);
-      }
-      //We remove the last value, since the last measure always gets registered as repetition (we don't want that :S)
-      repArray.pop();
 
-      if (repArray.includes(this.osmd.cursor.iterator.CurrentMeasureIndex)) {
-        console.log("Oi mate, I found a repetition at measure ", this.osmd.cursor.iterator.CurrentMeasureIndex, ", that's bloody bonkers innit?");
-        //this.setState({ pitchData: [] });
-      }
-      //console.log(this.osmd.graphic.MeasureList)
-    //}
-
-    const container = document.getElementById('osmdSvgPage1')
-    this.coords=[container.getBoundingClientRect().width,container.getBoundingClientRect().height]
+    const container = document.getElementById('osmdSvgPage1');
+    this.coords=[container.getBoundingClientRect().width,container.getBoundingClientRect().height];
     
     // for title and file changes
     if (this.props.drawTitle !== prevProps.drawTitle) {
@@ -528,11 +525,26 @@ class OpenSheetMusicDisplay extends Component {
         const currentNoteinScorePitchMIDI= freq2midipitch(this.state.currentNoteinScorePitch); //note under cursor
         const midiToStaffStep=midi2StaffGaps(newPitchMIDI) //where to locate the played note in the staff with respect to B4(middle line)
         if (midiToStaffStep === 0) {
+          //Color turns gray when pitch is out of bounds
           this.color = "#CBCBCB";
-          console.log("Pitch value out of bounds");
         } else {
-          this.color = "black";
+          //this changes color for different repetitions, should be removed when fixed
+          switch (this.repetition){
+            case 0:
+              this.color = "#000000";
+              break;
+            case 1:
+              this.color = "#FF00FF";
+              break;
+            case 2:
+              this.color = "#93C572";
+              break;
+            case 3:
+              this.color = "#00FFFF";
+              break;
+          }
         }
+        
         const staveLines=document.getElementsByClassName("vf-stave")[this.osmd.cursor.Iterator.currentMeasureIndex]
         const upperLineStave= staveLines.children[0].getBoundingClientRect().top; //upper line
         const middleLineStave= staveLines.children[2].getBoundingClientRect().top; //middle line//document.getElementById("cursorImg-0").getBoundingClientRect().top+(document.getElementById("cursorImg-0").getBoundingClientRect().height/2); //middle line
@@ -562,6 +574,9 @@ class OpenSheetMusicDisplay extends Component {
           //Add note color
           const addPitchColor = [...this.state.pitchColor, this.color];
           this.setState({ pitchColor: addPitchColor })
+          //Add current number of repetition
+          const addRepetitionNumber = [...this.state.repetitionNumber, this.repetition];
+          this.setState({ repetitionNumber: addRepetitionNumber})
         }
         
         ////////////////////////////////////////////////////////        
