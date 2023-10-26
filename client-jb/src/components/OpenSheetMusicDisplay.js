@@ -556,6 +556,9 @@ class OpenSheetMusicDisplay extends Component {
             case 3:
               this.color = "#00FFFF";
               break;
+            default:
+              this.color = "#F28500";
+              break;
           }
         }
         
