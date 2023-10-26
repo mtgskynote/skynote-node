@@ -20,16 +20,20 @@ const LineChart = (props) => {
   return (
     <div ref={containerRef}>
       <svg width={props.width} height={props.height}>
-        {polylinePoints.map(([x, y], index) => (
-          <circle
-            key={index}
-            cx={x}
-            cy={y}
-            r={2*props.zoom}
-            fill={props.pitchColor[index]}
-            
-          />
-        ))}
+        {polylinePoints.map(([x, y], index) => {
+          if (props.repetitionNumber[index] === props.showingRep) {
+            return(
+            <circle
+              key={index}
+              cx={x}
+              cy={y}
+              r={2*props.zoom}
+              fill={props.pitchColor[index]}
+              
+            />
+            )
+          }
+        })}
       </svg>
     </div>
   );

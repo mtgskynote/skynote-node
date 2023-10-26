@@ -176,7 +176,8 @@ class OpenSheetMusicDisplay extends Component {
     this.coords=[0,0];
     this.color = "black";
     this.zoom=props.zoom;
-    this.repetition=0;
+    this.totalReps=0;
+    this.showingRep=0;
   }
 
   
@@ -285,9 +286,10 @@ class OpenSheetMusicDisplay extends Component {
     //if recording active
     if (this.props.startPitchTrack){
       if (this.previousTimestamp > cursorCurrent.RealValue) {
-        this.repetition++;
+        this.totalReps++;
+        this.showingRep = this.totalReps;
         /*
-        console.log("SALTOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOO", this.repetition);
+        console.log("SALTOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOO", this.totalReps);
         this.setState({ pitchColor: []});
         this.setState({ pitchData: []});
         this.setState({ pitchPositionX: []});
@@ -508,7 +510,11 @@ class OpenSheetMusicDisplay extends Component {
 
     //for switch repeats layers changes
     if (this.props.repeatsIterator !== prevProps.repeatsIterator) {
-      console.log("Switch showing repetition")
+      if (this.showingRep < this.totalReps) {
+        this.showingRep++;
+      } else {
+        this.showingRep = 0;
+      }
     }
 
     // follow cursor changes
@@ -537,7 +543,7 @@ class OpenSheetMusicDisplay extends Component {
           this.color = "#CBCBCB";
         } else {
           //this changes color for different repetitions, should be removed when fixed
-          switch (this.repetition){
+          switch (this.totalReps){
             case 0:
               this.color = "#000000";
               break;
@@ -583,7 +589,7 @@ class OpenSheetMusicDisplay extends Component {
           const addPitchColor = [...this.state.pitchColor, this.color];
           this.setState({ pitchColor: addPitchColor })
           //Add current number of repetition
-          const addRepetitionNumber = [...this.state.repetitionNumber, this.repetition];
+          const addRepetitionNumber = [...this.state.repetitionNumber, this.totalReps];
           this.setState({ repetitionNumber: addRepetitionNumber})
         }
         
@@ -642,6 +648,9 @@ class OpenSheetMusicDisplay extends Component {
               pitchDataPosX={this.state.pitchPositionX}
               pitchDataPosY={this.state.pitchPositionY}
               pitchIndex={this.state.recordedNoteIndex}
+              repetitionNumber={this.state.repetitionNumber}
+              showingRep={this.showingRep}
+              
             />
           </div>
         )}
