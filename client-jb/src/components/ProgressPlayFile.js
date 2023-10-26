@@ -32,9 +32,10 @@ const ProgressPlayFile = (props) => {
 
   const [startPitchTrack, setStartPitchTrack] = useState(false);
   const [showPitchTrack, setShowPitchTrack] = useState(false);
-  const startPitchTrackRef = useRef(startPitchTrack);
 
   const [isResetButtonPressed, setIsResetButtonPressed] = useState(false);
+
+  const[repeatsIterator, setRepeatsIterator] = useState(false);
 
   const onResetDone = () => {
     setIsResetButtonPressed(false);
@@ -92,7 +93,7 @@ const ProgressPlayFile = (props) => {
 
   //Most important, handles basically any change
   useEffect(() => {
-    
+
     //--------------------------------------------------------------------------------
     //audioStreamer.init();
     //--------------------------------------------------------------------------------
@@ -183,11 +184,12 @@ const ProgressPlayFile = (props) => {
     //--------------------------------------------------------------------------------
 
     // TIMBRE VISUALIZATION ----------------------------------------------------------
-    const visualizeButton = document.getElementById("visualize");
-    const handleVisualizeButtonClick = () => {
-      window.location.href = "/TimbreVisualization";
+    const repeatLayersButton = document.getElementById("repeatLayers");
+    const handleRepeatLayersButtonClick = () => {
+      //window.location.href = "/TimbreVisualization";
+      setRepeatsIterator(!repeatsIterator);
     };
-    visualizeButton.addEventListener("click", handleVisualizeButtonClick);
+    repeatLayersButton.addEventListener("click", handleRepeatLayersButtonClick);
     //--------------------------------------------------------------------------------
 
 
@@ -199,11 +201,11 @@ const ProgressPlayFile = (props) => {
 
     return () => {
       recordButton.removeEventListener("click", handleRecordButtonClick);
-      visualizeButton.removeEventListener("click", handleVisualizeButtonClick);
+      repeatLayersButton.removeEventListener("click", handleRepeatLayersButtonClick);
       beginningButton.removeEventListener("click", handleBeginningButtonClick);
       playButton.removeEventListener("click", handlePlayButtonClick);
     };
-  }, [recordVol, zoom, recordActive, pitchValue]);
+  }, [recordVol, zoom, recordActive, pitchValue, repeatsIterator]);
 
   return (
     
@@ -222,6 +224,7 @@ const ProgressPlayFile = (props) => {
         showPitchTrack={showPitchTrack}
         recordVol={recordVol}
         isResetButtonPressed={isResetButtonPressed}
+        repeatsIterator={repeatsIterator}
         onResetDone={onResetDone}
         cursorActivity={handleFinishedCursorCallback}
       />
