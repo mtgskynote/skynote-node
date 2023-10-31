@@ -27,7 +27,9 @@ const ProgressPlayFile = (props) => {
 
   const controlbar = useControlBar();
   const [pitchValue, setPitchValue] = useState(null);
+  const [confidenceValue, setConfidenceValue] = useState(null);
   const [pitch, setPitch] = useState([]);
+  const [confidence, setConfidence] = useState([]);
   var pitchCount =0;
 
   const [startPitchTrack, setStartPitchTrack] = useState(false);
@@ -46,7 +48,9 @@ const ProgressPlayFile = (props) => {
     pitchCount=pitchCount+1;
       if(pitchCount>0){
         //if (pitchData.confidence > 0.5) {
+          console.log("Confidence ", pitchData.confidence)
           setPitchValue(pitchData.pitch);
+          setConfidenceValue(pitchData.confidence);
         //}else{
         //  setPitchValue(1);
         //}
@@ -80,6 +84,7 @@ const ProgressPlayFile = (props) => {
       
       //Once countdown is finished, activate Pitch tracking
       setPitch([])
+      setConfidence([])
       setStartPitchTrack(true);
       setShowPitchTrack(true);
       //And play file, make cursor start
@@ -138,6 +143,7 @@ const ProgressPlayFile = (props) => {
       setStartPitchTrack(false);
       setShowPitchTrack(false)
       setPitch([])
+      setConfidence([])
       setRecordActive(true) //Set to true, just like the initial state
 
     };
@@ -196,6 +202,7 @@ const ProgressPlayFile = (props) => {
     //Add new pitch value to pitch array
     if(pitchValue){
       setPitch([...pitch,pitchValue])
+      setConfidence([...confidence,confidenceValue])
     }
 
 
@@ -220,6 +227,7 @@ const ProgressPlayFile = (props) => {
         zoom={zoom}
         followCursor={true}
         pitch={pitch}
+        pitchConfidence={confidence}
         startPitchTrack={startPitchTrack}
         showPitchTrack={showPitchTrack}
         recordVol={recordVol}
