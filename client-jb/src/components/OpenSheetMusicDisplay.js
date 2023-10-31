@@ -149,6 +149,7 @@ class OpenSheetMusicDisplay extends Component {
     this.state = {
       pitchColor: [],
       pitchData: [],
+      pitchConfidenceData: [],
       pitchPositionX:[],
       pitchPositionY:[],
       recordedNoteIndex:[],
@@ -283,6 +284,7 @@ class OpenSheetMusicDisplay extends Component {
   //function to check cursor change
   checkCursorChange = () => {
     const cursorCurrent=this.osmd.cursor.Iterator.currentTimeStamp
+    //console.log(this.osmd.cursor.Iterator.EndReached)
 
     //if recording active
     if (this.props.startPitchTrack){
@@ -338,32 +340,46 @@ class OpenSheetMusicDisplay extends Component {
       // Get the last pitch in the pitchData array
       const lastPitchData =
         this.state.pitchData[this.state.pitchData.length - 1];
+      const lastPitchConfidenceData =
+        this.state.pitchConfidenceData[this.state.pitchConfidenceData.length - 1];
 
-      //Current Note under cursor
-      const notePitch = this.osmd.cursor.NotesUnderCursor()[0]?.Pitch.frequency;
+
+      //Current Note/Silence under cursor
+      var notePitch;
+      if(this.osmd.cursor.NotesUnderCursor()[0].Pitch!==undefined){
+        //note
+        notePitch = this.osmd.cursor.NotesUnderCursor()[0].Pitch.frequency;
+      }else{
+        //silence
+        notePitch = 0;
+      }
       const gNote = this.osmd.cursor.GNotesUnderCursor()[0];
       
       //Prepare colors
       const colorPitchMatched = "#00FF00"; //green
       const colorPitchNotMatched = "#FF0000"; //red
 
-      //Check if pitch was matched or not
-      if (
-        lastPitchData !== undefined &&
-        Math.abs(freq2midipitch(lastPitchData) - freq2midipitch(notePitch)) <= 0.25 // 0.25 MIDI error margin
-      ) {
-        this.countGoodNotes=this.countGoodNotes+1;     
-      }
-      else {
-        this.countBadNotes=this.countBadNotes+1;
-      }
-      var total=this.countBadNotes+this.countGoodNotes;
-      if(total!==0 && (this.countGoodNotes>= Math.ceil(total*0.5))){
-        //GOOD NOTE - change color to green
-        this.noteColor=colorPitchMatched;
-      }else{
-        //WRONG NOTE - change color to red
-        this.noteColor=colorPitchNotMatched;
+      //Check if pitch was matched or not, only if confidence of newPitchdata is >=0.5
+      if(lastPitchConfidenceData>=0.5){
+        console.log("im in")
+        if (
+          lastPitchData !== undefined &&
+          Math.abs(freq2midipitch(lastPitchData) - freq2midipitch(notePitch)) <= 0.25 // 0.25 MIDI error margin
+        ) {
+          this.countGoodNotes=this.countGoodNotes+1;  
+          console.log("Good")   
+        }
+        else {
+          this.countBadNotes=this.countBadNotes+1;
+        }
+        var total=this.countBadNotes+this.countGoodNotes;
+        if(total!==0 && (this.countGoodNotes>= Math.ceil(total*0.5))){
+          //GOOD NOTE - change color to green
+          this.noteColor=colorPitchMatched;
+        }else{
+          //WRONG NOTE - change color to red
+          this.noteColor=colorPitchNotMatched;
+        }
       }
 
       if(this.state.currentGNoteinScorePitch){
@@ -481,7 +497,7 @@ class OpenSheetMusicDisplay extends Component {
       } else {
         this.showingRep = 0;
       }
-
+      this.resetNotesColor();
       //Update color of notes
       let staves = this.osmd.graphic.measureList;
       for (let stave_index = 0; stave_index < staves.length; stave_index++) {
@@ -536,8 +552,8 @@ class OpenSheetMusicDisplay extends Component {
         const newPitchMIDI= freq2midipitch(this.props.pitch[this.props.pitch.length-1]); //played note
         const currentNoteinScorePitchMIDI= freq2midipitch(this.state.currentNoteinScorePitch); //note under cursor
         const midiToStaffStep=midi2StaffGaps(newPitchMIDI) //where to locate the played note in the staff with respect to B4(middle line)
-        if (midiToStaffStep === 0) {
-          //Color turns gray when pitch is out of bounds
+        if (midiToStaffStep === 0 || this.props.pitchConfidence[this.props.pitchConfidence.length-1]<0.5) { //
+          //Color turns gray when pitch is out of bounds or pitch confidence is below 0.5
           this.color = "#CBCBCB";
         } else {
           //this changes color for different repetitions, should be removed when fixed
@@ -580,6 +596,9 @@ class OpenSheetMusicDisplay extends Component {
           //Add pitch data
           const newPitchData = [...this.state.pitchData, this.props.pitch[this.props.pitch.length-1]];
           this.setState({ pitchData: newPitchData });
+          //Add pitch confidence data
+          const newPitchConfidenceData = [...this.state.pitchConfidenceData, this.props.pitchConfidence[this.props.pitchConfidence.length-1]];
+          this.setState({ pitchConfidenceData: newPitchConfidenceData });
           //Add X position to array
           const addedNewPositionX= [...this.state.pitchPositionX, this.notePositionX];
           this.setState({ pitchPositionX: addedNewPositionX })
@@ -593,7 +612,6 @@ class OpenSheetMusicDisplay extends Component {
           const addRepetitionNumber = [...this.state.repetitionNumber, this.totalReps];
           this.setState({ repetitionNumber: addRepetitionNumber})
         }
-        
         ////////////////////////////////////////////////////////        
       }
     }
