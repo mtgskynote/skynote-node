@@ -88,7 +88,6 @@ const midi2StaffGaps=(playedNoteMidi)=>{
 }
 
 const renderPitchLineZoom=(osmd, state, prevZoom, showingRep)=>{
-  console.log(state.colorNotes, showingRep)
   //When zoom happens, coordinates X and Y of pitch tracking points have to be updated
   let staves = osmd.graphic.measureList;
   let copy_pitchPositionX=state.pitchPositionX.slice();
@@ -613,6 +612,14 @@ class OpenSheetMusicDisplay extends Component {
       prevProps.isResetButtonPressed !== this.props.isResetButtonPressed &&
       this.props.isResetButtonPressed
     ) {
+      this.setState({colorNotes:[]});
+      this.setState({ recordedNoteIDs: [] });
+      this.setState({ recordedNoteIndex:[]});
+      this.setState({ pitchData: [] });
+      this.setState({ pitchPositionX: [] })
+      this.setState({ pitchPositionY: [] })
+      this.setState({ pitchColor: [] })
+      this.setState({ repetitionNumber: []})
       this.resetNotesColor();
       this.props.onResetDone(); // call the function passed from the parent component
     }
