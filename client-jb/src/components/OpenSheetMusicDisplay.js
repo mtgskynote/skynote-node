@@ -25,6 +25,23 @@ Chartjs.register(LineElement, CategoryScale, LinearScale, PointElement);
 const freq2midipitch = (freq) => {
   return(12 * (Math.log2(freq / 440)) + 69)
 }
+/////////////////////////////////////////////////////////
+//THIS DEALS WITH THE AUTO-SCROLL OF THE CURSOR, IT MIGHT NOT BE THE MOST EFFICIENT WAY OF DOING IT
+//SO WE'LL CONSIDER THIS A TEMPORAL PATCH :), THE SECOND PART OF THIS IS INSIDE componentDidUpdate
+let isScrolling;
+let scrolled = false;
+window.addEventListener('scroll', function (event) {
+    // Clear our timeout throughout the scroll
+    window.clearTimeout(isScrolling);
+
+    // Set a timeout to run after scrolling ends
+    isScrolling = setTimeout(function () {
+        // Run the code here
+        scrolled = true;
+        console.log("Cursor has jumped :)");
+    }, 100);
+}, false);
+////////////////////////////////////////////////////////////////////////////////////////////////
 
 const midi2StaffGaps=(playedNoteMidi)=>{
 
@@ -361,13 +378,13 @@ class OpenSheetMusicDisplay extends Component {
 
       //Check if pitch was matched or not, only if confidence of newPitchdata is >=0.5
       if(lastPitchConfidenceData>=0.5){
-        console.log("im in")
+        //console.log("im in")
         if (
           lastPitchData !== undefined &&
           Math.abs(freq2midipitch(lastPitchData) - freq2midipitch(notePitch)) <= 0.25 // 0.25 MIDI error margin
         ) {
           this.countGoodNotes=this.countGoodNotes+1;  
-          console.log("Good")   
+          //console.log("Good")   
         }
         else {
           this.countBadNotes=this.countBadNotes+1;
@@ -462,7 +479,20 @@ class OpenSheetMusicDisplay extends Component {
 
     const container = document.getElementById('osmdSvgPage1');
     this.coords=[container.getBoundingClientRect().width,container.getBoundingClientRect().height];
-    
+
+    /////////////////////////////////////////////////////////
+    //THIS DEALS WITH THE AUTO-SCROLL OF THE CURSOR, IT MIGHT NOT BE THE MOST EFFICIENT WAY OF DOING IT
+    //SO WE'LL CONSIDER THIS A TEMPORAL PATCH :), THE FIRST PART OF THIS IS AT THE TOP
+    if (scrolled == true) {
+      scrolled = false;
+      //this.osmd.render(); // update the OSMD instance after changing the zoom level
+      const [updatedPitchPositionX, updatedPitchPositionY, updatedNoteIndex] = renderPitchLineZoom(this.osmd, this.state, this.zoom, this.showingRep);
+      this.setState({pitchPositionX: updatedPitchPositionX});
+      this.setState({ pitchPositionY: updatedPitchPositionY});
+      this.setState({recordedNoteIndex:updatedNoteIndex})
+    }
+    //////////////////////////////////////////////////////////
+
     // for title and file changes
     if (this.props.drawTitle !== prevProps.drawTitle) {
       this.setupOsmd();
@@ -644,7 +674,7 @@ class OpenSheetMusicDisplay extends Component {
     }
 
     // resize the osmd when the window is resized
-    window.addEventListener("resize", this.resize);
+    //window.addEventListener("resize", this.resize);
   }
 
   componentDidMount() {
