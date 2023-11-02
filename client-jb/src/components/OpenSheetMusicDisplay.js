@@ -556,8 +556,9 @@ class OpenSheetMusicDisplay extends Component {
           //Color turns gray when pitch is out of bounds or pitch confidence is below 0.5
           this.color = "#CBCBCB";
         } else {
+          this.color = "#000000";
           //this changes color for different repetitions, should be removed when fixed
-          switch (this.totalReps){
+          /*switch (this.totalReps){
             case 0:
               this.color = "#000000";
               break;
@@ -573,7 +574,7 @@ class OpenSheetMusicDisplay extends Component {
             default:
               this.color = "#F28500";
               break;
-          }
+          }*/
         }
         
         const staveLines=document.getElementsByClassName("vf-stave")[this.osmd.cursor.Iterator.currentMeasureIndex]
