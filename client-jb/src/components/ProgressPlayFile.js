@@ -47,13 +47,8 @@ const ProgressPlayFile = (props) => {
   const handlePitchCallback = (pitchData) => {
     pitchCount=pitchCount+1;
       if(pitchCount>0){
-        //if (pitchData.confidence > 0.5) {
-          //console.log("Confidence ", pitchData.confidence)
           setPitchValue(pitchData.pitch);
           setConfidenceValue(pitchData.confidence);
-        //}else{
-        //  setPitchValue(1);
-        //}
         pitchCount=0;
       }
   };
@@ -203,7 +198,6 @@ const ProgressPlayFile = (props) => {
     if(pitchValue){
       setPitch([...pitch,pitchValue])
       setConfidence([...confidence,confidenceValue])
-      //console.log(pitch.length, confidence.length)
     }
 
 
