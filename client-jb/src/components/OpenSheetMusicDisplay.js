@@ -360,42 +360,49 @@ class OpenSheetMusicDisplay extends Component {
       const lastPitchConfidenceData =
         this.state.pitchConfidenceData[this.state.pitchConfidenceData.length - 1];
 
+      //Prepare colors
+      const colorPitchMatched = "#00FF00"; //green
+      const colorPitchNotMatched = "#FF0000"; //red
 
       //Current Note/Silence under cursor
       var notePitch;
       if(this.osmd.cursor.NotesUnderCursor()[0].Pitch!==undefined){
         //note
         notePitch = this.osmd.cursor.NotesUnderCursor()[0].Pitch.frequency;
+        //Check if pitch was matched or not, only if confidence of newPitchdata is >=0.5
+        if(lastPitchConfidenceData>=0.5){
+          if (
+            lastPitchData !== undefined &&
+            Math.abs(freq2midipitch(lastPitchData) - freq2midipitch(notePitch)) <= 0.25 // 0.25 MIDI error margin
+          ) {
+            this.countGoodNotes=this.countGoodNotes+1;  
+          }
+          else {
+            this.countBadNotes=this.countBadNotes+1;
+          }
+        }
       }else{
         //silence
         notePitch = 0;
+        //Check if pitch was matched or not, only if confidence of newPitchdata is >=0.5
+        if(lastPitchConfidenceData<=0.5){
+            this.countGoodNotes=this.countGoodNotes+1;  
+          }
+          else {
+            this.countBadNotes=this.countBadNotes+1;
+          }
       }
       const gNote = this.osmd.cursor.GNotesUnderCursor()[0];
-      
-      //Prepare colors
-      const colorPitchMatched = "#00FF00"; //green
-      const colorPitchNotMatched = "#FF0000"; //red
-
-      //Check if pitch was matched or not, only if confidence of newPitchdata is >=0.5
-      if(lastPitchConfidenceData>=0.5){
-        if (
-          lastPitchData !== undefined &&
-          Math.abs(freq2midipitch(lastPitchData) - freq2midipitch(notePitch)) <= 0.25 // 0.25 MIDI error margin
-        ) {
-          this.countGoodNotes=this.countGoodNotes+1;  
-        }
-        else {
-          this.countBadNotes=this.countBadNotes+1;
-        }
-        var total=this.countBadNotes+this.countGoodNotes;
-        if(total!==0 && (this.countGoodNotes>= Math.ceil(total*0.5))){
-          //GOOD NOTE - change color to green
-          this.noteColor=colorPitchMatched;
-        }else{
-          //WRONG NOTE - change color to red
-          this.noteColor=colorPitchNotMatched;
-        }
+        
+      var total=this.countBadNotes+this.countGoodNotes;
+      if(total!==0 && (this.countGoodNotes>= Math.ceil(total*0.5))){
+        //GOOD NOTE - change color to green
+        this.noteColor=colorPitchMatched;
+      }else{
+        //WRONG NOTE - change color to red
+        this.noteColor=colorPitchNotMatched;
       }
+    
 
       if(this.state.currentGNoteinScorePitch){
         //Save/overwrite color data
