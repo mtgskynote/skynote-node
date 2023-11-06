@@ -582,8 +582,8 @@ class OpenSheetMusicDisplay extends Component {
         const currentNoteinScorePitchMIDI= freq2midipitch(this.state.currentNoteinScorePitch); //note under cursor
         const midiToStaffStep=midi2StaffGaps(newPitchMIDI) //where to locate the played note in the staff with respect to B4(middle line)
         if (midiToStaffStep === 0 || this.props.pitchConfidence[this.props.pitchConfidence.length-1]<0.5) { //
-          //Color turns gray when pitch is out of bounds or pitch confidence is below 0.5
-          this.color = "#CBCBCB";
+          //Color turns white/invisible when pitch is out of bounds or pitch confidence is below 0.5
+          this.color = "#FFFFFF";
         } else {
           this.color = "#000000";
           //this changes color for different repetitions, should be removed when fixed
