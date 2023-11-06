@@ -361,13 +361,11 @@ class OpenSheetMusicDisplay extends Component {
 
       //Check if pitch was matched or not, only if confidence of newPitchdata is >=0.5
       if(lastPitchConfidenceData>=0.5){
-        console.log("im in")
         if (
           lastPitchData !== undefined &&
           Math.abs(freq2midipitch(lastPitchData) - freq2midipitch(notePitch)) <= 0.25 // 0.25 MIDI error margin
         ) {
           this.countGoodNotes=this.countGoodNotes+1;  
-          console.log("Good")   
         }
         else {
           this.countBadNotes=this.countBadNotes+1;
@@ -419,6 +417,7 @@ class OpenSheetMusicDisplay extends Component {
         //Reset for next note checking
         this.countBadNotes=0;
         this.countGoodNotes=0;
+        this.noteColor="#000000"
       }
       //Update new vales for future comparisons
       this.setState({ currentNoteinScorePitch: notePitch });
@@ -665,7 +664,7 @@ class OpenSheetMusicDisplay extends Component {
 
     return (
       <div > 
-        {showPitchTrack && (
+
           <div style={lineChartStyle}>
             <LineChart
               width={this.coords[0]}
@@ -681,7 +680,7 @@ class OpenSheetMusicDisplay extends Component {
               
             />
           </div>
-        )}
+        
         <div  ref={this.divRef}  /> 
       </div>
     );
