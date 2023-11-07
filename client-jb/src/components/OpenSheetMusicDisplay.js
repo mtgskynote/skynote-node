@@ -359,6 +359,9 @@ class OpenSheetMusicDisplay extends Component {
         this.state.pitchData[this.state.pitchData.length - 1];
       const lastPitchConfidenceData =
         this.state.pitchConfidenceData[this.state.pitchConfidenceData.length - 1];
+      
+      //Get note object under cursor
+      const gNote = this.osmd.cursor.GNotesUnderCursor()[0];
 
       //Prepare colors
       const colorPitchMatched = "#00FF00"; //green
@@ -392,13 +395,13 @@ class OpenSheetMusicDisplay extends Component {
             this.countBadNotes=this.countBadNotes+1;
           }
       }
-      const gNote = this.osmd.cursor.GNotesUnderCursor()[0];
+      
         
       var total=this.countBadNotes+this.countGoodNotes;
       if(total!==0 && (this.countGoodNotes>= Math.ceil(total*0.5))){
         //GOOD NOTE - change color to green
         this.noteColor=colorPitchMatched;
-      }else{
+      }else if(total!==0 && (this.countGoodNotes< Math.ceil(total*0.5))){
         //WRONG NOTE - change color to red
         this.noteColor=colorPitchNotMatched;
       }
@@ -436,6 +439,7 @@ class OpenSheetMusicDisplay extends Component {
           this.noteColor; // notehead
         }
       }
+      
       //When note changes, reset values
       if(gNote!==this.state.currentGNoteinScorePitch){
         //Reset for next note checking
