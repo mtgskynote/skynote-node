@@ -107,10 +107,10 @@ const ControlBar = (props) => {
 
   //Generate data to generate buttons
   const titles = [
-    "beginning",
-    "play",
-    "record",
-    "repeatLayers",
+    "reset",
+    "play/pause",
+    "record/stopRecording",
+    "switchRepetition",
     "settings",
   ];
   const icons = [
@@ -170,6 +170,7 @@ const ControlBar = (props) => {
                           <label
                             htmlFor="volume-slider"
                             className="slider-label"
+                            title="audio-volume"
                           >
                             Volume
                           </label>
@@ -181,16 +182,18 @@ const ControlBar = (props) => {
                             step="0.1"
                             value={volume}
                             onChange={handleVolumeChange}
+                            title="audio-volume"
                           />
                         </div>
                         <div>
                           {/* Metronome Volume Slider */}
                           <FontAwesomeIcon icon={faVolumeHigh} />
-                          <label htmlFor="metroVol-slider" className="slider-label">
+                          <label htmlFor="metroVol-slider" className="slider-label" title="metronome-volume">
                             Metronome
                           </label>
                           <input
                             id="metroVol-slider"
+                            title="metronome-volume"
                             type="range"
                             min="0"
                             max="1"
@@ -202,7 +205,7 @@ const ControlBar = (props) => {
                         <div>
                           {/* Zoom Slider */}
                           <FontAwesomeIcon icon={faMagnifyingGlassMinus} />
-                          <label htmlFor="zoom-slider" className="slider-label">
+                          <label htmlFor="zoom-slider" className="slider-label" title="zoom-slider">
                             Zoom
                           </label>
                           <input
@@ -213,12 +216,13 @@ const ControlBar = (props) => {
                             step="0.1"
                             value={zoom}
                             onChange={handleZoomChange}
+                            title="zoom-slider"
                           />
                         </div>
                         <div>
                           {/* BPM Slider */}
                           <FontAwesomeIcon icon={faGauge} />
-                          <label htmlFor="bpm-slider" className="slider-label">
+                          <label htmlFor="bpm-slider" className="slider-label" title="change-bpm">
                             BPM
                           </label>
                           <input
@@ -228,6 +232,7 @@ const ControlBar = (props) => {
                             max="200"
                             value={bpm}
                             onChange={handleBPMChange}
+                            title="change-bpm"
                           />
                         </div>
                         

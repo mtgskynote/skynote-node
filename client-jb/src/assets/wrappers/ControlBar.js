@@ -20,7 +20,7 @@ const Wrapper = styled.section`
     font-size: 1.2rem;
     }
 
-    .controlBtn[title="record"] {
+    .controlBtn[title="record/stopRecording"] {
     color: red;
     }
 

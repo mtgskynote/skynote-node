@@ -116,7 +116,7 @@ const ProgressPlayFile = (props) => {
     //--------------------------------------------------------------------------------
 
     // RECORD BUTTON -----------------------------------------------------------------
-    const recordButton = document.getElementById("record");
+    const recordButton = document.getElementById("record/stopRecording");
     const handleRecordButtonClick = () => {
 
       //Toggle recording state (FIXME does not work the first time, so recordActive is started with true value)
@@ -142,8 +142,8 @@ const ProgressPlayFile = (props) => {
     //--------------------------------------------------------------------------------
 
     // RESET BUTTON ------------------------------------------------------------------
-    const beginningButton = document.getElementById("beginning");
-    const handleBeginningButtonClick = () => {
+    const resetButton = document.getElementById("reset");
+    const handleResetButtonClick = () => {
       audioStreamer.close()
       setIsResetButtonPressed(true);
       const playbackManager = playbackRef.current;
@@ -160,13 +160,13 @@ const ProgressPlayFile = (props) => {
       setRecordActive(true) //Set to true, just like the initial state
     };
 
-    beginningButton.addEventListener("click", handleBeginningButtonClick);
+    resetButton.addEventListener("click", handleResetButtonClick);
     //--------------------------------------------------------------------------------
 
     // PLAY/PAUSE BUTTON -------------------------------------------------------------
     // gets the playback manager and sets the start time to the current time
     // plays the music where the cursor is
-    const playButton = document.getElementById("play");
+    const playButton = document.getElementById("play/pause");
     const handlePlayButtonClick = () => {
       const playbackManager = playbackRef.current;
       const cursor = cursorRef.current;
@@ -202,7 +202,7 @@ const ProgressPlayFile = (props) => {
     //--------------------------------------------------------------------------------
 
     // TIMBRE VISUALIZATION ----------------------------------------------------------
-    const repeatLayersButton = document.getElementById("repeatLayers");
+    const repeatLayersButton = document.getElementById("switchRepetition");
     const handleRepeatLayersButtonClick = () => {
       //window.location.href = "/TimbreVisualization";
       setRepeatsIterator(!repeatsIterator);
@@ -221,7 +221,7 @@ const ProgressPlayFile = (props) => {
     return () => {
       recordButton.removeEventListener("click", handleRecordButtonClick);
       repeatLayersButton.removeEventListener("click", handleRepeatLayersButtonClick);
-      beginningButton.removeEventListener("click", handleBeginningButtonClick);
+      resetButton.removeEventListener("click", handleResetButtonClick);
       playButton.removeEventListener("click", handlePlayButtonClick);
     };
   }, [recordVol, zoom, recordActive, pitchValue, repeatsIterator]);
