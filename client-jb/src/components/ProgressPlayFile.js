@@ -1,7 +1,7 @@
 import React, { useEffect, useState, useRef } from "react";
 import { useParams } from "react-router-dom";
 import OpenSheetMusicDisplay from "./OpenSheetMusicDisplay";
-import { useControlBar } from "./controlbar";
+import ControlBar from "./ControlBar";
 import { makeAudioStreamer } from "./audioStreamer.js";
 import CountdownTimer from "./MetronomeCountDown.js";
 import { log } from "@tensorflow/tfjs";
@@ -25,7 +25,6 @@ const ProgressPlayFile = (props) => {
 
   const [zoom, setZoom] = useState(1.0);
 
-  const controlbar = useControlBar();
   const [pitchValue, setPitchValue] = useState(null);
   const [confidenceValue, setConfidenceValue] = useState(null);
   const [pitch, setPitch] = useState([]);
@@ -38,6 +37,8 @@ const ProgressPlayFile = (props) => {
   const [isResetButtonPressed, setIsResetButtonPressed] = useState(false);
 
   const[repeatsIterator, setRepeatsIterator] = useState(false);
+
+  const[cursorFinished, setCursorFinished] = useState(false);
 
   const onResetDone = () => {
     setIsResetButtonPressed(false);
@@ -56,6 +57,7 @@ const ProgressPlayFile = (props) => {
   // Define recording stop when cursor finishes callback function
   const handleFinishedCursorCallback = (finishedCursor) => {
     if (finishedCursor){
+      setCursorFinished(!cursorFinished);
       //Recording is unwanted
       audioStreamer.close()
       console.log("Recording stopped because cursor finished")
@@ -232,7 +234,9 @@ const ProgressPlayFile = (props) => {
         cursorActivity={handleFinishedCursorCallback}
       />
        {showTimer ? (<CountdownTimer bpm={bpmChange}  onComplete={() => setFinishedTimer(true)} />):(null)}
-      {controlbar}
+      <ControlBar 
+        finishedCursor={cursorFinished}
+      />
     </div>
   );
 };

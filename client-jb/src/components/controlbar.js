@@ -1,5 +1,5 @@
 import {useState } from "react";
-import Wrapper from "../assets/wrappers/controlBar";
+import Wrapper from "../assets/wrappers/ControlBar";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { Button} from "@material-ui/core";
 import { Dropdown } from "react-bootstrap";
@@ -17,14 +17,19 @@ import {
   faGear,
 } from "@fortawesome/free-solid-svg-icons";
 
-const useControlBar = () => {
-  
-
+const ControlBar = (props) => {
   //Volume, bpm and zoom variables
   const [volume, setVolume] = useState(0.5);
   const [bpm, setBPM] = useState(100);
   const [zoom, setZoom] = useState(1);
   const [metronomeVol, setMetronomeVol] = useState(0);
+
+  /*if (props.cursorFinished !== prevProps.cursorFinished) {
+    //cursor finished the score --> reset button values
+    setIsPlaying(true)
+    setRecordingOff(true)
+  }
+  var prevProps=props; //save*/
 
   //PLAY/PAUSE variable
   const [isPlayingOn, setIsPlaying] = useState(true);
@@ -112,7 +117,7 @@ const useControlBar = () => {
     handleToggleSettings
   ]
 
-  const controlbar = (
+  const ControlBar = (
     <Wrapper>
       <div className="myDiv">
         {titles.map((title, i) => {
@@ -229,7 +234,7 @@ const useControlBar = () => {
     </Wrapper>
   );
 
-  return controlbar;
+  return ControlBar;
 };
 
-export { useControlBar };
+export default ControlBar;
