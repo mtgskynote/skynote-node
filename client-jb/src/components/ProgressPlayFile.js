@@ -44,7 +44,7 @@ const ProgressPlayFile = (props) => {
     setIsResetButtonPressed(false);
   };
 
-  // Define pitch callback function
+  // Define pitch callback function 
   const handlePitchCallback = (pitchData) => {
     pitchCount=pitchCount+1;
       if(pitchCount>0){
