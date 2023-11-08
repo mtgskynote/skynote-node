@@ -57,13 +57,16 @@ const ProgressPlayFile = (props) => {
   const handleFinishedCursorCallback = (finishedCursor) => {
     if (finishedCursor){
       //Recording is unwanted
-      audioStreamer.close()
-      console.log("Recording stopped because cursor finished")
+      audioStreamer.close();
+      console.log("Recording stopped because cursor finished");
       //Deactivate Pitch tracking
       setStartPitchTrack(false);
+      setRecordActive(!recordActive);
+      //NEEDS TO BE FIXED, RECORD BUTTON SHOULD CHANGE SKIN
+      //THIS IS NOT NEEDED, THE CURSOR STOPS BY ITSELF WHEN IT REACHES THE END :S
       //Pause file and therefore, cursor
-      const playbackManager = playbackRef.current;
-      playbackManager.pause();
+      // const playbackManager = playbackRef.current;
+      // playbackManager.pause();
     }
   };
 
@@ -231,7 +234,7 @@ const ProgressPlayFile = (props) => {
         onResetDone={onResetDone}
         cursorActivity={handleFinishedCursorCallback}
       />
-       {showTimer ? (<CountdownTimer bpm={bpmChange}  onComplete={() => setFinishedTimer(true)} />):(null)}
+      {showTimer ? (<CountdownTimer bpm={bpmChange}  onComplete={() => setFinishedTimer(true)} />):(null)}
       {controlbar}
     </div>
   );

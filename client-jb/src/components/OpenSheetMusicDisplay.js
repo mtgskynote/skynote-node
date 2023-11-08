@@ -38,7 +38,6 @@ window.addEventListener('scroll', function (event) {
     isScrolling = setTimeout(function () {
         // Run the code here
         scrolled = true;
-        console.log("Cursor has jumped :)");
     }, 100);
 }, false);
 ////////////////////////////////////////////////////////////////////////////////////////////////
@@ -123,7 +122,7 @@ const renderPitchLineZoom=(osmd, state, prevZoom, showingRep)=>{
           let noteX=note.graphicalVoiceEntries[0].notes[0].getSVGGElement().getBoundingClientRect().x 
           //check for notehead color
           const colorsArray=state.colorNotes.slice()
-          const index = colorsArray.findIndex(item => item[0][0] === noteID && item[0][2]==showingRep);
+          const index = colorsArray.findIndex(item => item[0][0] === noteID && item[0][2]===showingRep);
           if(index!==-1){ 
             //note has a color assigned--> color notehead
             // this is for all the notes except the quarter and whole notes
@@ -183,7 +182,6 @@ class OpenSheetMusicDisplay extends Component {
     this.osmd = undefined;
     this.divRef = React.createRef();
     this.cursorInterval = null;
-    this.countFinishRecording=25 //if recording is active and cursor doesnt move, stop recording
     this.previousTimestamp=null; 
     this.notePositionX=null;
     this.notePositionY=null;
@@ -300,8 +298,7 @@ class OpenSheetMusicDisplay extends Component {
 
   //function to check cursor change
   checkCursorChange = () => {
-    const cursorCurrent=this.osmd.cursor.Iterator.currentTimeStamp
-    //console.log(this.osmd.cursor.Iterator.EndReached)
+    const cursorCurrent=this.osmd.cursor.Iterator.currentTimeStamp;
 
     //if recording active
     if (this.props.startPitchTrack){
@@ -314,19 +311,9 @@ class OpenSheetMusicDisplay extends Component {
       }
 
       // STOP RECORDING WHEN CURSOR REACHES THE END /////////////
-      // check if cursor stays in the same position for a long time
-      if(cursorCurrent.RealValue===this.previousTimestamp){
-        //Cursor has not moved
-        this.countFinishRecording=this.countFinishRecording-1;
-        if(this.countFinishRecording===0){
-          //when countdown reaches zero, stop recording 
-          this.props.cursorActivity(true);
-          this.previousTimestamp=null;
-          this.countFinishRecording=25;
-        }
-      }else{
-        //If cursor keeps moving, reset
-        this.countFinishRecording=25;
+      if(this.osmd.PlaybackManager.CursorIterator.EndReached === true){
+        this.props.cursorActivity(true);
+        this.previousTimestamp=null;
       }
 
       //store timestampfor next iteration
@@ -493,7 +480,7 @@ class OpenSheetMusicDisplay extends Component {
     /////////////////////////////////////////////////////////
     //THIS DEALS WITH THE AUTO-SCROLL OF THE CURSOR, IT MIGHT NOT BE THE MOST EFFICIENT WAY OF DOING IT
     //SO WE'LL CONSIDER THIS A TEMPORAL PATCH :), THE FIRST PART OF THIS IS AT THE TOP
-    if (scrolled == true) {
+    if (scrolled === true) {
       scrolled = false;
       //this.osmd.render(); // update the OSMD instance after changing the zoom level
       const [updatedPitchPositionX, updatedPitchPositionY, updatedNoteIndex] = renderPitchLineZoom(this.osmd, this.state, this.zoom, this.showingRep);
@@ -547,7 +534,7 @@ class OpenSheetMusicDisplay extends Component {
               let noteID= note.graphicalVoiceEntries[0].notes[0].getSVGId();
               //check for notehead color
               const colorsArray=this.state.colorNotes.slice()
-              const index = colorsArray.findIndex(item => item[0][0] === noteID && item[0][2]==this.showingRep);
+              const index = colorsArray.findIndex(item => item[0][0] === noteID && item[0][2]===this.showingRep);
               if(index!==-1){ 
                 //note has a color assigned--> color notehead
                 // this is for all the notes except the quarter and whole notes
@@ -594,7 +581,7 @@ class OpenSheetMusicDisplay extends Component {
         const midiToStaffStep=midi2StaffGaps(newPitchMIDI) //where to locate the played note in the staff with respect to B4(middle line)
         if (midiToStaffStep === 0 || this.props.pitchConfidence[this.props.pitchConfidence.length-1]<0.5) { //
           //Color turns white/invisible when pitch is out of bounds or pitch confidence is below 0.5
-          this.color = "#FFFFFF";
+          this.color = "#FF00FF"; //"#FFFFFF"
         } else {
           this.color = "#000000";
           //this changes color for different repetitions, should be removed when fixed
