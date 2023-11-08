@@ -248,7 +248,7 @@ const ProgressPlayFile = (props) => {
         onResetDone={onResetDone}
         cursorActivity={handleFinishedCursorOSMDCallback}
       />
-       {showTimer ? (<CountdownTimer bpm={bpmChange}  onComplete={() => setFinishedTimer(true)} />):(null)}
+      {showTimer ? (<CountdownTimer bpm={bpmChange}  onComplete={() => setFinishedTimer(true)} />):(null)}
       <ControlBar 
         cursorFinished={cursorFinished} cursorFinishedCallback={handleFinishedCursorControlBarCallback}
       />
