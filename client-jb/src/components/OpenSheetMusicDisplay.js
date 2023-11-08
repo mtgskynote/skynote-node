@@ -308,6 +308,7 @@ class OpenSheetMusicDisplay extends Component {
         // Cursor moved back, repetition detected
         this.totalReps++;
         this.showingRep = this.totalReps;
+        this.resetNotesColor();
       }
 
       // STOP RECORDING WHEN CURSOR REACHES THE END /////////////
@@ -321,8 +322,15 @@ class OpenSheetMusicDisplay extends Component {
       ////////////////////////////////////////////////////////
       
       // EXTRACT POSITION OF NOTE UNDER CURSOR////////////////
+
+      //Get note object under cursor
+      const gNote = this.osmd.cursor.GNotesUnderCursor()[0];
+      
       //Absolute Position
-      const svgElement=this.osmd.cursor.GNotesUnderCursor()[0].getSVGGElement()
+      const svgElement=gNote.getSVGGElement()
+      console.log(this.osmd.cursor.GNotesUnderCursor())
+      console.log("element under the cursor ",gNote.vfpitch[0])
+      console.log("time stamp ", cursorCurrent.RealValue)
       if (
         svgElement &&
         svgElement.children[0] &&
@@ -346,9 +354,6 @@ class OpenSheetMusicDisplay extends Component {
         this.state.pitchData[this.state.pitchData.length - 1];
       const lastPitchConfidenceData =
         this.state.pitchConfidenceData[this.state.pitchConfidenceData.length - 1];
-      
-      //Get note object under cursor
-      const gNote = this.osmd.cursor.GNotesUnderCursor()[0];
 
       //Prepare colors
       const colorPitchMatched = "#00FF00"; //green
@@ -681,9 +686,9 @@ class OpenSheetMusicDisplay extends Component {
   }
 
   render() {
-    const { showPitchTrack } = this.props;
+    //const { showPitchTrack } = this.props;
 
-    const { isResetButtonPressed } = this.state;
+    //const { isResetButtonPressed } = this.state;
 
     const lineChartStyle = {
       position: "absolute",
