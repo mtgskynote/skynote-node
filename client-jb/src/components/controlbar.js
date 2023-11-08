@@ -1,4 +1,4 @@
-import {useState } from "react";
+import {useEffect, useState } from "react";
 import Wrapper from "../assets/wrappers/ControlBar";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { Button} from "@material-ui/core";
@@ -24,6 +24,18 @@ const ControlBar = (props) => {
   const [zoom, setZoom] = useState(1);
   const [metronomeVol, setMetronomeVol] = useState(0);
 
+  useEffect(() => {
+
+    if(props.cursorFinished){
+      //cursor finished -->same actions as in reset
+      setIsPlaying(true)
+      setRecordingOff(true)
+      //Change cursorFinished state in parent component
+      props.cursorFinishedCallback(false)
+    }
+    
+  }, [props]);
+
   /*if (props.cursorFinished !== prevProps.cursorFinished) {
     //cursor finished the score --> reset button values
     setIsPlaying(true)
@@ -43,7 +55,6 @@ const ControlBar = (props) => {
   const [recordingOff, setRecordingOff] = useState(true);
   const handleRecord = () => {
     setRecordingOff(!recordingOff);
-    // Add logic to handle the play/pause action here
   };
 
   //Settings-visible variable

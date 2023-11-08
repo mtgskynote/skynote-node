@@ -341,9 +341,10 @@ class OpenSheetMusicDisplay extends Component {
       
       //Absolute Position
       const svgElement=gNote.getSVGGElement()
-      console.log(this.osmd.cursor.GNotesUnderCursor())
+      /*console.log(this.osmd.cursor.GNotesUnderCursor())
       console.log("element under the cursor ",gNote.vfpitch[0])
-      console.log("time stamp ", cursorCurrent.RealValue)
+      console.log("time stamp ", cursorCurrent.RealValue)*/
+      
       if (
         svgElement &&
         svgElement.children[0] &&

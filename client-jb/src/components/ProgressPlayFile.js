@@ -1,7 +1,7 @@
 import React, { useEffect, useState, useRef } from "react";
 import { useParams } from "react-router-dom";
 import OpenSheetMusicDisplay from "./OpenSheetMusicDisplay";
-import ControlBar from "./ControlBar";
+import ControlBar from "./ControlBar.js";
 import { makeAudioStreamer } from "./audioStreamer.js";
 import CountdownTimer from "./MetronomeCountDown.js";
 import { log } from "@tensorflow/tfjs";
@@ -55,17 +55,32 @@ const ProgressPlayFile = (props) => {
   };
 
   // Define recording stop when cursor finishes callback function
-  const handleFinishedCursorCallback = (finishedCursor) => {
-    if (finishedCursor){
-      setCursorFinished(!cursorFinished);
-      //Recording is unwanted
+  const handleFinishedCursorOSMDCallback = (OSMDfinishedCursor) => {
+    if (OSMDfinishedCursor){//cursor has finished
+
+      //Send info to ControlBar--> true cursor finished
+      setCursorFinished(true);
+
+      //"Reset" funcionalities
+      //No recording
       audioStreamer.close()
       console.log("Recording stopped because cursor finished")
-      //Deactivate Pitch tracking
-      setStartPitchTrack(false);
-      //Pause file and therefore, cursor
       const playbackManager = playbackRef.current;
+      //const cursor = cursorRef.current;
       playbackManager.pause();
+      playbackManager.setPlaybackStart(0);
+      //playbackManager.reset();
+      //cursor.reset();
+      setStartPitchTrack(false);
+      setRecordActive(true) //Set to true, just like the initial state
+    }
+  };
+  const handleFinishedCursorControlBarCallback = (controlBarFinishedCursor) => {
+    if (controlBarFinishedCursor===false){//ControlBar already took cursor finishing actions
+      
+      //Update value, ready for new cursor finishings--> false cursor finished
+      setCursorFinished(false);
+      console.log("cursor finished work done")
     }
   };
 
@@ -129,6 +144,7 @@ const ProgressPlayFile = (props) => {
     // RESET BUTTON ------------------------------------------------------------------
     const beginningButton = document.getElementById("beginning");
     const handleBeginningButtonClick = () => {
+      audioStreamer.close()
       setIsResetButtonPressed(true);
       const playbackManager = playbackRef.current;
       const cursor = cursorRef.current;
@@ -142,7 +158,6 @@ const ProgressPlayFile = (props) => {
       setPitch([])
       setConfidence([])
       setRecordActive(true) //Set to true, just like the initial state
-
     };
 
     beginningButton.addEventListener("click", handleBeginningButtonClick);
@@ -231,11 +246,11 @@ const ProgressPlayFile = (props) => {
         isResetButtonPressed={isResetButtonPressed}
         repeatsIterator={repeatsIterator}
         onResetDone={onResetDone}
-        cursorActivity={handleFinishedCursorCallback}
+        cursorActivity={handleFinishedCursorOSMDCallback}
       />
        {showTimer ? (<CountdownTimer bpm={bpmChange}  onComplete={() => setFinishedTimer(true)} />):(null)}
       <ControlBar 
-        finishedCursor={cursorFinished}
+        cursorFinished={cursorFinished} cursorFinishedCallback={handleFinishedCursorControlBarCallback}
       />
     </div>
   );
