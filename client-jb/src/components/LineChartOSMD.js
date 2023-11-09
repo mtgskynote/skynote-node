@@ -1,79 +1,39 @@
-import React, {useState, useEffect} from "react";
-
-//Convert frequency Hertz to MIDI function
-const freq2midipitch = (freq) => {
-  return(12 * (Math.log2(freq / 440)) + 69)
-}
-let staffBox;
-let container;
+import React, {useState, useEffect, useRef} from "react";
 
 //Pitch track line component
-const LineChart = ({ pitchData }) => {
-  //if (!pitchData || pitchData.length === 0) return null;
-
-  const [previousPitchData, setPreviousPitchData] = useState([]);
-  const [polylinePoints, setPolylinePoints] = useState('');
-  
-  // Normalize pitch data between 0 (A3) and 1 (C6)
-  let minimumMIDI=57 //A3
-  let maximumMIDI=84 //C6
-
-  const spacing = 10; // Spacing between points
-  const svgWidth = pitchData.length * spacing;
+const LineChart = (props) => {
+  const containerRef = useRef(null);
+  const [polylinePoints, setPolylinePoints] = useState([]);
 
   useEffect(()=> {
-    // New values added to pitchdata
-    const newValues = pitchData.filter((value) => !previousPitchData.includes(value));
-    const newNormalizedData = newValues.map(
-      (value) =>
-        (freq2midipitch(value) - minimumMIDI) /
-        (maximumMIDI - minimumMIDI)
-    )
-    // Actualizar el estado anterior con el nuevo estado
-    setPreviousPitchData(pitchData);
-    
-  
-    // Combinar los nuevos datos procesados con los datos anteriores
-    setPolylinePoints((prevPolylinePoints) => {
-      // Mapear y agregar las coordenadas de los nuevos valores al estado anterior
-      const newPolylinePoints = newNormalizedData.map((value, index) => {
-        const x = (prevPolylinePoints.split(' ').length + index) * spacing;
-        const y = 100 - value * 100;
-        return `${x},${y}`;
-        });
-      // Combinar las coordenadas anteriores con las nuevas
-      return prevPolylinePoints + ' ' + newPolylinePoints.join(' ');
+    const containerElement = containerRef.current;
+    const rect = containerElement.getBoundingClientRect();
+    const newPolylinePoints = props.pitchDataPosX.map((value, index) => {
+      const x = props.pitchDataPosX[index] + props.pitchIndex[index] - rect.left;
+      const y =  props.pitchDataPosY[index] - rect.top; 
+      return [x, y]; // Return a coordinate pair as an array [x, y]
     });
+    setPolylinePoints(newPolylinePoints);
   
-  }, [pitchData, previousPitchData]);
-
-  // Style
-  /*container = document.getElementById('osmdSvgPage1');
-  staffBox = container.querySelector('staffline'); 
-  let topValue=0
-  let leftValue=0
-  if (staffBox){
-    const coord = staffBox.getBoundingClientRect();
-    topValue=coord.top
-    leftValue=coord.left
-  }*/
-
-  const style = {
-    overflowX: "auto",
-    /*position: "absolute",
-    top: topValue, // Ajusta la posición vertical según tus necesidades
-    left: leftValue, // Ajusta la posición horizontal según tus necesidades*/
-  };
+  }, [props.pitchData, props.zoom]); //, previousPitchData
 
   return (
-    <div style={style}>
-      <svg>
-        <polyline
-          points={polylinePoints}
-          fill="none"
-          stroke="black"
-          strokeDasharray="2"
-        />
+    <div ref={containerRef}>
+      <svg width={props.width} height={props.height}>
+        {polylinePoints.map(([x, y], index) => {
+          if (props.repetitionNumber[index] === props.showingRep) {
+            return(
+            <circle
+              key={index}
+              cx={x}
+              cy={y}
+              r={2*props.zoom}
+              fill={props.pitchColor[index]}
+              
+            />
+            )
+          }
+        })}
       </svg>
     </div>
   );

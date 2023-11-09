@@ -1,5 +1,5 @@
-import {useState } from "react";
-import Wrapper from "../assets/wrappers/controlBar";
+import {useEffect, useState } from "react";
+import Wrapper from "../assets/wrappers/ControlBar";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { Button} from "@material-ui/core";
 import { Dropdown } from "react-bootstrap";
@@ -13,18 +13,35 @@ import {
   faVolumeHigh,
   faGauge,
   faMagnifyingGlassMinus,
-  faBoltLightning,
+  faWater,
   faGear,
 } from "@fortawesome/free-solid-svg-icons";
 
-const useControlBar = (cursorRef) => {
-  
-
+const ControlBar = (props) => {
   //Volume, bpm and zoom variables
   const [volume, setVolume] = useState(0.5);
   const [bpm, setBPM] = useState(100);
   const [zoom, setZoom] = useState(1);
   const [metronomeVol, setMetronomeVol] = useState(0);
+
+  useEffect(() => {
+
+    if(props.cursorFinished){
+      //cursor finished -->same actions as in reset
+      setIsPlaying(true)
+      setRecordingOff(true)
+      //Change cursorFinished state in parent component
+      props.cursorFinishedCallback(false)
+    }
+    
+  }, [props]);
+
+  /*if (props.cursorFinished !== prevProps.cursorFinished) {
+    //cursor finished the score --> reset button values
+    setIsPlaying(true)
+    setRecordingOff(true)
+  }
+  var prevProps=props; //save*/
 
   //PLAY/PAUSE variable
   const [isPlayingOn, setIsPlaying] = useState(true);
@@ -38,7 +55,6 @@ const useControlBar = (cursorRef) => {
   const [recordingOff, setRecordingOff] = useState(true);
   const handleRecord = () => {
     setRecordingOff(!recordingOff);
-    // Add logic to handle the play/pause action here
   };
 
   //Settings-visible variable
@@ -84,35 +100,35 @@ const useControlBar = (cursorRef) => {
     // Update the zoom state or perform any other necessary actions
   };
 
-  //Visualize button
-  const handleVisualize = (event) => {
+  //RepeatLayers button
+  const handleRepeatLayers = (event) => {
     // None
   };
 
   //Generate data to generate buttons
   const titles = [
-    "beginning",
-    "play",
-    "record",
-    "visualize",
+    "reset",
+    "play/pause",
+    "record/stopRecording",
+    "switchRepetition",
     "settings",
   ];
   const icons = [
     faUndoAlt,
     faPlay,
     faBullseye,
-    faBoltLightning,
+    faWater,
     faGear,
   ];
   const handlers = [
     handleResetChange,
     handlePlayPause,
     handleRecord,
-    handleVisualize,
+    handleRepeatLayers,
     handleToggleSettings
   ]
 
-  const controlbar = (
+  const ControlBar = (
     <Wrapper>
       <div className="myDiv">
         {titles.map((title, i) => {
@@ -154,6 +170,7 @@ const useControlBar = (cursorRef) => {
                           <label
                             htmlFor="volume-slider"
                             className="slider-label"
+                            title="audio-volume"
                           >
                             Volume
                           </label>
@@ -165,16 +182,18 @@ const useControlBar = (cursorRef) => {
                             step="0.1"
                             value={volume}
                             onChange={handleVolumeChange}
+                            title="audio-volume"
                           />
                         </div>
                         <div>
                           {/* Metronome Volume Slider */}
                           <FontAwesomeIcon icon={faVolumeHigh} />
-                          <label htmlFor="metroVol-slider" className="slider-label">
+                          <label htmlFor="metroVol-slider" className="slider-label" title="metronome-volume">
                             Metronome
                           </label>
                           <input
                             id="metroVol-slider"
+                            title="metronome-volume"
                             type="range"
                             min="0"
                             max="1"
@@ -186,7 +205,7 @@ const useControlBar = (cursorRef) => {
                         <div>
                           {/* Zoom Slider */}
                           <FontAwesomeIcon icon={faMagnifyingGlassMinus} />
-                          <label htmlFor="zoom-slider" className="slider-label">
+                          <label htmlFor="zoom-slider" className="slider-label" title="zoom-slider">
                             Zoom
                           </label>
                           <input
@@ -197,12 +216,13 @@ const useControlBar = (cursorRef) => {
                             step="0.1"
                             value={zoom}
                             onChange={handleZoomChange}
+                            title="zoom-slider"
                           />
                         </div>
                         <div>
                           {/* BPM Slider */}
                           <FontAwesomeIcon icon={faGauge} />
-                          <label htmlFor="bpm-slider" className="slider-label">
+                          <label htmlFor="bpm-slider" className="slider-label" title="change-bpm">
                             BPM
                           </label>
                           <input
@@ -212,6 +232,7 @@ const useControlBar = (cursorRef) => {
                             max="200"
                             value={bpm}
                             onChange={handleBPMChange}
+                            title="change-bpm"
                           />
                         </div>
                         
@@ -229,7 +250,7 @@ const useControlBar = (cursorRef) => {
     </Wrapper>
   );
 
-  return controlbar;
+  return ControlBar;
 };
 
-export { useControlBar };
+export default ControlBar;

@@ -5,11 +5,17 @@ function CountdownTimer({ bpm, onComplete }) {
 
   const countdownStyle = {
     display: 'flex',
+    justifyContent: 'center', // Center horizontally
     backgroundColor: 'lightblue',
     color: 'darkblue',
-    fontSize: '40px',
-    padding: '10px',
-    alignItems: 'center',  
+    opacity: "60%",
+    fontSize: '15vh', // 15% of height of screen
+    padding: '1vh', // 1% of height of screen
+    alignItems: 'center',
+    position: 'fixed',
+    top: '34%', // Center vertically 50% - 15% fontsize - 1% padding = 34%
+    left: 0,
+    width: '100%', // Make it as wide as the screen
   };
   
 
