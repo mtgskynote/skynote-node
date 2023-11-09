@@ -298,13 +298,13 @@ class OpenSheetMusicDisplay extends Component {
 
   //function to check cursor change
   checkCursorChange = () => {
-    const cursorCurrent=this.osmd.cursor.Iterator.currentTimeStamp;
+    const cursorCurrent=this.osmd.cursor.Iterator.currentTimeStamp.RealValue;
 
     //if recording active
     if (this.props.startPitchTrack){
 
       //Check for repetitions
-      if (this.previousTimestamp > cursorCurrent.RealValue) {
+      if (this.previousTimestamp > cursorCurrent) {
         // Cursor moved back, repetition detected
         this.totalReps++;
         this.showingRep = this.totalReps;
@@ -318,7 +318,7 @@ class OpenSheetMusicDisplay extends Component {
       }
 
       //store timestampfor next iteration
-      this.previousTimestamp=cursorCurrent.RealValue; 
+      this.previousTimestamp=cursorCurrent; 
       ////////////////////////////////////////////////////////
       
       // EXTRACT POSITION OF NOTE UNDER CURSOR////////////////
