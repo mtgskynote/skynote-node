@@ -21,7 +21,8 @@ const Wrapper = styled.aside`
     opacity: 1;
   }
   .content {
-    background: var(--white);
+    /* background: var(--white); */
+    background: #AFA;
     width: var(--fluid-width);
     height: 95vh;
     border-radius: var(--borderRadius);

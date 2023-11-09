@@ -27,7 +27,7 @@ const initialState = {
   token: token,
   userLocation: userLocation || "",
   jobLocation: userLocation || "",
-  showSidebar: false, // as an overlay
+  showSidebar: true, // as an overlay
 };
 
 // Create context

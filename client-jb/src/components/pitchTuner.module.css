@@ -3,6 +3,7 @@
     border: 1px solid blueviolet; 
     width:302px; /* width of the pitch image we contain, plus the border */
     text-align: center;
+    margin:auto;
 }
 
 /* Style for the vertical line */

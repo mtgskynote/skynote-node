@@ -93,7 +93,7 @@ const PitchTuner = React.forwardRef(({
 
   return (
     <><div className={pitchTunerCSS.myContainer} width={m_width} height={m_height}>
-      <div class={pitchTunerCSS.vertical}></div>
+      <div className={pitchTunerCSS.vertical}></div>
 
       <br />
         <div ref={notesareaRef} className={pitchTunerCSS.notesareaDiv}>

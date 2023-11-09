@@ -77,7 +77,11 @@ const TimbreVisualization = () => {
     
 
   return (
-    <div>
+    <div         style={{
+      textAlign: "center",
+      margin:"auto",
+    }}>
+      <h2> Sound Quality </h2>
       <div
         style={{
           display: "flex",
@@ -100,10 +104,11 @@ const TimbreVisualization = () => {
         <div
         style={{
           textAlign: "center",
+          margin:"auto",
         }}
       >
         <h2> Pitch </h2>
-        <PitchTuner ref={pitchTunerRef} m_width={60} m_height={60}/>
+        <PitchTuner ref={pitchTunerRef} m_width={60} m_height={60} />
       </div>
       {/* <div>{controlbar}</div>   */}
 
