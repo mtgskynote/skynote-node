@@ -2,17 +2,48 @@ import styled from "styled-components";
 
 const Wrapper = styled.section`
 
+    .completeModeDiv {
+        display: flex;
+        align-items: center;
+        /* Add any other styles or sizing properties if needed */
+    }
+
+    .InfoMode {
+        justify-content: center;
+        
+        position: fixed;
+        left: 90%;
+        top: 5%;
+       
+    }
+    .message{
+        background-color: #FFFFFF;
+        justify-content: center;
+        
+        position: fixed;
+        left: 90%;
+        top: 15%;
+        transform: translateX(-50%);
+        width: fit-content;
+        border-radius: 10px;
+        padding: 10px;
+        border: 2px solid #333;
+
+    }
+
     .modeToggleDiv {
     background-color: #D3D3D3;
     justify-content: center;
-    bottom: 20px;
+    
     position: fixed;
-    left: 70%;
+    left: 84%;
+    top: 5%;
     transform: translateX(-50%);
     width: fit-content;
     border-radius: 20px;
     
     }
+
 
     .toggleBtn {
     color: black;

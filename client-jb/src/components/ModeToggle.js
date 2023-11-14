@@ -2,6 +2,7 @@ import {useEffect, useState } from "react";
 import Wrapper from "../assets/wrappers/ModeToggle";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { Button} from "@material-ui/core";
+import ModeInfoButton from "./ModeInfoButton.js";
 import { Dropdown } from "react-bootstrap";
 
 import {
@@ -32,6 +33,7 @@ const ModeToggle = (props) => {
     setRecordMode(false);
     
   };
+
   const icons = [
     faGamepad,
     faPen,
@@ -43,25 +45,38 @@ const ModeToggle = (props) => {
 
   const ModeToggle = (
     <Wrapper>
-      <div className="modeToggleDiv">
-      <Button key={"PracticeMode"} className="toggleBtn" title={practiceMode?"PracticeModeON":"PracticeModeOFF"} id={"PracticeMode"} onClick={() => handlers[0]("PracticeMode")}>
-        <div>
-          <FontAwesomeIcon
-              icon={icons[0]} //Practice button
-            />
-        </div>
-      </Button>
+      <div className="completeModeDiv">
+        <div className="modeToggleDiv">
+          <Button 
+            key={"PracticeMode"} 
+            className="toggleBtn" 
+            title={practiceMode?"PracticeModeON":"PracticeModeOFF"} 
+            id={"PracticeMode"} 
+            onClick={() => handlers[0]("PracticeMode") }
+            >
+            <div>
+              <FontAwesomeIcon
+                  icon={icons[0]} //Practice button
+                />
+            </div>
+          </Button>
 
-      <Button key={"RecordMode"} className="toggleBtn" title={recordMode?"RecordModeON":"RecordModeOFF"} id={"RecordMode"} onClick={() => handlers[1]("RecordMode")}>
-        <div>
-          <FontAwesomeIcon
-              icon={icons[1]} //Recording button
-            />
+          <Button 
+            key={"RecordMode"} 
+            className="toggleBtn" 
+            title={recordMode?"RecordModeON":"RecordModeOFF"} 
+            id={"RecordMode"} 
+            onClick={() => handlers[1]("RecordMode")}
+            >
+            <div>
+              <FontAwesomeIcon
+                  icon={icons[1]} //Recording button
+                />
+            </div>
+          </Button>
         </div>
-      </Button>
-               
-        
-      </div>
+        <ModeInfoButton/>
+        </div>
     </Wrapper>
   );
 
