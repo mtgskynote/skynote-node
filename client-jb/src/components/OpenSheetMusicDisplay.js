@@ -242,13 +242,14 @@ class OpenSheetMusicDisplay extends Component {
       followCursor:
         this.props.followCursor !== undefined ? this.props.followCursor : true,
     };
-
     // define a new class instance of opensheetmusicdisplay
     this.osmd = new OSMD(this.divRef.current, options);
 
     //define the osmd features to be included
     this.osmd.load(this.props.file).then(() => {
       if (this.osmd.Sheet) {
+        this.osmd.render();
+        this.osmd.cursor.CursorOptions.color="#add8e6";
         this.osmd.render();
         const cursor = this.osmd.cursor;
         this.props.cursorRef.current = cursor;
@@ -479,6 +480,17 @@ class OpenSheetMusicDisplay extends Component {
   };
 
   componentDidUpdate(prevProps) {
+
+  //mode changed
+    if (this.props.mode !== prevProps.mode) { 
+      if(this.props.mode){ //practice mode
+        this.osmd.cursor.CursorOptions.color="#add8e6"
+        this.osmd.render()
+      }else{ //record mode
+        this.osmd.cursor.CursorOptions.color="#a3cd8f"
+        this.osmd.render()
+      }
+    }
 
     const container = document.getElementById('osmdSvgPage1');
     this.coords=[container.getBoundingClientRect().width,container.getBoundingClientRect().height];

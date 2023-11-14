@@ -394,6 +394,7 @@ const ProgressPlayFile = (props) => {
         repeatsIterator={repeatsIterator}
         onResetDone={onResetDone}
         cursorActivity={handleFinishedCursorOSMDCallback}
+        mode={practiceMode}
       />
       {showTimer ? (<CountdownTimer bpm={bpmChange} mode={practiceMode}  onComplete={() => setFinishedTimer(true)} />):(null)}
 
