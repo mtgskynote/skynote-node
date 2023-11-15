@@ -540,6 +540,7 @@ class OpenSheetMusicDisplay extends Component {
       } else {
         this.showingRep = 0;
       }
+      this.props.showRepeatsInfo(this.showingRep, this.totalReps);
       this.resetNotesColor();
       //Update color of notes
       let staves = this.osmd.graphic.measureList;
@@ -682,6 +683,9 @@ class OpenSheetMusicDisplay extends Component {
       this.setState({ pitchColor: [] })
       this.setState({ repetitionNumber: []})
       this.resetNotesColor();
+      this.showingRep=0;
+      this.totalReps=0;
+      this.props.showRepeatsInfo(0,0)
       this.props.onResetDone(); // call the function passed from the parent component
     }
 

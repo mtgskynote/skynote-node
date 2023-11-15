@@ -5,6 +5,7 @@ import ControlBar from "./ControlBar.js";
 import ControlBarRecord from "./ControlBarRecord.js";
 import { makeAudioStreamer } from "./audioStreamer.js";
 import CountdownTimer from "./MetronomeCountDown.js";
+import SimpleMessaje from "./AnyMessage.js"
 //import { log } from "@tensorflow/tfjs";
 import ModeToggle from "./ModeToggle.js";
 
@@ -38,6 +39,9 @@ const ProgressPlayFile = (props) => {
 
   const [isResetButtonPressed, setIsResetButtonPressed] = useState(false);
   const[repeatsIterator, setRepeatsIterator] = useState(false);
+  const[showRepetitionMessage, setShowRepetitionMessage]=useState(false);
+  const[repetitionMessage, setRepetitionMessage]=useState("No stored recordings yet");
+
   const[cursorFinished, setCursorFinished] = useState(false);
 
   const [practiceMode, setPracticeMode] = useState(true);
@@ -84,6 +88,18 @@ const ProgressPlayFile = (props) => {
       //Update value, ready for new cursor finishings--> false cursor finished
       setCursorFinished(false);
       console.log("cursor finished work done")
+    }
+  };
+  // Define recording stop when cursor finishes callback function
+  const handleReceiveRepetitionInfo = (showingRep, totalRep) => {
+    /*console.log("im in the handlerrrr", showingRep)
+    const message_aux="Seeing "+ showingRep +" of " + totalRep
+    setRepetitionMessage(message_aux)*/
+    if(totalRep===0){
+      setRepetitionMessage("No recordings yet")
+    }else{
+      const message_aux="Seeing "+ showingRep + " of "+ totalRep
+      setRepetitionMessage(message_aux)
     }
   };
 
@@ -241,8 +257,19 @@ const ProgressPlayFile = (props) => {
       const handleRepeatLayersButtonClick = () => {
         //window.location.href = "/TimbreVisualization";
         setRepeatsIterator(!repeatsIterator);
+        console.log("clicked")
+      };
+      const handleRepeatLayersMouseOver = () => {
+        console.log("im on the button")
+        setShowRepetitionMessage(true);
+      };
+      const handleRepeatLayersMouseLeave = () => {
+        console.log("bye button")
+        setShowRepetitionMessage(false);
       };
       repeatLayersButton.addEventListener("click", handleRepeatLayersButtonClick);
+      repeatLayersButton.addEventListener("mousemove", handleRepeatLayersMouseOver);
+      repeatLayersButton.addEventListener("mouseout", handleRepeatLayersMouseLeave);
       //--------------------------------------------------------------------------------
 
 
@@ -255,6 +282,8 @@ const ProgressPlayFile = (props) => {
       return () => {
         recordButton.removeEventListener("click", handleRecordButtonClick);
         repeatLayersButton.removeEventListener("click", handleRepeatLayersButtonClick);
+        repeatLayersButton.removeEventListener("mouseover", handleRepeatLayersMouseOver);
+        repeatLayersButton.removeEventListener("mouseleave", handleRepeatLayersMouseLeave);
         resetButton.removeEventListener("click", handleResetButtonClick);
         playButton.removeEventListener("click", handlePlayButtonClick);
       }
@@ -371,7 +400,7 @@ const ProgressPlayFile = (props) => {
         playButton.removeEventListener("click", handlePlayButtonClick);
       }
     };
-  }, [recordVol, zoom, recordActive, pitchValue, repeatsIterator, practiceMode, recordMode]);
+  }, [recordVol, zoom, recordActive, pitchValue, repeatsIterator, practiceMode, recordMode, showRepetitionMessage]);
 
   return (
     
@@ -392,15 +421,18 @@ const ProgressPlayFile = (props) => {
         recordVol={recordVol}
         isResetButtonPressed={isResetButtonPressed}
         repeatsIterator={repeatsIterator}
+        showRepeatsInfo={handleReceiveRepetitionInfo}
         onResetDone={onResetDone}
         cursorActivity={handleFinishedCursorOSMDCallback}
         mode={practiceMode}
       />
       {showTimer ? (<CountdownTimer bpm={bpmChange} mode={practiceMode}  onComplete={() => setFinishedTimer(true)} />):(null)}
-
+      {(showRepetitionMessage&&<SimpleMessaje message={repetitionMessage}/>)}
       {(practiceMode ===true && recordMode===false)?<ControlBar 
         cursorFinished={cursorFinished} cursorFinishedCallback={handleFinishedCursorControlBarCallback}
       /> : <ControlBarRecord/>}
+
+      
       
         
       
