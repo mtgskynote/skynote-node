@@ -1,7 +1,7 @@
 // opensheetmusicdisplay.js
 // necessary imports
-import React, { Component, useRef } from "react";
-import { OpenSheetMusicDisplay as OSMD, RepetitionInstruction } from "opensheetmusicdisplay";
+import React, { Component } from "react";
+import { OpenSheetMusicDisplay as OSMD } from "opensheetmusicdisplay"; //RepetitionInstruction
 import {
   PlaybackManager,
   LinearTimingSource,
@@ -174,7 +174,6 @@ class OpenSheetMusicDisplay extends Component {
       colorNotes:[],
       initialCursorTop: 0,
       initialCursorLeft: 0,
-      currentNoteinScorePitch: null,
       currentGNoteinScorePitch: null,
       
       
@@ -442,7 +441,6 @@ class OpenSheetMusicDisplay extends Component {
         this.noteColor="#000000"
       }
       //Update new vales for future comparisons
-      this.setState({ currentNoteinScorePitch: notePitch });
       this.setState({ currentGNoteinScorePitch: gNote });
     }
   
@@ -595,7 +593,6 @@ class OpenSheetMusicDisplay extends Component {
 
         //Calculate Y coordinate ///////////////////////////////
         const newPitchMIDI= freq2midipitch(this.props.pitch[this.props.pitch.length-1]); //played note
-        const currentNoteinScorePitchMIDI= freq2midipitch(this.state.currentNoteinScorePitch); //note under cursor
         const midiToStaffStep=midi2StaffGaps(newPitchMIDI) //where to locate the played note in the staff with respect to B4(middle line)
         if (midiToStaffStep === 0 || this.props.pitchConfidence[this.props.pitchConfidence.length-1]<0.5) { //
           //Color turns white/invisible when pitch is out of bounds or pitch confidence is below 0.5

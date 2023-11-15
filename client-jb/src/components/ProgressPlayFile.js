@@ -5,7 +5,7 @@ import ControlBar from "./ControlBar.js";
 import ControlBarRecord from "./ControlBarRecord.js";
 import { makeAudioStreamer } from "./audioStreamer.js";
 import CountdownTimer from "./MetronomeCountDown.js";
-import { log } from "@tensorflow/tfjs";
+//import { log } from "@tensorflow/tfjs";
 import ModeToggle from "./ModeToggle.js";
 
 const folderBasePath = "/xmlScores/violin";
@@ -13,8 +13,8 @@ const folderBasePath = "/xmlScores/violin";
 const ProgressPlayFile = (props) => {
   const params = useParams();
 
-  const cursorRef = React.useRef(null);
-  const playbackRef = React.useRef(null);
+  const cursorRef = useRef(null);
+  const playbackRef = useRef(null);
 
   const [metroVol, setMetroVol] = useState(0);
   const [bpmChange, setBpm] = useState(100);
@@ -204,8 +204,8 @@ const ProgressPlayFile = (props) => {
       const handlePlayButtonClick = () => {
         console.log("playyyyy")
         const playbackManager = playbackRef.current;
-        const cursor = cursorRef.current;
-        const currentTime = cursor.Iterator.currentTimeStamp;
+        //const cursor = cursorRef.current;
+        //const currentTime = cursor.Iterator.currentTimeStamp;
         
         if (playbackManager.isPlaying) {
           playbackManager.pause();
@@ -316,8 +316,8 @@ const ProgressPlayFile = (props) => {
       const handlePlayButtonClick = () => {
         console.log("playyyyy")
         const playbackManager = playbackRef.current;
-        const cursor = cursorRef.current;
-        const currentTime = cursor.Iterator.currentTimeStamp;
+        //const cursor = cursorRef.current;
+        //const currentTime = cursor.Iterator.currentTimeStamp;
         
         if (playbackManager.isPlaying) {
           playbackManager.pause();
