@@ -7,6 +7,7 @@ import {
   LinearTimingSource,
   BasicAudioPlayer,
   IAudioMetronomePlayer,
+  IPlaybackListener,
 } from "opensheetmusicdisplay";
 
 import LineChart from "./LineChartOSMD";
@@ -195,7 +196,7 @@ class OpenSheetMusicDisplay extends Component {
     this.totalReps=0;
     this.showingRep=0;
   }
-
+  //this.IPlaybackListener=new IPlaybackListener()
   
   // defining the playback manager for playing music and cursor controls
   // you first define and then initialize the playback manager
@@ -207,6 +208,16 @@ class OpenSheetMusicDisplay extends Component {
       new BasicAudioPlayer(),
       undefined
     );
+    /*var myListener = {
+      selectionEndReached: function(o) { console.log("end") },
+      resetOccurred: function(o) {},
+      cursorPositionChanged: function(timestamp, data) {},
+      pauseOccurred: function(o) {console.log("pause")},
+      notesPlaybackEventOccurred: function(o) {}
+    };
+    osmd.PlaybackManager.addListener(myListener);*/
+
+
     this.playbackManager.DoPlayback = true;
     this.playbackManager.DoPreCount = false;
     this.playbackManager.PreCountMeasures = 1;
@@ -299,7 +310,8 @@ class OpenSheetMusicDisplay extends Component {
   //function to check cursor change
   checkCursorChange = () => {
     const cursorCurrent=this.osmd.cursor.Iterator.currentTimeStamp.RealValue;
-
+    //console.log(cursorCurrent, this.osmd.PlaybackManager.CursorIterator.EndReached, this.osmd, this.osmd.PlaybackManager.isPlaying)
+    //console.log(this.osmd.playbackManager.myListener) ///////AMAIA CHECK THIS MONDAY
     //if recording active
     if (this.props.startPitchTrack){
 
