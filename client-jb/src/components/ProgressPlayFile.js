@@ -8,6 +8,7 @@ import CountdownTimer from "./MetronomeCountDown.js";
 import SimpleMessaje from "./AnyMessage.js"
 //import { log } from "@tensorflow/tfjs";
 import ModeToggle from "./ModeToggle.js";
+import PopUpWindow from "./PopUpWindow.js";
 
 const folderBasePath = "/xmlScores/violin";
 
@@ -43,6 +44,7 @@ const ProgressPlayFile = (props) => {
   const[repetitionMessage, setRepetitionMessage]=useState("No stored recordings yet");
 
   const[cursorFinished, setCursorFinished] = useState(false);
+  const[showPopUpWindow, setShowPopUpWindow]= useState(false);
 
   const [practiceMode, setPracticeMode] = useState(true);
   const [recordMode, setRecordMode] = useState(false);
@@ -67,7 +69,6 @@ const ProgressPlayFile = (props) => {
 
       //Send info to ControlBar--> true cursor finished
       setCursorFinished(true);
-
       //"Reset" funcionalities
       //No recording
       audioStreamer.close()
@@ -75,19 +76,24 @@ const ProgressPlayFile = (props) => {
       const playbackManager = playbackRef.current;
       //const cursor = cursorRef.current;
       playbackManager.pause();
-      playbackManager.setPlaybackStart(0);
+      //playbackManager.setPlaybackStart(0);
       //playbackManager.reset();
       //cursor.reset();
       setStartPitchTrack(false);
       setRecordActive(true) //Set to true, just like the initial state
     }
   };
+  
   const handleFinishedCursorControlBarCallback = (controlBarFinishedCursor) => {
     if (controlBarFinishedCursor===false){//ControlBar already took cursor finishing actions
       
       //Update value, ready for new cursor finishings--> false cursor finished
       setCursorFinished(false);
       console.log("cursor finished work done")
+
+      if(recordMode){//record mode active, ask to save or delete recording
+        handleSaveDeleteWindowPopUp(true); //call popup window save/delete
+      }
     }
   };
   // Define recording stop when cursor finishes callback function
@@ -98,10 +104,42 @@ const ProgressPlayFile = (props) => {
     if(totalRep===0){
       setRepetitionMessage("No recordings yet")
     }else{
-      const message_aux="Seeing "+ showingRep + " of "+ totalRep
+      const message_aux="Seeing "+ (showingRep+1) + " of "+ (totalRep+1)
       setRepetitionMessage(message_aux)
     }
   };
+  //save/delete recording when cursor finishes or when recording is stopped
+  const handleSaveDeleteWindowPopUp=(windowShow, answer)=>{
+      if(windowShow){ //recording stopped or cursor finished --> pop up window
+        setShowPopUpWindow(true);
+      }else{ //user already choose save or delete options --> hide window
+        //hide pop-up window
+        setShowPopUpWindow(false)
+        //Do like a reset:
+        audioStreamer.close()
+        const playbackManager = playbackRef.current;
+        const cursor = cursorRef.current;
+        playbackManager.pause();
+        playbackManager.setPlaybackStart(0);
+        playbackManager.reset();
+        cursor.reset();
+        setStartPitchTrack(false);
+        setShowPitchTrack(false)
+        setRecordActive(true) //Set to true, just like the initial state
+        //Depending on answer save or delete:
+        if(answer==="delete"){
+          console.log("received delete answer")
+          setIsResetButtonPressed(true);
+          setPitch([])
+          setConfidence([])
+        }else if(answer==="save"){
+          console.log("received save answer")
+        }
+        
+        
+      }
+      
+  }
 
   var audioStreamer = makeAudioStreamer(handlePitchCallback);
   
@@ -127,7 +165,7 @@ const ProgressPlayFile = (props) => {
     setFinishedTimer(false)
   }, [finishedTimer]);
 
-  //Most important, handles basically any change
+  //Changing mode practice/record handler
   useEffect(() => {
 
     // PRACTICE MODE BUTTON -------------------------------------------------------------
@@ -156,12 +194,10 @@ const ProgressPlayFile = (props) => {
     };
   }, [practiceMode, recordMode]);
 
-  //Most important, handles basically any change
+  //Handles basically any change
   useEffect(() => {
 
-    //--------------------------------------------------------------------------------
-    //audioStreamer.init();
-    //--------------------------------------------------------------------------------
+    console.log(showPopUpWindow)
 
     if(practiceMode===true){ //Practice Mode
       
@@ -194,6 +230,7 @@ const ProgressPlayFile = (props) => {
       // RESET BUTTON ------------------------------------------------------------------
       const resetButton = document.getElementById("reset");
       const handleResetButtonClick = () => {
+        setShowPopUpWindow(false)
         audioStreamer.close()
         setIsResetButtonPressed(true);
         const playbackManager = playbackRef.current;
@@ -208,6 +245,7 @@ const ProgressPlayFile = (props) => {
         setPitch([])
         setConfidence([])
         setRecordActive(true) //Set to true, just like the initial state
+        
       };
 
       resetButton.addEventListener("click", handleResetButtonClick);
@@ -257,14 +295,11 @@ const ProgressPlayFile = (props) => {
       const handleRepeatLayersButtonClick = () => {
         //window.location.href = "/TimbreVisualization";
         setRepeatsIterator(!repeatsIterator);
-        console.log("clicked")
       };
       const handleRepeatLayersMouseOver = () => {
-        console.log("im on the button")
         setShowRepetitionMessage(true);
       };
       const handleRepeatLayersMouseLeave = () => {
-        console.log("bye button")
         setShowRepetitionMessage(false);
       };
       repeatLayersButton.addEventListener("click", handleRepeatLayersButtonClick);
@@ -289,7 +324,9 @@ const ProgressPlayFile = (props) => {
       }
     }else if(recordMode===true){//Record Mode
       
+      //get maximum number of repetitions
       
+
       // RECORD BUTTON -----------------------------------------------------------------
       const recordButton = document.getElementById("record/stopRecording");
       const handleRecordButtonClick = () => {
@@ -310,6 +347,7 @@ const ProgressPlayFile = (props) => {
           //Pause file and therefore, cursor
           const playbackManager = playbackRef.current;
           playbackManager.pause();
+          handleSaveDeleteWindowPopUp(true); //call save/delete popup window
         }
       };
 
@@ -319,6 +357,7 @@ const ProgressPlayFile = (props) => {
       // RESET BUTTON ------------------------------------------------------------------
       const resetButton = document.getElementById("reset");
       const handleResetButtonClick = () => {
+        setShowPopUpWindow(false)
         audioStreamer.close()
         setIsResetButtonPressed(true);
         const playbackManager = playbackRef.current;
@@ -333,6 +372,7 @@ const ProgressPlayFile = (props) => {
         setPitch([])
         setConfidence([])
         setRecordActive(true) //Set to true, just like the initial state
+        
       };
 
       resetButton.addEventListener("click", handleResetButtonClick);
@@ -383,7 +423,15 @@ const ProgressPlayFile = (props) => {
         //window.location.href = "/TimbreVisualization";
         setRepeatsIterator(!repeatsIterator);
       };
+      const handleRepeatLayersMouseOver = () => {
+        setShowRepetitionMessage(true);
+      };
+      const handleRepeatLayersMouseLeave = () => {
+        setShowRepetitionMessage(false);
+      };
       repeatLayersButton.addEventListener("click", handleRepeatLayersButtonClick);
+      repeatLayersButton.addEventListener("mousemove", handleRepeatLayersMouseOver);
+      repeatLayersButton.addEventListener("mouseout", handleRepeatLayersMouseLeave);
       //--------------------------------------------------------------------------------
 
 
@@ -405,6 +453,8 @@ const ProgressPlayFile = (props) => {
   return (
     
     <div>
+      {(showRepetitionMessage&&<SimpleMessaje message={repetitionMessage}/>)}
+
       <OpenSheetMusicDisplay
         file={`${folderBasePath}/${params.files}`}
         autoResize={true}
@@ -427,11 +477,13 @@ const ProgressPlayFile = (props) => {
         mode={practiceMode}
       />
       {showTimer ? (<CountdownTimer bpm={bpmChange} mode={practiceMode}  onComplete={() => setFinishedTimer(true)} />):(null)}
-      {(showRepetitionMessage&&<SimpleMessaje message={repetitionMessage}/>)}
+      
       {(practiceMode ===true && recordMode===false)?<ControlBar 
         cursorFinished={cursorFinished} cursorFinishedCallback={handleFinishedCursorControlBarCallback}
-      /> : <ControlBarRecord/>}
+      /> : <ControlBarRecord cursorFinished={cursorFinished} cursorFinishedCallback={handleFinishedCursorControlBarCallback}/>}
 
+
+      {(showPopUpWindow && <PopUpWindow showWindow={showPopUpWindow} handlerBack={handleSaveDeleteWindowPopUp}/>)}
       
       
         
