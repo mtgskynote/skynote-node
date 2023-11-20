@@ -16,6 +16,7 @@ const Message = (props) => {
     padding: "1", // No fixed padding
     margin: "0px",
     width: "fit-content",
+    position:"fixed",
   };
 
   const Message = (
