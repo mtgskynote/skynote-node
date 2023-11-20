@@ -19,6 +19,7 @@ import {
   faMagnifyingGlassMinus,
   faWater,
   faGear,
+  faBookmark,
 } from "@fortawesome/free-solid-svg-icons";
 
 const ControlBarRecord = (props) => {
@@ -109,6 +110,11 @@ const ControlBarRecord = (props) => {
     // None
   };
 
+   //Saved recordings button
+   const handleSaveRecordings = (event) => {
+    // None
+  };
+
   //Generate data to generate buttons
   const titles = [
     "reset",
@@ -116,11 +122,13 @@ const ControlBarRecord = (props) => {
     "record/stopRecording",
     "switchRepetition",
     "settings",
+    "saved"
   ];
   const icons = [
     faUndoAlt,
     faPlay,
     faBullseye,
+    faBookmark,
     faWater,
     faGear,
   ];
@@ -128,8 +136,9 @@ const ControlBarRecord = (props) => {
     handleResetChange,
     handlePlayPause,
     handleRecord,
+    handleSaveRecordings,
     handleRepeatLayers,
-    handleToggleSettings
+    handleToggleSettings,
   ]
 
   const ControlBarRecord = (
