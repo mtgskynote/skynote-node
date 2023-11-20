@@ -1,0 +1,35 @@
+.popUpWindow {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 400px;
+    max-width: 80%;
+    background: white;
+    border: 2px solid #A3CD8F;
+    border-radius: 8px;
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.2);
+    z-index: 1000;
+    text-align: center; /* Center text within the container */
+  }
+  
+  .content {
+    padding: 20px;
+  }
+  
+  /* Style the buttons */
+  button {
+    margin: 10px 5px;
+    padding: 10px 20px;
+    cursor: pointer;
+    background-color: #A3CD8F;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    font-size: 14px;
+  }
+  
+  button:hover {
+    background-color: #A3CD8F;
+  }
+  
