@@ -195,6 +195,7 @@ class OpenSheetMusicDisplay extends Component {
     this.zoom=props.zoom;
     this.totalReps=0;
     this.showingRep=0;
+    this.selectionEndReached=false;
   }
   //this.IPlaybackListener=new IPlaybackListener()
   
@@ -208,15 +209,19 @@ class OpenSheetMusicDisplay extends Component {
       new BasicAudioPlayer(),
       undefined
     );
-    /*var myListener = {
-      selectionEndReached: function(o) { console.log("end") },
+    const handleSelectionEndReached = (o) => {
+      console.log('end');
+      // Update the flag when the event occurs
+      this.selectionEndReached=true;
+    };
+    var myListener = {
+      selectionEndReached: handleSelectionEndReached,
       resetOccurred: function(o) {},
       cursorPositionChanged: function(timestamp, data) {},
       pauseOccurred: function(o) {console.log("pause")},
       notesPlaybackEventOccurred: function(o) {}
     };
-    osmd.PlaybackManager.addListener(myListener);*/
-
+    this.playbackManager.addListener(myListener);
 
     this.playbackManager.DoPlayback = true;
     this.playbackManager.DoPreCount = false;
@@ -310,10 +315,15 @@ class OpenSheetMusicDisplay extends Component {
   //function to check cursor change
   checkCursorChange = () => {
     const cursorCurrent=this.osmd.cursor.Iterator.currentTimeStamp.RealValue;
-    //console.log(cursorCurrent, this.osmd.PlaybackManager.CursorIterator.EndReached, this.osmd, this.osmd.PlaybackManager.isPlaying)
-    //console.log(this.osmd.playbackManager.myListener) ///////AMAIA CHECK THIS MONDAY
     //if recording active
     if (this.props.startPitchTrack){
+
+      // STOP RECORDING WHEN CURSOR REACHES THE END /////////////
+      if(this.selectionEndReached === true){ 
+        this.props.cursorActivity(true);
+        this.previousTimestamp=null;
+        this.selectionEndReached=false; //ready for next time
+      }
 
       //Check for repetitions
       if (this.previousTimestamp > cursorCurrent) {
@@ -321,12 +331,6 @@ class OpenSheetMusicDisplay extends Component {
         this.totalReps++;
         this.showingRep = this.totalReps;
         this.resetNotesColor();
-      }
-
-      // STOP RECORDING WHEN CURSOR REACHES THE END /////////////
-      if(this.osmd.PlaybackManager.CursorIterator.EndReached === true){
-        this.props.cursorActivity(true);
-        this.previousTimestamp=null;
       }
 
       //store timestampfor next iteration
