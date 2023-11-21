@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useRef } from "react";
-import { useParams } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import OpenSheetMusicDisplay from "./OpenSheetMusicDisplay";
 import ControlBar from "./ControlBar.js";
 import ControlBarRecord from "./ControlBarRecord.js";
@@ -48,6 +48,8 @@ const ProgressPlayFile = (props) => {
 
   const [practiceMode, setPracticeMode] = useState(true);
   const [recordMode, setRecordMode] = useState(false);
+
+  const navigate = useNavigate();
 
   const onResetDone = () => {
     setIsResetButtonPressed(false);
@@ -432,6 +434,20 @@ const ProgressPlayFile = (props) => {
       repeatLayersButton.addEventListener("click", handleRepeatLayersButtonClick);
       repeatLayersButton.addEventListener("mousemove", handleRepeatLayersMouseOver);
       repeatLayersButton.addEventListener("mouseout", handleRepeatLayersMouseLeave);*/
+      //--------------------------------------------------------------------------------
+
+      // SWITCH BETWEEN REPETITION/RECORDING LAYERS ------------------------------------
+      const savedButton = document.getElementById("saved");
+      const handleSavedButtonClick = () => {
+        //window.location.href = "/TimbreVisualization";
+        const song = 'YourSong';
+        const typeList = 'single-song';
+
+        // Use navigate to go to the ListRecordings page with parameters in the URL
+        navigate('/ListRecordings', { state: { song, typeList } });
+  
+      };
+      savedButton.addEventListener("click", handleSavedButtonClick);
       //--------------------------------------------------------------------------------
 
 
