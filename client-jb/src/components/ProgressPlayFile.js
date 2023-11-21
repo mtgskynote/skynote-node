@@ -355,7 +355,7 @@ const ProgressPlayFile = (props) => {
       //--------------------------------------------------------------------------------
 
       // RESET BUTTON ------------------------------------------------------------------
-      const resetButton = document.getElementById("reset");
+      /*const resetButton = document.getElementById("reset");
       const handleResetButtonClick = () => {
         setShowPopUpWindow(false)
         audioStreamer.close()
@@ -375,7 +375,7 @@ const ProgressPlayFile = (props) => {
         
       };
 
-      resetButton.addEventListener("click", handleResetButtonClick);
+      resetButton.addEventListener("click", handleResetButtonClick);*/
       //--------------------------------------------------------------------------------
 
       // PLAY/PAUSE BUTTON -------------------------------------------------------------
@@ -418,7 +418,7 @@ const ProgressPlayFile = (props) => {
       //--------------------------------------------------------------------------------
 
       // SWITCH BETWEEN REPETITION/RECORDING LAYERS ------------------------------------
-      const repeatLayersButton = document.getElementById("switchRepetition");
+      /*const repeatLayersButton = document.getElementById("switchRepetition");
       const handleRepeatLayersButtonClick = () => {
         //window.location.href = "/TimbreVisualization";
         setRepeatsIterator(!repeatsIterator);
@@ -431,7 +431,7 @@ const ProgressPlayFile = (props) => {
       };
       repeatLayersButton.addEventListener("click", handleRepeatLayersButtonClick);
       repeatLayersButton.addEventListener("mousemove", handleRepeatLayersMouseOver);
-      repeatLayersButton.addEventListener("mouseout", handleRepeatLayersMouseLeave);
+      repeatLayersButton.addEventListener("mouseout", handleRepeatLayersMouseLeave);*/
       //--------------------------------------------------------------------------------
 
 
@@ -443,8 +443,8 @@ const ProgressPlayFile = (props) => {
     
       return () => {
         recordButton.removeEventListener("click", handleRecordButtonClick);
-        repeatLayersButton.removeEventListener("click", handleRepeatLayersButtonClick);
-        resetButton.removeEventListener("click", handleResetButtonClick);
+        //repeatLayersButton.removeEventListener("click", handleRepeatLayersButtonClick);
+        //resetButton.removeEventListener("click", handleResetButtonClick);
         playButton.removeEventListener("click", handlePlayButtonClick);
       }
     };

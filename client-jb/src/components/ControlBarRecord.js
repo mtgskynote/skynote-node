@@ -41,13 +41,6 @@ const ControlBarRecord = (props) => {
     
   }, [props]);
 
-  /*if (props.cursorFinished !== prevProps.cursorFinished) {
-    //cursor finished the score --> reset button values
-    setIsPlaying(true)
-    setRecordingOff(true)
-  }
-  var prevProps=props; //save*/
-
   //PLAY/PAUSE variable
   const [isPlayingOn, setIsPlaying] = useState(true);
   const handlePlayPause = () => {
@@ -97,19 +90,6 @@ const ControlBarRecord = (props) => {
     // Update the MetroVol state or perform any other necessary actions
   };
 
-  //Reset change
-  const handleResetChange = (event) => {
-    // Handle reset button --> show play button, not pause
-    setIsPlaying(true)
-    setRecordingOff(true)
-    // Update the zoom state or perform any other necessary actions
-  };
-
-  //RepeatLayers button
-  const handleRepeatLayers = (event) => {
-    // None
-  };
-
    //Saved recordings button
    const handleSaveRecordings = (event) => {
     // None
@@ -117,27 +97,21 @@ const ControlBarRecord = (props) => {
 
   //Generate data to generate buttons
   const titles = [
-    "reset",
     "play/pause",
     "record/stopRecording",
     "saved",
-    "switchRepetition",
     "settings",
     ];
   const icons = [
-    faUndoAlt,
     faPlay,
     faBullseye,
     faBookmark,
-    faWater,
     faGear,
   ];
   const handlers = [
-    handleResetChange,
     handlePlayPause,
     handleRecord,
     handleSaveRecordings,
-    handleRepeatLayers,
     handleToggleSettings,
   ]
 
@@ -153,17 +127,12 @@ const ControlBarRecord = (props) => {
                     icon={isPlayingOn ? faPlay : faPause} //Alternate Pause/Play button
                     
                   />
-                ) : icons[i] === faUndoAlt ? ( 
-                  <FontAwesomeIcon
-                    icon={icons[i]}
-                    
-                  />
                 ) : icons[i] === faBullseye ? (
                   <FontAwesomeIcon
                     icon={recordingOff ? faBullseye:faRecordVinyl} //Alternate NotRecoding/Recording button
                     
                   />
-                ): icons[i] === faGear ? (
+                ): icons[i] === faGear ? ( //settings
                   <div>
                     <Dropdown
                       show={isSettingsVisible}
@@ -253,7 +222,7 @@ const ControlBarRecord = (props) => {
                     </Dropdown>
                   </div>
                 ) : (
-                  <FontAwesomeIcon icon={icons[i]} />
+                  <FontAwesomeIcon icon={icons[i]} /> //else: saved recordings
                 )}
               </div>
             </Button>
