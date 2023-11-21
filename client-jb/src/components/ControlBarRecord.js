@@ -120,10 +120,10 @@ const ControlBarRecord = (props) => {
     "reset",
     "play/pause",
     "record/stopRecording",
+    "saved",
     "switchRepetition",
     "settings",
-    "saved"
-  ];
+    ];
   const icons = [
     faUndoAlt,
     faPlay,
