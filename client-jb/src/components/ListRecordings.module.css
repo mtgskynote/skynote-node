@@ -1,0 +1,95 @@
+/* ListRecordings.css */
+
+/*General styling*/
+body {
+    margin: 0;
+    font-family: 'Cabin'; /* You can choose the font you prefer */
+  }
+  
+.container {
+    min-height: 100vh; /* Ensure the container covers the full viewport height */
+    text-align: left;
+    background-color: #FFFFFF;
+    padding: 20px;
+  }
+
+  /*List of songs*/
+  .songlist {
+    background-color: #ffffff;
+    list-style: none;
+    padding: 0;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: left;
+   
+  }
+
+  /*Items of list*/
+  /*.songlist li {
+    padding: 10px;
+    background-color: #8fb0cd;
+    color: #fff;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 14px;    
+  }*/
+  
+  .songelement {  
+    padding: 5px;
+    background-color: #ffffff;
+    color:#435b38;
+    border-radius: 5px;
+    border: 0.2px solid #59b296;
+    box-shadow: 0 0 3px #59b296;
+    flex-basis: calc(23.00% - 0px); /* Adjust the width based on the number of items per row */
+    margin: 10px;
+    text-align:center;
+  }
+
+  
+  /* Media queries for responsiveness */
+  @media (max-width: 900px) {
+    .songlist li {
+      flex-basis: calc(50% - 20px);
+    }
+  }
+  
+  @media (max-width: 600px) {
+    .songlist li {
+      flex-basis: calc(100% - 20px);
+    }
+  }
+  
+  
+  /*Backward button*/
+  .backbutton {
+    margin-top: 20px;
+    padding: 10px 15px;
+    background-color:#A3CD8F;
+    color: #fff;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 16px;
+    width: 10%;
+    align-items:center;
+  }
+  
+  .backbutton:hover {
+    background-color: #435b38;
+  }
+
+  .iconbutton {
+    margin: 4px;
+    padding: 2px;
+    color: #b3b3b3;
+    background-color: #ffffff;
+    cursor: pointer;
+    width: 10%;
+  }
+  .iconbutton:hover {
+    background-color: #d2e8e1;
+  }
+
+  
