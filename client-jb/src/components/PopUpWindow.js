@@ -32,8 +32,8 @@ const PopUpWindow = (props) => {
     <div className={PopUpWindowCSS.popUpWindow}>
         <div className={PopUpWindowCSS.content}>
           <p>Do you want to save or delete this recording?</p>
-          <button onClick={handleSave}>Save</button>
-          <button onClick={handleDelete}>Delete</button>
+          <button className={"saveAnswerButton"} onClick={handleSave}>Save</button>
+          <button className={"deleteAnswerButton"} onClick={handleDelete}>Delete</button>
         </div>
     </div>
   );
