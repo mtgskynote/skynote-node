@@ -1,8 +1,9 @@
 import styled from "styled-components";
 
 const Wrapper = styled.aside`
-  display: none;
-   @media (min-width: 992px) { 
+/* sidebarhell */
+/*  display: none;
+   @media (min-width: 992px) { */
     display: block;
     box-shadow: 1px 0px 0px 0px rgba(0, 0, 0, 0.1);
     .sidebar-container {
@@ -24,7 +25,7 @@ const Wrapper = styled.aside`
     }
 
     .show-sidebar {
-      border: 10px solid #000; 
+      border: 10px solid #F00; 
       margin-left: 0;
       transition: var(--transition);
     }
@@ -90,6 +91,6 @@ const Wrapper = styled.aside`
       padding-top: 10px;
       padding-right: 10px;
     }
-   } 
+/*   }  */
 `;
 export default Wrapper;

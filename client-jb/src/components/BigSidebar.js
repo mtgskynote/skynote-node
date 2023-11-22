@@ -10,13 +10,14 @@ import { Button } from "react-bootstrap";
 
 const BigSidebar = () => {
   const { showSidebar, toggleSidebar, logoutUser } = useAppContext();
-
+  console.log('in BigSideBar.js, about to return the Wrapper ')
   return (
     <Wrapper>
       <div
         // print show sidebar below
-        className={showSidebar ? "sidebar-container" : "show-sidebar"}
+        className={showSidebar ? "sidebar-container" : "sidebar-container"} //"show-sidebar"}
       >
+        THIS IS THE BIG PURPLE SIDEBAR (whether sidelined (wrapper class is sidebar-container) or not (wrapper class is show-sidebar))
         <div className="content">
           <header>
             <Logo width={175} height={75} />

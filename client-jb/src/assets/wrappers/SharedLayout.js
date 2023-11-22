@@ -10,6 +10,8 @@ const Wrapper = styled.section`
     margin: 0 auto;
     padding: 2rem 0;
   }
+
+  /*
   @media (min-width: 992px) {
     .dashboard {
       grid-template-columns: auto 1fr;
@@ -18,5 +20,6 @@ const Wrapper = styled.section`
       width: 100%;
     }
   }
+  */
 `;
 export default Wrapper;
