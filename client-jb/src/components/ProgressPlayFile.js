@@ -440,7 +440,7 @@ const ProgressPlayFile = (props) => {
       const savedButton = document.getElementById("saved");
       const handleSavedButtonClick = () => {
         //window.location.href = "/TimbreVisualization";
-        const song = 'YourSong';
+        const song = `${folderBasePath}/${params.files}`;
         const typeList = 'single-song';
 
         // Use navigate to go to the ListRecordings page with parameters in the URL
