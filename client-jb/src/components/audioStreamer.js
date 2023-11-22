@@ -25,10 +25,14 @@ const audioContext = new AudioContext({
   sampleRate: 22050,
 }); // must be audioContext.resumed()'d by a user before mic will work.
 
+var mediaRecorder = null;
+var audioChunks = [];
+
 var makeAudioStreamer = function (
   pitchCallback,
   pitchVectorCallback,
-  analysisCb
+  analysisCb,
+  hola = "XD",
 ) {
   var audioStreamer = {
     // Create an analyser node to extract amplitude data
@@ -37,7 +41,7 @@ var makeAudioStreamer = function (
     analyzer: null,
     analyzerCb: analysisCb,
 
-    init: function (meydaFeatures = []) {
+    init: function (recordMode, meydaFeatures = []) {
       navigator.mediaDevices
         .getUserMedia({ audio: {
           echoCancellation: false,
@@ -47,6 +51,44 @@ var makeAudioStreamer = function (
           sampleRate: 22050
         } })
         .then(async (stream) => {
+          mediaRecorder = new MediaRecorder(stream);
+          mediaRecorder.ondataavailable = (event) => {
+            if (event.data.size > 0) {
+              audioChunks.push(event.data);
+            }
+          };
+          mediaRecorder.onstop = () => {
+            console.log("Recording completed :)");
+            //THIS PART OF THE CODE CREATES A WAV FILE AND AUTOMATICALLY DOWNLOADS IT, 
+            //WHAT WE WANT IS TO SEND audioChunks AWAY, AND LET THIS BE MANAGED BY
+            //ProgressPlayFile.js
+            /*const audioBlob = new Blob(audioChunks, { type: 'audio/wav' });
+
+            //THIS IS JUST TO GET THE NAME RIGHT
+            const currentDate = new Date();
+            const year = currentDate.getFullYear();
+            const month = (currentDate.getMonth() + 1).toString().padStart(2, '0');
+            const day = currentDate.getDate().toString().padStart(2, '0');
+            const hours = currentDate.getHours().toString().padStart(2, '0');
+            const minutes = currentDate.getMinutes().toString().padStart(2, '0');
+            const seconds = currentDate.getSeconds().toString().padStart(2, '0');
+            const formattedDate = `${year}_${month}_${day}-${hours}_${minutes}_${seconds}.wav`;
+            // Automatically create a link and trigger download
+            const downloadLink = document.createElement('a');
+            downloadLink.href = URL.createObjectURL(audioBlob);
+            downloadLink.download = formattedDate;
+            downloadLink.style.display = 'none';
+            document.body.appendChild(downloadLink);
+            downloadLink.click();
+            document.body.removeChild(downloadLink);*/
+            audioChunks = [];
+          };
+        
+          if (recordMode === true) {
+            mediaRecorder.start();
+            console.log("We're now recording stuff :D");
+          };
+          
           audioContext.resume();
           const sourceNode = audioContext.createMediaStreamSource(stream);
 
@@ -102,9 +144,13 @@ var makeAudioStreamer = function (
         });
     },
     close: function (){
+      mediaRecorder.stop();
       audioContext.suspend();
     },
-
+    save: function(){
+      console.log("SAVING FILE...");
+      console.log("UNDER CONTSTRUCTION :)");
+    },
   };
 
   return audioStreamer;

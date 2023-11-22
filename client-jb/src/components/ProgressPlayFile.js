@@ -118,6 +118,8 @@ const ProgressPlayFile = (props) => {
         //hide pop-up window
         setShowPopUpWindow(false)
         //Do like a reset:
+        audioStreamer.resume()
+        audioStreamer.save()
         audioStreamer.close()
         const playbackManager = playbackRef.current;
         const cursor = cursorRef.current;
@@ -199,8 +201,6 @@ const ProgressPlayFile = (props) => {
   //Handles basically any change
   useEffect(() => {
 
-    console.log(showPopUpWindow)
-
     if(practiceMode===true){ //Practice Mode
       
       // RECORD BUTTON -----------------------------------------------------------------
@@ -211,7 +211,7 @@ const ProgressPlayFile = (props) => {
         setRecordActive(!recordActive)
 
         if (recordActive) { //Recoding is wanted
-          audioStreamer.init()
+          audioStreamer.init(recordMode)
           //setShowPitchTrack(true)
           console.log("Recording started")
           setShowTimer(true) //initialize process of countdown, which will then lead to recording
@@ -337,7 +337,7 @@ const ProgressPlayFile = (props) => {
         setRecordActive(!recordActive)
 
         if (recordActive) { //Recoding is wanted
-          audioStreamer.init()
+          audioStreamer.init(recordMode)
           //setShowPitchTrack(true)
           console.log("Recording started")
           setShowTimer(true) //initialize process of countdown, which will then lead to recording
