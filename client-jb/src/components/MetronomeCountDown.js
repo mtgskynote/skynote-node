@@ -1,13 +1,15 @@
 import React, { useState, useEffect } from 'react';
 
-function CountdownTimer({ bpm, onComplete }) {
+function CountdownTimer({ bpm, mode, onComplete }) {
   const [countDownBeats, setCountDownBeats] = useState(4); // Set the initial countdown time in beats
+
+  const background=mode?'lightblue':"#A3CD8F";
 
   const countdownStyle = {
     display: 'flex',
     justifyContent: 'center', // Center horizontally
-    backgroundColor: 'lightblue',
-    color: 'darkblue',
+    backgroundColor: background,
+    color: '#000000',
     opacity: "60%",
     fontSize: '15vh', // 15% of height of screen
     padding: '1vh', // 1% of height of screen

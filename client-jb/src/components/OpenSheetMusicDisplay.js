@@ -1,12 +1,13 @@
 // opensheetmusicdisplay.js
 // necessary imports
-import React, { Component, useRef } from "react";
-import { OpenSheetMusicDisplay as OSMD, RepetitionInstruction } from "opensheetmusicdisplay";
+import React, { Component } from "react";
+import { OpenSheetMusicDisplay as OSMD } from "opensheetmusicdisplay"; //RepetitionInstruction
 import {
   PlaybackManager,
   LinearTimingSource,
   BasicAudioPlayer,
   IAudioMetronomePlayer,
+  IPlaybackListener,
 } from "opensheetmusicdisplay";
 
 import LineChart from "./LineChartOSMD";
@@ -174,7 +175,6 @@ class OpenSheetMusicDisplay extends Component {
       colorNotes:[],
       initialCursorTop: 0,
       initialCursorLeft: 0,
-      currentNoteinScorePitch: null,
       currentGNoteinScorePitch: null,
       
       
@@ -195,8 +195,9 @@ class OpenSheetMusicDisplay extends Component {
     this.zoom=props.zoom;
     this.totalReps=0;
     this.showingRep=0;
+    this.selectionEndReached=false;
   }
-
+  //this.IPlaybackListener=new IPlaybackListener()
   
   // defining the playback manager for playing music and cursor controls
   // you first define and then initialize the playback manager
@@ -208,6 +209,20 @@ class OpenSheetMusicDisplay extends Component {
       new BasicAudioPlayer(),
       undefined
     );
+    const handleSelectionEndReached = (o) => {
+      console.log('end');
+      // Update the flag when the event occurs
+      this.selectionEndReached=true;
+    };
+    var myListener = {
+      selectionEndReached: handleSelectionEndReached,
+      resetOccurred: function(o) {},
+      cursorPositionChanged: function(timestamp, data) {},
+      pauseOccurred: function(o) {console.log("pause")},
+      notesPlaybackEventOccurred: function(o) {}
+    };
+    this.playbackManager.addListener(myListener);
+
     this.playbackManager.DoPlayback = true;
     this.playbackManager.DoPreCount = false;
     this.playbackManager.PreCountMeasures = 1;
@@ -242,13 +257,14 @@ class OpenSheetMusicDisplay extends Component {
       followCursor:
         this.props.followCursor !== undefined ? this.props.followCursor : true,
     };
-
     // define a new class instance of opensheetmusicdisplay
     this.osmd = new OSMD(this.divRef.current, options);
 
     //define the osmd features to be included
     this.osmd.load(this.props.file).then(() => {
       if (this.osmd.Sheet) {
+        this.osmd.render();
+        this.osmd.cursor.CursorOptions.color="#add8e6";
         this.osmd.render();
         const cursor = this.osmd.cursor;
         this.props.cursorRef.current = cursor;
@@ -299,9 +315,15 @@ class OpenSheetMusicDisplay extends Component {
   //function to check cursor change
   checkCursorChange = () => {
     const cursorCurrent=this.osmd.cursor.Iterator.currentTimeStamp.RealValue;
-
     //if recording active
     if (this.props.startPitchTrack){
+
+      // STOP RECORDING WHEN CURSOR REACHES THE END /////////////
+      if(this.selectionEndReached === true){ 
+        this.props.cursorActivity(true);
+        this.previousTimestamp=null;
+        this.selectionEndReached=false; //ready for next time
+      }
 
       //Check for repetitions
       if (this.previousTimestamp > cursorCurrent) {
@@ -309,12 +331,6 @@ class OpenSheetMusicDisplay extends Component {
         this.totalReps++;
         this.showingRep = this.totalReps;
         this.resetNotesColor();
-      }
-
-      // STOP RECORDING WHEN CURSOR REACHES THE END /////////////
-      if(this.osmd.PlaybackManager.CursorIterator.EndReached === true){
-        this.props.cursorActivity(true);
-        this.previousTimestamp=null;
       }
 
       //store timestampfor next iteration
@@ -441,7 +457,6 @@ class OpenSheetMusicDisplay extends Component {
         this.noteColor="#000000"
       }
       //Update new vales for future comparisons
-      this.setState({ currentNoteinScorePitch: notePitch });
       this.setState({ currentGNoteinScorePitch: gNote });
     }
   
@@ -479,6 +494,17 @@ class OpenSheetMusicDisplay extends Component {
   };
 
   componentDidUpdate(prevProps) {
+
+  //mode changed
+    if (this.props.mode !== prevProps.mode) { 
+      if(this.props.mode){ //practice mode
+        this.osmd.cursor.CursorOptions.color="#add8e6"
+        this.osmd.render()
+      }else{ //record mode
+        this.osmd.cursor.CursorOptions.color="#a3cd8f"
+        this.osmd.render()
+      }
+    }
 
     const container = document.getElementById('osmdSvgPage1');
     this.coords=[container.getBoundingClientRect().width,container.getBoundingClientRect().height];
@@ -530,6 +556,7 @@ class OpenSheetMusicDisplay extends Component {
       } else {
         this.showingRep = 0;
       }
+      this.props.showRepeatsInfo(this.showingRep, this.totalReps);
       this.resetNotesColor();
       //Update color of notes
       let staves = this.osmd.graphic.measureList;
@@ -583,7 +610,6 @@ class OpenSheetMusicDisplay extends Component {
 
         //Calculate Y coordinate ///////////////////////////////
         const newPitchMIDI= freq2midipitch(this.props.pitch[this.props.pitch.length-1]); //played note
-        const currentNoteinScorePitchMIDI= freq2midipitch(this.state.currentNoteinScorePitch); //note under cursor
         const midiToStaffStep=midi2StaffGaps(newPitchMIDI) //where to locate the played note in the staff with respect to B4(middle line)
         if (midiToStaffStep === 0 || this.props.pitchConfidence[this.props.pitchConfidence.length-1]<0.5) { //
           //Color turns white/invisible when pitch is out of bounds or pitch confidence is below 0.5
@@ -673,6 +699,9 @@ class OpenSheetMusicDisplay extends Component {
       this.setState({ pitchColor: [] })
       this.setState({ repetitionNumber: []})
       this.resetNotesColor();
+      this.showingRep=0;
+      this.totalReps=0;
+      this.props.showRepeatsInfo(0,0)
       this.props.onResetDone(); // call the function passed from the parent component
     }
 

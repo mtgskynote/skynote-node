@@ -12,6 +12,7 @@ import LevelThree from "./components/levels/LevelThree";
 import ErrorBoundary from "./components/ErrorBoundary";
 
 import TimbreVisualization from "./components/TimbreVisualization";
+import ListRecordings from "./components/ListRecordings";
 
 function App() {
   return (
@@ -43,7 +44,7 @@ function App() {
                   element={<TimbreVisualization />}
                 />
               </Route>
-
+              <Route path="/ListRecordings" element={<ListRecordings />} />
               <Route path="/register" element={<Register />} />
               <Route path="/ourteam" element={<OurTeam />} />
               <Route path="/research" element={<Research />} />
