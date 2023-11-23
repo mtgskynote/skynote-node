@@ -1,11 +1,11 @@
-import MainMenu from "../../components/MainMenu";
-
 
 const Profile = () => {
   return (
     <div>
-      <MainMenu></MainMenu>
-      <h1>Profile Page</h1>;
+
+      <div  align="center">
+      <h1 >Profile Page</h1>;
+      </div>
     </div>
   
   )

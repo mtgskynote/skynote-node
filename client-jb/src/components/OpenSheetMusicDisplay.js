@@ -692,8 +692,8 @@ class OpenSheetMusicDisplay extends Component {
     //const { isResetButtonPressed } = this.state;
 
     const lineChartStyle = {
-      position: "absolute",
-      pointerEvents: "none",
+      position: "absolute", 
+      pointerEvents: "none", 
     };
 
     return (

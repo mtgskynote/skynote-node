@@ -414,6 +414,7 @@ const AllLessons = () => {
   };
 
   useEffect(() => {
+    console.log("allLessons useEffect")
     fetchAllData().then((data) => {
       setFetchedData(data);
     });

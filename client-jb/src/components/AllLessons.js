@@ -154,7 +154,7 @@ const AllLessons = () => {
 
   return (
     <>
-      <div>
+      <div align="center">
         <h1>All Lessons</h1>
       </div>
       <Box sx={sxStyles}>
