@@ -117,6 +117,15 @@ const ProgressPlayFile = (props) => {
       }else{ //user already choose save or delete options --> hide window
         //hide pop-up window
         setShowPopUpWindow(false)
+        //Depending on answer save or delete:
+        if(answer==="delete"){
+          console.log("received delete answer")
+          setIsResetButtonPressed(true);
+          setPitch([])
+          setConfidence([])
+        }else if(answer==="save"){
+          console.log("received save answer")
+        }
         //Do like a reset:
         //audioStreamer.resume()
         //audioStreamer.save()
@@ -130,15 +139,7 @@ const ProgressPlayFile = (props) => {
         setStartPitchTrack(false);
         setShowPitchTrack(false)
         setRecordActive(true) //Set to true, just like the initial state
-        //Depending on answer save or delete:
-        if(answer==="delete"){
-          console.log("received delete answer")
-          setIsResetButtonPressed(true);
-          setPitch([])
-          setConfidence([])
-        }else if(answer==="save"){
-          console.log("received save answer")
-        }
+        
         
         
       }
