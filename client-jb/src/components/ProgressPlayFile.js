@@ -118,8 +118,8 @@ const ProgressPlayFile = (props) => {
         //hide pop-up window
         setShowPopUpWindow(false)
         //Do like a reset:
-        audioStreamer.resume()
-        audioStreamer.save()
+        //audioStreamer.resume()
+        //audioStreamer.save()
         audioStreamer.close()
         const playbackManager = playbackRef.current;
         const cursor = cursorRef.current;
