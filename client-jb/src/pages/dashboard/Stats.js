@@ -137,7 +137,7 @@ const Stats = () => {
             </div>
           </Grid>
           <Grid item xs={12}>
-            <div className="grid-tile">Tile 3</div>
+            <div className="grid-tile">Plceholder</div>
           </Grid>
         </Grid>
       </>
