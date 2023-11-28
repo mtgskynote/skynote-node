@@ -151,7 +151,7 @@ var makeAudioStreamer = function (
       //audioContext.suspend();
     },
     close_not_save: function (){
-      mediaRecorder.stop();
+      //mediaRecorder.stop();
       audioContext.suspend();
     },
     close_maybe_save: function (){
