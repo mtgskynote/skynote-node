@@ -1,9 +1,10 @@
 import styled from 'styled-components'
 
 const Wrapper = styled.aside`
-  @media (min-width: 992px) {
+  /* sidebarhell */
+  /* @media (min-width: 992px) {
     display: none;
-  }
+  } */
   .sidebar-container {
     position: fixed;
     inset: 0;
@@ -16,11 +17,13 @@ const Wrapper = styled.aside`
     transition: var(--transition);
   }
   .show-sidebar {
+    border: 10px solid #0F0; 
     z-index: 99;
     opacity: 1;
   }
   .content {
-    background: var(--white);
+    /* background: var(--white); */
+    background: #AFA;
     width: var(--fluid-width);
     height: 95vh;
     border-radius: var(--borderRadius);

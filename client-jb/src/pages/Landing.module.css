@@ -1,0 +1,13 @@
+.creditscontainer {
+    position: relative;
+    font-size: small;
+    border: 1px solid black; 
+    width:100%; /* width of the pitch image we contain, plus the border */
+    text-align: center;
+}
+
+.creditsimg {
+    width: 16%; /* Adjust the width as needed */
+    padding: 10px; /* Adjust the padding as needed */
+
+  }

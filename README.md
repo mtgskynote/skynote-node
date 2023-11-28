@@ -57,8 +57,8 @@ NOTE THAT: You dont need to always build osmd-extended from scratch, since we on
 a) Clone the OSMD-Extended repository: https://github.com/opensheetmusicdisplay/osmd-extended in a separate directory
 
 b) To build the minified version go to your clone directory and run in your terminal:
-cd "cloned directory path"
-npm run build
+cd "cloned directory path"  then  
+npm install  
 
 You will find a minified opensheetmusicdisplay.min.js in the build/ folder. If you want to test the official version of osmd-extended provided by the developers of OSMD, you can also run the local demo of osmd-extended by using the command: npm start
 
@@ -74,7 +74,7 @@ ii) then go to your skynote-node/client-jb folder and in your package.json file 
         replace:
 
         "dependencies": {
-            "opensheetmusicdisplay": "^0.6.8",
+            "opensheetmusicdisplay": "^1.8.3",
         }
 
         with:
@@ -92,13 +92,13 @@ a) Get the the zipped version of 'opensheetmusicdisplay.zip' available in skynot
 b) Replace the opensheetmusicdisplay dependency in package.json with:
 
         "dependencies": {
-            "opensheetmusicdisplay": "^0.6.8",
+            "opensheetmusicdisplay": "^1.8.0",
         }
 
         with:
 
         “dependencies”: {
-            "opensheetmusicdisplay”: “file:opensheetmusicdisplay.min.js",
+            "opensheetmusicdisplay”: "file:opensheetmusicdisplay.min.js",
         }
 
 c) Then go to the "build/" folder you got after unzipping, copy it and paste it in your Node modules folder under the skynote-node/client-jb/node-modules/opensheetmusicdisplay/.

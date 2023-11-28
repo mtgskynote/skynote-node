@@ -1,0 +1,42 @@
+.dropdown {
+    display: inline-block;
+    position: absolute;
+  }
+
+  /* Style the dropdown button (label) */
+  .dropbtn {
+    background-color: #23292B; 
+    font-family: var(--lato);
+    color: var(--blue-300);
+    padding: 10px;
+    cursor: pointer;
+  }
+
+
+  /* Hide the checkbox boxinput */
+  .dropdown_toggle {
+    display: none;
+  }
+
+  .dropdown_content {
+    display: none;
+    background-color: #23292B; 
+    position: absolute;
+    left: 2em;
+    width: 14em;
+    color: white;
+    border: blue 4px solid; 
+    z-index: 100;
+    border-radius: 4%;
+  }
+
+  .dropdown_content a {
+    color: var(--blue-300);
+    text-decoration: none;
+  }
+
+  /* Show the dropdown content when checkbox is checked */
+  .dropdown_toggle:checked + .dropbtn + .dropdown_content {
+    display: block;
+  }
+

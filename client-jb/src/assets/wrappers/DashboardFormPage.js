@@ -45,6 +45,7 @@ const Wrapper = styled.section`
   .clear-btn:hover {
     background: var(--black);
   }
+  /*
   @media (min-width: 992px) {
     .form-center {
       grid-template-columns: 1fr 1fr;
@@ -63,6 +64,7 @@ const Wrapper = styled.section`
       margin-top: 0;
     }
   }
+*/
 `
 
 export default Wrapper

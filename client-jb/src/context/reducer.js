@@ -56,6 +56,7 @@ const reducer = (state, action) => {
   }
 
   if (action.type === TOGGLE_SIDEBAR) {
+    console.log(`will switch showSidebar to ${!state.showSidebar}`)
     return { ...state, showSidebar: !state.showSidebar };
   }
 
