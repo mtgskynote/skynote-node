@@ -200,6 +200,20 @@ const ProgressPlayFile = (props) => {
     const handleRecordModeButtonClick = () => {
       setPracticeMode(false);
       setRecordMode(true);
+
+      //Do like a reset:
+      setIsResetButtonPressed(true);
+      setPitch([])
+      setConfidence([])
+      const playbackManager = playbackRef.current;
+      const cursor = cursorRef.current;
+      playbackManager.pause();
+      playbackManager.setPlaybackStart(0);
+      playbackManager.reset();
+      cursor.reset();
+      setStartPitchTrack(false);
+      setShowPitchTrack(false)
+      setRecordActive(true) //Set to true, just like the initial state
       
     };
    recordModeButton.addEventListener("click", handleRecordModeButtonClick);
