@@ -81,7 +81,7 @@ var makeAudioStreamer = function (
             document.body.appendChild(downloadLink);
             downloadLink.click();
             document.body.removeChild(downloadLink);*/
-            audioChunks = [];
+            //audioChunks = [];
           };
         
           if (recordMode === true) {
@@ -144,12 +144,50 @@ var makeAudioStreamer = function (
         });
     },
     close: function (){
+      console.log("audiochunks", audioChunks)
+      mediaRecorder.stop();
+      console.log("audiochunks", audioChunks)
+      
+      //audioContext.suspend();
+    },
+    close_not_save: function (){
       mediaRecorder.stop();
       audioContext.suspend();
     },
-    save: function(){
-      console.log("SAVING FILE...");
-      console.log("UNDER CONTSTRUCTION :)");
+    close_maybe_save: function (){
+      mediaRecorder.stop();
+      //audioContext.suspend();
+    },
+    save_or_not: function(answer, song_name){
+
+      if(answer==="save"){
+        //THIS PART OF THE CODE CREATES A WAV FILE AND AUTOMATICALLY DOWNLOADS IT, 
+        //WHAT WE WANT IS TO SEND audioChunks AWAY, AND LET THIS BE MANAGED BY
+        //ProgressPlayFile.js
+        const audioBlob = new Blob(audioChunks, { type: 'audio/wav' });
+
+        //THIS IS JUST TO GET THE NAME
+        const currentDate = new Date();
+        const year = currentDate.getFullYear();
+        const month = (currentDate.getMonth() + 1).toString().padStart(2, '0');
+        const day = currentDate.getDate().toString().padStart(2, '0');
+        const hours = currentDate.getHours().toString().padStart(2, '0');
+        const minutes = currentDate.getMinutes().toString().padStart(2, '0');
+        const seconds = currentDate.getSeconds().toString().padStart(2, '0');
+        const formattedDate = `${song_name}_${year}_${month}_${day}-${hours}_${minutes}_${seconds}.wav`;
+        // Automatically create a link and trigger download (local download for now)
+        const downloadLink = document.createElement('a');
+        downloadLink.href = URL.createObjectURL(audioBlob);
+        downloadLink.download = formattedDate;
+        downloadLink.style.display = 'none';
+        document.body.appendChild(downloadLink);
+        downloadLink.click();
+        document.body.removeChild(downloadLink);
+
+      }
+      
+      audioChunks = [];
+      audioContext.suspend();
     },
   };
 

@@ -73,7 +73,12 @@ const ProgressPlayFile = (props) => {
       setCursorFinished(true);
       //"Reset" funcionalities
       //No recording
-      audioStreamer.close()
+      if(recordMode){
+        audioStreamer.close_maybe_save(); //maybe save audio in Record mode
+      }else if(practiceMode){
+        audioStreamer.close_not_save(); //never save audio in Practice mode
+      }
+      //audioStreamer.close()
       console.log("Recording stopped because cursor finished")
       const playbackManager = playbackRef.current;
       //const cursor = cursorRef.current;
@@ -120,16 +125,22 @@ const ProgressPlayFile = (props) => {
         //Depending on answer save or delete:
         if(answer==="delete"){
           console.log("received delete answer")
+          audioStreamer.save_or_not(answer) //No save wanted
           setIsResetButtonPressed(true);
           setPitch([])
           setConfidence([])
         }else if(answer==="save"){
           console.log("received save answer")
+          const song_name = `${params.files}`;
+          audioStreamer.save_or_not(answer,song_name) //save wanted, send name of file
+          setIsResetButtonPressed(true);
+          setPitch([])
+          setConfidence([])
         }
         //Do like a reset:
         //audioStreamer.resume()
         //audioStreamer.save()
-        audioStreamer.close()
+        //audioStreamer.close()
         const playbackManager = playbackRef.current;
         const cursor = cursorRef.current;
         playbackManager.pause();
@@ -138,10 +149,7 @@ const ProgressPlayFile = (props) => {
         cursor.reset();
         setStartPitchTrack(false);
         setShowPitchTrack(false)
-        setRecordActive(true) //Set to true, just like the initial state
-        
-        
-        
+        setRecordActive(true) //Set to true, just like the initial state        
       }
       
   }
@@ -161,6 +169,10 @@ const ProgressPlayFile = (props) => {
       setConfidence([])
       setStartPitchTrack(true);
       setShowPitchTrack(true);
+
+      //Start audioStreamer
+      audioStreamer.init(recordMode);
+
       //And play file, make cursor start
       playbackManager.play();
       //Timer work is done, false until next call
@@ -212,12 +224,12 @@ const ProgressPlayFile = (props) => {
         setRecordActive(!recordActive)
 
         if (recordActive) { //Recoding is wanted
-          audioStreamer.init(recordMode)
+          //audioStreamer.init(recordMode)
           //setShowPitchTrack(true)
           console.log("Recording started")
           setShowTimer(true) //initialize process of countdown, which will then lead to recording
         } else { //Recording is unwanted
-          audioStreamer.close()
+          audioStreamer.close_not_save() //when practice mode on, no saving
           console.log("Recording stopped")
           //Deactivate Pitch tracking
           setStartPitchTrack(false);
@@ -234,7 +246,7 @@ const ProgressPlayFile = (props) => {
       const resetButton = document.getElementById("reset");
       const handleResetButtonClick = () => {
         setShowPopUpWindow(false)
-        audioStreamer.close()
+        audioStreamer.close_not_save() //when practice mode is on, no saving
         setIsResetButtonPressed(true);
         const playbackManager = playbackRef.current;
         const cursor = cursorRef.current;
@@ -327,9 +339,6 @@ const ProgressPlayFile = (props) => {
       }
     }else if(recordMode===true){//Record Mode
       
-      //get maximum number of repetitions
-      
-
       // RECORD BUTTON -----------------------------------------------------------------
       const recordButton = document.getElementById("record/stopRecording");
       const handleRecordButtonClick = () => {
@@ -338,12 +347,12 @@ const ProgressPlayFile = (props) => {
         setRecordActive(!recordActive)
 
         if (recordActive) { //Recoding is wanted
-          audioStreamer.init(recordMode)
+          //audioStreamer.init(recordMode)
           //setShowPitchTrack(true)
           console.log("Recording started")
           setShowTimer(true) //initialize process of countdown, which will then lead to recording
         } else { //Recording is unwanted
-          audioStreamer.close()
+          audioStreamer.close_maybe_save() //when record mode is active, maybe we save
           console.log("Recording stopped")
           //Deactivate Pitch tracking
           setStartPitchTrack(false);
@@ -355,30 +364,6 @@ const ProgressPlayFile = (props) => {
       };
 
       recordButton.addEventListener("click", handleRecordButtonClick);
-      //--------------------------------------------------------------------------------
-
-      // RESET BUTTON ------------------------------------------------------------------
-      /*const resetButton = document.getElementById("reset");
-      const handleResetButtonClick = () => {
-        setShowPopUpWindow(false)
-        audioStreamer.close()
-        setIsResetButtonPressed(true);
-        const playbackManager = playbackRef.current;
-        const cursor = cursorRef.current;
-        //Reset
-        playbackManager.pause();
-        playbackManager.setPlaybackStart(0);
-        playbackManager.reset();
-        cursor.reset();
-        setStartPitchTrack(false);
-        setShowPitchTrack(false)
-        setPitch([])
-        setConfidence([])
-        setRecordActive(true) //Set to true, just like the initial state
-        
-      };
-
-      resetButton.addEventListener("click", handleResetButtonClick);*/
       //--------------------------------------------------------------------------------
 
       // PLAY/PAUSE BUTTON -------------------------------------------------------------
@@ -420,28 +405,11 @@ const ProgressPlayFile = (props) => {
       settingsSliders.addEventListener("click", handleSettings);
       //--------------------------------------------------------------------------------
 
-      // SWITCH BETWEEN REPETITION/RECORDING LAYERS ------------------------------------
-      /*const repeatLayersButton = document.getElementById("switchRepetition");
-      const handleRepeatLayersButtonClick = () => {
-        //window.location.href = "/TimbreVisualization";
-        setRepeatsIterator(!repeatsIterator);
-      };
-      const handleRepeatLayersMouseOver = () => {
-        setShowRepetitionMessage(true);
-      };
-      const handleRepeatLayersMouseLeave = () => {
-        setShowRepetitionMessage(false);
-      };
-      repeatLayersButton.addEventListener("click", handleRepeatLayersButtonClick);
-      repeatLayersButton.addEventListener("mousemove", handleRepeatLayersMouseOver);
-      repeatLayersButton.addEventListener("mouseout", handleRepeatLayersMouseLeave);*/
-      //--------------------------------------------------------------------------------
-
-      // SWITCH BETWEEN REPETITION/RECORDING LAYERS ------------------------------------
+      // GO TO SAVINGS BUTTON  ------------------------------------
       const savedButton = document.getElementById("saved");
       const handleSavedButtonClick = () => {
         //window.location.href = "/TimbreVisualization";
-        const song = `${folderBasePath}/${params.files}`;
+        const song = `${params.files}`;
         const typeList = 'single-song';
 
         // Use navigate to go to the ListRecordings page with parameters in the URL
@@ -460,8 +428,6 @@ const ProgressPlayFile = (props) => {
     
       return () => {
         recordButton.removeEventListener("click", handleRecordButtonClick);
-        //repeatLayersButton.removeEventListener("click", handleRepeatLayersButtonClick);
-        //resetButton.removeEventListener("click", handleResetButtonClick);
         playButton.removeEventListener("click", handlePlayButtonClick);
       }
     };
