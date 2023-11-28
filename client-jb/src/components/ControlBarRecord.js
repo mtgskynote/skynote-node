@@ -205,7 +205,7 @@ const ControlBarRecord = (props) => {
                           {/* BPM Slider */}
                           <FontAwesomeIcon icon={faGauge} />
                           <label htmlFor="bpm-slider" className="slider-label" title="change-bpm">
-                            BPM
+                            BPM ({bpm})
                           </label>
                           <input
                             id="bpm-slider"
