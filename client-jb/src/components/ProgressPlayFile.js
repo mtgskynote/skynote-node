@@ -164,9 +164,8 @@ const ProgressPlayFile = (props) => {
         console.log('Microphone access granted!', canRecord);
       } catch (error) {
         setCanRecord(false);
-        alert('Microphone access denied. Please refresh the page and grant permission.');
-        console.error('Error accessing microphone:', error);
-        console.log('Microphone access denied. Please refresh the page and grant permission.');
+        alert('Microphone access denied. If you have trouble with permissions, try clicking on the small lock at the left of your search bar and make sure the microphone is enabled, then accept this message :)');
+        window.location.reload();
       }
     };
     requestMicrophonePermission();
