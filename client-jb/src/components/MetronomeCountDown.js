@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 
 function CountdownTimer({ bpm, mode, onComplete }) {
-  const [countDownBeats, setCountDownBeats] = useState(4); // Set the initial countdown time in beats
+  const [countDownBeats, setCountDownBeats] = useState(1); // Set the initial countdown time in beats
 
   const background=mode?'lightblue':"#A3CD8F";
 
@@ -38,15 +38,15 @@ function CountdownTimer({ bpm, mode, onComplete }) {
     const timePerBeat = (1 / new_bpm) * 60 * 1000; // milliseconds per beat
     let countdownInterval;
 
-    if (countDownBeats > 0) {
+    if (countDownBeats <5) {
       countdownInterval = setInterval(() => {
-        setCountDownBeats(prevCountDownBeats => prevCountDownBeats - 1);
+        setCountDownBeats(prevCountDownBeats => prevCountDownBeats + 1);
       }, timePerBeat);
     }else{
         setCountDownBeats("")
     }
 
-    if (countDownBeats === 0) {
+    if (countDownBeats === 5) {
         clearInterval(countdownInterval);
         onComplete(); // Llamar a la función onComplete cuando el contador llegue a cero
       }
