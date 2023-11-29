@@ -18,6 +18,8 @@ const ProgressPlayFile = (props) => {
   const cursorRef = useRef(null);
   const playbackRef = useRef(null);
 
+  const [canRecord, setCanRecord] = useState(true);
+
   const [metroVol, setMetroVol] = useState(0);
   const [bpmChange, setBpm] = useState(100);
 
@@ -154,6 +156,22 @@ const ProgressPlayFile = (props) => {
       
   }
 
+  useEffect(() => {
+    const requestMicrophonePermission = async () => {
+      try {
+        const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+        setCanRecord(true);
+        console.log('Microphone access granted!', canRecord);
+      } catch (error) {
+        setCanRecord(false);
+        alert('Microphone access denied. If you have trouble with permissions, try clicking on the small lock at the left of your search bar and make sure the microphone is enabled, then accept this message :)');
+        window.location.reload();
+      }
+    };
+    requestMicrophonePermission();
+  }, []); //This should run only once
+    
+
   var audioStreamer = makeAudioStreamer(handlePitchCallback);
   
   //When countdown timer (previous to start recording) finishes
@@ -233,11 +251,11 @@ const ProgressPlayFile = (props) => {
       // RECORD BUTTON -----------------------------------------------------------------
       const recordButton = document.getElementById("record/stopRecording");
       const handleRecordButtonClick = () => {
-
+        console.log("Can I record?: ", canRecord);
         //Toggle recording state (FIXME does not work the first time, so recordActive is started with true value)
         setRecordActive(!recordActive)
 
-        if (recordActive) { //Recoding is wanted
+        if (recordActive && canRecord) { //Recoding is wanted
           //audioStreamer.init(recordMode)
           //setShowPitchTrack(true)
           console.log("Recording started")
