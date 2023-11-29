@@ -85,7 +85,7 @@ const ProgressPlayFile = (props) => {
         audioStreamer.close_not_save(); //never save audio in Practice mode
       }
       //audioStreamer.close()
-      console.log("Recording stopped because cursor finished")
+      //console.log("Recording stopped because cursor finished")
       const playbackManager = playbackRef.current;
       //const cursor = cursorRef.current;
       playbackManager.pause();
@@ -124,13 +124,13 @@ const ProgressPlayFile = (props) => {
         setShowPopUpWindow(false)
         //Depending on answer save or delete:
         if(answer==="delete"){
-          console.log("received delete answer")
+          //console.log("received delete answer")
           audioStreamer.save_or_not(answer) //No save wanted
           setIsResetButtonPressed(true);
           setPitch([])
           setConfidence([])
         }else if(answer==="save"){
-          console.log("received save answer")
+          //console.log("received save answer")
           const song_name = `${params.files}`;
           audioStreamer.save_or_not(answer,song_name) //save wanted, send name of file
           setIsResetButtonPressed(true);
@@ -196,10 +196,10 @@ const ProgressPlayFile = (props) => {
   
   //When countdown timer (previous to start recording) finishes
   useEffect(() => {
-    console.log("record active??? ", recordInactive)
+    //console.log("record active??? ", recordInactive)
     if(finishedTimer){
 
-      console.log("TIMER IS FINISHED")
+      //console.log("TIMER IS FINISHED")
       const playbackManager = playbackRef.current;
       playbackManager.play()
       
@@ -272,18 +272,18 @@ const ProgressPlayFile = (props) => {
       // RECORD BUTTON -----------------------------------------------------------------
       const recordButton = document.getElementById("record/stopRecording");
       const handleRecordButtonClick = () => {
-        console.log("Can I record?: ", canRecord);
+        //console.log("Can I record?: ", canRecord);
         //Toggle recording state (FIXME does not work the first time, so recordInactive is started with true value)
         setRecordInactive(!recordInactive)
 
         if (recordInactive && canRecord) { //Recoding is wanted
           //audioStreamer.init(recordMode)
           //setShowPitchTrack(true)
-          console.log("Recording started")
+          //console.log("Recording started")
           setShowTimer(true) //initialize process of countdown, which will then lead to recording
         } else { //Recording is unwanted
           audioStreamer.close_not_save() //when practice mode on, no saving
-          console.log("Recording stopped")
+          //console.log("Recording stopped")
           //Deactivate Pitch tracking
           setStartPitchTrack(false);
           //Pause file and therefore, cursor
@@ -324,7 +324,7 @@ const ProgressPlayFile = (props) => {
       // plays the music where the cursor is
       const playButton = document.getElementById("play/pause");
       const handlePlayButtonClick = () => {
-        console.log("playyyyy")
+        //console.log("playyyyy")
         const playbackManager = playbackRef.current;
         //const cursor = cursorRef.current;
         //const currentTime = cursor.Iterator.currentTimeStamp;
@@ -402,11 +402,11 @@ const ProgressPlayFile = (props) => {
         if (recordInactive) { //Recoding is wanted
           //audioStreamer.init(recordMode)
           //setShowPitchTrack(true)
-          console.log("Recording started")
+          //console.log("Recording started")
           setShowTimer(true) //initialize process of countdown, which will then lead to recording
         } else { //Recording is unwanted
           audioStreamer.close_maybe_save() //when record mode is active, maybe we save
-          console.log("Recording stopped")
+          //console.log("Recording stopped")
           //Deactivate Pitch tracking
           setStartPitchTrack(false);
           //Pause file and therefore, cursor
@@ -424,7 +424,7 @@ const ProgressPlayFile = (props) => {
       // plays the music where the cursor is
       const playButton = document.getElementById("play/pause");
       const handlePlayButtonClick = () => {
-        console.log("playyyyy")
+        //console.log("playyyyy")
         const playbackManager = playbackRef.current;
         //const cursor = cursorRef.current;
         //const currentTime = cursor.Iterator.currentTimeStamp;
