@@ -321,15 +321,18 @@ class OpenSheetMusicDisplay extends Component {
   //function to check cursor change
   checkCursorChange = () => {
     const cursorCurrent=this.osmd.cursor.Iterator.currentTimeStamp.RealValue;
+
+    //WHEN CURSOR REACHES THE END /////////////
+    if(this.selectionEndReached === true){ 
+      this.props.cursorActivity(true);
+      this.previousTimestamp=null;
+      this.selectionEndReached=false; //ready for next time
+    }
+    
     //if recording active
     if (this.props.startPitchTrack){
 
-      // STOP RECORDING WHEN CURSOR REACHES THE END /////////////
-      if(this.selectionEndReached === true){ 
-        this.props.cursorActivity(true);
-        this.previousTimestamp=null;
-        this.selectionEndReached=false; //ready for next time
-      }
+      
 
       //Check for repetitions
       if (this.previousTimestamp > cursorCurrent) {
