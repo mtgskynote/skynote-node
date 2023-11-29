@@ -309,7 +309,13 @@ class OpenSheetMusicDisplay extends Component {
 
   // update bpm value
   updateBpm(newBpm) {
+    //Update bpm
     this.osmd.PlaybackManager.setBpm(newBpm);
+    //Just in case, update bpm values for every measure of the score
+    const sourceMeasures = this.osmd.Sheet.SourceMeasures;
+    for (let i = 0; i < sourceMeasures.length; i++) {
+      sourceMeasures[i].TempoInBPM = newBpm;
+    }
   }
 
   //function to check cursor change
