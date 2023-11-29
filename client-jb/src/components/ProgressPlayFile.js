@@ -9,6 +9,7 @@ import SimpleMessaje from "./AnyMessage.js"
 //import { log } from "@tensorflow/tfjs";
 import ModeToggle from "./ModeToggle.js";
 import PopUpWindow from "./PopUpWindow.js";
+import XMLParser from "react-xml-parser";
 
 const folderBasePath = "/xmlScores/violin";
 
@@ -17,6 +18,8 @@ const ProgressPlayFile = (props) => {
 
   const cursorRef = useRef(null);
   const playbackRef = useRef(null);
+
+  const [scoreTitle, setScoreTitle] = useState(null);
 
   const [canRecord, setCanRecord] = useState(true);
 
@@ -157,11 +160,32 @@ const ProgressPlayFile = (props) => {
   }
 
   useEffect(() => {
+    //This part just gets the tittle of the score, so it can later be used for the saving part
+    //I don't know if it's the most efficient way, I based the code on the one used in AllLessons.js
+    const requestScoreTitle = async () => {
+      try {
+        const response = await fetch(`${folderBasePath}/${params.files}`);
+        const xmlFileData = await response.text();
+        const arr = Array.from(
+          new XMLParser()
+            .parseFromString(xmlFileData)
+            .getElementsByTagName("movement-title")
+        );
+        if (arr.length > 0) {
+          setScoreTitle(arr[0].value);
+        }
+      } catch (error) {
+        console.log(error.message);
+      }
+    };
+    //This part deals with microphone permissions.
+    //Accepting permissions works as expected
+    //Denying permissions shows an alert that refreshes the page when accepted, but won't go away until permissions are given
+    //Ignoring permissions allows to use the page, but audio won't be picked up and an error will show when the recorging process is finished  
     const requestMicrophonePermission = async () => {
       try {
         const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
         setCanRecord(true);
-        console.log('Microphone access granted!', canRecord);
       } catch (error) {
         setCanRecord(false);
         alert('Microphone access denied. If you have trouble with permissions, try clicking on the small lock at the left of your search bar and make sure the microphone is enabled, then accept this message :)');
@@ -169,6 +193,7 @@ const ProgressPlayFile = (props) => {
       }
     };
     requestMicrophonePermission();
+    requestScoreTitle();
   }, []); //This should run only once
     
 
@@ -441,7 +466,7 @@ const ProgressPlayFile = (props) => {
       const savedButton = document.getElementById("saved");
       const handleSavedButtonClick = () => {
         //window.location.href = "/TimbreVisualization";
-        const song = `${params.files}`;
+        const song = `${scoreTitle}`;
         const typeList = 'single-song';
 
         // Use navigate to go to the ListRecordings page with parameters in the URL
