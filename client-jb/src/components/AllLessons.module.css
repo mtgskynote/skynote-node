@@ -1,0 +1,41 @@
+.title{
+    text-align:center;
+}
+
+  .completeTree {
+    max-width: 100%;
+  }
+  .level{
+    font-family: 'Cabin';
+  }
+  .skill{
+    font-family: 'Cabin';
+    background-color:rgb(255, 255, 255);
+  }
+  .songlist{
+    list-style: none;
+    padding: 0;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: left;}
+  .song{
+    font-family: 'Cabin';
+    background-color: rgb(255, 255, 255);
+    
+  }
+  .link{
+    text-decoration: none;
+    color: black;
+  }
+  .songelement {  
+    padding: 5px;
+    background-color: #ffffff;
+    color:#435b38;
+    border-radius: 5px;
+    border: 0.2px solid #59b296;
+    box-shadow: 0 0 3px #59b296;
+    flex-basis: calc(23.00% - 0px); /* Adjust the width based on the number of items per row */
+    margin: 10px;
+    text-align:center;
+  }
+  
