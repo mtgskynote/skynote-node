@@ -27,7 +27,7 @@ const ProgressPlayFile = (props) => {
   const [bpmChange, setBpm] = useState(100);
 
   const [recordVol, setRecordVol] = useState(0.5);
-  const[recordActive, setRecordActive] = useState(true)
+  const[recordInactive, setRecordInactive] = useState(true)
   
   const [showTimer, setShowTimer] = useState(false);
   const [finishedTimer, setFinishedTimer] = useState(false);
@@ -78,9 +78,10 @@ const ProgressPlayFile = (props) => {
       setCursorFinished(true);
       //"Reset" funcionalities
       //No recording
-      if(recordMode){
+      if(recordMode && !recordInactive){
         audioStreamer.close_maybe_save(); //maybe save audio in Record mode
-      }else if(practiceMode){
+        handleSaveDeleteWindowPopUp(true); //call popup window save/delete
+      }else{
         audioStreamer.close_not_save(); //never save audio in Practice mode
       }
       //audioStreamer.close()
@@ -92,20 +93,14 @@ const ProgressPlayFile = (props) => {
       //playbackManager.reset();
       //cursor.reset();
       setStartPitchTrack(false);
-      setRecordActive(true) //Set to true, just like the initial state
+      setRecordInactive(true) //Set to true, just like the initial state
     }
   };
   
   const handleFinishedCursorControlBarCallback = (controlBarFinishedCursor) => {
-    if (controlBarFinishedCursor===false){//ControlBar already took cursor finishing actions
-      
+    if (controlBarFinishedCursor===false){//ControlBar already took cursor finishing actions 
       //Update value, ready for new cursor finishings--> false cursor finished
       setCursorFinished(false);
-      console.log("cursor finished work done")
-
-      if(recordMode){//record mode active, ask to save or delete recording
-        handleSaveDeleteWindowPopUp(true); //call popup window save/delete
-      }
     }
   };
   // Define recording stop when cursor finishes callback function
@@ -154,7 +149,7 @@ const ProgressPlayFile = (props) => {
         cursor.reset();
         setStartPitchTrack(false);
         setShowPitchTrack(false)
-        setRecordActive(true) //Set to true, just like the initial state        
+        setRecordInactive(true) //Set to true, just like the initial state        
       }
       
   }
@@ -201,6 +196,7 @@ const ProgressPlayFile = (props) => {
   
   //When countdown timer (previous to start recording) finishes
   useEffect(() => {
+    console.log("record active??? ", recordInactive)
     if(finishedTimer){
 
       console.log("TIMER IS FINISHED")
@@ -256,7 +252,7 @@ const ProgressPlayFile = (props) => {
       cursor.reset();
       setStartPitchTrack(false);
       setShowPitchTrack(false)
-      setRecordActive(true) //Set to true, just like the initial state
+      setRecordInactive(true) //Set to true, just like the initial state
       
     };
    recordModeButton.addEventListener("click", handleRecordModeButtonClick);
@@ -277,10 +273,10 @@ const ProgressPlayFile = (props) => {
       const recordButton = document.getElementById("record/stopRecording");
       const handleRecordButtonClick = () => {
         console.log("Can I record?: ", canRecord);
-        //Toggle recording state (FIXME does not work the first time, so recordActive is started with true value)
-        setRecordActive(!recordActive)
+        //Toggle recording state (FIXME does not work the first time, so recordInactive is started with true value)
+        setRecordInactive(!recordInactive)
 
-        if (recordActive && canRecord) { //Recoding is wanted
+        if (recordInactive && canRecord) { //Recoding is wanted
           //audioStreamer.init(recordMode)
           //setShowPitchTrack(true)
           console.log("Recording started")
@@ -316,7 +312,7 @@ const ProgressPlayFile = (props) => {
         setShowPitchTrack(false)
         setPitch([])
         setConfidence([])
-        setRecordActive(true) //Set to true, just like the initial state
+        setRecordInactive(true) //Set to true, just like the initial state
         
       };
 
@@ -400,10 +396,10 @@ const ProgressPlayFile = (props) => {
       const recordButton = document.getElementById("record/stopRecording");
       const handleRecordButtonClick = () => {
 
-        //Toggle recording state (FIXME does not work the first time, so recordActive is started with true value)
-        setRecordActive(!recordActive)
+        //Toggle recording state (FIXME does not work the first time, so recordInactive is started with true value)
+        setRecordInactive(!recordInactive)
 
-        if (recordActive) { //Recoding is wanted
+        if (recordInactive) { //Recoding is wanted
           //audioStreamer.init(recordMode)
           //setShowPitchTrack(true)
           console.log("Recording started")
@@ -488,7 +484,7 @@ const ProgressPlayFile = (props) => {
         playButton.removeEventListener("click", handlePlayButtonClick);
       }
     };
-  }, [recordVol, zoom, recordActive, pitchValue, repeatsIterator, practiceMode, recordMode, showRepetitionMessage]);
+  }, [recordVol, zoom, recordInactive, pitchValue, repeatsIterator, practiceMode, recordMode, showRepetitionMessage]);
 
   return (
     
