@@ -22,12 +22,13 @@ const ProgressPlayFile = (props) => {
   const [scoreTitle, setScoreTitle] = useState(null);
 
   const [canRecord, setCanRecord] = useState(true);
+  const [canDownload, setCanDownload] = useState(false);
 
   const [metroVol, setMetroVol] = useState(0);
   const [bpmChange, setBpm] = useState(100);
 
   const [recordVol, setRecordVol] = useState(0.5);
-  const[recordInactive, setRecordInactive] = useState(true)
+  const [recordInactive, setRecordInactive] = useState(true)
   
   const [showTimer, setShowTimer] = useState(false);
   const [finishedTimer, setFinishedTimer] = useState(false);
@@ -44,12 +45,12 @@ const ProgressPlayFile = (props) => {
   const [showPitchTrack, setShowPitchTrack] = useState(false);
 
   const [isResetButtonPressed, setIsResetButtonPressed] = useState(false);
-  const[repeatsIterator, setRepeatsIterator] = useState(false);
-  const[showRepetitionMessage, setShowRepetitionMessage]=useState(false);
-  const[repetitionMessage, setRepetitionMessage]=useState("No stored recordings yet");
+  const [repeatsIterator, setRepeatsIterator] = useState(false);
+  const [showRepetitionMessage, setShowRepetitionMessage]=useState(false);
+  const [repetitionMessage, setRepetitionMessage]=useState("No stored recordings yet");
 
-  const[cursorFinished, setCursorFinished] = useState(false);
-  const[showPopUpWindow, setShowPopUpWindow]= useState(false);
+  const [cursorFinished, setCursorFinished] = useState(false);
+  const [showPopUpWindow, setShowPopUpWindow]= useState(false);
 
   const [practiceMode, setPracticeMode] = useState(true);
   const [recordMode, setRecordMode] = useState(false);
@@ -96,6 +97,35 @@ const ProgressPlayFile = (props) => {
       setRecordInactive(true) //Set to true, just like the initial state
     }
   };
+
+  const handleDownload = (dataBlob) => {
+    //THIS IS JUST TO GET THE NAME RIGHT
+    const currentDate = new Date();
+    const year = currentDate.getFullYear();
+    const month = (currentDate.getMonth() + 1).toString().padStart(2, '0');
+    const day = currentDate.getDate().toString().padStart(2, '0');
+    const hours = currentDate.getHours().toString().padStart(2, '0');
+    const minutes = currentDate.getMinutes().toString().padStart(2, '0');
+    const seconds = currentDate.getSeconds().toString().padStart(2, '0');
+    let formattedDate = `${params.files.replace(".xml", "")}_${year}_${month}_${day}-${hours}_${minutes}_${seconds}`;
+
+    if (dataBlob.type === "audio/wav") {
+      formattedDate = formattedDate + ".wav";
+    } else if (dataBlob.type === "application/json") {
+      formattedDate = formattedDate + ".json";
+    }
+    
+    console.log("DOWNLOADING: ", formattedDate)
+    /*const downloadLink = document.createElement('a');
+    downloadLink.href = URL.createObjectURL(dataBlob);
+    downloadLink.download = formattedDate;
+    downloadLink.style.display = 'none';
+    document.body.appendChild(downloadLink);
+    downloadLink.click();
+    document.body.removeChild(downloadLink);
+    setCanDownload(false);*/
+    console.log("The download worked (trust me bro I wrote the code), you should see this message twice");
+  }
   
   const handleFinishedCursorControlBarCallback = (controlBarFinishedCursor) => {
     if (controlBarFinishedCursor===false){//ControlBar already took cursor finishing actions 
@@ -127,12 +157,14 @@ const ProgressPlayFile = (props) => {
           //console.log("received delete answer")
           audioStreamer.save_or_not(answer) //No save wanted
           setIsResetButtonPressed(true);
-          setPitch([])
-          setConfidence([])
+          setPitch([]);
+          setConfidence([]);
         }else if(answer==="save"){
           //console.log("received save answer")
           const song_name = `${params.files}`;
-          audioStreamer.save_or_not(answer,song_name) //save wanted, send name of file
+          const dataToDownload = audioStreamer.save_or_not(answer,song_name) //save wanted, send name of file
+          handleDownload(dataToDownload);
+          setCanDownload(true);
           setIsResetButtonPressed(true);
           setPitch([])
           setConfidence([])
@@ -511,6 +543,8 @@ const ProgressPlayFile = (props) => {
         onResetDone={onResetDone}
         cursorActivity={handleFinishedCursorOSMDCallback}
         mode={practiceMode}
+        dataToDownload={handleDownload}
+        canDownload={canDownload}
       />
       {showTimer ? (<CountdownTimer bpm={bpmChange} mode={practiceMode}  onComplete={() => setFinishedTimer(true)} />):(null)}
       

@@ -538,6 +538,21 @@ class OpenSheetMusicDisplay extends Component {
       this.osmd.load(this.props.file).then(() => this.osmd.render());
     }
 
+    // for downloading
+    if (this.props.canDownload === true && this.props.canDownload !== prevProps.canDownload) {
+      const dataToSave = {
+        pitchTrackPoints: "SI :)",
+        repetitionNumber: "A LO MEJOR :0",
+        noteIDs: "TAL VEZ :S",
+        noteColors: "NO :("
+      };
+
+      const jsonString = JSON.stringify(dataToSave);
+      const jsonBlob = new Blob([jsonString], { type: "application/json" });
+      this.props.dataToDownload(jsonBlob);
+    }
+    
+
     // for metronome volume and bpm changes
     if (this.props.metroVol !== prevProps.metroVol) {
       this.updateMetronomeVolume(this.props.metroVol);

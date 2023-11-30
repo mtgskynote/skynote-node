@@ -132,29 +132,11 @@ var makeAudioStreamer = function (
       //audioContext.suspend();
     },
     save_or_not: function(answer, song_name){
-
       if(answer==="save"){
-        //THIS PART OF THE CODE CREATES A WAV FILE AND DOWNLOADS IT
+        //This creates an audioBlob that will be saved later
         const audioBlob = new Blob(audioChunks, { type: 'audio/wav' });
 
-        //THIS IS JUST TO GET THE NAME
-        const currentDate = new Date();
-        const year = currentDate.getFullYear();
-        const month = (currentDate.getMonth() + 1).toString().padStart(2, '0');
-        const day = currentDate.getDate().toString().padStart(2, '0');
-        const hours = currentDate.getHours().toString().padStart(2, '0');
-        const minutes = currentDate.getMinutes().toString().padStart(2, '0');
-        const seconds = currentDate.getSeconds().toString().padStart(2, '0');
-        const formattedDate = `${song_name}_${year}_${month}_${day}-${hours}_${minutes}_${seconds}.wav`;
-        // Automatically create a link and trigger download (local download for now)
-        const downloadLink = document.createElement('a');
-        downloadLink.href = URL.createObjectURL(audioBlob);
-        downloadLink.download = formattedDate;
-        downloadLink.style.display = 'none';
-        document.body.appendChild(downloadLink);
-        downloadLink.click();
-        document.body.removeChild(downloadLink);
-
+        return audioBlob
       }
       
       audioChunks = [];
