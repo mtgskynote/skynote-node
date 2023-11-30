@@ -10,6 +10,12 @@ import TreeItem from "@mui/lab/TreeItem";
 import OpenSheetMusicDisplayPreview from "./OpenSheetMusicDisplayPreview";
 import XMLParser from "react-xml-parser";
 import { useAppContext } from "../context/appContext";
+import AllLessonsCSS from './AllLessons.module.css';
+import { blue } from "@material-ui/core/colors";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import {
+  faStar,
+} from "@fortawesome/free-solid-svg-icons";
 
 const folderBasePath = "xmlScores/violin";
 
@@ -53,7 +59,8 @@ const AllLessons = () => {
   const { getAllLevels, getAllSkills, getAllNames } = useAppContext();
 
   const [titles, setTitles] = useState({});
-  const [selectedNode, setSelectedNode] = useState(null);
+  const [selectedNodeActive, setSelectedNodeActive] = useState(false);
+  const [selectedNodeInfo, setSelectedNodeInfo] = useState(null);
   const [fetchedData, setFetchedData] = useState({});
 
   const fetchAllData = async () => {
@@ -93,9 +100,23 @@ const AllLessons = () => {
     fetchAllTitles(allFiles).then(setTitles);
   }, [fetchedData]); // This useEffect is dependent on fetchedData
 
-  const handleNodeSelect = (event, nodeId) => {
-    const selectedData = getNodeDataById(fetchedData, nodeId);
-    setSelectedNode(selectedData);
+  const handleNodeMouseOver = (event, nodeId) => {
+    if(nodeId!==undefined){
+      const selectedData = getNodeDataById(fetchedData, nodeId);
+      setSelectedNodeInfo(selectedData);
+      setSelectedNodeActive(true);
+      console.log("Im on ", nodeId, selectedData)
+    }else{
+      setSelectedNodeInfo(null);
+      setSelectedNodeActive(false);
+      console.log("Im off ")
+    }
+    
+  };
+  const handleNodeMouseOut = (event) => {
+      setSelectedNodeInfo(null);
+      setSelectedNodeActive(false);
+      console.log("Im off ")
   };
 
   const getNodeDataById = (data, nodeId) => {
@@ -114,63 +135,78 @@ const AllLessons = () => {
     }
     return null;
   };
-
+/*
+.osmdScore{
+    position: fixed;
+  top: 0;
+  right: 0;
+  margin: 10px;
+  z-index: 999
+  } */ 
   const renderTree = (level, skills) => (
-    <TreeItem key={level} nodeId={level} label={`Level ${level}`}>
+    <div className={AllLessonsCSS.level}>
+    <TreeItem key={level} nodeId={level} label={`Level ${level}`} >
       {Object.entries(skills).map(([skill, names]) => (
+        <div className={AllLessonsCSS.skill}>
         <TreeItem key={skill} nodeId={skill} label={skill}>
+          <div className={AllLessonsCSS.songlist}>
           {names.map((nameObj, index) => (
+            <div className={AllLessonsCSS.song} >
             <TreeItem
               key={`${nameObj.name}-${index}`}
               nodeId={`${nameObj.name}-${index}`}
               label={
-                <div
-                  style={{
-                    display: "flex",
-                    justifyContent: "space-between",
-                    width: "100%",
-                  }}
+                <div 
+                className={AllLessonsCSS.songelement} 
+                onMouseOver={(e) => handleNodeMouseOver(e, `${nameObj.name}-${index}`)}
+                onMouseOut={(e) => handleNodeMouseOut(e)}
                 >
-                  <div>
-                    <Link to={nameObj.route_path}>
+                    <Link to={nameObj.route_path} className={AllLessonsCSS.link}>
                       <span>{titles[nameObj.name] || nameObj.name}</span>
-                    </Link>
-                  </div>
-                  {selectedNode &&
-                    selectedNode.id === `${nameObj.name}-${index}` && (
-                      <div style={{ flexShrink: 1, width: "60%" }}>
-                        {/* {console.log("Rendering file with path:", nameObj.path)} */}
-                        <OpenSheetMusicDisplayPreview file={nameObj.path} />
+                      <div>
+                        <FontAwesomeIcon icon={faStar} className={AllLessonsCSS.completeStar}/>
+                        <FontAwesomeIcon icon={faStar} className={AllLessonsCSS.incompleteStar}/>
+                        <FontAwesomeIcon icon={faStar} className={AllLessonsCSS.incompleteStar}/>
                       </div>
-                    )}
+                    </Link>
+                    
                 </div>
               }
-            />
-          ))}
-        </TreeItem>
+            /></div>
+          ))
+          }
+          </div>
+        </TreeItem></div>
       ))}
     </TreeItem>
+    </div>
   );
 
   return (
-    <>
-      <div align="center">
+    <div>
+      <div className={AllLessonsCSS.title}>
         <h1>All Lessons</h1>
       </div>
-      <Box sx={sxStyles}>
+      <Box >
         <TreeView
           aria-label="rich object"
           defaultCollapseIcon={<ExpandMoreIcon />}
           defaultExpanded={["root"]}
           defaultExpandIcon={<ChevronRightIcon />}
-          onNodeSelect={handleNodeSelect}
+          
+          className={AllLessonsCSS.completeTree}
         >
           {Object.entries(fetchedData).map(([level, skills]) =>
             renderTree(level, skills)
           )}
         </TreeView>
       </Box>
-    </>
+      {(selectedNodeActive &&
+        <div className={AllLessonsCSS.osmdScore}>
+          <OpenSheetMusicDisplayPreview file={selectedNodeInfo.path} />
+        </div>           
+      )}
+    </div>
   );
 };
 
