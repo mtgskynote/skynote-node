@@ -12,6 +12,10 @@ import XMLParser from "react-xml-parser";
 import { useAppContext } from "../context/appContext";
 import AllLessonsCSS from './AllLessons.module.css';
 import { blue } from "@material-ui/core/colors";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import {
+  faStar,
+} from "@fortawesome/free-solid-svg-icons";
 
 const folderBasePath = "xmlScores/violin";
 
@@ -144,7 +148,9 @@ const AllLessons = () => {
                       </div>
                     )}
                     <div>
-                    STARS
+                    <FontAwesomeIcon icon={faStar} className={AllLessonsCSS.completeStar}/>
+                    <FontAwesomeIcon icon={faStar} className={AllLessonsCSS.incompleteStar}/>
+                    <FontAwesomeIcon icon={faStar} className={AllLessonsCSS.incompleteStar}/>
                   </div>
                 </div>
               }

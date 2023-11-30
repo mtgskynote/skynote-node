@@ -7,17 +7,24 @@
   }
   .level{
     font-family: 'Cabin';
+    border-radius: 5px;
+    border: 0.2px solid #cecece;
+    box-shadow: 0 0 3px #cecece;
   }
   .skill{
     font-family: 'Cabin';
     background-color:rgb(255, 255, 255);
   }
   .songlist{
+    margin:1% 2% 1% 2%;
     list-style: none;
-    padding: 0;
+    padding: 10;
     display: flex;
     flex-wrap: wrap;
-    justify-content: left;}
+    justify-content: left;
+    border-radius: 5px;
+    border: 0.2px solid #cecece;
+    box-shadow: 0 0 3px #cecece;}
   .song{
     font-family: 'Cabin';
     background-color: rgb(255, 255, 255);
@@ -28,7 +35,7 @@
     color: black;
   }
   .songelement {  
-    padding: 5px;
+    padding: 5px 15px 5px 15px;
     background-color: #ffffff;
     color:#435b38;
     border-radius: 5px;
@@ -37,5 +44,12 @@
     flex-basis: calc(23.00% - 0px); /* Adjust the width based on the number of items per row */
     margin: 10px;
     text-align:center;
+  }
+
+  .completeStar{
+    color:#e8d73f;
+  }
+  .incompleteStar{
+    color:#909090;
   }
   
