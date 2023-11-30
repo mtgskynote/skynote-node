@@ -61,8 +61,8 @@
     transform: translateX(-1%);
     width: 50%;
     border-radius: 7px;
-    border: 0.2px solid #59b296;
-    box-shadow: 0 0 3px #59b296;
+    border: 0.2px solid #cecdcd;
+    box-shadow: 0 0 3px #cecdcd;
     background-color: #ffffff;
     z-index: 1;
   }
