@@ -52,4 +52,18 @@
   .incompleteStar{
     color:#909090;
   }
+  .osmdScore{
+    position: fixed;
+    margin: 1% 0%;
+    padding:10px;
+    top: 0px; /* Move the element 50% down from the top */
+    left: 50%; /* Move the element 50% to the right from the left */
+    transform: translateX(-1%);
+    width: 50%;
+    border-radius: 7px;
+    border: 0.2px solid #59b296;
+    box-shadow: 0 0 3px #59b296;
+    background-color: #ffffff;
+    z-index: 1;
+  }
   
