@@ -7,6 +7,11 @@ import pub5_img from "../assets/images/publications/pub5_img.jpeg";
 import pub6_img from "../assets/images/publications/pub6_img.png";
 import pub7_img from "../assets/images/publications/pub7_img.jpeg";
 import pub8_img from "../assets/images/publications/pub8_img.png";
+import pub9_img from "../assets/images/Violinist-2.jpg";
+
+
+import pub9 from "../assets/papers/SkyNote_CSEDU2023.pdf"
+
 import MusicTech from "../components/MusicTech.js";
 import WhiteLogo from "../components/WhiteLogo";
 import { Link } from "react-router-dom";
@@ -59,6 +64,11 @@ const publications = [
     imagelink: pub8_img,
     text: "Bowing Modeling for Violin Students Assistance",
   },
+  {
+    publicationlink: pub9,
+    imagelink: pub9_img,
+    text: "Ramirez, R. and Wyse, L. (2023) SkyNote: An AI-Enhanced Learning System for Violin, 15th International Conference on Computer Supported Education, (pg 58) Prague, Czech Republic April 21 - 23, 2023",
+  }
 ];
 
 const Research = () => {
@@ -130,7 +140,7 @@ const Research = () => {
                   <div class="centercontainer">
                     <img src={data.imagelink} class="img2" />
                   </div>
-                  <div>
+                  <div align="center">
                       <p>{data.text}</p>
                     </div>
                   <div>

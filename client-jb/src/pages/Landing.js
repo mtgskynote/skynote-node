@@ -10,8 +10,8 @@ import Violinist2 from "../components/Violinist-2";
 import Violinist3 from "../components/Violinist-3";
 
 import cimg1 from "../assets/images/CREDIT_accio.jpg";
-import cimg2 from "../assets/images/CREDIT_tecnio.jpg";
-import cimg3 from "../assets/images/CREDIT_EU.png";
+import cimg2 from "../assets/images/Logo_Tecniospring_INDUSTRY_transparent.png";
+import cimg3 from "../assets/images/EU_emblem_and_funding_declaration_EN.PNG";
 
 
 
@@ -179,13 +179,9 @@ const Landing = () => {
           </div>
         </div>
         <div className={LandingCSS.creditscontainer}>
-        This project has received funding from the European Union’s
-Horizon 2020 research and innovation programme under Marie Skłodowska-Curie grant agreement
-No. 801342 (Tecniospring INDUSTRY) and the Government of Catalonia's Agency for Business
-Competitiveness (ACCIÓ)<br></br>
         <img className={LandingCSS.creditsimg} src={cimg1} alt="img 1"/>
-        <img className={LandingCSS.creditsimg} src={cimg2} alt="img 2"/>
-        <img className={LandingCSS.creditsimg} src={cimg3} alt="img 3"/>
+        <img className={LandingCSS.creditsimgtio} src={cimg2} alt="img 2"/>
+        <img className={LandingCSS.creditsimgeu} src={cimg3} alt="img 3"/>
         </div>
       </div>
     </Wrapper>

@@ -92,7 +92,7 @@ const AppProvider = ({ children }) => {
           alertText,
         },
       });
-      addUserToLocalStorage({ user, token, location });
+      addUserToLocalStorage({ user, token, location });  // why are we doing this?
     } catch (error) {
       dispatch({
         type: SETUP_USER_ERROR,
@@ -112,6 +112,10 @@ const AppProvider = ({ children }) => {
     dispatch({ type: LOGOUT_USER });
     removeUserFromLocalStorage();
   };
+
+  const getCurrentUser = async () => {
+    return state.user;
+  }
 
   // functions for getting the names of the scores from the database
 
@@ -161,6 +165,7 @@ const AppProvider = ({ children }) => {
         setupUser,
         toggleSidebar,
         logoutUser,
+        getCurrentUser,
         getAllLevels,
         getAllSkills,
         getAllNames,

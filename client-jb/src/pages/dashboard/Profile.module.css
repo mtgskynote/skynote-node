@@ -1,0 +1,14 @@
+.profilelabel {
+    display: block;
+    width: 100px;
+    margin-left : 12px; 
+    color :blue;
+  }
+
+.profileinput {
+    width : 400px;
+    margin-left : 12px; 
+    margin-bottom: 10px;
+    border-color: rgb(183, 183, 254);
+    border-radius: 2px;
+  }

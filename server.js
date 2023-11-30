@@ -11,6 +11,7 @@ import connectDB from "./db/connect.js";
 //routers
 import authRouter from "./routes/authRoutes.js";
 import scoreRouter from "./routes/scoreRoutes.js";
+import studentRouter from "./routes/studentRoutes.js";
 
 // middleware
 import notFoundMiddleWare from "./middleware-jb/not-found.js";
@@ -43,6 +44,7 @@ app.get("/api/v1", (req, res) => {
 // app.use is a method that allows us to use middleware
 app.use("/api/v1/auth", authRouter);
 app.use("/api/v1/scores", scoreRouter);
+app.use("/api/v1/student", studentRouter);
 
 // only when ready to deploy
 app.get("*", function (request, response) {
