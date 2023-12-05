@@ -505,7 +505,7 @@ const ProgressPlayFile = (props) => {
         const typeList = 'single-song';
 
         // Use navigate to go to the ListRecordings page with parameters in the URL
-        navigate('/ListRecordings', { state: { song, typeList } });
+        navigate('/ListRecordings', { state: { score, song, typeList } });
   
       };
       savedButton.addEventListener("click", handleSavedButtonClick);
