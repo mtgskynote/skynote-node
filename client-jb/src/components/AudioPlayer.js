@@ -11,11 +11,21 @@ const AudioPlayer = () => {
     if (file) {
       const reader = new FileReader();
 
-      reader.onload = function (e) {
-        const audioContext = new (window.AudioContext || window.webkitAudioContext)();
-        audioContext.decodeAudioData(e.target.result, function (buffer) {
-          setAudioBuffer(buffer);
-        });
+      reader.onload = function (importedFile) {
+        if (file.name.endsWith('.wav')) {
+          // Handle audio file
+          const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+          audioContext.decodeAudioData(importedFile.target.result, function (buffer) {
+            setAudioBuffer(buffer);
+          });
+        } else if (file.name.endsWith('.json')) {
+          // Handle JSON file
+          console.log("holaaa", file);
+          const uint8Array = new Uint8Array(importedFile.target.result);
+          const jsonString = new TextDecoder().decode(uint8Array);    
+          const jsonContent = JSON.parse(jsonString);
+          console.log('JSON Content:', jsonContent);
+        }
       };
 
       reader.readAsArrayBuffer(file);
@@ -23,21 +33,25 @@ const AudioPlayer = () => {
   };
 
   const playAudio = () => {
-    const audioContext = new (window.AudioContext || window.webkitAudioContext)();
-    const source = audioContext.createBufferSource();
-    source.buffer = audioBuffer;
-    source.connect(audioContext.destination);
-    source.start(0);
+    if (audioBuffer) {
+      const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+      const source = audioContext.createBufferSource();
+      source.buffer = audioBuffer;
+      source.connect(audioContext.destination);
+      source.start(0);
+    }
   };
 
   return (
     <div>
-      <input type="file" ref={fileInputRef} onChange={handleFileSelect} accept=".wav" />
+      <input type="file" ref={fileInputRef} onChange={handleFileSelect} />
       <button onClick={playAudio} disabled={!audioBuffer}>
-        Play
+        Play Audio
       </button>
     </div>
   );
 };
 
 export default AudioPlayer;
+
+
