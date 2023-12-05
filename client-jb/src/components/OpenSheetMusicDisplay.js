@@ -541,10 +541,13 @@ class OpenSheetMusicDisplay extends Component {
     // for downloading
     if (this.props.canDownload === true && this.props.canDownload !== prevProps.canDownload) {
       const dataToSave = {
-        pitchTrackPoints: "SI :)",
-        repetitionNumber: "A LO MEJOR :0",
-        noteIDs: "TAL VEZ :S",
-        noteColors: "NO :("
+        pitchTrackPoints: this.state.pitchData,
+        pitchPointColor: this.state.pitchColor,
+        repetitionNumber: this.state.repetitionNumber,
+        noteIDs: this.state.recordedNoteIDs,
+        noteIndex: this.state.recordedNoteIndex,
+        noteColors: this.state.colorNotes,
+        bpm: this.props.bpm
       };
 
       const jsonString = JSON.stringify(dataToSave);
