@@ -500,6 +500,7 @@ const ProgressPlayFile = (props) => {
       const savedButton = document.getElementById("saved");
       const handleSavedButtonClick = () => {
         //window.location.href = "/TimbreVisualization";
+        const score = `${params.files}`;
         const song = `${scoreTitle}`;
         const typeList = 'single-song';
 
