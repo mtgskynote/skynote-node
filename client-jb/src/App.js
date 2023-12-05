@@ -13,6 +13,7 @@ import ErrorBoundary from "./components/ErrorBoundary";
 
 import TimbreVisualization from "./components/TimbreVisualization";
 import ListRecordings from "./components/ListRecordings";
+import AudioPlayer from "./components/AudioPlayer";
 
 function App() {
   return (
@@ -45,6 +46,7 @@ function App() {
                 />
               </Route>
               <Route path="/ListRecordings" element={<ListRecordings />} />
+              <Route path="/AudioPlayer" element={<AudioPlayer />} />
               <Route path="/register" element={<Register />} />
               <Route path="/ourteam" element={<OurTeam />} />
               <Route path="/research" element={<Research />} />

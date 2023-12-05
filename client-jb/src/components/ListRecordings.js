@@ -33,7 +33,7 @@ const ListRecordings = () => {
   // Event handler for click on See
   const handleSeeClick = (song, number) => {
     console.log("See recording and score of song ", song, " recording ", number)
-
+    navigate("../AudioPlayer");
     //code that opens new page with the score, pitchtrack...
   };
 
