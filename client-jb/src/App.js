@@ -46,6 +46,10 @@ function App() {
                 />
               </Route>
               <Route path="/ListRecordings" element={<ListRecordings />} />
+              <Route
+                  path="ListRecordings/:files"
+                  element={<ProgressPlayFile mode="visual"/>}
+                />
               <Route path="/AudioPlayer" element={<AudioPlayer />} />
               <Route path="/register" element={<Register />} />
               <Route path="/ourteam" element={<OurTeam />} />

@@ -15,6 +15,7 @@ const ListRecordings = () => {
   const navigate = useNavigate();
 
   // Access the passed variables from the location object
+  const score = location.state?.score || 'DefaultSong';
   const song = location.state?.song || 'DefaultSong';
   const typeList = location.state?.typeList || 'DefaultTypeList';
 
@@ -31,21 +32,21 @@ const ListRecordings = () => {
   };
 
   // Event handler for click on See
-  const handleSeeClick = (song, number) => {
+  const handleSeeClick = (score, song, number) => {
     console.log("See recording and score of song ", song, " recording ", number)
-    navigate("../AudioPlayer");
+    navigate(score);
     //code that opens new page with the score, pitchtrack...
   };
 
   // Event handler for click on Play
-  const handlePlayClick = (song, number) => {
+  const handlePlayClick = (score, song, number) => {
     console.log("Play recording and score of song ", song, " recording ", number)
 
     //code that simply plays the audio of the recording, without having to get into the actual file
   };
 
   // Event handler for click on Trash
-  const handleTrashClick = (song, number) => {
+  const handleTrashClick = (sscore, ong, number) => {
     console.log("Delete recording and score of song ", song, " recording ", number)
 
     //send order to delete song to the database and force a re-render updating some state
@@ -67,13 +68,13 @@ const ListRecordings = () => {
           <li key={number}>
               <div>{song} - {number}</div>
               <div>
-              <button className={ListRecordingsCSS.iconbutton} onClick={() => handleSeeClick(song, number)}>
+              <button className={ListRecordingsCSS.iconbutton} onClick={() => handleSeeClick(score, song, number)}>
                 <FontAwesomeIcon icon={faEye} />
               </button>
-              <button className={ListRecordingsCSS.iconbutton} onClick={() => handlePlayClick(song, number)}>
+              <button className={ListRecordingsCSS.iconbutton} onClick={() => handlePlayClick(score, song, number)}>
                 <FontAwesomeIcon icon={faPlay} />
               </button>
-              <button className={ListRecordingsCSS.iconbutton} onClick={() => handleTrashClick(song, number)}>
+              <button className={ListRecordingsCSS.iconbutton} onClick={() => handleTrashClick(score, song, number)}>
                 <FontAwesomeIcon icon={faTrash} />
               </button>
               </div>
