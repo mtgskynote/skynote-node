@@ -116,14 +116,14 @@ const ProgressPlayFile = (props) => {
     }
     
     console.log("DOWNLOADING: ", formattedDate)
-    /*const downloadLink = document.createElement('a');
+    const downloadLink = document.createElement('a');
     downloadLink.href = URL.createObjectURL(dataBlob);
     downloadLink.download = formattedDate;
     downloadLink.style.display = 'none';
     document.body.appendChild(downloadLink);
     downloadLink.click();
     document.body.removeChild(downloadLink);
-    setCanDownload(false);*/
+    setCanDownload(false);
     console.log("The download worked (trust me bro I wrote the code), you should see this message twice");
   }
   
@@ -211,7 +211,13 @@ const ProgressPlayFile = (props) => {
     //Ignoring permissions allows to use the page, but audio won't be picked up and an error will show when the recorging process is finished  
     const requestMicrophonePermission = async () => {
       try {
-        const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+        const stream = await navigator.mediaDevices.getUserMedia({ audio: {
+          echoCancellation: false,
+          autoGainControl: false,
+          noiseSuppression: false,
+          latency: 0,
+          sampleRate: 22050
+        } });
         setCanRecord(true);
       } catch (error) {
         setCanRecord(false);
