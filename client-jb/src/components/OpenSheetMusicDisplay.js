@@ -281,7 +281,12 @@ class OpenSheetMusicDisplay extends Component {
 
       this.props.playbackRef.current = this.playbackManager;
 
+      //when we come in visual mode, in the setup we set the cursor color to yellow
       this.cursorInterval = setInterval(this.checkCursorChange, 200);
+      if(this.props.visual==="yes"){
+        this.osmd.cursor.CursorOptions.color="#dde172"
+        this.osmd.render()
+      }
 
     });
   }
