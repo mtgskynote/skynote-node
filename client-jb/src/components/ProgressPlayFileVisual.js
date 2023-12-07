@@ -3,6 +3,13 @@ import { useParams, useNavigate } from "react-router-dom";
 import OpenSheetMusicDisplay from "./OpenSheetMusicDisplay";
 import ControlBarVisual from "./ControlBarVisual.js";
 import SimpleMessaje from "./AnyMessage.js"
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import {
+    faEye, //visual mode
+} from "@fortawesome/free-solid-svg-icons";
+import Wrapper from "../assets/wrappers/ModeToggle";
+import { Button} from "@material-ui/core";
+import ModeInfoButton from "./ModeInfoButton.js";
 
 const folderBasePath = "/xmlScores/violin";
 
@@ -223,9 +230,31 @@ const ProgressPlayFileVisual = (props) => {
         onResetDone={onResetDone}
         cursorActivity={handleFinishedCursorOSMDCallback}
         mode={visualMode}
+        visual={"yes"}
       />
       
       <ControlBarVisual cursorFinished={cursorFinished} cursorFinishedCallback={handleFinishedCursorControlBarCallback}/>
+
+      <Wrapper>
+      <div className="completeModeDiv">
+        <div className="modeToggleDiv">
+          <Button 
+            key={"VisualMode"} 
+            className="toggleBtn" 
+            title={"VisualMode"} 
+            id={"VisualMode"} 
+            >
+            <div>
+              <FontAwesomeIcon
+                  icon={faEye} //Visual button
+                />
+            </div>
+          </Button>
+        </div>
+        <ModeInfoButton message={2}/> 
+
+        </div>
+    </Wrapper>
       
     </div>
   );
