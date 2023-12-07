@@ -75,7 +75,7 @@ const ModeToggle = (props) => {
             </div>
           </Button>
         </div>
-        <ModeInfoButton/>
+        <ModeInfoButton message={1}/>
         </div>
     </Wrapper>
   );

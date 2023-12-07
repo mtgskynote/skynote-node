@@ -1,16 +1,20 @@
 import React, { useEffect, useState, useRef } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import OpenSheetMusicDisplay from "./OpenSheetMusicDisplay";
-import ControlBar from "./ControlBar.js";
-import ControlBarRecord from "./ControlBarRecord.js";
 import ControlBarVisual from "./ControlBarVisual.js";
 import { makeAudioStreamer } from "./audioStreamer.js";
 import CountdownTimer from "./MetronomeCountDown.js";
 import SimpleMessaje from "./AnyMessage.js"
 //import { log } from "@tensorflow/tfjs";
-import ModeToggle from "./ModeToggle.js";
 import PopUpWindow from "./PopUpWindow.js";
 import XMLParser from "react-xml-parser";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import {
+    faEye, //visual mode
+} from "@fortawesome/free-solid-svg-icons";
+import Wrapper from "../assets/wrappers/ModeToggle";
+import { Button} from "@material-ui/core";
+import ModeInfoButton from "./ModeInfoButton.js";
 
 const folderBasePath = "/xmlScores/violin";
 
@@ -371,6 +375,27 @@ const ProgressPlayFileVisual = (props) => {
 
 
       {(showPopUpWindow && <PopUpWindow showWindow={showPopUpWindow} handlerBack={handleSaveDeleteWindowPopUp}/>)}
+
+      <Wrapper>
+      <div className="completeModeDiv">
+        <div className="modeToggleDiv">
+          <Button 
+            key={"VisualMode"} 
+            className="toggleBtn" 
+            title={"VisualMode"} 
+            id={"VisualMode"} 
+            >
+            <div>
+              <FontAwesomeIcon
+                  icon={faEye} //Visual button
+                />
+            </div>
+          </Button>
+        </div>
+        <ModeInfoButton message={2}/> 
+
+        </div>
+    </Wrapper>
       
     </div>
   );
