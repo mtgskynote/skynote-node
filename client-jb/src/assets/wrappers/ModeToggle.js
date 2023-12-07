@@ -60,6 +60,12 @@ const Wrapper = styled.section`
         color: black;
         background-color:#A3CD8F;
         }
+    
+        .toggleBtn[title="VisualMode"] {
+            color: black;
+            background-color:#DDE172;
+            margin: 0px 5px;
+            }
 
     .dropDownTgl {
         color: black;

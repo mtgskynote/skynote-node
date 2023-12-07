@@ -552,6 +552,7 @@ const ProgressPlayFile = (props) => {
         mode={practiceMode}
         dataToDownload={handleDownload}
         canDownload={canDownload}
+        visual={"no"}
       />
       {showTimer ? (<CountdownTimer bpm={bpmChange} mode={practiceMode}  onComplete={() => setFinishedTimer(true)} />):(null)}
       

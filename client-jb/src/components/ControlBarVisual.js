@@ -1,5 +1,5 @@
 import {useEffect, useState } from "react";
-import Wrapper from "../assets/wrappers/ControlBar";
+import Wrapper from "../assets/wrappers/ControlBarVisual";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { Button} from "@material-ui/core";
 import { Dropdown } from "react-bootstrap";
