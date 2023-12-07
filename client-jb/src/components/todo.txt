@@ -8,7 +8,7 @@ A small list of things we're currently working on, or stuff we have pending. Thi
 - añadir boton en algun lado que nos lleve a las saved songs generales, no sólo las correspondientes a una cancion, sino en general, tendrá que ir en el menú principal o así. HAcerlo bonito, cómo se mostrarán las grabaciones? Tree (como AllLessons)? más visual chuli?
 - Limpieza general(borrar console.logs, repasar comentarios, etc...)
 - A la hora de mostrar las previews con todos los ficheros guardados, tal vez se podria usar audio .ogg 
-
+- En ProgressPlayFileVisual no hacemos uso del micro, asi que todo lo relacionado con eso sobra, y deberiamos quitarlo
 
 DONE - preparar y guardar todo lo necesario en base de datos (color notas, pitch track points, id notas a los que hacen referencia, audio)
 DONE - cambio entre un modo y otro, qué pasa con las cosas guardadas (sobretodo al pasar de practice a record)
