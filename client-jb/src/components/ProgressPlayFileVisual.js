@@ -1,38 +1,27 @@
 import React, { useEffect, useState, useRef } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import OpenSheetMusicDisplay from "./OpenSheetMusicDisplay";
-import ControlBar from "./ControlBar.js";
-import ControlBarRecord from "./ControlBarRecord.js";
 import ControlBarVisual from "./ControlBarVisual.js";
-import { makeAudioStreamer } from "./audioStreamer.js";
-import CountdownTimer from "./MetronomeCountDown.js";
 import SimpleMessaje from "./AnyMessage.js"
-//import { log } from "@tensorflow/tfjs";
-import ModeToggle from "./ModeToggle.js";
-import PopUpWindow from "./PopUpWindow.js";
-import XMLParser from "react-xml-parser";
 
 const folderBasePath = "/xmlScores/violin";
 
 const ProgressPlayFileVisual = (props) => {
   const params = useParams();
 
+  //THIS IS FOR FILE LOADING, SHOULD BE DEALT WHEN DATABASE IS IMPLEMENTED
+  const [audioBuffer, setAudioBuffer] = useState(null);
+  const fileInputRef = useRef(null);
+  /////////////////////////////////////////////////////////
+
   const cursorRef = useRef(null);
   const playbackRef = useRef(null);
-
-  const [scoreTitle, setScoreTitle] = useState(null);
-
-  const [canRecord, setCanRecord] = useState(true);
-  const [canDownload, setCanDownload] = useState(false);
 
   const [metroVol, setMetroVol] = useState(0);
   const [bpmChange, setBpm] = useState(100);
 
   const [recordVol, setRecordVol] = useState(0.5);
   const [recordInactive, setRecordInactive] = useState(true)
-  
-  const [showTimer, setShowTimer] = useState(false);
-  const [finishedTimer, setFinishedTimer] = useState(false);
 
   const [zoom, setZoom] = useState(1.0);
 
@@ -51,7 +40,6 @@ const ProgressPlayFileVisual = (props) => {
   const [repetitionMessage, setRepetitionMessage]=useState("No stored recordings yet");
 
   const [cursorFinished, setCursorFinished] = useState(false);
-  const [showPopUpWindow, setShowPopUpWindow]= useState(false);
 
   const [visualMode, setVisualMode] = useState(true);
 
@@ -77,55 +65,12 @@ const ProgressPlayFileVisual = (props) => {
 
       //Send info to ControlBar--> true cursor finished
       setCursorFinished(true);
-      //"Reset" funcionalities
-      //No recording
-      /*if(recordMode && !recordInactive){
-        audioStreamer.close_maybe_save(); //maybe save audio in Record mode
-        handleSaveDeleteWindowPopUp(true); //call popup window save/delete
-      }else{*/
-        audioStreamer.close_not_save(); //never save audio in Practice mode
-      //}
-      //audioStreamer.close()
-      //console.log("Recording stopped because cursor finished")
       const playbackManager = playbackRef.current;
-      //const cursor = cursorRef.current;
       playbackManager.pause();
-      //playbackManager.setPlaybackStart(0);
-      //playbackManager.reset();
-      //cursor.reset();
       setStartPitchTrack(false);
       setRecordInactive(true) //Set to true, just like the initial state
     }
   };
-
-  const handleDownload = (dataBlob) => {
-    //THIS IS JUST TO GET THE NAME RIGHT
-    const currentDate = new Date();
-    const year = currentDate.getFullYear();
-    const month = (currentDate.getMonth() + 1).toString().padStart(2, '0');
-    const day = currentDate.getDate().toString().padStart(2, '0');
-    const hours = currentDate.getHours().toString().padStart(2, '0');
-    const minutes = currentDate.getMinutes().toString().padStart(2, '0');
-    const seconds = currentDate.getSeconds().toString().padStart(2, '0');
-    let formattedDate = `${params.files.replace(".xml", "")}_${year}_${month}_${day}-${hours}_${minutes}_${seconds}`;
-
-    if (dataBlob.type === "audio/wav") {
-      formattedDate = formattedDate + ".wav";
-    } else if (dataBlob.type === "application/json") {
-      formattedDate = formattedDate + ".json";
-    }
-    
-    console.log("DOWNLOADING: ", formattedDate)
-    const downloadLink = document.createElement('a');
-    downloadLink.href = URL.createObjectURL(dataBlob);
-    downloadLink.download = formattedDate;
-    downloadLink.style.display = 'none';
-    document.body.appendChild(downloadLink);
-    downloadLink.click();
-    document.body.removeChild(downloadLink);
-    setCanDownload(false);
-    console.log("The download worked (trust me bro I wrote the code), you should see this message twice");
-  }
   
   const handleFinishedCursorControlBarCallback = (controlBarFinishedCursor) => {
     if (controlBarFinishedCursor===false){//ControlBar already took cursor finishing actions 
@@ -135,9 +80,6 @@ const ProgressPlayFileVisual = (props) => {
   };
   // Define recording stop when cursor finishes callback function
   const handleReceiveRepetitionInfo = (showingRep, totalRep) => {
-    /*console.log("im in the handlerrrr", showingRep)
-    const message_aux="Seeing "+ showingRep +" of " + totalRep
-    setRepetitionMessage(message_aux)*/
     if(totalRep===0){
       setRepetitionMessage("No recordings yet")
     }else{
@@ -145,121 +87,40 @@ const ProgressPlayFileVisual = (props) => {
       setRepetitionMessage(message_aux)
     }
   };
-  //save/delete recording when cursor finishes or when recording is stopped
-  const handleSaveDeleteWindowPopUp=(windowShow, answer)=>{
-      if(windowShow){ //recording stopped or cursor finished --> pop up window
-        setShowPopUpWindow(true);
-      }else{ //user already choose save or delete options --> hide window
-        //hide pop-up window
-        setShowPopUpWindow(false)
-        //Depending on answer save or delete:
-        if(answer==="delete"){
-          //console.log("received delete answer")
-          audioStreamer.save_or_not(answer) //No save wanted
-          setIsResetButtonPressed(true);
-          setPitch([]);
-          setConfidence([]);
-        }else if(answer==="save"){
-          //console.log("received save answer")
-          const song_name = `${params.files}`;
-          const dataToDownload = audioStreamer.save_or_not(answer,song_name) //save wanted, send name of file
-          handleDownload(dataToDownload);
-          setCanDownload(true);
-          setIsResetButtonPressed(true);
-          setPitch([])
-          setConfidence([])
-        }
-        //Do like a reset:
-        //audioStreamer.resume()
-        //audioStreamer.save()
-        //audioStreamer.close()
-        const playbackManager = playbackRef.current;
-        const cursor = cursorRef.current;
-        playbackManager.pause();
-        playbackManager.setPlaybackStart(0);
-        playbackManager.reset();
-        cursor.reset();
-        setStartPitchTrack(false);
-        setShowPitchTrack(false)
-        setRecordInactive(true) //Set to true, just like the initial state        
-      }
-      
-  }
   
+  ////////////////////LOADING FILES TEMPORARY PATCH//////////////////////////////////////////////////
+  //Since database stuff is not yet implemented, I wrote a few lines to get local files, just so we
+  //can keep working on displaying and listening to said files
+  //THIS CODE SHOULDN'T BE IN THE MAIN BRANCH IT'S TEMPORARY AND SHOULD BE DEALT WITH BEFORE ANY MERGE
+  const handleFileSelect = (event) => {
+    const fileInput = fileInputRef.current;
+    const file = fileInput.files[0];
 
-  useEffect(() => {
-    //This part just gets the tittle of the score, so it can later be used for the saving part
-    //I don't know if it's the most efficient way, I based the code on the one used in AllLessons.js
-    const requestScoreTitle = async () => {
-      try {
-        const response = await fetch(`${folderBasePath}/${params.files}`);
-        const xmlFileData = await response.text();
-        const arr = Array.from(
-          new XMLParser()
-            .parseFromString(xmlFileData)
-            .getElementsByTagName("movement-title")
-        );
-        if (arr.length > 0) {
-          setScoreTitle(arr[0].value);
+    if (file) {
+      const reader = new FileReader();
+
+      reader.onload = function (importedFile) {
+        if (file.name.endsWith('.wav')) {
+          // Handle audio file
+          const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+          audioContext.decodeAudioData(importedFile.target.result, function (buffer) {
+            setAudioBuffer(buffer);
+          });
+        } else if (file.name.endsWith('.json')) {
+          // Handle JSON file
+          const uint8Array = new Uint8Array(importedFile.target.result);
+          const jsonString = new TextDecoder().decode(uint8Array);    
+          const jsonContent = JSON.parse(jsonString);
+          console.log('JSON Content:', jsonContent);
+          console.log('BPM:', jsonContent.bpm);
+          setBpm(jsonContent.bpm)
         }
-      } catch (error) {
-        console.log(error.message);
-      }
-    };
-    //This part deals with microphone permissions.
-    //Accepting permissions works as expected
-    //Denying permissions shows an alert that refreshes the page when accepted, but won't go away until permissions are given
-    //Ignoring permissions allows to use the page, but audio won't be picked up and an error will show when the recorging process is finished  
-    const requestMicrophonePermission = async () => {
-      try {
-        const stream = await navigator.mediaDevices.getUserMedia({ audio: {
-          echoCancellation: false,
-          autoGainControl: false,
-          noiseSuppression: false,
-          latency: 0,
-          sampleRate: 22050
-        } });
-        setCanRecord(true);
-      } catch (error) {
-        setCanRecord(false);
-        alert('Microphone access denied. If you have trouble with permissions, try clicking on the small lock at the left of your search bar and make sure the microphone is enabled, then accept this message :)');
-        window.location.reload();
-      }
-    };
-    requestMicrophonePermission();
-    requestScoreTitle();
-  }, []); //This should run only once
-    
+      };
 
-  var audioStreamer = makeAudioStreamer(handlePitchCallback);
-  
-  //When countdown timer (previous to start recording) finishes
-  useEffect(() => {
-    //console.log("record active??? ", recordInactive)
-    if(finishedTimer){
-
-      //console.log("TIMER IS FINISHED")
-      const playbackManager = playbackRef.current;
-      playbackManager.play()
-      
-      //Once countdown is finished, activate Pitch tracking
-      setPitch([])
-      setConfidence([])
-      setStartPitchTrack(true);
-      setShowPitchTrack(true);
-
-      //Start audioStreamer
-      audioStreamer.init(false);
-
-      //And play file, make cursor start
-      playbackManager.play();
-      //Timer work is done, false until next call
-      setShowTimer(false)
+      reader.readAsArrayBuffer(file);
     }
-    //Finished timer duties done, false until next call
-    setFinishedTimer(false)
-  }, [finishedTimer]);
-
+  };
+  ///////////////////////////////////////////////////////////////////////////////////////////////////
   
   //Handles basically any change
   useEffect(() => {
@@ -270,7 +131,6 @@ const ProgressPlayFileVisual = (props) => {
       // plays the music where the cursor is
       const playButton = document.getElementById("play/stop");
       const handlePlayButtonClick = () => {
-        //console.log("playyyyy")
         const playbackManager = playbackRef.current;
         const cursor = cursorRef.current;
         //const currentTime = cursor.Iterator.currentTimeStamp;
@@ -340,6 +200,7 @@ const ProgressPlayFileVisual = (props) => {
   return (
     
     <div>
+      <input type="file" ref={fileInputRef} onChange={handleFileSelect} />
       {(showRepetitionMessage&&<SimpleMessaje message={repetitionMessage}/>)}
 
       <OpenSheetMusicDisplay
@@ -362,15 +223,9 @@ const ProgressPlayFileVisual = (props) => {
         onResetDone={onResetDone}
         cursorActivity={handleFinishedCursorOSMDCallback}
         mode={visualMode}
-        dataToDownload={handleDownload}
-        canDownload={canDownload}
       />
-      {showTimer ? (<CountdownTimer bpm={bpmChange} mode={visualMode}  onComplete={() => setFinishedTimer(true)} />):(null)}
       
       <ControlBarVisual cursorFinished={cursorFinished} cursorFinishedCallback={handleFinishedCursorControlBarCallback}/>
-
-
-      {(showPopUpWindow && <PopUpWindow showWindow={showPopUpWindow} handlerBack={handleSaveDeleteWindowPopUp}/>)}
       
     </div>
   );
