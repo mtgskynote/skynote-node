@@ -5,6 +5,7 @@ import { Profile, Stats, SharedLayout } from "./pages/dashboard";
 
 import AllLessons from "./components/AllLessons";
 import ProgressPlayFile from "./components/ProgressPlayFile";
+import ProgressPlayFileVisual from "./components/ProgressPlayFileVisual";
 
 import LevelOne from "./components/levels/LevelOne";
 import LevelTwo from "./components/levels/LevelTwo";
@@ -48,7 +49,7 @@ function App() {
               <Route path="/ListRecordings" element={<ListRecordings />} />
               <Route
                   path="ListRecordings/:files"
-                  element={<ProgressPlayFile mode="visual"/>}
+                  element={<ProgressPlayFileVisual mode="visual"/>}
                 />
               <Route path="/AudioPlayer" element={<AudioPlayer />} />
               <Route path="/register" element={<Register />} />
