@@ -1,6 +1,6 @@
 import express from "express";
 const router = express.Router();
-import { register, login, updateUser } from "../controllers/authController.js";
+import { register, login, updateUser, updateProfileData } from "../controllers/authController.js";
 import authenticateUser from "../middleware-jb/authenticateUser.js";
 
 // since authrouter contains routes that are post methods
@@ -9,5 +9,7 @@ import authenticateUser from "../middleware-jb/authenticateUser.js";
 router.route("/register").post(register);
 router.route("/login").post(login);
 router.route("/updateUser").patch(authenticateUser, updateUser);
+
+router.route("/updateProfileData").patch(authenticateUser, updateProfileData);
 
 export default router;

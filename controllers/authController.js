@@ -78,6 +78,28 @@ const updateUser = async (req, res) => {
   });
 };
 
+
+const updateProfileData = async (req, res) => {
+  console.log("req.body", req.body);
+  const { email, name } = req.body;
+  if (!email || !name) {
+    throw new BadRequestError("Please provide at least name and email");
+  }
+  const user = await User.findOne({ _id: req.user.userId });
+  // user.email = email;
+  // user.name = name;
+
+  // await user.save();
+
+  // const token = user.createJWT();
+  res.status(StatusCodes.OK).json({
+    user,
+    token,
+    location: user.location,
+  });
+};
+
+
 // getCurrentUser is used to get the user's email and name
 const getCurrentUser = async (req, res) => {
   const user = await User.findOne({ _id: req.user.userId });
@@ -93,4 +115,4 @@ const logout = async (req, res) => {
   res.status(StatusCodes.OK).json({ msg: "user logged out!" });
 };
 
-export { register, login, updateUser, getCurrentUser, logout };
+export { register, login, updateUser, updateProfileData, getCurrentUser, logout };

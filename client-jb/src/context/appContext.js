@@ -30,6 +30,7 @@ const initialState = {
   showSidebar: true, // as an overlay
 };
 
+
 // Create context
 const AppContext = React.createContext();
 
@@ -92,7 +93,7 @@ const AppProvider = ({ children }) => {
           alertText,
         },
       });
-      addUserToLocalStorage({ user, token, location });  // why are we doing this?
+      addUserToLocalStorage(user, token, location );  // why are we doing this?
     } catch (error) {
       dispatch({
         type: SETUP_USER_ERROR,
