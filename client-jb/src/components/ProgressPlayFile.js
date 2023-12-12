@@ -124,7 +124,7 @@ const ProgressPlayFile = (props) => {
     downloadLink.click();
     document.body.removeChild(downloadLink);
     setCanDownload(false);
-    console.log("The download worked (trust me bro I wrote the code), you should see this message twice");
+    //console.log("The download worked (trust me bro I wrote the code), you should see this message twice");
   }
   
   const handleFinishedCursorControlBarCallback = (controlBarFinishedCursor) => {
@@ -156,18 +156,18 @@ const ProgressPlayFile = (props) => {
         if(answer==="delete"){
           //console.log("received delete answer")
           audioStreamer.save_or_not(answer) //No save wanted
-          setIsResetButtonPressed(true);
           setPitch([]);
           setConfidence([]);
+          setIsResetButtonPressed(true);
         }else if(answer==="save"){
           //console.log("received save answer")
           const song_name = `${params.files}`;
           const dataToDownload = audioStreamer.save_or_not(answer,song_name) //save wanted, send name of file
           handleDownload(dataToDownload);
           setCanDownload(true);
+          setPitch([]);
+          setConfidence([]);
           setIsResetButtonPressed(true);
-          setPitch([])
-          setConfidence([])
         }
         //Do like a reset:
         //audioStreamer.resume()

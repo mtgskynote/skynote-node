@@ -325,7 +325,6 @@ class OpenSheetMusicDisplay extends Component {
 
   //function to check cursor change
   checkCursorChange = () => {
-    console.log(this.state)
     const cursorCurrent=this.osmd.cursor.Iterator.currentTimeStamp.RealValue;
 
     //WHEN CURSOR REACHES THE END /////////////
@@ -565,7 +564,6 @@ class OpenSheetMusicDisplay extends Component {
     
     // newJson import
     if (this.props.visualJSON !== prevProps.visualJSON) {
-      console.log("im in OSMD and this is the json ", this.props.visualJSON)
       const json=this.props.visualJSON
       //update values:
       this.setState({colorNotes:json.noteColors});
@@ -588,7 +586,6 @@ class OpenSheetMusicDisplay extends Component {
               let noteID= note.graphicalVoiceEntries[0].notes[0].getSVGId();
               //check for notehead color
               const colorsArray=json.noteColors.slice()
-              console.log("colorsArray ", colorsArray)
               const index = colorsArray.findIndex(item => item[0][0] === noteID && item[0][2]===this.showingRep);
               if(index!==-1){ 
                 //note has a color assigned--> color notehead
@@ -759,7 +756,7 @@ class OpenSheetMusicDisplay extends Component {
       }
     }
 
-    // if record is clicked, put volume to 0, else put volume to 1
+    
     if (this.props.recordVol !== prevProps.recordVol) {
       const playbackManager = this.props.playbackRef.current;
       if (playbackManager) {
@@ -784,6 +781,7 @@ class OpenSheetMusicDisplay extends Component {
       this.resetNotesColor();
       this.showingRep=0;
       this.totalReps=0;
+      this.previousTimestamp=0;
       this.props.showRepeatsInfo(0,0)
       this.props.onResetDone(); // call the function passed from the parent component
     }
