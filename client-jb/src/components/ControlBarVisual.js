@@ -7,18 +7,15 @@ import { Dropdown } from "react-bootstrap";
 import {
   faPlay,
   faStop,
-  faBullseye,
   faVolumeHigh,
-  faGauge,
   faMagnifyingGlassMinus,
   faWater,
   faGear,
 } from "@fortawesome/free-solid-svg-icons";
 
 const ControlBarVisual = (props) => {
-  //Volume, bpm and zoom variables
+  //Volume and zoom variables
   const [volume, setVolume] = useState(0.5);
-  const [bpm, setBPM] = useState(100);
   const [zoom, setZoom] = useState(1);
   const [metronomeVol, setMetronomeVol] = useState(0);
 
