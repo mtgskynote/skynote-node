@@ -45,12 +45,13 @@ function App() {
                   path="/TimbreVisualization"
                   element={<TimbreVisualization />}
                 />
+                <Route path="/ListRecordings" element={<ListRecordings />} />
+                <Route
+                    path="ListRecordings/:files"
+                    element={<ProgressPlayFileVisual mode="visual"/>}
+                  />
               </Route>
-              <Route path="/ListRecordings" element={<ListRecordings />} />
-              <Route
-                  path="ListRecordings/:files"
-                  element={<ProgressPlayFileVisual mode="visual"/>}
-                />
+              
               <Route path="/AudioPlayer" element={<AudioPlayer />} />
               <Route path="/register" element={<Register />} />
               <Route path="/ourteam" element={<OurTeam />} />
