@@ -49,6 +49,7 @@ const ProgressPlayFileVisual = (props) => {
   const [cursorFinished, setCursorFinished] = useState(false);
 
   const [visualMode, setVisualMode] = useState(true);
+  const [json, setJson] = useState([]);
 
   const navigate = useNavigate();
 
@@ -120,7 +121,8 @@ const ProgressPlayFileVisual = (props) => {
           const jsonContent = JSON.parse(jsonString);
           console.log('JSON Content:', jsonContent);
           console.log('BPM:', jsonContent.bpm);
-          setBpm(jsonContent.bpm)
+          setJson(jsonContent);
+          setBpm(jsonContent.bpm);
         }
       };
 
@@ -202,7 +204,7 @@ const ProgressPlayFileVisual = (props) => {
         playButton.removeEventListener("click", handlePlayButtonClick);
       }
     };
-  }, [recordVol, zoom, recordInactive, pitchValue, repeatsIterator, visualMode, showRepetitionMessage]);
+  }, [recordVol, zoom, recordInactive, pitchValue, repeatsIterator, visualMode, showRepetitionMessage, json]);
 
   return (
     
@@ -231,6 +233,7 @@ const ProgressPlayFileVisual = (props) => {
         cursorActivity={handleFinishedCursorOSMDCallback}
         mode={visualMode}
         visual={"yes"}
+        visualJSON={json}
       />
       
       <ControlBarVisual cursorFinished={cursorFinished} cursorFinishedCallback={handleFinishedCursorControlBarCallback}/>

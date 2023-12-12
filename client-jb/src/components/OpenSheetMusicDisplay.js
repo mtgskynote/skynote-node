@@ -325,6 +325,7 @@ class OpenSheetMusicDisplay extends Component {
 
   //function to check cursor change
   checkCursorChange = () => {
+    console.log(this.state)
     const cursorCurrent=this.osmd.cursor.Iterator.currentTimeStamp.RealValue;
 
     //WHEN CURSOR REACHES THE END /////////////
@@ -547,6 +548,8 @@ class OpenSheetMusicDisplay extends Component {
     if (this.props.canDownload === true && this.props.canDownload !== prevProps.canDownload) {
       const dataToSave = {
         pitchTrackPoints: this.state.pitchData,
+        pitchX:this.state.pitchPositionX,
+        pitchY:this.state.pitchPositionY,
         pitchPointColor: this.state.pitchColor,
         repetitionNumber: this.state.repetitionNumber,
         noteIDs: this.state.recordedNoteIDs,
@@ -560,6 +563,54 @@ class OpenSheetMusicDisplay extends Component {
       this.props.dataToDownload(jsonBlob);
     }
     
+    // newJson import
+    if (this.props.visualJSON !== prevProps.visualJSON) {
+      console.log("im in OSMD and this is the json ", this.props.visualJSON)
+      const json=this.props.visualJSON
+      //update values:
+      this.setState({colorNotes:json.noteColors});
+      this.setState({ recordedNoteIDs: json.noteIDs});
+      this.setState({ recordedNoteIndex:json.noteIndex});
+      this.setState({ pitchData: json.pitchTrackPoints });
+      this.setState({ pitchPositionX: json.pitchX })
+      this.setState({ pitchPositionY: json.pitchY })
+      this.setState({ pitchColor: json.pitchPointColor })
+      this.setState({ repetitionNumber: json.repetitionNumber})
+      this.showingRep=0; 
+      this.totalReps=Math.max(...json.repetitionNumber);
+      //update note colores?????? FIX
+      //Update color of notes
+      let staves = this.osmd.graphic.measureList;
+      for (let stave_index = 0; stave_index < staves.length; stave_index++) {
+        let stave = staves[stave_index][0];
+          for (let note_index = 0; note_index < stave.staffEntries.length; note_index++) {
+              let note = stave.staffEntries[note_index]
+              let noteID= note.graphicalVoiceEntries[0].notes[0].getSVGId();
+              //check for notehead color
+              const colorsArray=json.noteColors.slice()
+              console.log("colorsArray ", colorsArray)
+              const index = colorsArray.findIndex(item => item[0][0] === noteID && item[0][2]===this.showingRep);
+              if(index!==-1){ 
+                //note has a color assigned--> color notehead
+                // this is for all the notes except the quarter and whole notes
+                const svgElement = note.graphicalVoiceEntries[0].notes[0].getSVGGElement();
+                svgElement.children[0].children[0].children[0].style.fill =
+                  colorsArray[index][0][1]; // notehead
+                if (
+                  svgElement &&
+                  svgElement.children[0] &&
+                  svgElement.children[0].children[0] &&
+                  svgElement.children[0].children[1]
+                ) {
+                  //this is for all the quarter and whole notes
+                  svgElement.children[0].children[0].children[0].style.fill =
+                    colorsArray[index][0][1]; // notehead
+                  svgElement.children[0].children[1].children[0].style.fill =
+                    colorsArray[index][0][1]; // notehead
+                }
+          }} }
+
+    }
 
     // for metronome volume and bpm changes
     if (this.props.metroVol !== prevProps.metroVol) {
