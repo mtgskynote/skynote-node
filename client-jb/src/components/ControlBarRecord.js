@@ -165,6 +165,7 @@ const ControlBarRecord = (props) => {
                             value={volume}
                             onChange={handleVolumeChange}
                             title="audio-volume"
+                            disabled={!recordingOff}
                           />
                         </div>
                         <div>
@@ -182,6 +183,7 @@ const ControlBarRecord = (props) => {
                             step="0.1"
                             value={metronomeVol}
                             onChange={handleMetroVolChange}
+                            disabled={!recordingOff}
                           />
                         </div>
                         <div>
@@ -199,6 +201,7 @@ const ControlBarRecord = (props) => {
                             value={zoom}
                             onChange={handleZoomChange}
                             title="zoom-slider"
+                            disabled={!recordingOff}
                           />
                         </div>
                         <div>
@@ -215,6 +218,7 @@ const ControlBarRecord = (props) => {
                             value={bpm}
                             onChange={handleBPMChange}
                             title="change-bpm"
+                            disabled={!recordingOff}
                           />
                         </div>
                         
