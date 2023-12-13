@@ -15,5 +15,6 @@ DONE - cambio entre un modo y otro, qué pasa con las cosas guardadas (sobretodo
 DONE - bpm doesnt change correctly in some scores
 DONE - asks for microphone permission but the song starts playing even when you didnt answer
 DONE - countdown should be 1,2,3,4 rather than 4,3,2,1 
+DONE - When recording, settings button should be deactivated
 
 hola prueba lees esto alvaro????
