@@ -1,20 +1,25 @@
-To do list:
-A small list of things we're currently working on, or stuff we have pending. This doesn't neccesarily contain every small detail, but just some relevant stuff we shouldn't miss :)
+To do list - A small list of things we're currently working on, or stuff we have pending. This doesn't neccesarily contain every small detail, 
+but just some relevant stuff we shouldn't miss :)
 
-- guardar archivos audio con nombre del score? o con nombre del archivo xml? Quizás archivo xml mejor, pero luego para displayear lista de grabaciones mejor con el nombre del score, mejor para el usuario
-- Botón "ver", símbolo ojo, de la lista de grabaciones, tiene que llevarnos a otro archivo osmd donde aparezca el pitch tracking, con los colores de la nota, y tengas opcion de darle a play/stop, para oir a la vez que se mueve el cursor, lo que has hecho. Por el momento, no permitiría que el usuario eligiera desde qué punto quiere oirlo, sino hacerlo que desde el principio, y si lo paras, vuelve al principio. Luego ya meteremos complicaciones. 
-- Añadir a lo anterior, y a la zona de lista de grabaciones, algo de go back (en la lista de grabaciones ya hay go back), no sé si tambien un boton de go back pero a las lessons? A no ser que aparezca ya la barra lateral? porque creo que desaparece(?) comprobar
-- añadir boton en algun lado que nos lleve a las saved songs generales, no sólo las correspondientes a una cancion, sino en general, tendrá que ir en el menú principal o así. HAcerlo bonito, cómo se mostrarán las grabaciones? Tree (como AllLessons)? más visual chuli?
+- guardar archivos audio con nombre del score? o con nombre del archivo xml? Quizás archivo xml mejor, pero luego para displayear lista de grabaciones mejor 
+con el nombre del score, mejor para el usuario
+- Botón "ver", símbolo ojo, de la lista de grabaciones, tiene que llevarnos a otro archivo osmd donde aparezca el pitch tracking, con los colores de la nota, 
+y tengas opcion de darle a play/stop, para oir a la vez que se mueve el cursor, lo que has hecho. Por el momento, no permitiría que el usuario eligiera desde 
+qué punto quiere oirlo, sino hacerlo que desde el principio, y si lo paras, vuelve al principio. Luego ya meteremos complicaciones. 
+- Añadir a lo anterior, y a la zona de lista de grabaciones, algo de go back (en la lista de grabaciones ya hay go back), no sé si tambien un boton de go back 
+pero a las lessons? A no ser que aparezca ya la barra lateral? porque creo que desaparece(?) comprobar
+- añadir boton en algun lado que nos lleve a las saved songs generales, no sólo las correspondientes a una cancion, sino en general, tendrá que ir en el menú 
+principal o así. HAcerlo bonito, cómo se mostrarán las grabaciones? Tree (como AllLessons)? más visual chuli?
 - Limpieza general(borrar console.logs, repasar comentarios, etc...)
 - A la hora de mostrar las previews con todos los ficheros guardados, tal vez se podria usar audio .ogg 
 - En ProgressPlayFileVisual no hacemos uso del micro, asi que todo lo relacionado con eso sobra, y deberiamos quitarlo
 
-DONE - El controlBar del punto anterior solo debe tener play/stop (alternados), el botón de iteracion entre repeticiones(?) para sin escuchar poder ver el recorrido de pitchtrack y color de notas, y los settings(pero sin poder modificar el bpm, de hecho habrá que haber guardado en qué bpm se ha grabado). Nada de grabar.
+DONE - El controlBar del punto anterior solo debe tener play/stop (alternados), el botón de iteracion entre repeticiones(?) para sin escuchar poder ver el 
+       recorrido de pitchtrack y color de notas, y los settings(pero sin poder modificar el bpm, de hecho habrá que haber guardado en qué bpm se ha grabado). Nada de grabar.
 DONE - preparar y guardar todo lo necesario en base de datos (color notas, pitch track points, id notas a los que hacen referencia, audio)
 DONE - cambio entre un modo y otro, qué pasa con las cosas guardadas (sobretodo al pasar de practice a record)
 DONE - bpm doesnt change correctly in some scores
 DONE - asks for microphone permission but the song starts playing even when you didnt answer
 DONE - countdown should be 1,2,3,4 rather than 4,3,2,1 
 DONE - When recording, settings button should be deactivated
-
-hola prueba lees esto alvaro????
+DONE - add bpm blocked button to visual mode, to see bpm with which we recorded
