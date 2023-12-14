@@ -20,7 +20,9 @@ const ProgressPlayFileVisual = (props) => {
   const [audioBuffer, setAudioBuffer] = useState(null);
   const fileInputRef = useRef(null);
   /////////////////////////////////////////////////////////
-
+  const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+  const [songFile, setSongFile] = useState(null);
+  
   const cursorRef = useRef(null);
   const playbackRef = useRef(null);
 
@@ -110,10 +112,8 @@ const ProgressPlayFileVisual = (props) => {
       reader.onload = function (importedFile) {
         if (file.name.endsWith('.wav')) {
           // Handle audio file
-          const audioContext = new (window.AudioContext || window.webkitAudioContext)();
-          audioContext.decodeAudioData(importedFile.target.result, function (buffer) {
-            setAudioBuffer(buffer);
-          });
+          setSongFile(importedFile.target.result);
+          
         } else if (file.name.endsWith('.json')) {
           // Handle JSON file
           const uint8Array = new Uint8Array(importedFile.target.result);
@@ -143,7 +143,16 @@ const ProgressPlayFileVisual = (props) => {
         const playbackManager = playbackRef.current;
         const cursor = cursorRef.current;
         //const currentTime = cursor.Iterator.currentTimeStamp;
-        
+        console.log("HOLIIIIIIIIIIIIIIIIIIIIIIII", songFile);
+        audioContext.decodeAudioData(songFile, function (buffer) {
+          const audioSource = audioContext.createBufferSource();
+          audioSource.buffer = buffer;
+          audioSource.connect(audioContext.destination);
+          audioSource.start(0);
+          setAudioBuffer(audioSource);
+          console.log(audioSource);
+          //audioSource.stop();
+        });
         if (playbackManager.isPlaying) {
           playbackManager.pause();
           playbackManager.setPlaybackStart(0);
@@ -204,7 +213,7 @@ const ProgressPlayFileVisual = (props) => {
         playButton.removeEventListener("click", handlePlayButtonClick);
       }
     };
-  }, [recordVol, zoom, recordInactive, pitchValue, repeatsIterator, visualMode, showRepetitionMessage, json]);
+  }, [recordVol, zoom, recordInactive, pitchValue, repeatsIterator, visualMode, showRepetitionMessage, json, songFile]);
 
   return (
     
