@@ -4,6 +4,13 @@ import ProfileCSS from './Profile.module.css';
 
 import axios from "axios";
 
+function getRandomInt(min, max) {
+  min = Math.ceil(min);
+  max = Math.floor(max);
+  return Math.floor(Math.random() * (max - min + 1)) + min;
+}
+
+
 /*
 The useEffect hook runs once when the component mounts ([] as a dependency means it runs only once).
 Inside useEffect, an asynchronous operation (fetching data in this case) is performed.
@@ -26,6 +33,99 @@ const Profile = () => {
   }
   const handleSubmit = async (event) => {
     event.preventDefault();
+
+    // ---------------------------------------
+    var recdatalist=[];  // list of core recording data [{recordingName, recordingId},{...}, ...]
+
+    /* getRecData  */
+    try {
+      // scoreId: "64d0de60d9ac9a34a66b4d45" is for the score "V_001_Cuerdas_Al_Aire_1_Suelta_A"
+      const response = await axios.get("/api/v1/recordings/getRecData", {params: {studentId: "645b6e484612a8ebe8525933", scoreId: "64d0de60d9ac9a34a66b4d45"}});
+
+      if (response.status===200) {
+        console.log('get names worked  (even though there may be none returned)')
+        recdatalist = response.data; // save results locally
+        console.log(`       response.data is  ${JSON.stringify(recdatalist)}`)
+
+      } else {
+        console.log('getRecData response.status is not 200!')
+      }
+    } catch (error) {
+      console.error('Error on axios getRecData', error);
+    }
+
+
+    /* putRecording  */
+    try {
+      // foo, "V_001_Cuerdas_Al_Aire_1_Suelta_A"
+      const response = await axios.put("/api/v1/recordings/putRecording", 
+        {studentId: "645b6e484612a8ebe8525933", scoreId: "64d0de60d9ac9a34a66b4d45", recordingName: "FooRecording"+getRandomInt(1,5), date: new Date(), sharing: false, info: {bpm: 100}}
+      );
+      console.log(`response from putRecording was ${JSON.stringify(response.data)}`);
+
+      if (response.status===201) { /* 201 is the status code for a successful PUT */
+        console.log('putRecording  returned OK')
+        recdatalist.push(response.data); // save results locally
+      } else {
+        console.log('putRecording failed!')
+      }
+    } catch (error) {
+      console.error('Error on axios putRecording', error);
+    }
+
+    /* patchViewPermissions  */
+    try {
+      // foo, "V_001_Cuerdas_Al_Aire_1_Suelta_A"
+      const response = await axios.patch("/api/v1/recordings/patchViewPermissions", 
+        {recordingId: recdatalist[0].recorordingId, sharing: true});
+      console.log(response.data);
+      if (response.status===200) { 
+        console.log('patchViewPermissions  returned OK')
+      } else {
+        console.log('patchViewPermissions failed!')
+      }
+    } catch (error) {
+      console.error('Error on axios patchViewPermissions', error);
+    }
+
+    /* getRecording  */
+    try {
+      // foo, "V_001_Cuerdas_Al_Aire_1_Suelta_A"
+      const response = await axios.get("/api/v1/recordings/getRecording", 
+        {params: {recordingId: recdatalist[0].recorordingId,}}
+      );
+
+      if (response.status===200) {
+        console.log('getRecording worked!')
+        console.log(`       response.data is ${JSON.stringify(response.data)}`)
+      } else {
+        console.log('getRecording failed!')
+      }
+    } catch (error) {
+      console.error('Error on axios getRecNames', error);
+    }
+
+
+
+
+    /* deleteRecording  */
+    try {
+      // foo, "V_001_Cuerdas_Al_Aire_1_Suelta_A"
+      const response = await axios.get("/api/v1/recordings/deleteRecording", 
+        {params: {recordingId: "FooRecording5",}}
+      );
+
+      if (response.status===200) {
+        console.log('deleteRecording worked!')
+        console.log(`       response.data is ${JSON.stringify(response.data)}`)
+      } else {
+        console.log('deleteRecording failed!')
+      }
+    } catch (error) {
+      console.error('Error on axios deleteRecording', error);
+    }
+
+    // ---------------------------------------
   
     //-----  print the form data out just for fun. ---  
     const formData = new FormData(event.target);
