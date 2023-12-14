@@ -29,11 +29,11 @@ const PopUpWindow = (props) => {
   };
 
   return (
-    <div className={PopUpWindowCSS.popUpWindow}>
-        <div className={PopUpWindowCSS.content}>
+    <div className={PopUpWindowCSS.popUpWindowSave}>
+        <div className={PopUpWindowCSS.contentSave}>
           <p>Do you want to save or delete this recording?</p>
-          <button className={"saveAnswerButton"} onClick={handleSave}>Save</button>
-          <button className={"deleteAnswerButton"} onClick={handleDelete}>Delete</button>
+          <button className={PopUpWindowCSS.buttonSave} onClick={handleSave}>Save</button>
+          <button className={PopUpWindowCSS.buttonSave} onClick={handleDelete}>Delete</button>
         </div>
     </div>
   );

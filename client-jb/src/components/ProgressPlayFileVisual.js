@@ -10,6 +10,7 @@ import {
 import Wrapper from "../assets/wrappers/ModeToggle";
 import { Button} from "@material-ui/core";
 import ModeInfoButton from "./ModeInfoButton.js";
+import PopUpWindowDelete from "./PopUpWindowDelete.js";
 
 const folderBasePath = "/xmlScores/violin";
 
@@ -33,6 +34,7 @@ const ProgressPlayFileVisual = (props) => {
   const [recordInactive, setRecordInactive] = useState(true)
 
   const [zoom, setZoom] = useState(1.0);
+  const [showPopUpWindow, setShowPopUpWindow]= useState(false);
 
   const [pitchValue, setPitchValue] = useState(null);
   const [confidenceValue, setConfidenceValue] = useState(null);
@@ -60,14 +62,27 @@ const ProgressPlayFileVisual = (props) => {
   };
 
   // Define pitch callback function 
-  const handlePitchCallback = (pitchData) => {
-    pitchCount=pitchCount+1;
-      if(pitchCount>0){
-          setPitchValue(pitchData.pitch);
-          setConfidenceValue(pitchData.confidence);
-        pitchCount=0;
-      }
+  const handleDeleteTasks = () => {
+
+    //take care of things
+    console.log("taking care of delete form progressplayfilevisual")
+    setShowPopUpWindow(true);
   };
+
+  const handleWindowPopUp =(answer)=> {
+
+    if(answer==="1"){ //"yes"
+      console.log("You choose option 1")
+      setShowPopUpWindow(false)
+      //Delete recording actions required FIXME
+
+    }else{ //"no"
+      console.log("You choose option 2")
+      setShowPopUpWindow(false)
+      //No other actions required
+    }
+
+  }
 
   // Define recording stop when cursor finishes callback function
   const handleFinishedCursorOSMDCallback = (OSMDfinishedCursor) => {
@@ -205,12 +220,28 @@ const ProgressPlayFileVisual = (props) => {
       repeatLayersButton.addEventListener("mouseout", handleRepeatLayersMouseLeave);
       //--------------------------------------------------------------------------------
 
+      // DELETE BUTTON -------------------------------------------------------------
+      /*const deleteButton = document.getElementById("delete");
+      const handleDeleteButtonClick = () => {
+        console.log("delete was clicked, progressplayfilevisual")
+        setDeletedWanted(true);
+        //tell controlbar that delete tasks are being taken care of
+        setDeleteHandledVisual(true);
+        //setDeleteHandledVisual(false); FIXME, otherwise it wont work the next time
+        //call function that does tasks for delete
+        handleDeleteTasks();
+      
+      };
+      deleteButton.addEventListener("click", handleDeleteButtonClick);*/
+      //--------------------------------------------------------------------------------
+
     
       return () => {
         repeatLayersButton.removeEventListener("click", handleRepeatLayersButtonClick);
         repeatLayersButton.removeEventListener("mouseover", handleRepeatLayersMouseOver);
         repeatLayersButton.removeEventListener("mouseleave", handleRepeatLayersMouseLeave);
         playButton.removeEventListener("click", handlePlayButtonClick);
+        //deleteButton.removeEventListener("click", handleDeleteButtonClick);
       }
     };
   }, [recordVol, zoom, recordInactive, pitchValue, repeatsIterator, visualMode, showRepetitionMessage, json, songFile]);
@@ -245,7 +276,9 @@ const ProgressPlayFileVisual = (props) => {
         visualJSON={json}
       />
       
-      <ControlBarVisual cursorFinished={cursorFinished} cursorFinishedCallback={handleFinishedCursorControlBarCallback} bpmValue={bpmChange}/>
+      <ControlBarVisual cursorFinished={cursorFinished} cursorFinishedCallback={handleFinishedCursorControlBarCallback} bpmValue={bpmChange} handleDelete={handleDeleteTasks}/>
+
+      {(showPopUpWindow && <PopUpWindowDelete showWindow={showPopUpWindow} handlerBack={handleWindowPopUp}/>)}
 
       <Wrapper>
       <div className="completeModeDiv">

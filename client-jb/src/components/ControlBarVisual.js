@@ -12,6 +12,7 @@ import {
   faWater,
   faGear,
   faGauge,
+  faTrash,
 } from "@fortawesome/free-solid-svg-icons";
 
 const ControlBarVisual = (props) => {
@@ -20,9 +21,11 @@ const ControlBarVisual = (props) => {
   const [zoom, setZoom] = useState(1);
   const [metronomeVol, setMetronomeVol] = useState(0);
   const [bpm, setBPM] = useState(100);
+  const [deleteWanted, setDeletedWanted] = useState(false);
 
   useEffect(() => {
 
+    //Cursor finished
     if(props.cursorFinished){
       //cursor finished -->same actions as in reset
       setIsPlaying(true)
@@ -31,6 +34,7 @@ const ControlBarVisual = (props) => {
       props.cursorFinishedCallback(false)
     }
 
+    //Set bpm of the loaded file
     setBPM(props.bpmValue)
     
   }, [props]);
@@ -86,21 +90,32 @@ const ControlBarVisual = (props) => {
     // None
   };
 
+  //Delete recording button
+  const handleDeleteRecording = () => {
+    // Toggle the visibility of the settings panel
+    setDeletedWanted(true);
+    //Tell parent, progressplayfilevisual, to take care of tasks
+    props.handleDelete();
+  };
+
   //Generate data to generate buttons
   const titles = [
     "play/stop",
     "switchRepetition",
     "settings",
+    "delete"
   ];
   const icons = [
     faPlay,
     faWater,
     faGear,
+    faTrash
   ];
   const handlers = [
     handlePlayStop,
     handleRepeatLayers,
-    handleToggleSettings
+    handleToggleSettings,
+    handleDeleteRecording,
   ]
 
   const ControlBarVisual = (
