@@ -236,7 +236,7 @@ const ProgressPlayFileVisual = (props) => {
         visualJSON={json}
       />
       
-      <ControlBarVisual cursorFinished={cursorFinished} cursorFinishedCallback={handleFinishedCursorControlBarCallback}/>
+      <ControlBarVisual cursorFinished={cursorFinished} cursorFinishedCallback={handleFinishedCursorControlBarCallback} bpmValue={bpmChange}/>
 
       <Wrapper>
       <div className="completeModeDiv">

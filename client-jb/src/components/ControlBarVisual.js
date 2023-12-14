@@ -11,6 +11,7 @@ import {
   faMagnifyingGlassMinus,
   faWater,
   faGear,
+  faGauge,
 } from "@fortawesome/free-solid-svg-icons";
 
 const ControlBarVisual = (props) => {
@@ -18,6 +19,7 @@ const ControlBarVisual = (props) => {
   const [volume, setVolume] = useState(0.5);
   const [zoom, setZoom] = useState(1);
   const [metronomeVol, setMetronomeVol] = useState(0);
+  const [bpm, setBPM] = useState(100);
 
   useEffect(() => {
 
@@ -28,6 +30,8 @@ const ControlBarVisual = (props) => {
       //Change cursorFinished state in parent component
       props.cursorFinishedCallback(false)
     }
+
+    setBPM(props.bpmValue)
     
   }, [props]);
 
@@ -67,6 +71,13 @@ const ControlBarVisual = (props) => {
     // Handle MetroVol slider change
     setMetronomeVol(event.target.value);
     // Update the MetroVol state or perform any other necessary actions
+  };
+
+  //BPM change
+  const handleBPMChange = (event) => {
+    // Handle BPM slider change
+    setBPM(event.target.value);
+    // Update the BPM state or perform any other necessary actions
   };
 
 
@@ -171,6 +182,23 @@ const ControlBarVisual = (props) => {
                             value={zoom}
                             onChange={handleZoomChange}
                             title="zoom-slider"
+                          />
+                        </div>
+                        <div>
+                          {/* BPM Slider */}
+                          <FontAwesomeIcon icon={faGauge} />
+                          <label htmlFor="bpm-slider" className="slider-label" title="change-bpm">
+                            BPM ({bpm})
+                          </label>
+                          <input
+                            id="bpm-slider"
+                            type="range"
+                            min="50"
+                            max="200"
+                            value={bpm}
+                            onChange={handleBPMChange}
+                            title="change-bpm"
+                            disabled={true}
                           />
                         </div>
                         
