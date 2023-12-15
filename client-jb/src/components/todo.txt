@@ -14,6 +14,12 @@ principal o así. HAcerlo bonito, cómo se mostrarán las grabaciones? Tree (com
 - A la hora de mostrar las previews con todos los ficheros guardados, tal vez se podria usar audio .ogg 
 - En ProgressPlayFileVisual no hacemos uso del micro, asi que todo lo relacionado con eso sobra, y deberiamos quitarlo
 
+
+- Audio buffer to play audio
+
+
+
+
 DONE - El controlBar del punto anterior solo debe tener play/stop (alternados), el botón de iteracion entre repeticiones(?) para sin escuchar poder ver el 
        recorrido de pitchtrack y color de notas, y los settings(pero sin poder modificar el bpm, de hecho habrá que haber guardado en qué bpm se ha grabado). Nada de grabar.
 DONE - preparar y guardar todo lo necesario en base de datos (color notas, pitch track points, id notas a los que hacen referencia, audio)
@@ -23,3 +29,4 @@ DONE - asks for microphone permission but the song starts playing even when you 
 DONE - countdown should be 1,2,3,4 rather than 4,3,2,1 
 DONE - When recording, settings button should be deactivated
 DONE - add bpm blocked button to visual mode, to see bpm with which we recorded
+DONE - PopUpWinwdow should allow writing name for file

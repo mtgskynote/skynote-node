@@ -131,7 +131,7 @@ var makeAudioStreamer = function (
       mediaRecorder.stop();
       //audioContext.suspend();
     },
-    save_or_not: function(answer, song_name){
+    save_or_not: function(answer){
       if(answer==="save"){
         //This creates an audioBlob that will be saved later
         const audioBlob = new Blob(audioChunks, { type: 'audio/wav' });
