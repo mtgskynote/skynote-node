@@ -1,4 +1,4 @@
-import student_recordings from "../models/StudentRecordings.js";
+import student_recordings from "../models/studentRecordings.js";
 import { StatusCodes } from "http-status-codes";
 import { BadRequestError, UnAuthenticatedError } from "../errors/index.js";
 
@@ -102,17 +102,20 @@ const getRecording = async (req, res) => {
 
   /* recordingRouter.route("/deleteRecording").delete(deleteRecording); */
   const deleteRecording = async (req, res) => {
+    console.log('OK!! Inside deleteRecording controller!')
     try {
-      const id = req.params.id;
-      const result = await student_recordings.findByIdAndDelete(id);
+      //const recordingId=req.query.recordingId;
+      const recordingId = req.params.recordingId;
+      console.log(`in deleteRecording, got a request to delete recordingId ${recordingId}`)
+      const result = await student_recordings.findByIdAndDelete(recordingId );
 
       if (!result) {
-          return res.status(404).send('Document not found');
+          return res.status(404).send('Could not delete, document not found');
       }
 
       res.send('Document successfully deleted');
     } catch (error) {
-        res.status(500).send('Server error');
+        res.status(500).send('Server error in deleteRecording function');
     }
   }
   

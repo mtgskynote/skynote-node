@@ -9,6 +9,6 @@ recordingRouter.route("/getRecData").get(getRecData);
 recordingRouter.route("/getRecording").get(getRecording);
 recordingRouter.route("/putRecording").put(putRecording);
 recordingRouter.route("/patchViewPermissions").patch(patchViewPermissions);
-recordingRouter.route("/deleteRecording").delete(deleteRecording);
+recordingRouter.route('/deleteRecording/:recordingId').delete(deleteRecording);
 
 export default recordingRouter;

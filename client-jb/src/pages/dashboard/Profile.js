@@ -10,34 +10,16 @@ function getRandomInt(min, max) {
   return Math.floor(Math.random() * (max - min + 1)) + min;
 }
 
+  //====================================================================
+  //  This is a demo/test of the /recordings/XXX API 
+  //====================================================================
 
-/*
-The useEffect hook runs once when the component mounts ([] as a dependency means it runs only once).
-Inside useEffect, an asynchronous operation (fetching data in this case) is performed.
-While the data is being fetched, the component displays a loading message (<p>Loading...</p>).
-Once the data is fetched successfully, the state data is updated, and the loading state is set to false.
-
-This might be overkill for grabbing the user's email, but it's a good pattern to follow for more complex data fetching from the server.
-*/
-
-const Profile = () => {
-  const [data, setData] = useState(null);
-  const [loading, setLoading] = useState(true);
-
-  //--------------------------------------------------------------------
-  const [inputs, setInputs] = useState({});
-  const handleChange = (event) => {
-    const name = event.target.name;
-    const value = event.target.value;
-    setInputs(values => ({...values, [name]: value}))
-  }
-  const handleSubmit = async (event) => {
+  const handleRecordingTestSubmit = async (event) => {
     event.preventDefault();
-
     // ---------------------------------------
-    var recdatalist=[];  // list of core recording data [{recordingName, recordingId},{...}, ...]
+    var recdatalist=[];  // list of minimal recording data [{recordingName, recordingId},{...}, ...]
 
-    /* getRecData  */
+    /* getRecData  --------------*/
     try {
       // scoreId: "64d0de60d9ac9a34a66b4d45" is for the score "V_001_Cuerdas_Al_Aire_1_Suelta_A"
       const response = await axios.get("/api/v1/recordings/getRecData", {params: {studentId: "645b6e484612a8ebe8525933", scoreId: "64d0de60d9ac9a34a66b4d45"}});
@@ -46,7 +28,6 @@ const Profile = () => {
         console.log('get names worked  (even though there may be none returned)')
         recdatalist = response.data; // save results locally
         console.log(`       response.data is  ${JSON.stringify(recdatalist)}`)
-
       } else {
         console.log('getRecData response.status is not 200!')
       }
@@ -55,7 +36,7 @@ const Profile = () => {
     }
 
 
-    /* putRecording  */
+    /* putRecording  --------------*/
     try {
       // foo, "V_001_Cuerdas_Al_Aire_1_Suelta_A"
       const response = await axios.put("/api/v1/recordings/putRecording", 
@@ -105,15 +86,12 @@ const Profile = () => {
       console.error('Error on axios getRecNames', error);
     }
 
-
-
-
     /* deleteRecording  */
     try {
       // foo, "V_001_Cuerdas_Al_Aire_1_Suelta_A"
-      const response = await axios.get("/api/v1/recordings/deleteRecording", 
-        {params: {recordingId: "FooRecording5",}}
-      );
+      const recordingId = recdatalist[recdatalist.length-1].recordingId;
+      console.log(`will try to delete recordingId ${recordingId}`)
+      const response = await axios.delete(`/api/v1/recordings/deleteRecording/${recordingId}`);
 
       if (response.status===200) {
         console.log('deleteRecording worked!')
@@ -124,8 +102,38 @@ const Profile = () => {
     } catch (error) {
       console.error('Error on axios deleteRecording', error);
     }
+  }
+  
+  //====================================================================
+  //  end of Recordings test/demo
+  //====================================================================
+ 
 
-    // ---------------------------------------
+/*
+The useEffect hook runs once when the component mounts ([] as a dependency means it runs only once).
+Inside useEffect, an asynchronous operation (fetching data in this case) is performed.
+While the data is being fetched, the component displays a loading message (<p>Loading...</p>).
+Once the data is fetched successfully, the state data is updated, and the loading state is set to false.
+
+This might be overkill for grabbing the user's email, but it's a good pattern to follow for more complex data fetching from the server.
+*/
+
+const Profile = () => {
+  const [data, setData] = useState(null);
+  const [loading, setLoading] = useState(true);
+
+  //--------------------------------------------------------------------
+  const [inputs, setInputs] = useState({});
+  const handleChange = (event) => {
+    const name = event.target.name;
+    const value = event.target.value;
+    setInputs(values => ({...values, [name]: value}))
+  }
+
+
+  const handleSubmit = async (event) => {
+    event.preventDefault();
+
   
     //-----  print the form data out just for fun. ---  
     const formData = new FormData(event.target);
@@ -138,7 +146,7 @@ const Profile = () => {
 
     //-----  send the form data to the server. ---
     try {
-      const response = await axios.post('/updateProfileData', {
+      const response = await axios.post('/api/v1/auth/updateProfileData', {
         method: 'POST',
         body: formData
       });
@@ -181,6 +189,7 @@ const Profile = () => {
   return (
     <div>
       <div  align="center">
+      <button onClick={handleRecordingTestSubmit}>Run Recordings DB test</button>
       <h1 >Skynote Profile</h1>
       <div  align="left">
 
