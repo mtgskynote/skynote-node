@@ -1,59 +1,52 @@
-/////////////////////////////////////////////////////////////////////
-//////////////////////UNDER CONSTRUCTION :(//////////////////////////
-///ATM this is just a copy of ControlBar but with a different color//
-/////////////////////////////////////////////////////////////////////
 import {useEffect, useState } from "react";
-import Wrapper from "../assets/wrappers/ControlBarRecord";
+import Wrapper from "../assets/wrappers/ControlBarVisual";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { Button} from "@material-ui/core";
 import { Dropdown } from "react-bootstrap";
 
 import {
-  faUndoAlt,
   faPlay,
-  faPause,
-  faRecordVinyl,
-  faBullseye,
+  faStop,
   faVolumeHigh,
-  faGauge,
   faMagnifyingGlassMinus,
   faWater,
   faGear,
-  faBookmark,
+  faGauge,
+  faTrash,
 } from "@fortawesome/free-solid-svg-icons";
 
-const ControlBarRecord = (props) => {
-  //Volume, bpm and zoom variables
+const ControlBarVisual = (props) => {
+  //Volume and zoom variables
   const [volume, setVolume] = useState(0.5);
-  const [bpm, setBPM] = useState(100);
   const [zoom, setZoom] = useState(1);
   const [metronomeVol, setMetronomeVol] = useState(0);
+  const [bpm, setBPM] = useState(100);
+  const [deleteWanted, setDeletedWanted] = useState(false);
 
   useEffect(() => {
 
+    //Cursor finished
     if(props.cursorFinished){
       //cursor finished -->same actions as in reset
       setIsPlaying(true)
-      setRecordingOff(true)
+      //setRecordingOff(true)
       //Change cursorFinished state in parent component
       props.cursorFinishedCallback(false)
     }
+
+    //Set bpm of the loaded file
+    setBPM(props.bpmValue)
     
   }, [props]);
 
-  //PLAY/PAUSE variable
+
+  //PLAY/STOP variable
   const [isPlayingOn, setIsPlaying] = useState(true);
-  const handlePlayPause = () => {
+  const handlePlayStop = () => {
     setIsPlaying(!isPlayingOn);
-    // Add logic to handle the play/pause action here
+    // Add logic to handle the play/stop action here
   };
 
-  
-  //record variable
-  const [recordingOff, setRecordingOff] = useState(true);
-  const handleRecord = () => {
-    setRecordingOff(!recordingOff);
-  };
 
   //Settings-visible variable
   const [isSettingsVisible, setIsSettingsVisible] = useState(false);
@@ -69,12 +62,6 @@ const ControlBarRecord = (props) => {
     // Update the volume state or perform any other necessary actions
   };
 
-  //BPM change
-  const handleBPMChange = (event) => {
-    // Handle BPM slider change
-    setBPM(event.target.value);
-    // Update the BPM state or perform any other necessary actions
-  };
 
   //Zoom change
   const handleZoomChange = (event) => {
@@ -90,32 +77,48 @@ const ControlBarRecord = (props) => {
     // Update the MetroVol state or perform any other necessary actions
   };
 
-   //Saved recordings button
-   const handleSaveRecordings = (event) => {
+  //BPM change
+  const handleBPMChange = (event) => {
+    // Handle BPM slider change
+    setBPM(event.target.value);
+    // Update the BPM state or perform any other necessary actions
+  };
+
+
+  //RepeatLayers button
+  const handleRepeatLayers = (event) => {
     // None
+  };
+
+  //Delete recording button
+  const handleDeleteRecording = () => {
+    // Toggle the visibility of the settings panel
+    setDeletedWanted(true);
+    //Tell parent, progressplayfilevisual, to take care of tasks
+    props.handleDelete();
   };
 
   //Generate data to generate buttons
   const titles = [
-    "play/pause",
-    "record/stopRecording",
-    "saved",
+    "play/stop",
+    "switchRepetition",
     "settings",
-    ];
+    "delete"
+  ];
   const icons = [
     faPlay,
-    faBullseye,
-    faBookmark,
+    faWater,
     faGear,
+    faTrash
   ];
   const handlers = [
-    handlePlayPause,
-    handleRecord,
-    handleSaveRecordings,
+    handlePlayStop,
+    handleRepeatLayers,
     handleToggleSettings,
+    handleDeleteRecording,
   ]
 
-  const ControlBarRecord = (
+  const ControlBarVisual = (
     <Wrapper>
       <div className="myDiv">
         {titles.map((title, i) => {
@@ -124,15 +127,10 @@ const ControlBarRecord = (props) => {
               <div>
                 {icons[i] === faPlay ? (
                   <FontAwesomeIcon
-                    icon={isPlayingOn ? faPlay : faPause} //Alternate Pause/Play button
+                    icon={isPlayingOn ? faPlay : faStop} //Alternate Stop/Play button
                     
                   />
-                ) : icons[i] === faBullseye ? (
-                  <FontAwesomeIcon
-                    icon={recordingOff ? faBullseye:faRecordVinyl} //Alternate NotRecoding/Recording button
-                    
-                  />
-                ): icons[i] === faGear ? ( //settings
+                ) : icons[i] === faGear ? ( //settings
                   <div>
                     <Dropdown
                       show={isSettingsVisible}
@@ -165,7 +163,6 @@ const ControlBarRecord = (props) => {
                             value={volume}
                             onChange={handleVolumeChange}
                             title="audio-volume"
-                            disabled={!recordingOff}
                           />
                         </div>
                         <div>
@@ -183,7 +180,6 @@ const ControlBarRecord = (props) => {
                             step="0.1"
                             value={metronomeVol}
                             onChange={handleMetroVolChange}
-                            disabled={!recordingOff}
                           />
                         </div>
                         <div>
@@ -201,7 +197,6 @@ const ControlBarRecord = (props) => {
                             value={zoom}
                             onChange={handleZoomChange}
                             title="zoom-slider"
-                            disabled={!recordingOff}
                           />
                         </div>
                         <div>
@@ -218,7 +213,7 @@ const ControlBarRecord = (props) => {
                             value={bpm}
                             onChange={handleBPMChange}
                             title="change-bpm"
-                            disabled={!recordingOff}
+                            disabled={true}
                           />
                         </div>
                         
@@ -226,7 +221,7 @@ const ControlBarRecord = (props) => {
                     </Dropdown>
                   </div>
                 ) : (
-                  <FontAwesomeIcon icon={icons[i]} /> //else: saved recordings
+                  <FontAwesomeIcon icon={icons[i]} />
                 )}
               </div>
             </Button>
@@ -236,7 +231,7 @@ const ControlBarRecord = (props) => {
     </Wrapper>
   );
 
-  return ControlBarRecord;
+  return ControlBarVisual;
 };
 
-export default ControlBarRecord;
+export default ControlBarVisual;

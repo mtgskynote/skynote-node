@@ -9,6 +9,7 @@ import SimpleMessaje from "./AnyMessage.js"
 //import { log } from "@tensorflow/tfjs";
 import ModeToggle from "./ModeToggle.js";
 import PopUpWindow from "./PopUpWindow.js";
+import XMLParser from "react-xml-parser";
 
 const folderBasePath = "/xmlScores/violin";
 
@@ -18,11 +19,17 @@ const ProgressPlayFile = (props) => {
   const cursorRef = useRef(null);
   const playbackRef = useRef(null);
 
+  const [scoreTitle, setScoreTitle] = useState(null);
+
+  const [canRecord, setCanRecord] = useState(true);
+  const [canDownload, setCanDownload] = useState(false);
+  const [userFileName, setUserFileName] = useState("");
+
   const [metroVol, setMetroVol] = useState(0);
   const [bpmChange, setBpm] = useState(100);
 
   const [recordVol, setRecordVol] = useState(0.5);
-  const[recordActive, setRecordActive] = useState(true)
+  const [recordInactive, setRecordInactive] = useState(true)
   
   const [showTimer, setShowTimer] = useState(false);
   const [finishedTimer, setFinishedTimer] = useState(false);
@@ -39,12 +46,12 @@ const ProgressPlayFile = (props) => {
   const [showPitchTrack, setShowPitchTrack] = useState(false);
 
   const [isResetButtonPressed, setIsResetButtonPressed] = useState(false);
-  const[repeatsIterator, setRepeatsIterator] = useState(false);
-  const[showRepetitionMessage, setShowRepetitionMessage]=useState(false);
-  const[repetitionMessage, setRepetitionMessage]=useState("No stored recordings yet");
+  const [repeatsIterator, setRepeatsIterator] = useState(false);
+  const [showRepetitionMessage, setShowRepetitionMessage]=useState(false);
+  const [repetitionMessage, setRepetitionMessage]=useState("No stored recordings yet");
 
-  const[cursorFinished, setCursorFinished] = useState(false);
-  const[showPopUpWindow, setShowPopUpWindow]= useState(false);
+  const [cursorFinished, setCursorFinished] = useState(false);
+  const [showPopUpWindow, setShowPopUpWindow]= useState(false);
 
   const [practiceMode, setPracticeMode] = useState(true);
   const [recordMode, setRecordMode] = useState(false);
@@ -73,36 +80,56 @@ const ProgressPlayFile = (props) => {
       setCursorFinished(true);
       //"Reset" funcionalities
       //No recording
-      audioStreamer.close()
-      console.log("Recording stopped because cursor finished")
+      if(recordMode && !recordInactive){
+        audioStreamer.close_maybe_save(); //maybe save audio in Record mode
+        handleSaveDeleteWindowPopUp(true); //call popup window save/delete
+      }else{
+        audioStreamer.close_not_save(); //never save audio in Practice mode
+      }
       const playbackManager = playbackRef.current;
-      //const cursor = cursorRef.current;
       playbackManager.pause();
-      //playbackManager.setPlaybackStart(0);
-      //playbackManager.reset();
-      //cursor.reset();
       setStartPitchTrack(false);
-      setRecordActive(true) //Set to true, just like the initial state
+      setRecordInactive(true) //Set to true, just like the initial state
     }
   };
+
+  //function in charge of downloading
+  const handleDownload = (dataBlob) => {
+    //Generate name of the file: name-introduced-by-user_date_time
+    const currentDate = new Date();
+    const year = currentDate.getFullYear();
+    const month = (currentDate.getMonth() + 1).toString().padStart(2, '0');
+    const day = currentDate.getDate().toString().padStart(2, '0');
+    const hours = currentDate.getHours().toString().padStart(2, '0');
+    const minutes = currentDate.getMinutes().toString().padStart(2, '0');
+    const seconds = currentDate.getSeconds().toString().padStart(2, '0');
+    let formattedDate = `${userFileName}__${params.files.replace(".xml", "")}_${year}_${month}_${day}-${hours}_${minutes}_${seconds}`;
+
+    if (dataBlob.type === "audio/wav") { //AUDIO
+      formattedDate = formattedDate + ".wav";
+    } else if (dataBlob.type === "application/json") { //TEXT-JSON
+      formattedDate = formattedDate + ".json";
+    }
+    
+    console.log("DOWNLOADING: ", formattedDate)
+    const downloadLink = document.createElement('a');
+    downloadLink.href = URL.createObjectURL(dataBlob);
+    downloadLink.download = formattedDate;
+    downloadLink.style.display = 'none';
+    document.body.appendChild(downloadLink);
+    downloadLink.click();
+    document.body.removeChild(downloadLink);
+    setCanDownload(false);
+  }
   
   const handleFinishedCursorControlBarCallback = (controlBarFinishedCursor) => {
-    if (controlBarFinishedCursor===false){//ControlBar already took cursor finishing actions
-      
+    if (controlBarFinishedCursor===false){//ControlBar already took cursor finishing actions 
       //Update value, ready for new cursor finishings--> false cursor finished
       setCursorFinished(false);
-      console.log("cursor finished work done")
-
-      if(recordMode){//record mode active, ask to save or delete recording
-        handleSaveDeleteWindowPopUp(true); //call popup window save/delete
-      }
     }
   };
   // Define recording stop when cursor finishes callback function
   const handleReceiveRepetitionInfo = (showingRep, totalRep) => {
-    /*console.log("im in the handlerrrr", showingRep)
-    const message_aux="Seeing "+ showingRep +" of " + totalRep
-    setRepetitionMessage(message_aux)*/
     if(totalRep===0){
       setRepetitionMessage("No recordings yet")
     }else{
@@ -111,7 +138,7 @@ const ProgressPlayFile = (props) => {
     }
   };
   //save/delete recording when cursor finishes or when recording is stopped
-  const handleSaveDeleteWindowPopUp=(windowShow, answer)=>{
+  const handleSaveDeleteWindowPopUp=(windowShow, answer, fileName)=>{
       if(windowShow){ //recording stopped or cursor finished --> pop up window
         setShowPopUpWindow(true);
       }else{ //user already choose save or delete options --> hide window
@@ -119,17 +146,20 @@ const ProgressPlayFile = (props) => {
         setShowPopUpWindow(false)
         //Depending on answer save or delete:
         if(answer==="delete"){
-          console.log("received delete answer")
+          //console.log("received delete answer")
+          audioStreamer.save_or_not(answer) //No save wanted
+          setPitch([]);
+          setConfidence([]);
           setIsResetButtonPressed(true);
-          setPitch([])
-          setConfidence([])
         }else if(answer==="save"){
-          console.log("received save answer")
+          console.log("im in saved clicked and the name is ", fileName)
+          setUserFileName(fileName) //save file name introduced by the user
+          setCanDownload(true); //raise flag order to initiate downloading process (json in OSMD and audio here)
+          setPitch([]);
+          setConfidence([]);
+          setIsResetButtonPressed(true);
         }
         //Do like a reset:
-        //audioStreamer.resume()
-        //audioStreamer.save()
-        audioStreamer.close()
         const playbackManager = playbackRef.current;
         const cursor = cursorRef.current;
         playbackManager.pause();
@@ -138,21 +168,68 @@ const ProgressPlayFile = (props) => {
         cursor.reset();
         setStartPitchTrack(false);
         setShowPitchTrack(false)
-        setRecordActive(true) //Set to true, just like the initial state
-        
-        
-        
+        setRecordInactive(true) //Set to true, just like the initial state        
       }
       
   }
+
+  //when canDownload activates (meaning that we can download the data)
+  useEffect(() => {
+    if(canDownload){
+      const dataToDownload = audioStreamer.save_or_not("save") //save wanted, data prepared
+      handleDownload(dataToDownload); //send data to downloading function
+    }
+  }, [canDownload]);
+
+  useEffect(() => {
+    //This part just gets the tittle of the score, so it can later be used for the saving part
+    //I don't know if it's the most efficient way, I based the code on the one used in AllLessons.js
+    const requestScoreTitle = async () => {
+      try {
+        const response = await fetch(`${folderBasePath}/${params.files}`);
+        const xmlFileData = await response.text();
+        const arr = Array.from(
+          new XMLParser()
+            .parseFromString(xmlFileData)
+            .getElementsByTagName("movement-title")
+        );
+        if (arr.length > 0) {
+          setScoreTitle(arr[0].value);
+        }
+      } catch (error) {
+        console.log(error.message);
+      }
+    };
+    //This part deals with microphone permissions.
+    //Accepting permissions works as expected
+    //Denying permissions shows an alert that refreshes the page when accepted, but won't go away until permissions are given
+    //Ignoring permissions allows to use the page, but audio won't be picked up and an error will show when the recorging process is finished  
+    const requestMicrophonePermission = async () => {
+      try {
+        const stream = await navigator.mediaDevices.getUserMedia({ audio: {
+          echoCancellation: false,
+          autoGainControl: false,
+          noiseSuppression: false,
+          latency: 0,
+          sampleRate: 22050
+        } });
+        setCanRecord(true);
+      } catch (error) {
+        setCanRecord(false);
+        alert('Microphone access denied. If you have trouble with permissions, try clicking on the small lock at the left of your search bar and make sure the microphone is enabled, then accept this message :)');
+        window.location.reload();
+      }
+    };
+    requestMicrophonePermission();
+    requestScoreTitle();
+  }, []); //This should run only once
+    
 
   var audioStreamer = makeAudioStreamer(handlePitchCallback);
   
   //When countdown timer (previous to start recording) finishes
   useEffect(() => {
     if(finishedTimer){
-
-      console.log("TIMER IS FINISHED")
       const playbackManager = playbackRef.current;
       playbackManager.play()
       
@@ -161,6 +238,10 @@ const ProgressPlayFile = (props) => {
       setConfidence([])
       setStartPitchTrack(true);
       setShowPitchTrack(true);
+
+      //Start audioStreamer
+      audioStreamer.init(recordMode);
+
       //And play file, make cursor start
       playbackManager.play();
       //Timer work is done, false until next call
@@ -188,6 +269,20 @@ const ProgressPlayFile = (props) => {
     const handleRecordModeButtonClick = () => {
       setPracticeMode(false);
       setRecordMode(true);
+
+      //Do like a reset:
+      setIsResetButtonPressed(true);
+      setPitch([])
+      setConfidence([])
+      const playbackManager = playbackRef.current;
+      const cursor = cursorRef.current;
+      playbackManager.pause();
+      playbackManager.setPlaybackStart(0);
+      playbackManager.reset();
+      cursor.reset();
+      setStartPitchTrack(false);
+      setShowPitchTrack(false)
+      setRecordInactive(true) //Set to true, just like the initial state
       
     };
    recordModeButton.addEventListener("click", handleRecordModeButtonClick);
@@ -207,18 +302,14 @@ const ProgressPlayFile = (props) => {
       // RECORD BUTTON -----------------------------------------------------------------
       const recordButton = document.getElementById("record/stopRecording");
       const handleRecordButtonClick = () => {
+        //console.log("Can I record?: ", canRecord);
+        //Toggle recording state (FIXME does not work the first time, so recordInactive is started with true value)
+        setRecordInactive(!recordInactive)
 
-        //Toggle recording state (FIXME does not work the first time, so recordActive is started with true value)
-        setRecordActive(!recordActive)
-
-        if (recordActive) { //Recoding is wanted
-          audioStreamer.init(recordMode)
-          //setShowPitchTrack(true)
-          console.log("Recording started")
+        if (recordInactive && canRecord) { //Recoding is wanted
           setShowTimer(true) //initialize process of countdown, which will then lead to recording
         } else { //Recording is unwanted
-          audioStreamer.close()
-          console.log("Recording stopped")
+          audioStreamer.close_not_save() //when practice mode on, no saving
           //Deactivate Pitch tracking
           setStartPitchTrack(false);
           //Pause file and therefore, cursor
@@ -234,7 +325,7 @@ const ProgressPlayFile = (props) => {
       const resetButton = document.getElementById("reset");
       const handleResetButtonClick = () => {
         setShowPopUpWindow(false)
-        audioStreamer.close()
+        audioStreamer.close_not_save() //when practice mode is on, no saving
         setIsResetButtonPressed(true);
         const playbackManager = playbackRef.current;
         const cursor = cursorRef.current;
@@ -247,7 +338,7 @@ const ProgressPlayFile = (props) => {
         setShowPitchTrack(false)
         setPitch([])
         setConfidence([])
-        setRecordActive(true) //Set to true, just like the initial state
+        setRecordInactive(true) //Set to true, just like the initial state
         
       };
 
@@ -259,10 +350,7 @@ const ProgressPlayFile = (props) => {
       // plays the music where the cursor is
       const playButton = document.getElementById("play/pause");
       const handlePlayButtonClick = () => {
-        console.log("playyyyy")
         const playbackManager = playbackRef.current;
-        //const cursor = cursorRef.current;
-        //const currentTime = cursor.Iterator.currentTimeStamp;
         
         if (playbackManager.isPlaying) {
           playbackManager.pause();
@@ -327,24 +415,17 @@ const ProgressPlayFile = (props) => {
       }
     }else if(recordMode===true){//Record Mode
       
-      //get maximum number of repetitions
-      
-
       // RECORD BUTTON -----------------------------------------------------------------
       const recordButton = document.getElementById("record/stopRecording");
       const handleRecordButtonClick = () => {
 
-        //Toggle recording state (FIXME does not work the first time, so recordActive is started with true value)
-        setRecordActive(!recordActive)
+        //Toggle recording state (FIXME does not work the first time, so recordInactive is started with true value)
+        setRecordInactive(!recordInactive)
 
-        if (recordActive) { //Recoding is wanted
-          audioStreamer.init(recordMode)
-          //setShowPitchTrack(true)
-          console.log("Recording started")
+        if (recordInactive) { //Recoding is wanted
           setShowTimer(true) //initialize process of countdown, which will then lead to recording
         } else { //Recording is unwanted
-          audioStreamer.close()
-          console.log("Recording stopped")
+          audioStreamer.close_maybe_save() //when record mode is active, maybe we save
           //Deactivate Pitch tracking
           setStartPitchTrack(false);
           //Pause file and therefore, cursor
@@ -357,40 +438,12 @@ const ProgressPlayFile = (props) => {
       recordButton.addEventListener("click", handleRecordButtonClick);
       //--------------------------------------------------------------------------------
 
-      // RESET BUTTON ------------------------------------------------------------------
-      /*const resetButton = document.getElementById("reset");
-      const handleResetButtonClick = () => {
-        setShowPopUpWindow(false)
-        audioStreamer.close()
-        setIsResetButtonPressed(true);
-        const playbackManager = playbackRef.current;
-        const cursor = cursorRef.current;
-        //Reset
-        playbackManager.pause();
-        playbackManager.setPlaybackStart(0);
-        playbackManager.reset();
-        cursor.reset();
-        setStartPitchTrack(false);
-        setShowPitchTrack(false)
-        setPitch([])
-        setConfidence([])
-        setRecordActive(true) //Set to true, just like the initial state
-        
-      };
-
-      resetButton.addEventListener("click", handleResetButtonClick);*/
-      //--------------------------------------------------------------------------------
-
       // PLAY/PAUSE BUTTON -------------------------------------------------------------
       // gets the playback manager and sets the start time to the current time
       // plays the music where the cursor is
       const playButton = document.getElementById("play/pause");
       const handlePlayButtonClick = () => {
-        console.log("playyyyy")
         const playbackManager = playbackRef.current;
-        //const cursor = cursorRef.current;
-        //const currentTime = cursor.Iterator.currentTimeStamp;
-        
         if (playbackManager.isPlaying) {
           playbackManager.pause();
         } else {
@@ -420,32 +473,15 @@ const ProgressPlayFile = (props) => {
       settingsSliders.addEventListener("click", handleSettings);
       //--------------------------------------------------------------------------------
 
-      // SWITCH BETWEEN REPETITION/RECORDING LAYERS ------------------------------------
-      /*const repeatLayersButton = document.getElementById("switchRepetition");
-      const handleRepeatLayersButtonClick = () => {
-        //window.location.href = "/TimbreVisualization";
-        setRepeatsIterator(!repeatsIterator);
-      };
-      const handleRepeatLayersMouseOver = () => {
-        setShowRepetitionMessage(true);
-      };
-      const handleRepeatLayersMouseLeave = () => {
-        setShowRepetitionMessage(false);
-      };
-      repeatLayersButton.addEventListener("click", handleRepeatLayersButtonClick);
-      repeatLayersButton.addEventListener("mousemove", handleRepeatLayersMouseOver);
-      repeatLayersButton.addEventListener("mouseout", handleRepeatLayersMouseLeave);*/
-      //--------------------------------------------------------------------------------
-
-      // SWITCH BETWEEN REPETITION/RECORDING LAYERS ------------------------------------
+      // GO TO SAVINGS BUTTON  ------------------------------------
       const savedButton = document.getElementById("saved");
       const handleSavedButtonClick = () => {
-        //window.location.href = "/TimbreVisualization";
-        const song = `${folderBasePath}/${params.files}`;
+        const score = `${params.files}`;
+        const song = `${scoreTitle}`;
         const typeList = 'single-song';
 
         // Use navigate to go to the ListRecordings page with parameters in the URL
-        navigate('/ListRecordings', { state: { song, typeList } });
+        navigate('/ListRecordings', { state: { score, song, typeList } });
   
       };
       savedButton.addEventListener("click", handleSavedButtonClick);
@@ -460,12 +496,10 @@ const ProgressPlayFile = (props) => {
     
       return () => {
         recordButton.removeEventListener("click", handleRecordButtonClick);
-        //repeatLayersButton.removeEventListener("click", handleRepeatLayersButtonClick);
-        //resetButton.removeEventListener("click", handleResetButtonClick);
         playButton.removeEventListener("click", handlePlayButtonClick);
       }
     };
-  }, [recordVol, zoom, recordActive, pitchValue, repeatsIterator, practiceMode, recordMode, showRepetitionMessage]);
+  }, [recordVol, zoom, recordInactive, pitchValue, repeatsIterator, practiceMode, recordMode, showRepetitionMessage, userFileName]);
 
   return (
     
@@ -492,6 +526,9 @@ const ProgressPlayFile = (props) => {
         onResetDone={onResetDone}
         cursorActivity={handleFinishedCursorOSMDCallback}
         mode={practiceMode}
+        dataToDownload={handleDownload}
+        canDownload={canDownload}
+        visual={"no"}
       />
       {showTimer ? (<CountdownTimer bpm={bpmChange} mode={practiceMode}  onComplete={() => setFinishedTimer(true)} />):(null)}
       
@@ -499,11 +536,7 @@ const ProgressPlayFile = (props) => {
         cursorFinished={cursorFinished} cursorFinishedCallback={handleFinishedCursorControlBarCallback}
       /> : <ControlBarRecord cursorFinished={cursorFinished} cursorFinishedCallback={handleFinishedCursorControlBarCallback}/>}
 
-
       {(showPopUpWindow && <PopUpWindow showWindow={showPopUpWindow} handlerBack={handleSaveDeleteWindowPopUp}/>)}
-      
-      
-        
       
       <ModeToggle/>
     </div>

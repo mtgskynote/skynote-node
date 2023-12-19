@@ -1,4 +1,6 @@
-.popUpWindow {
+
+/*CSS for Save/Delete PopupWindow*/
+.popUpWindowSave {
     position: fixed;
     top: 50%;
     left: 50%;
@@ -13,12 +15,12 @@
     text-align: center; /* Center text within the container */
   }
   
-  .content {
+  .contentSave {
     padding: 20px;
   }
   
   /* Style the buttons */
-  button {
+  .buttonSave {
     margin: 10px 5px;
     padding: 10px 20px;
     cursor: pointer;
@@ -28,8 +30,46 @@
     border-radius: 4px;
     font-size: 14px;
   }
-  
-  button:hover {
-    background-color: #A3CD8F;
+
+  /*CSS for Delete Yes/No PopupWindow*/
+
+  .popUpWindowDelete {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 400px;
+    max-width: 80%;
+    background: white;
+    border: 2px solid #DDE172;
+    border-radius: 8px;
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.2);
+    z-index: 1000;
+    text-align: center; /* Center text within the container */
   }
+  
+  .contentDelete {
+    padding: 20px;
+  }
+  
+  /* Style the buttons */
+  .buttonDelete {
+    margin: 10px 5px;
+    padding: 10px 20px;
+    cursor: pointer;
+    background-color: #DDE172;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    font-size: 14px;
+  }
+  
+
+
+  /*Common for all*/
+  button:hover {
+    background-color: #a2a2a2;
+  }
+
+
   

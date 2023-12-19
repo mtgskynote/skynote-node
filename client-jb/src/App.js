@@ -5,6 +5,7 @@ import { Profile, Stats, SharedLayout } from "./pages/dashboard";
 
 import AllLessons from "./components/AllLessons";
 import ProgressPlayFile from "./components/ProgressPlayFile";
+import ProgressPlayFileVisual from "./components/ProgressPlayFileVisual";
 
 import LevelOne from "./components/levels/LevelOne";
 import LevelTwo from "./components/levels/LevelTwo";
@@ -13,6 +14,7 @@ import ErrorBoundary from "./components/ErrorBoundary";
 
 import TimbreVisualization from "./components/TimbreVisualization";
 import ListRecordings from "./components/ListRecordings";
+import AudioPlayer from "./components/AudioPlayer";
 
 function App() {
   return (
@@ -43,8 +45,14 @@ function App() {
                   path="/TimbreVisualization"
                   element={<TimbreVisualization />}
                 />
+                <Route path="/ListRecordings" element={<ListRecordings />} />
+                <Route
+                    path="ListRecordings/:files"
+                    element={<ProgressPlayFileVisual mode="visual"/>}
+                  />
               </Route>
-              <Route path="/ListRecordings" element={<ListRecordings />} />
+              
+              <Route path="/AudioPlayer" element={<AudioPlayer />} />
               <Route path="/register" element={<Register />} />
               <Route path="/ourteam" element={<OurTeam />} />
               <Route path="/research" element={<Research />} />

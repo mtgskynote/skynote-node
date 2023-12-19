@@ -87,6 +87,7 @@ body {
     background-color: #ffffff;
     cursor: pointer;
     width: 10%;
+    border:none;
   }
   .iconbutton:hover {
     background-color: #d2e8e1;

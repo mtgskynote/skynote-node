@@ -17,27 +17,38 @@ const ModeInfoButton = (props) => {
   }, [props]);
 
   const ModeInfoMessage = () => {
-    return (
-      <div className="mode-info-message">
-        <h4>Guide</h4>
-        <p>You can choose from two modes:</p>
-  
-        <div className="mode-description">
-          <h5>Practice Mode</h5>
-          <p>
-            Practice Mode allows you to... {/* Describe what Practice Mode consists of */}
-          </p>
+
+    if (props.message===1){
+      return (
+        <div className="mode-info-message">
+          <h4>Guide</h4>
+          <p>You can choose from two modes:</p>
+    
+          <div className="mode-description">
+            <h5>Practice Mode</h5>
+            <p>
+              Practice Mode allows you to... {/* Describe what Practice Mode consists of */}
+            </p>
+          </div>
+    
+          <div className="mode-description">
+            <h5>Record Mode</h5>
+            <p>
+              Record Mode lets you... {/* Describe what Record Mode consists of */}
+            </p>
+          </div>
         </div>
-  
-        <div className="mode-description">
-          <h5>Record Mode</h5>
-          <p>
-            Record Mode lets you... {/* Describe what Record Mode consists of */}
-          </p>
+      );
+    }else if(props.message===2){
+      return (
+        <div className="mode-info-message">
+          <h4>Info</h4>
+          <p>You are visualizing your recording. Click "play" to listen to it or iterate through the different repetitions</p>
         </div>
-      </div>
-    );
-  };
+      );
+    }
+    }
+    
 
   const handleMouseOver = (event) => {
     console.log("Show message")
