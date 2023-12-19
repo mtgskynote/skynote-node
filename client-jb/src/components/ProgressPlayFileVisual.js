@@ -147,7 +147,6 @@ const ProgressPlayFileVisual = (props) => {
   ///////////////////////////////////////////////////////////////////////////////////////////////////
   
   const playAudio = async () => {
-    console.log(songFile)
     try {
       const copiedSongFile = songFile.slice(0) //so the original is not modified
       const audioBuffer = await audioContext.decodeAudioData(copiedSongFile);

@@ -15,7 +15,7 @@ const LineChart = (props) => {
     });
     setPolylinePoints(newPolylinePoints);
   
-  }, [props.pitchData, props.zoom]); //, previousPitchData
+  }, [props.pitchData, props.zoom, props.showingRep]); //, previousPitchData
 
   return (
     <div ref={containerRef}>

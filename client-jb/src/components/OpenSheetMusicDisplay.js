@@ -357,6 +357,50 @@ class OpenSheetMusicDisplay extends Component {
       this.previousTimestamp=null;
       this.selectionEndReached=false; //ready for next time
     }
+
+    //In visual mode, check if cursor finishes to update showingRep
+    if(this.previousTimestamp!==null && this.props.visual==="yes" && this.previousTimestamp > cursorCurrent){
+      //Increase showingRep
+      if (this.showingRep < this.totalReps) {
+        this.showingRep++;
+      } else {
+        this.showingRep = 0;
+      }
+      this.props.showRepeatsInfo(this.showingRep, this.totalReps);
+      //Update color of notes
+      let staves = this.osmd.graphic.measureList;
+      for (let stave_index = 0; stave_index < staves.length; stave_index++) {
+        let stave = staves[stave_index][0];
+        for (let note_index = 0; note_index < stave.staffEntries.length; note_index++) {
+              let note = stave.staffEntries[note_index]
+              let noteID= note.graphicalVoiceEntries[0].notes[0].getSVGId();
+              let noteNEWID=this.osmd.IDdict[noteID]
+              //check for notehead color
+              const colorsArray=[...this.state.colorNotes]
+              const index = colorsArray.findIndex(item => item[0][0] === noteNEWID && item[0][2]===this.showingRep);
+              if(index!==-1){ 
+                //note has a color assigned--> color notehead
+                // this is for all the notes except the quarter and whole notes
+                const svgElement = note.graphicalVoiceEntries[0].notes[0].getSVGGElement();
+                svgElement.children[0].children[0].children[0].style.fill =
+                  colorsArray[index][0][1]; // notehead
+                if (
+                  svgElement &&
+                  svgElement.children[0] &&
+                  svgElement.children[0].children[0] &&
+                  svgElement.children[0].children[1]
+                ) {
+                  //this is for all the quarter and whole notes
+                  svgElement.children[0].children[0].children[0].style.fill =
+                    colorsArray[index][0][1]; // notehead
+                  svgElement.children[0].children[1].children[0].style.fill =
+                    colorsArray[index][0][1]; // notehead
+                }
+              }
+            } 
+      }
+      
+    }
     
     //if recording active
     if (this.props.startPitchTrack){
@@ -372,7 +416,7 @@ class OpenSheetMusicDisplay extends Component {
       }
 
       //store timestampfor next iteration
-      this.previousTimestamp=cursorCurrent; 
+      //this.previousTimestamp=cursorCurrent; 
       ////////////////////////////////////////////////////////
       
       // EXTRACT POSITION OF NOTE UNDER CURSOR////////////////
@@ -497,7 +541,8 @@ class OpenSheetMusicDisplay extends Component {
       //Update new vales for future comparisons
       this.setState({ currentGNoteinScorePitch: gNote });
     }
-  
+    //store timestampfor next iteration
+    this.previousTimestamp=cursorCurrent;
   }////////////////////////////////////////////////////////
 
   
