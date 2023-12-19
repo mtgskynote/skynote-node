@@ -21,7 +21,7 @@ const ProgressPlayFileVisual = (props) => {
   const [audioBuffer, setAudioBuffer] = useState(null);
   const fileInputRef = useRef(null);
   /////////////////////////////////////////////////////////
-  const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+  let audioContext = new (window.AudioContext || window.webkitAudioContext)();
   const [songFile, setSongFile] = useState(null);
   
   const cursorRef = useRef(null);
@@ -146,6 +146,28 @@ const ProgressPlayFileVisual = (props) => {
   };
   ///////////////////////////////////////////////////////////////////////////////////////////////////
   
+  const playAudio = async () => {
+    console.log(songFile)
+    try {
+      const copiedSongFile = songFile.slice(0) //so the original is not modified
+      const audioBuffer = await audioContext.decodeAudioData(copiedSongFile);
+      const source = audioContext.createBufferSource();
+      source.buffer = audioBuffer;
+      source.connect(audioContext.destination);
+      source.start();
+    } catch (error) {
+      console.error('Error playing audio:', error);
+    }
+  };
+
+  const stopAudio = () => {
+    audioContext.close().then(() => {
+      audioContext = new (window.AudioContext || window.webkitAudioContext)();
+    });;
+  };
+
+
+
   //Handles basically any change
   useEffect(() => {
 
@@ -157,18 +179,10 @@ const ProgressPlayFileVisual = (props) => {
       const handlePlayButtonClick = () => {
         const playbackManager = playbackRef.current;
         const cursor = cursorRef.current;
-        //const currentTime = cursor.Iterator.currentTimeStamp;
-        console.log("HOLIIIIIIIIIIIIIIIIIIIIIIII", songFile);
-        audioContext.decodeAudioData(songFile, function (buffer) {
-          const audioSource = audioContext.createBufferSource();
-          audioSource.buffer = buffer;
-          audioSource.connect(audioContext.destination);
-          audioSource.start(0);
-          setAudioBuffer(audioSource);
-          console.log(audioSource);
-          //audioSource.stop();
-        });
         if (playbackManager.isPlaying) {
+          //Pause/stop audio of recording
+          stopAudio();
+          //Pause/stop osmd
           playbackManager.pause();
           playbackManager.setPlaybackStart(0);
           playbackManager.reset();
@@ -178,9 +192,12 @@ const ProgressPlayFileVisual = (props) => {
           setPitch([])
           setConfidence([])
           setRecordInactive(true) //Set to true, just like the initial state
-        } else {
-          playbackManager.play();
           
+        } else {
+          //Play osmd
+          playbackManager.play();
+          //Play audio of recording
+          playAudio();
         }
       };
       playButton.addEventListener("click", handlePlayButtonClick);
