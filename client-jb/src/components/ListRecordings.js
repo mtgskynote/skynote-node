@@ -3,6 +3,7 @@ import React, { useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import ListRecordingsCSS from './ListRecordings.module.css';
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { getRecData, getRecording, putRecording, deleteRecording, patchViewPermissions } from "../utils/studentRecordingMethods.js";
 
 import {
   faTrash,
@@ -10,7 +11,26 @@ import {
   faEye,
 } from "@fortawesome/free-solid-svg-icons";
 
+const dataBaseCall = async () => {
+  // ---------------------------------------
+  var recdatalist=[];  // list of minimal recording data [{recordingName, recordingId},{...}, ...]
+
+  //getRecData(studentId, scoreId)
+  try {
+    recdatalist = await getRecData("645b6e484612a8ebe8525933", "64d0de60d9ac9a34a66b4d45") // // scoreId: "64d0de60d9ac9a34a66b4d45" is for the score "V_001_Cuerdas_Al_Aire_1_Suelta_A"
+    //console.log(`getRecData return OK, and recdatalist is ${JSON.stringify(recdatalist)}`)
+    return (JSON.stringify(recdatalist))
+  } catch (error) {
+    console.log(`error in getRecData`, error)
+  }
+};
+
 const ListRecordings = () => {
+  dataBaseCall().then((result) => {
+    const loadedData = result;
+    console.log("The recording list has been loaded :) 1", loadedData);
+  });
+  
   const location = useLocation();
   const navigate = useNavigate();
 
