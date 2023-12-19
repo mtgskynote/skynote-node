@@ -359,7 +359,7 @@ class OpenSheetMusicDisplay extends Component {
     }
 
     //In visual mode, check if cursor finishes to update showingRep
-    if(this.previousTimestamp!==null && this.props.visual==="yes" && this.previousTimestamp > cursorCurrent){
+    if(this.previousTimestamp!==null && this.props.visual==="yes" && this.previousTimestamp > cursorCurrent &&this.playbackManager.isPlaying){
       //Increase showingRep
       if (this.showingRep < this.totalReps) {
         this.showingRep++;
