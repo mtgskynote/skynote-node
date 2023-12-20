@@ -29,7 +29,7 @@ async function putRecording(recordingObject) {
         const response = await axios.put("/api/v1/recordings/putRecording", recordingObject);
         //console.log(`response from putRecording was ${JSON.stringify(response.data)}`);
         if (response.status===201) { /* 201 is the status code for a successful PUT */
-            //console.log('putRecording  returned OK')
+            console.log('putRecording  returned OK')
             return response.data; 
         } else {
             console.log('putRecording failed!')
