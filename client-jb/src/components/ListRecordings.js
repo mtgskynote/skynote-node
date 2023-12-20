@@ -1,9 +1,10 @@
 // ListRecordings.js
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import ListRecordingsCSS from './ListRecordings.module.css';
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { getRecData, getRecording, putRecording, deleteRecording, patchViewPermissions } from "../utils/studentRecordingMethods.js";
+import { useAppContext } from "../context/appContext";
 
 import {
   faTrash,
@@ -11,6 +12,11 @@ import {
   faEye,
 } from "@fortawesome/free-solid-svg-icons";
 
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//  THIS PART IS FOR REQUESTING INFO FROM THE DATABASE. ATM IT GETS THE USER ID FROM getCurrentUser
+//  AND THEN IT REQUESTS THE RECORDINGS FROM THAT USER AND THAT SPECIFIC SONG. WE DON'T HAVE A WAY
+//  TO GET THE SONG ID RIGHT NOW, SO WE HAVE A PLACEHOLDER ONE
 const dataBaseCall = async () => {
   // ---------------------------------------
   var recdatalist=[];  // list of minimal recording data [{recordingName, recordingId},{...}, ...]
@@ -21,16 +27,39 @@ const dataBaseCall = async () => {
     //console.log(`getRecData return OK, and recdatalist is ${JSON.stringify(recdatalist)}`)
     return (JSON.stringify(recdatalist))
   } catch (error) {
-    console.log(`error in getRecData`, error)
+    console.log(`error in getRecData`, error);
   }
 };
 
 const ListRecordings = () => {
+
+  const { getCurrentUser } = useAppContext();
+  const [userData, setUserData] = useState(null);
+  const [recordingList, setRecordingList] = useState(null);
+
   dataBaseCall().then((result) => {
-    const loadedData = result;
-    console.log("The recording list has been loaded :) 1", loadedData);
+    setRecordingList(result);
   });
-  
+
+  useEffect(() => {
+    const fetchDataFromAPI = () => {
+      //console.log(`in fetchDataFromAPI, about to call getCurentUser()`)
+      getCurrentUser() // fetchData is already an async function
+        .then((result) => {
+          //console.log(`getCurentUser() has returnd this result: ${JSON.stringify(result)}`);
+          setUserData(result);
+        })
+        .catch((error) => {
+          console.log(`getCurentUser() error: ${error}`)
+          // Handle errors if necessary
+        });
+    };
+
+    fetchDataFromAPI();
+  }, [getCurrentUser, userData, recordingList]);
+
+  //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
   const location = useLocation();
   const navigate = useNavigate();
 
@@ -41,8 +70,24 @@ const ListRecordings = () => {
 
   // Array of numbers (replace with the actual array of recordings later)
   // Use state to manage the recordingNumbers array
-  const [recordingNumbers, setRecordingNumbers] = useState([1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13]);
-  console.log(song)
+  const [recordingNumbers, setRecordingNumbers] = useState([1, 2, 3]);
+
+  //recordingNumbers SHOULD BE FILLED WITH THE DATA IN recordingList, BUT:
+  //recordingList TAKES LONGER TO LOAD, AND THAT WILL RAISE AN ERROR FOR TRYING TO
+  //Object.keys AN EMPTY OBJECT. CODE SHOULD WAIT FOR THE DATABASE TO SEND THE INFO
+  //AND THEN THE PAGE SHOULD LOAD/WORK AS USUAL.
+  
+  try {
+    const aux = Object.keys(JSON.parse(recordingList));
+    console.log("Song is: ", song);
+    console.log("Good luck, ", userData);
+    console.log("You have a total of ", aux.length, " recordings for this piece :)");
+    console.log("Here are your recordings: ", JSON.parse(recordingList));
+  } catch (error) {
+    console.log("Loading data...");
+  }
+  
+  
 
 
   // Event handler for going back
