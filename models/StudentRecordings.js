@@ -28,14 +28,16 @@ const student_recordingsSchema = new mongoose.Schema({
     sharing: Boolean,
     
     info: {
-        title: String,
-        pitchValues: [Number],
-        pitchColor: String,
-        repetition: Number,
-        noteIds: [Number],
-        noteColor: [Number],
-        noteIndex: [Number],
         bpm: Number,
+        noteColors: [],
+        noteIndex: [Number],
+        noteNEWIDs: [String],
+        pitchPointColor: [String],
+        pitchTrackPoints:[String],
+        pitchX:[Number],
+        pitchY:[Number],
+        repetitionNumber: [Number],
+        audio:Blob,
         statistics: String, 
     }
 
