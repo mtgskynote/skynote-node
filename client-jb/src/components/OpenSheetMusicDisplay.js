@@ -630,7 +630,7 @@ class OpenSheetMusicDisplay extends Component {
 
       const jsonString = JSON.stringify(dataToSave);
       const jsonBlob = new Blob([jsonString], { type: "application/json" });
-      this.props.dataToDownload(jsonBlob);
+      this.props.dataToDownload(jsonString);
     }
     
     // newJson import - UPDATE ALL NECCESSARY VALUES
