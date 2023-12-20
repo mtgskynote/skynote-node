@@ -5,7 +5,6 @@ import {
   SETUP_USER_BEGIN,
   SETUP_USER_SUCCESS,
   SETUP_USER_ERROR,
-  TOGGLE_SIDEBAR,
   LOGOUT_USER,
 } from "./actions";
 
@@ -27,7 +26,6 @@ const initialState = {
   token: token,
   userLocation: userLocation || "",
   jobLocation: userLocation || "",
-  showSidebar: true, // as an overlay
 };
 
 
@@ -103,10 +101,6 @@ const AppProvider = ({ children }) => {
     clearAlert();
   };
 
-  // Toggle sidebar
-  const toggleSidebar = () => {
-    dispatch({ type: TOGGLE_SIDEBAR });
-  };
 
   // Logout user
   const logoutUser = () => {
@@ -164,7 +158,6 @@ const AppProvider = ({ children }) => {
         ...state,
         displayAlert,
         setupUser,
-        toggleSidebar,
         logoutUser,
         getCurrentUser,
         getAllLevels,

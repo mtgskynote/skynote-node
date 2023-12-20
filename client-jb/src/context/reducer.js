@@ -4,7 +4,7 @@ import {
   SETUP_USER_BEGIN,
   SETUP_USER_SUCCESS,
   SETUP_USER_ERROR,
-  TOGGLE_SIDEBAR,
+
   LOGOUT_USER,
 } from "./actions";
 
@@ -55,10 +55,6 @@ const reducer = (state, action) => {
     };
   }
 
-  if (action.type === TOGGLE_SIDEBAR) {
-    console.log(`will switch showSidebar to ${!state.showSidebar}`)
-    return { ...state, showSidebar: !state.showSidebar };
-  }
 
   if (action.type === LOGOUT_USER) {
     return {
