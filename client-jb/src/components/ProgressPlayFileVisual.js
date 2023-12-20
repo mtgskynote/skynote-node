@@ -51,6 +51,7 @@ const ProgressPlayFileVisual = (props) => {
   const [repetitionMessage, setRepetitionMessage]=useState("No stored recordings yet");
 
   const [cursorFinished, setCursorFinished] = useState(false);
+  const [cursorJumped, setCursorJumped] = useState(false);
 
   const [visualMode, setVisualMode] = useState(true);
   const [json, setJson] = useState([]);
@@ -92,9 +93,16 @@ const ProgressPlayFileVisual = (props) => {
       setCursorFinished(true);
       const playbackManager = playbackRef.current;
       playbackManager.pause();
+      playbackManager.setPlaybackStart(0);
       setStartPitchTrack(false);
+      setIsResetButtonPressed(true)
       setRecordInactive(true) //Set to true, just like the initial state
     }
+  };
+
+  // When cursor jumps (osmd detects it, we need to generate state)
+  const handleJumpedCursorOSMDCallback = () => {
+    setCursorJumped(!cursorJumped)
   };
   
   const handleFinishedCursorControlBarCallback = (controlBarFinishedCursor) => {
@@ -183,20 +191,22 @@ const ProgressPlayFileVisual = (props) => {
           stopAudio();
           //Pause/stop osmd
           playbackManager.pause();
-          playbackManager.setPlaybackStart(0);
+          //playbackManager.setPlaybackStart(0);
           playbackManager.reset();
-          cursor.reset();
+          //cursor.reset();
           setStartPitchTrack(false);
           setShowPitchTrack(false)
           setPitch([])
           setConfidence([])
           setRecordInactive(true) //Set to true, just like the initial state
+          setIsResetButtonPressed(true);
           
         } else {
-          //Play osmd
-          playbackManager.play();
           //Play audio of recording
           playAudio();
+          //Play osmd
+          setIsResetButtonPressed(true);
+          playbackManager.play();
         }
       };
       playButton.addEventListener("click", handlePlayButtonClick);
@@ -260,7 +270,7 @@ const ProgressPlayFileVisual = (props) => {
         //deleteButton.removeEventListener("click", handleDeleteButtonClick);
       }
     };
-  }, [recordVol, zoom, recordInactive, pitchValue, repeatsIterator, visualMode, showRepetitionMessage, json, songFile]);
+  }, [recordVol, zoom, recordInactive, pitchValue, repeatsIterator, visualMode, showRepetitionMessage, json, songFile, cursorFinished, cursorJumped]);
 
   return (
     
@@ -287,6 +297,7 @@ const ProgressPlayFileVisual = (props) => {
         showRepeatsInfo={handleReceiveRepetitionInfo}
         onResetDone={onResetDone}
         cursorActivity={handleFinishedCursorOSMDCallback}
+        cursorJumpsBack={handleJumpedCursorOSMDCallback}
         mode={visualMode}
         visual={"yes"}
         visualJSON={json}

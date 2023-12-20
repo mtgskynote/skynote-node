@@ -399,6 +399,7 @@ class OpenSheetMusicDisplay extends Component {
               }
             } 
       }
+      this.props.cursorJumpsBack()
       
     }
     
@@ -848,21 +849,60 @@ class OpenSheetMusicDisplay extends Component {
       prevProps.isResetButtonPressed !== this.props.isResetButtonPressed &&
       this.props.isResetButtonPressed
     ) {
-      this.setState({colorNotes:[]});
-      this.setState({ recordedNoteIDs: [] });
-      this.setState({ recordedNoteNEWIDs: [] });
-      this.setState({ recordedNoteIndex:[]});
-      this.setState({ pitchData: [] });
-      this.setState({ pitchPositionX: [] })
-      this.setState({ pitchPositionY: [] })
-      this.setState({ pitchColor: [] })
-      this.setState({ repetitionNumber: []})
-      this.resetNotesColor();
-      this.showingRep=0;
-      this.totalReps=0;
-      this.previousTimestamp=0;
-      this.props.showRepeatsInfo(0,0)
-      this.props.onResetDone(); // call the function passed from the parent component
+      if(this.props.visual==="no"){
+        this.setState({colorNotes:[]});
+        this.setState({ recordedNoteIDs: [] });
+        this.setState({ recordedNoteNEWIDs: [] });
+        this.setState({ recordedNoteIndex:[]});
+        this.setState({ pitchData: [] });
+        this.setState({ pitchPositionX: [] })
+        this.setState({ pitchPositionY: [] })
+        this.setState({ pitchColor: [] })
+        this.setState({ repetitionNumber: []})
+        this.resetNotesColor();
+        this.showingRep=0;
+        this.totalReps=0;
+        this.previousTimestamp=0;
+        this.props.showRepeatsInfo(0,0)
+        this.props.onResetDone(); // call the function passed from the parent component
+      }else{
+        //put showingRep at 0
+        this.showingRep=0;
+        //put note colors corresponding to showingRep=0
+        //Update color of notes
+        let staves = this.osmd.graphic.measureList;
+        for (let stave_index = 0; stave_index < staves.length; stave_index++) {
+          let stave = staves[stave_index][0];
+            for (let note_index = 0; note_index < stave.staffEntries.length; note_index++) {
+                let note = stave.staffEntries[note_index]
+                let noteID= note.graphicalVoiceEntries[0].notes[0].getSVGId();
+                let noteNEWID=this.osmd.IDdict[noteID]
+                //check for notehead color
+                const colorsArray=this.state.colorNotes.slice()
+                const index = colorsArray.findIndex(item => item[0][0] === noteNEWID && item[0][2]===0);
+                if(index!==-1){ 
+                  //note has a color assigned--> color notehead
+                  // this is for all the notes except the quarter and whole notes
+                  const svgElement = note.graphicalVoiceEntries[0].notes[0].getSVGGElement();
+                  svgElement.children[0].children[0].children[0].style.fill =
+                    colorsArray[index][0][1]; // notehead
+                  if (
+                    svgElement &&
+                    svgElement.children[0] &&
+                    svgElement.children[0].children[0] &&
+                    svgElement.children[0].children[1]
+                  ) {
+                    //this is for all the quarter and whole notes
+                    svgElement.children[0].children[0].children[0].style.fill =
+                      colorsArray[index][0][1]; // notehead
+                    svgElement.children[0].children[1].children[0].style.fill =
+                      colorsArray[index][0][1]; // notehead
+                  }
+            }} }
+        //make notice that reset actions were taken care of
+        this.props.onResetDone(); // call the function passed from the parent component
+      }
+      
     }
 
     // resize the osmd when the window is resized
