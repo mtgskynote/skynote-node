@@ -36,12 +36,10 @@ const ListRecordings = () => {
   const { getCurrentUser } = useAppContext();
   const [userData, setUserData] = useState(null);
   const [recordingList, setRecordingList] = useState(null);
-
-  dataBaseCall().then((result) => {
-    setRecordingList(result);
-  });
+  const [numberOfRecordings, setNumberOfRecordings] = useState(null);
 
   useEffect(() => {
+
     const fetchDataFromAPI = () => {
       //console.log(`in fetchDataFromAPI, about to call getCurentUser()`)
       getCurrentUser() // fetchData is already an async function
@@ -56,7 +54,24 @@ const ListRecordings = () => {
     };
 
     fetchDataFromAPI();
-  }, [getCurrentUser, userData, recordingList]);
+
+    dataBaseCall().then((result) => {
+      setRecordingList(result);
+    });
+
+    try {
+      if (recordingList) {
+        const recordingsArray = Object.keys(JSON.parse(recordingList)).map(Number);
+        setNumberOfRecordings(recordingsArray);
+        console.log("Done Done Done Done Done Done Done Done");
+      } else {
+        console.log("Loading data...");
+      }
+      
+    } catch(error) {
+      console.log("Error parsing recordingList:", error);
+    }
+  }, [getCurrentUser, recordingList]);
 
   //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -70,24 +85,17 @@ const ListRecordings = () => {
 
   // Array of numbers (replace with the actual array of recordings later)
   // Use state to manage the recordingNumbers array
-  const [recordingNumbers, setRecordingNumbers] = useState([1, 2, 3]);
+  const [recordingNumbers, setRecordingNumbers] = useState([1, 2, 3]);//numberOfRecordings has to replace [1, 2, 3]
 
   //recordingNumbers SHOULD BE FILLED WITH THE DATA IN recordingList, BUT:
   //recordingList TAKES LONGER TO LOAD, AND THAT WILL RAISE AN ERROR FOR TRYING TO
   //Object.keys AN EMPTY OBJECT. CODE SHOULD WAIT FOR THE DATABASE TO SEND THE INFO
   //AND THEN THE PAGE SHOULD LOAD/WORK AS USUAL.
   
-  try {
-    const aux = Object.keys(JSON.parse(recordingList));
-    console.log("Song is: ", song);
-    console.log("Good luck, ", userData);
-    console.log("You have a total of ", aux.length, " recordings for this piece :)");
-    console.log("Here are your recordings: ", JSON.parse(recordingList));
-  } catch (error) {
-    console.log("Loading data...");
-  }
-  
-  
+  console.log("Song is: ", song);
+  console.log("Good luck, ", userData);
+  console.log("You have a total of ", numberOfRecordings, " recordings for this piece :)");
+  console.log("Here are your recordings: ", JSON.parse(recordingList));
 
 
   // Event handler for going back
