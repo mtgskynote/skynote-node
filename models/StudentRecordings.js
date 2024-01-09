@@ -1,5 +1,5 @@
 import mongoose from "mongoose";
-// import User from "./User.js";
+
 
 const student_recordingsSchema = new mongoose.Schema({
     // recordingId: {
@@ -23,7 +23,8 @@ const student_recordingsSchema = new mongoose.Schema({
         ref: 'User', // Reference to the Student model
       },
           
-    audioData: Buffer,
+    
+    audio:Buffer,
     date: Date,
     sharing: Boolean,
     
@@ -37,8 +38,7 @@ const student_recordingsSchema = new mongoose.Schema({
         pitchX:[Number],
         pitchY:[Number],
         repetitionNumber: [Number],
-        audio:[],
-        statistics: String, 
+        statistics: String,
     }
 
 })

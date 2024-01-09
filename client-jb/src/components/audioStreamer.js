@@ -131,12 +131,25 @@ var makeAudioStreamer = function (
       mediaRecorder.stop();
       //audioContext.suspend();
     },
-    save_or_not: function(answer){
+    save_or_not: async function(answer){
       if(answer==="save"){
-        //This creates an audioBlob that will be saved later
+        //This creates an audioBlob
         const audioBlob = new Blob(audioChunks, { type: 'audio/mp3' });
-
-        return audioBlob
+        // Transform audioBlob to audioArray
+        try {
+          // Convert Blob to ArrayBuffer using await
+          const arrayBuffer = await audioBlob.arrayBuffer();
+          // Clean
+          audioChunks = [];
+          audioContext.suspend();
+          return arrayBuffer;
+        } catch (error) {
+          console.error('Error converting Blob to ArrayBuffer:', error);
+          // Clean
+          audioChunks = [];
+          audioContext.suspend();
+          return 0
+        }
       }
       
       audioChunks = [];
