@@ -134,7 +134,7 @@ var makeAudioStreamer = function (
     save_or_not: function(answer){
       if(answer==="save"){
         //This creates an audioBlob that will be saved later
-        const audioBlob = new Blob(audioChunks, { type: 'audio/wav' });
+        const audioBlob = new Blob(audioChunks, { type: 'audio/mp3' });
 
         return audioBlob
       }

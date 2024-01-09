@@ -110,9 +110,9 @@ const ProgressPlayFile = (props) => {
     const seconds = currentDate.getSeconds().toString().padStart(2, '0');
     let formattedDate = `${userFileName}__${params.files.replace(".xml", "")}_${year}_${month}_${day}-${hours}_${minutes}_${seconds}`;
     //Check format and do different things
-    /*if (dataBlob.type === "audio/wav") { //AUDIO
+    /*if (dataBlob.type === "audio/mp3") { //AUDIO
       console.log("AUDIO IS DOWNLOADING")
-      formattedDate = formattedDate + ".wav"; //add extension
+      formattedDate = formattedDate + ".mp3"; //add extension
       //Download
       console.log("DOWNLOADING: ", formattedDate)
       const downloadLink = document.createElement('a');
