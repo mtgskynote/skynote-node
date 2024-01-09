@@ -36,7 +36,7 @@ const ListRecordings = () => {
   const { getCurrentUser } = useAppContext();
   const [userData, setUserData] = useState(null);
   const [recordingList, setRecordingList] = useState(null);
-  const [numberOfRecordings, setNumberOfRecordings] = useState(null);
+  const [recordingNames, setRecordingNames] = useState(null);
 
   useEffect(() => {
 
@@ -53,25 +53,17 @@ const ListRecordings = () => {
         });
     };
 
-    fetchDataFromAPI();
-
-    dataBaseCall().then((result) => {
-      setRecordingList(result);
-    });
-
-    try {
-      if (recordingList) {
-        const recordingsArray = Object.keys(JSON.parse(recordingList)).map(Number);
-        setNumberOfRecordings(recordingsArray);
-        console.log("Done Done Done Done Done Done Done Done");
-      } else {
-        console.log("Loading data...");
-      }
-      
-    } catch(error) {
-      console.log("Error parsing recordingList:", error);
+    if (userData === null || recordingList === null) {
+      fetchDataFromAPI();
+      dataBaseCall().then((result) => {
+        setRecordingList(result);
+        setRecordingNames(JSON.parse(result).map((recording) => recording.recordingName));
+      });
+    } else {
+      console.log("DATA ALREADY LOADED :)");
     }
-  }, [getCurrentUser, recordingList]);
+    
+  }, recordingList, recordingNames);
 
   //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -80,23 +72,18 @@ const ListRecordings = () => {
 
   // Access the passed variables from the location object
   const score = location.state?.score || 'DefaultSong';
-  const song = location.state?.song || 'DefaultSong';
+  const song = location.state?.song || 'DefaultSong1';
   const typeList = location.state?.typeList || 'DefaultTypeList';
-
-  // Array of numbers (replace with the actual array of recordings later)
-  // Use state to manage the recordingNumbers array
-  const [recordingNumbers, setRecordingNumbers] = useState([1, 2, 3]);//numberOfRecordings has to replace [1, 2, 3]
-
-  //recordingNumbers SHOULD BE FILLED WITH THE DATA IN recordingList, BUT:
-  //recordingList TAKES LONGER TO LOAD, AND THAT WILL RAISE AN ERROR FOR TRYING TO
-  //Object.keys AN EMPTY OBJECT. CODE SHOULD WAIT FOR THE DATABASE TO SEND THE INFO
-  //AND THEN THE PAGE SHOULD LOAD/WORK AS USUAL.
   
-  console.log("Song is: ", song);
-  console.log("Good luck, ", userData);
-  console.log("You have a total of ", numberOfRecordings, " recordings for this piece :)");
-  console.log("Here are your recordings: ", JSON.parse(recordingList));
-
+  try {
+    console.log("Song is: ", song);
+    console.log("Good luck, ", userData.user.name);
+    console.log("You have ", recordingNames.length, " recordings");
+    console.log("Here are your recordings: ", recordingNames);
+  } catch(error) {
+    console.log("STILL LOADING...");
+  }
+    
 
   // Event handler for going back
   const handleGoBack = () => {
@@ -106,26 +93,28 @@ const ListRecordings = () => {
 
   // Event handler for click on See
   const handleSeeClick = (score, song, number) => {
-    console.log("See recording and score of song ", song, " recording ", number)
+    console.log("See recording and score of song ", song, " recording ", number);
     navigate(score);
     //code that opens new page with the score, pitchtrack...
   };
 
   // Event handler for click on Play
   const handlePlayClick = (score, song, number) => {
-    console.log("Play recording and score of song ", song, " recording ", number)
+    console.log("Play recording and score of song ", song, " recording ", number);
 
     //code that simply plays the audio of the recording, without having to get into the actual file
   };
 
   // Event handler for click on Trash
-  const handleTrashClick = (sscore, ong, number) => {
-    console.log("Delete recording and score of song ", song, " recording ", number)
+  const handleTrashClick = (score, song, number) => {
+    console.log("UNDER CONSTRUCTION :D");
+    console.log("Delete recording and score of song ", song, " recording ", number);
 
     //send order to delete song to the database and force a re-render updating some state
-    setRecordingNumbers((prevNumbers) => prevNumbers.filter((n) => n !== number)); //state update
   };
-
+  if (recordingNames === null) {
+    return <p>Loading...</p>;
+  }
   // Your component logic using the variables
   return (
     <div className={ListRecordingsCSS.container}>
@@ -136,7 +125,7 @@ const ListRecordings = () => {
 
       {/* List of songs */}
       <div className={ListRecordingsCSS.songlist}>
-        {recordingNumbers.map((number) => (
+        {recordingNames.map((number) => (
           <div className={ListRecordingsCSS.songelement} key={number}>
           <li key={number}>
               <div>{song} - {number}</div>
