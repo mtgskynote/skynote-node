@@ -133,7 +133,7 @@ const ProgressPlayFileVisual = (props) => {
       const reader = new FileReader();
 
       reader.onload = function (importedFile) {
-        if (file.name.endsWith('.wav')) {
+        if (file.name.endsWith('.mp3')) {
           // Handle audio file
           setSongFile(importedFile.target.result);
           
