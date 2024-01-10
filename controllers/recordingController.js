@@ -1,4 +1,4 @@
-import student_recordings from "../models/studentRecordings.js";
+import student_recordings from "../models/StudentRecordings.js";
 import { StatusCodes } from "http-status-codes";
 import { BadRequestError, UnAuthenticatedError } from "../errors/index.js";
 
