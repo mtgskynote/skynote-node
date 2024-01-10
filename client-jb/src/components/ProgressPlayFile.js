@@ -11,6 +11,10 @@ import ModeToggle from "./ModeToggle.js";
 import PopUpWindow from "./PopUpWindow.js";
 import XMLParser from "react-xml-parser";
 import { getRecData, getRecording, putRecording, deleteRecording, patchViewPermissions } from "../utils/studentRecordingMethods.js";
+import { Buffer } from 'buffer';
+// @ts-ignore
+window.Buffer = Buffer;
+
 
 const folderBasePath = "/xmlScores/violin";
 
@@ -99,52 +103,38 @@ const ProgressPlayFile = (props) => {
   //function in charge of downloading
   async function handleDownload (dataBlob){
     setAudioReady(false);
-    console.log("I received audio, i proceed to save everything: ", dataBlob, jsonToDownload)
-    //Generate name of the file: name-introduced-by-user_date_time
-    const currentDate = new Date();
-    const year = currentDate.getFullYear();
-    const month = (currentDate.getMonth() + 1).toString().padStart(2, '0');
-    const day = currentDate.getDate().toString().padStart(2, '0');
-    const hours = currentDate.getHours().toString().padStart(2, '0');
-    const minutes = currentDate.getMinutes().toString().padStart(2, '0');
-    const seconds = currentDate.getSeconds().toString().padStart(2, '0');
-    let formattedDate = `${userFileName}__${params.files.replace(".xml", "")}_${year}_${month}_${day}-${hours}_${minutes}_${seconds}`;
-    //Check format and do different things
-    /*if (dataBlob.type === "audio/mp3") { //AUDIO
-      console.log("AUDIO IS DOWNLOADING")
-      formattedDate = formattedDate + ".mp3"; //add extension
-      //Download
-      console.log("DOWNLOADING: ", formattedDate)
-      const downloadLink = document.createElement('a');
-      downloadLink.href = URL.createObjectURL(toDownload);
-      downloadLink.download = formattedDate;
-      downloadLink.style.display = 'none';
-      document.body.appendChild(downloadLink);
-      downloadLink.click();
-      document.body.removeChild(downloadLink);
-      setCanDownload(false);
-    } else { //TEXT-JSON */
-      console.log("JSON IS DOWNLOADING")
-      //formattedDate = formattedDate + ".json"; //add extension
-      //Complete json with additional data:
-      console.log(jsonToDownload, "holaaaaa")
-      const jsonData = JSON.parse(jsonToDownload)//convert data to json
-      const jsonComplete={
-        studentId: "645b6e484612a8ebe8525933", 
-        scoreId: "64d0de60d9ac9a34a66b4d45", 
-        recordingName: formattedDate, 
-        date: new Date(), 
-        sharing: false,
-        info:jsonData,
-        audio:dataBlob,
-      }
-      /*const jsonReady = JSON.stringify(jsonComplete); //This is the complete json object
-      const blobtoDownload = new Blob([jsonReady], { type: "application/json" });
-      toDownload=blobtoDownload;
-      console.log("data to upload to database ", blobtoDownload)*/
+    //console.log("I received audio, i proceed to save everything: ", dataBlob, jsonToDownload)
+    const jsonData = JSON.parse(jsonToDownload)//convert data to json
+    const jsonComplete={
+      studentId: "645b6e484612a8ebe8525933", 
+      scoreId: "64d0de60d9ac9a34a66b4d45", 
+      recordingName: `${userFileName}`, 
+      date: new Date(), 
+      audio: dataBlob,
+      sharing: false,
+      info:jsonData,
+    }
 
-      //Put to dataset
-      //putRecording(recordingObject)
+    ///////////REMOVE
+    // Convert the combined data to a JSON string
+    const jsonString = JSON.stringify(jsonComplete);
+    // Create a Blob from the JSON string
+    const blob = new Blob([jsonString], { type: "application/json" });
+    // Create a download link
+    const url = URL.createObjectURL(blob);
+    // Create a link element
+    const link = document.createElement("a");
+    link.href = url;
+    link.download = "yourFileName.json"; // Set the desired file name
+    // Append the link to the document
+    document.body.appendChild(link);
+    // Trigger a click on the link to start the download
+    link.click();
+    // Remove the link from the document
+    document.body.removeChild(link);
+    ///////////REMOVE
+
+      // upload to database
       try{
         console.log(jsonComplete)
         let result = await putRecording(jsonComplete);
@@ -195,7 +185,6 @@ const ProgressPlayFile = (props) => {
           setConfidence([]);
           setIsResetButtonPressed(true);
         }else if(answer==="save"){
-          console.log("im in saved clicked and the name is ", fileName)
           setUserFileName(fileName) //save file name introduced by the user
           setCanDownload(true); //raise flag order to initiate downloading process (json in OSMD)
           setPitch([]);
@@ -219,8 +208,14 @@ const ProgressPlayFile = (props) => {
   //when audioReady activates (meaning that we can download the data)
   useEffect(() => {
     if(audioReady){
-      const dataToDownload = audioStreamer.save_or_not("save") //save wanted, data prepared
-      handleDownload(dataToDownload); //send data to downloading function
+      audioStreamer.save_or_not("save")
+        .then(dataToDownload => {
+          const buffer= new Buffer.from(dataToDownload)
+          handleDownload(buffer); // send data to downloading function
+        })
+        .catch(error => {
+          console.error("Error:", error);
+        });
     }
   }, [audioReady]);
 
