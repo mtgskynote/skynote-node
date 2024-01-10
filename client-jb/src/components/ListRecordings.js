@@ -14,20 +14,37 @@ import {
 
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-//  THIS PART IS FOR REQUESTING INFO FROM THE DATABASE. ATM IT GETS THE USER ID FROM getCurrentUser
+/////////////////////////////////////////IMPORTANT READ ME!!//////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//  THIS PART IS FOR DATABASE PETITIONS. ATM YOU CAN READ AND DELETE ENTRIES 
+//  ATM IT GETS THE USER ID FROM getCurrentUser
 //  AND THEN IT REQUESTS THE RECORDINGS FROM THAT USER AND THAT SPECIFIC SONG. WE DON'T HAVE A WAY
 //  TO GET THE SONG ID RIGHT NOW, SO WE HAVE A PLACEHOLDER ONE
-const dataBaseCall = async () => {
+//  THE DELETE OPTION IS WORKING ON THE DATABASE SIDE, BUT DOESN'T PROPERLY DISPLAY ON SCREEN SO
+//  I FORCEFULLY RELOAD THE PAGE. THIS NEEDS TO BE LOOKED INTO, SINCE IT MIGHT BE BETTER TO JUST
+//  UPDATE THE RECORDINGLIST, BUT THAT MIGHT IMPLY REWRITING THE WAY RECORDINGLIST WORKS ATM :(
+const dataBaseCall = async (action, idToDelete=null) => {
   // ---------------------------------------
   var recdatalist=[];  // list of minimal recording data [{recordingName, recordingId},{...}, ...]
 
   //getRecData(studentId, scoreId)
-  try {
-    recdatalist = await getRecData("645b6e484612a8ebe8525933", "64d0de60d9ac9a34a66b4d45") // // scoreId: "64d0de60d9ac9a34a66b4d45" is for the score "V_001_Cuerdas_Al_Aire_1_Suelta_A"
-    //console.log(`getRecData return OK, and recdatalist is ${JSON.stringify(recdatalist)}`)
-    return (JSON.stringify(recdatalist))
-  } catch (error) {
-    console.log(`error in getRecData`, error);
+  if (action === "read") {
+    try {
+      recdatalist = await getRecData("645b6e484612a8ebe8525933", "64d0de60d9ac9a34a66b4d45") // // scoreId: "64d0de60d9ac9a34a66b4d45" is for the score "V_001_Cuerdas_Al_Aire_1_Suelta_A"
+      //console.log(`getRecData return OK, and recdatalist is ${JSON.stringify(recdatalist)}`)
+      return (JSON.stringify(recdatalist))
+    } catch (error) {
+      console.log(`error in getRecData`, error);
+    }
+  }
+
+  if (action === "delete") {
+    try {
+      await deleteRecording(idToDelete);
+      return "DONE DONE DONE :)";
+    } catch (error) {
+      console.log(`error in deleteRecording`, error);
+    }
   }
 };
 
@@ -55,8 +72,9 @@ const ListRecordings = () => {
 
     if (userData === null || recordingList === null) {
       fetchDataFromAPI();
-      dataBaseCall().then((result) => {
+      dataBaseCall("read").then((result) => {
         setRecordingList(result);
+        //setRecordingNames([1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15]);
         setRecordingNames(JSON.parse(result).map((recording) => recording.recordingName));
       });
     } else {
@@ -73,9 +91,11 @@ const ListRecordings = () => {
   // Access the passed variables from the location object
   const score = location.state?.score || 'DefaultSong';
   const song = location.state?.song || 'DefaultSong1';
-  const typeList = location.state?.typeList || 'DefaultTypeList';
+  //I believe typelist doesn't have any purpose
+  //const typeList = location.state?.typeList || 'DefaultTypeList';
   
   try {
+    console.log(recordingList);
     console.log("Song is: ", song);
     console.log("Good luck, ", userData.user.name);
     console.log("You have ", recordingNames.length, " recordings");
@@ -106,9 +126,17 @@ const ListRecordings = () => {
   };
 
   // Event handler for click on Trash
-  const handleTrashClick = (score, song, number) => {
+  const handleTrashClick = (nameOfFile, number) => {
     console.log("UNDER CONSTRUCTION :D");
-    console.log("Delete recording and score of song ", song, " recording ", number);
+    console.log("Deleting ", nameOfFile, number);
+    if (recordingNames.indexOf(nameOfFile) !== -1) {
+      const idToDelete = JSON.parse(recordingList)[recordingNames.indexOf(nameOfFile)].recordingId;
+      dataBaseCall("delete", idToDelete).then((result) => {
+        console.log(result);
+      });
+      //setRecordingNames(null);
+      window.location.reload();
+    }
 
     //send order to delete song to the database and force a re-render updating some state
   };
@@ -125,18 +153,18 @@ const ListRecordings = () => {
 
       {/* List of songs */}
       <div className={ListRecordingsCSS.songlist}>
-        {recordingNames.map((number) => (
-          <div className={ListRecordingsCSS.songelement} key={number}>
-          <li key={number}>
-              <div>{song} - {number}</div>
+        {recordingNames.map((nameOfFile) => (
+          <div className={ListRecordingsCSS.songelement} key={recordingNames.indexOf(nameOfFile)}>
+          <li key={recordingNames.indexOf(nameOfFile)}>
+              <div>{song} - {nameOfFile}</div>
               <div>
-              <button className={ListRecordingsCSS.iconbutton} onClick={() => handleSeeClick(score, song, number)}>
+              <button className={ListRecordingsCSS.iconbutton} onClick={() => handleSeeClick(score, song, recordingNames.indexOf(nameOfFile))}>
                 <FontAwesomeIcon icon={faEye} />
               </button>
-              <button className={ListRecordingsCSS.iconbutton} onClick={() => handlePlayClick(score, song, number)}>
+              <button className={ListRecordingsCSS.iconbutton} onClick={() => handlePlayClick(score, song, recordingNames.indexOf(nameOfFile))}>
                 <FontAwesomeIcon icon={faPlay} />
               </button>
-              <button className={ListRecordingsCSS.iconbutton} onClick={() => handleTrashClick(score, song, number)}>
+              <button className={ListRecordingsCSS.iconbutton} onClick={() => handleTrashClick(nameOfFile, recordingNames.indexOf(nameOfFile))}>
                 <FontAwesomeIcon icon={faTrash} />
               </button>
               </div>
