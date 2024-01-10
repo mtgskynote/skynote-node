@@ -4,6 +4,7 @@ import { BadRequestError, UnAuthenticatedError } from "../errors/index.js";
 
 import { dirname } from "path";
 import { fileURLToPath } from "url";
+import { match } from "assert";
 const pathname = "/xmlScores/violin";
 // import cors from "cors";
 
@@ -88,4 +89,74 @@ const xml = async (req, res) => {
   // https://appskynote.com/musicXmlFiles/74_Minuet_2.xml
 };
 
-export { names, levels, skills, xml };
+// //scoreRouter.route("/getAllScoreDataa").get(getAllScoreData);
+// const getAllScoreData = async (req, res) => {
+//   console.log("in allScoreData");
+//   let data = {};
+//   try{
+//     let levels = await xmlScores.distinct("level");
+
+//     for (let level of levels) {
+//       let  skills = await xmlScores.distinct("skill", {level: level});
+//       data[level] = {};
+//       //let skillnum=0
+//       for (let skill of skills) {
+//         let names = await xmlScores.find({level: level, skill: skill}); 
+//         //data[level][skillnum] = names; 
+        
+//         data[level][skill] = names.map((name) => ({
+//           name,
+//           path: `${pathname}/${name}.xml`,
+//           route_path: `/all-lessons/${name}.xml`,
+//         }));
+//         console.log(`-----data[${level}][${skill}] is ${JSON.stringify(data)}\n`)
+//         //skillnum++
+//       }
+//     }
+//     //console.log(`-----------data is ${JSON.stringify(data)}`)
+//     res.status(StatusCodes.OK).json(data);
+//   } catch (error) {
+//     console.log(`error in getAllScoreData`, error)
+//   } 
+// }
+
+
+const getAllScoreData = async (req, res) => {
+  
+  try {
+    const levels_ = await xmlScores.distinct("level");
+    const data = {};
+
+    for (let level of levels_) {
+      let match={level: level} 
+      const skills_ = await xmlScores.distinct("skill", match)
+      data[level] = {};
+
+      for (let skill of skills_) {
+        let match={level: level, skill: skill}
+        let docs = await xmlScores.find(match);
+
+        let names_ = [];
+        for (let i = 0; i < docs.length; i++) {
+          names_.push(formatName(docs[i].fname));
+        }
+
+        //console.log(`names for level ${level} and skill ${skill} are ${JSON.stringify(names_)}`  )
+        
+        data[level][skill] = names_.map((name) => ({
+          name,
+          path: `${pathname}/${name}.xml`,
+          route_path: `/all-lessons/${name}.xml`,
+        }));
+      }
+    }
+    //console.log("All data fetched:", data);
+    console.log("in getAllScoreData, returning data");
+    res.status(StatusCodes.OK).json(data);
+    //return data;
+  } catch (error) {
+    console.error("Error fetching data:", error);
+  }
+}
+
+export { names, levels, skills, xml, getAllScoreData };

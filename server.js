@@ -1,5 +1,6 @@
 import express from "express";
 import dotenv from "dotenv";
+//const bodyParse = require('body-parser')
 
 dotenv.config();
 import "express-async-errors"; // this is a package that allows us to use async await in express
@@ -23,6 +24,19 @@ import { fileURLToPath } from "url";
 import path from "path";
 
 const app = express();
+
+app.use(express.json({ limit: '16mb' })); // For JSON payloads
+app.use(express.urlencoded({ limit: '16mb', extended: true })); // For URL-encoded data
+
+
+// app.use(bodyParser.json({limit: '16mb'}));
+// app.use(
+//   bodyParser.urlencoded({
+//     extended: true,
+//     limit: '16mb',
+//     parameterLimit: 50000, // limit parameter number (not sure what this is, actually)
+//   }),
+// );
 
 if (process.env.NODE_ENV !== "production") {
   app.use(morgan("dev")); // morgan is a middleware that allows us to log the requests in the console

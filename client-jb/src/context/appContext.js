@@ -79,9 +79,12 @@ const AppProvider = ({ children }) => {
       const { data } = await axios.post(
         `/api/v1/auth/${endPoint}`,
         currentUser
-      );
+      );  
 
       const { user, token, location } = data;
+
+      console.log(`user from setupUser is ${JSON.stringify(user)}`) 
+      console.log(`_id from setupUser is ${JSON.stringify(user.id)}`)
       dispatch({
         type: SETUP_USER_SUCCESS,
         payload: {
@@ -109,6 +112,7 @@ const AppProvider = ({ children }) => {
   };
 
   const getCurrentUser = async () => {
+    console.log(`getting current user from STATE = ${JSON.stringify(state.user)}  `)
     return state.user;
   }
 
@@ -144,12 +148,23 @@ const AppProvider = ({ children }) => {
         level: level,
         skill: skill,
       });
+      console.log("names:", response.data);
       return response.data;
-      // console.log("names:", response.data);
     } catch (error) {
       console.error("Error fetching file names:", error);
     }
   };
+
+  const getAllScoreData = async() => {
+    try {
+      const response = await axios.get("/api/v1/scores/getAllScoreData", {
+      });
+      console.log("======================   names returned :");//, response.data);
+      return response.data;
+    } catch (error) {
+      console.error("Error fetching file names:", error);
+    }
+  };  
 
   // Return provider component with context value
   return (
@@ -163,6 +178,7 @@ const AppProvider = ({ children }) => {
         getAllLevels,
         getAllSkills,
         getAllNames,
+        getAllScoreData,
       }}
     >
       {children}

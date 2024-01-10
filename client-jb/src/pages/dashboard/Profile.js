@@ -130,7 +130,7 @@ const Profile = () => {
       console.log(`in fetchDataFromAPI, about to call getCurentUser()`)
       getCurrentUser() // fetchData is already an async function
         .then((result) => {
-          console.log(`getCurentUser() has returnd this result: ${result}`)
+          console.log(`getCurentUser() has returnd this result: ${JSON.stringify(result)}`)
           setData(result);
           setLoading(false);
         })

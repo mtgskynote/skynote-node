@@ -56,36 +56,53 @@ const sxStyles = {
 };
 
 const AllLessons = () => {
-  const { getAllLevels, getAllSkills, getAllNames } = useAppContext();
+  const { getAllLevels, getAllSkills, getAllNames, getAllScoreData } = useAppContext();
 
   const [titles, setTitles] = useState({});
   const [selectedNodeActive, setSelectedNodeActive] = useState(false);
   const [selectedNodeInfo, setSelectedNodeInfo] = useState(null);
   const [fetchedData, setFetchedData] = useState({});
 
-  const fetchAllData = async () => {
-    try {
-      const levels = await getAllLevels();
-      const data = {};
-
-      for (let level of levels) {
-        const skills = await getAllSkills(level);
-        data[level] = {};
-
-        for (let skill of skills) {
-          let names = await getAllNames(level, skill);
-          data[level][skill] = names.map((name) => ({
-            name,
-            path: `${folderBasePath}/${name}.xml`,
-            route_path: `/all-lessons/${name}.xml`,
-          }));
-        }
-      }
+  const fetchAllData = async () => {   
+    let data = []
+    console.log("Fetching all data...");
+    try{
+      let data = await getAllScoreData();
+      console.log("AllLessons===============================All data fetched:", data); 
       return data;
-    } catch (error) {
-      console.error("Error fetching data:", error);
-    }
-  };
+    } catch (error) { 
+      console.log(`error in getAllScoreData`, error)
+    }    
+  }
+
+  // const fetchAllData = async () => {
+  //   console.log("Fetching all data...");
+  //   try {
+  //     const levels = await getAllLevels();
+  //     const data = {};
+
+  //     for (let level of levels) {
+  //       const skills = await getAllSkills(level);
+  //       data[level] = {};
+
+  //       for (let skill of skills) {
+          
+  //         let names = await getAllNames(level, skill);
+  //         console.log(`names for level ${level} and skill ${skill} are ${JSON.stringify(names)}`  )
+          
+  //         data[level][skill] = names.map((name) => ({
+  //           name,
+  //           path: `${folderBasePath}/${name}.xml`,
+  //           route_path: `/all-lessons/${name}.xml`,
+  //         }));
+  //       }
+  //     }
+  //     console.log("AllLessons===============================All data fetched:", data); 
+  //     return data;
+  //   } catch (error) {
+  //     console.error("Error fetching data:", error);
+  //   }
+  // };
 
   useEffect(() => {
     fetchAllData().then((data) => {
