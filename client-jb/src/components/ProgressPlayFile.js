@@ -115,6 +115,25 @@ const ProgressPlayFile = (props) => {
       info:jsonData,
     }
 
+    ///////////REMOVE
+    // Convert the combined data to a JSON string
+    const jsonString = JSON.stringify(jsonComplete);
+    // Create a Blob from the JSON string
+    const blob = new Blob([jsonString], { type: "application/json" });
+    // Create a download link
+    const url = URL.createObjectURL(blob);
+    // Create a link element
+    const link = document.createElement("a");
+    link.href = url;
+    link.download = "yourFileName.json"; // Set the desired file name
+    // Append the link to the document
+    document.body.appendChild(link);
+    // Trigger a click on the link to start the download
+    link.click();
+    // Remove the link from the document
+    document.body.removeChild(link);
+    ///////////REMOVE
+
       // upload to database
       try{
         console.log(jsonComplete)
