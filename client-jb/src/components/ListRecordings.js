@@ -59,6 +59,7 @@ const ListRecordings = () => {
   }
 };
 
+  // Starting --> load recordings from userID and scoreID
   useEffect(() => {
 
     const fetchDataFromAPI = () => {
@@ -86,25 +87,11 @@ const ListRecordings = () => {
         })
 
       }
-  };
-        
-        
+  };   
 
     fetchDataFromAPI();
-
-    /*if (userData === null){
-      fetchDataFromAPI();
-    } else if (recordingList === null) {
-      dataBaseCall("read").then((result) => {
-        setRecordingList(result);
-        //setRecordingNames([1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15]);
-        setRecordingNames(JSON.parse(result).map((recording) => recording.recordingName));
-      });
-    } else {
-      console.log("DATA ALREADY LOADED :)");
-    }*/
     
-  }, [userData, recordingList, recordingNames]);
+  }, [userData]);
 
   //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -114,21 +101,7 @@ const ListRecordings = () => {
   // Access the passed variables from the location object
   const score = location.state?.score || 'DefaultSong';
   const song = location.state?.song || 'DefaultSong1';
-  //I believe typelist doesn't have any purpose
-  //const typeList = location.state?.typeList || 'DefaultTypeList';
   
-  try {
-    console.log(recordingList);
-    console.log("Song is: ", song);
-    console.log("Good luck, ", userData.user.name);
-    console.log("You have ", recordingNames.length, " recordings");
-    console.log("Here are your recordings: ", recordingNames);
-    console.log("Recordings list: ", recordingList);
-  } catch(error) {
-    console.log("STILL LOADING...");
-  }
-    
-
   // Event handler for going back
   const handleGoBack = () => {
     // Use navigate to go back to the previous page
@@ -164,9 +137,15 @@ const ListRecordings = () => {
 
     //send order to delete song to the database and force a re-render updating some state
   };
+
+
+
   if (recordingNames === null) {
     return <p>Loading...</p>;
   }
+
+
+
   // Your component logic using the variables
   return (
     <div className={ListRecordingsCSS.container}>
