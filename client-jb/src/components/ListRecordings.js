@@ -23,14 +23,25 @@ import {
 //  THE DELETE OPTION IS WORKING ON THE DATABASE SIDE, BUT DOESN'T PROPERLY DISPLAY ON SCREEN SO
 //  I FORCEFULLY RELOAD THE PAGE. THIS NEEDS TO BE LOOKED INTO, SINCE IT MIGHT BE BETTER TO JUST
 //  UPDATE THE RECORDINGLIST, BUT THAT MIGHT IMPLY REWRITING THE WAY RECORDINGLIST WORKS ATM :(
-const dataBaseCall = async (action, idToDelete=null) => {
+
+
+const ListRecordings = () => {
+
+  const { getCurrentUser } = useAppContext();
+  const [userData, setUserData] = useState(null);
+  const [recordingList, setRecordingList] = useState(null);
+  const [recordingNames, setRecordingNames] = useState(null);
+
+
+  const dataBaseCall = async (action, idToDelete=null) => {
   // ---------------------------------------
   var recdatalist=[];  // list of minimal recording data [{recordingName, recordingId},{...}, ...]
 
   //getRecData(studentId, scoreId)
   if (action === "read") {
     try {
-      recdatalist = await getRecData("645b6e484612a8ebe8525933", "64d0de60d9ac9a34a66b4d45") // // scoreId: "64d0de60d9ac9a34a66b4d45" is for the score "V_001_Cuerdas_Al_Aire_1_Suelta_A"
+      console.log("im here ", userData)
+      recdatalist = await getRecData("645b6e484612a8ebe8525933", "64d0de60d9ac9a34a66b4d45") // // userID: "645b6e484612a8ebe8525933"; scoreId: "64d0de60d9ac9a34a66b4d45" is for the score "V_001_Cuerdas_Al_Aire_1_Suelta_A"
       //console.log(`getRecData return OK, and recdatalist is ${JSON.stringify(recdatalist)}`)
       return (JSON.stringify(recdatalist))
     } catch (error) {
@@ -48,30 +59,42 @@ const dataBaseCall = async (action, idToDelete=null) => {
   }
 };
 
-const ListRecordings = () => {
-
-  const { getCurrentUser } = useAppContext();
-  const [userData, setUserData] = useState(null);
-  const [recordingList, setRecordingList] = useState(null);
-  const [recordingNames, setRecordingNames] = useState(null);
-
   useEffect(() => {
 
     const fetchDataFromAPI = () => {
-      //console.log(`in fetchDataFromAPI, about to call getCurentUser()`)
+      if(userData===null){
       getCurrentUser() // fetchData is already an async function
         .then((result) => {
           //console.log(`getCurentUser() has returnd this result: ${JSON.stringify(result)}`);
           setUserData(result);
-        })
-        .catch((error) => {
+        }).catch((error) => {
           console.log(`getCurentUser() error: ${error}`)
           // Handle errors if necessary
-        });
-    };
+        })
+      }
 
-    if (userData === null || recordingList === null) {
+      if(userData !== null){
+        console.log("im in here")
+        dataBaseCall("read").then((result) => {
+          console.log("result from get is ", result)
+          setRecordingList(result);
+          //setRecordingNames([1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15]);
+          setRecordingNames(JSON.parse(result).map((recording) => recording.recordingName));
+        }).catch((error) => {
+          console.log(`Cannot get recordings from database: ${error}`)
+          // Handle errors if necessary
+        })
+
+      }
+  };
+        
+        
+
+    fetchDataFromAPI();
+
+    /*if (userData === null){
       fetchDataFromAPI();
+    } else if (recordingList === null) {
       dataBaseCall("read").then((result) => {
         setRecordingList(result);
         //setRecordingNames([1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15]);
@@ -79,9 +102,9 @@ const ListRecordings = () => {
       });
     } else {
       console.log("DATA ALREADY LOADED :)");
-    }
+    }*/
     
-  }, recordingList, recordingNames);
+  }, [userData, recordingList, recordingNames]);
 
   //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -100,6 +123,7 @@ const ListRecordings = () => {
     console.log("Good luck, ", userData.user.name);
     console.log("You have ", recordingNames.length, " recordings");
     console.log("Here are your recordings: ", recordingNames);
+    console.log("Recordings list: ", recordingList);
   } catch(error) {
     console.log("STILL LOADING...");
   }
