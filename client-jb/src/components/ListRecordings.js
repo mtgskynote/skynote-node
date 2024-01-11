@@ -32,32 +32,12 @@ const ListRecordings = () => {
   const [recordingList, setRecordingList] = useState(null);
   const [recordingNames, setRecordingNames] = useState(null);
 
+  const location = useLocation();
+  const navigate = useNavigate();
 
-  const dataBaseCall = async (action, idToDelete=null) => {
-  // ---------------------------------------
-  var recdatalist=[];  // list of minimal recording data [{recordingName, recordingId},{...}, ...]
-
-  //getRecData(studentId, scoreId)
-  if (action === "read") {
-    try {
-      console.log("im here ", userData)
-      recdatalist = await getRecData("645b6e484612a8ebe8525933", "64d0de60d9ac9a34a66b4d45") // // userID: "645b6e484612a8ebe8525933"; scoreId: "64d0de60d9ac9a34a66b4d45" is for the score "V_001_Cuerdas_Al_Aire_1_Suelta_A"
-      //console.log(`getRecData return OK, and recdatalist is ${JSON.stringify(recdatalist)}`)
-      return (JSON.stringify(recdatalist))
-    } catch (error) {
-      console.log(`error in getRecData`, error);
-    }
-  }
-
-  if (action === "delete") {
-    try {
-      await deleteRecording(idToDelete);
-      return "DONE DONE DONE :)";
-    } catch (error) {
-      console.log(`error in deleteRecording`, error);
-    }
-  }
-};
+  // Access the passed variables from the location object
+  const score = location.state?.score || 'DefaultSong';
+  const song = location.state?.song || 'DefaultSong1';
 
   // Starting --> load recordings from userID and scoreID
   useEffect(() => {
@@ -75,16 +55,21 @@ const ListRecordings = () => {
       }
 
       if(userData !== null){
-        console.log("im in here")
-        dataBaseCall("read").then((result) => {
-          console.log("result from get is ", result)
-          setRecordingList(result);
-          //setRecordingNames([1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15]);
-          setRecordingNames(JSON.parse(result).map((recording) => recording.recordingName));
+        getRecData("645b6e484612a8ebe8525933", "64d0de60d9ac9a34a66b4d45").then((result) => {
+          setRecordingList(JSON.stringify(result));
+          setRecordingNames(result.map((recording) => recording.recordingName));
+          console.log("Hola mi bro, aqui tienes tu info fiera ;) ", result);
         }).catch((error) => {
           console.log(`Cannot get recordings from database: ${error}`)
           // Handle errors if necessary
         })
+        // dataBaseCall("read").then((result) => {
+        //   setRecordingList(result);
+        //   setRecordingNames(JSON.parse(result).map((recording) => recording.recordingName));
+        // }).catch((error) => {
+        //   console.log(`Cannot get recordings from database: ${error}`)
+        //   // Handle errors if necessary
+        // })
 
       }
   };   
@@ -94,14 +79,6 @@ const ListRecordings = () => {
   }, [userData]);
 
   //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-  const location = useLocation();
-  const navigate = useNavigate();
-
-  // Access the passed variables from the location object
-  const score = location.state?.score || 'DefaultSong';
-  const song = location.state?.song || 'DefaultSong1';
-  
   // Event handler for going back
   const handleGoBack = () => {
     // Use navigate to go back to the previous page
@@ -124,18 +101,20 @@ const ListRecordings = () => {
 
   // Event handler for click on Trash
   const handleTrashClick = (nameOfFile, number) => {
-    console.log("UNDER CONSTRUCTION :D");
-    console.log("Deleting ", nameOfFile, number);
     if (recordingNames.indexOf(nameOfFile) !== -1) {
       const idToDelete = JSON.parse(recordingList)[recordingNames.indexOf(nameOfFile)].recordingId;
-      dataBaseCall("delete", idToDelete).then((result) => {
-        console.log(result);
-      });
-      //setRecordingNames(null);
-      window.location.reload();
+      const auxArrayNames = recordingNames.filter((item, index) => index !== recordingNames.indexOf(nameOfFile));
+      const auxArrayList = JSON.parse(recordingList).filter((item, index) => index !== recordingNames.indexOf(nameOfFile));
+      console.log("Deleting: ", idToDelete);
+      deleteRecording(idToDelete).then(() => {
+        setRecordingNames(auxArrayNames);
+        setRecordingList(auxArrayList);
+        console.log("listooooooooooooo")
+        //window.location.reload();
+      }).catch((error) => {
+        console.log(`Cannot delete recordings from database: ${error}`)
+      })
     }
-
-    //send order to delete song to the database and force a re-render updating some state
   };
 
 
