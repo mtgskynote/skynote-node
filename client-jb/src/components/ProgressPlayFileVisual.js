@@ -17,10 +17,6 @@ const folderBasePath = "/xmlScores/violin";
 const ProgressPlayFileVisual = (props) => {
   const params = useParams();
 
-  //THIS IS FOR FILE LOADING, SHOULD BE DEALT WHEN DATABASE IS IMPLEMENTED
-  const [audioBuffer, setAudioBuffer] = useState(null);
-  const fileInputRef = useRef(null);
-  /////////////////////////////////////////////////////////
   let audioContext = new (window.AudioContext || window.webkitAudioContext)();
   const [songFile, setSongFile] = useState(null);
   
@@ -120,39 +116,6 @@ const ProgressPlayFileVisual = (props) => {
       setRepetitionMessage(message_aux)
     }
   };
-  
-  ////////////////////LOADING FILES TEMPORARY PATCH//////////////////////////////////////////////////
-  //Since database stuff is not yet implemented, I wrote a few lines to get local files, just so we
-  //can keep working on displaying and listening to said files
-  //THIS CODE SHOULDN'T BE IN THE MAIN BRANCH IT'S TEMPORARY AND SHOULD BE DEALT WITH BEFORE ANY MERGE
-  const handleFileSelect = (event) => {
-    const fileInput = fileInputRef.current;
-    const file = fileInput.files[0];
-
-    if (file) {
-      const reader = new FileReader();
-
-      reader.onload = function (importedFile) {
-        if (file.name.endsWith('.mp3')) {
-          // Handle audio file
-          setSongFile(importedFile.target.result);
-          
-        } else if (file.name.endsWith('.json')) {
-          // Handle JSON file
-          const uint8Array = new Uint8Array(importedFile.target.result);
-          const jsonString = new TextDecoder().decode(uint8Array);    
-          const jsonContent = JSON.parse(jsonString);
-          console.log('JSON Content:', jsonContent);
-          console.log('BPM:', jsonContent.bpm);
-          setJson(jsonContent);
-          setBpm(jsonContent.bpm);
-        }
-      };
-
-      reader.readAsArrayBuffer(file);
-    }
-  };
-  ///////////////////////////////////////////////////////////////////////////////////////////////////
   
   const playAudio = async () => {
     try {
@@ -275,7 +238,6 @@ const ProgressPlayFileVisual = (props) => {
   return (
     
     <div>
-      <input type="file" ref={fileInputRef} onChange={handleFileSelect} />
       {(showRepetitionMessage&&<SimpleMessaje message={repetitionMessage}/>)}
 
       <OpenSheetMusicDisplay
