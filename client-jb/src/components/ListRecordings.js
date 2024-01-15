@@ -31,7 +31,6 @@ const ListRecordings = () => {
   const [userData, setUserData] = useState(null);
   const [recordingList, setRecordingList] = useState(null);
   const [recordingNames, setRecordingNames] = useState(null);
-
   const location = useLocation();
   const navigate = useNavigate();
 
@@ -86,11 +85,14 @@ const ListRecordings = () => {
   };
 
   // Event handler for click on See
-  const handleSeeClick = (score, song, number) => {
-    console.log("See recording and score of song ", song, " recording ", number);
-    navigate(score);
-    //code that opens new page with the score, pitchtrack...
-  };
+  const handleSeeClick = (nameOfFile, number)=> {
+      const id = JSON.parse(recordingList)[recordingNames.indexOf(nameOfFile)].recordingId;
+      console.log("ID of this recording ", id)
+      getRecording(id).then((jsonData)=>{
+        console.log("json obtained is ", jsonData)
+      })
+
+    }
 
   // Event handler for click on Play
   const handlePlayClick = (score, song, number) => {
@@ -140,7 +142,7 @@ const ListRecordings = () => {
           <li key={recordingNames.indexOf(nameOfFile)}>
               <div>{song} - {nameOfFile}</div>
               <div>
-              <button className={ListRecordingsCSS.iconbutton} onClick={() => handleSeeClick(score, song, recordingNames.indexOf(nameOfFile))}>
+              <button className={ListRecordingsCSS.iconbutton} onClick={() => handleSeeClick(nameOfFile, recordingNames.indexOf(nameOfFile))}>
                 <FontAwesomeIcon icon={faEye} />
               </button>
               <button className={ListRecordingsCSS.iconbutton} onClick={() => handlePlayClick(score, song, recordingNames.indexOf(nameOfFile))}>
