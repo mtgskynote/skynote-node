@@ -3,7 +3,7 @@ import React, { useState, useEffect } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import ListRecordingsCSS from './ListRecordings.module.css';
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { getRecData, getRecording, putRecording, deleteRecording, patchViewPermissions } from "../utils/studentRecordingMethods.js";
+import { getRecData, getRecording, deleteRecording } from "../utils/studentRecordingMethods.js";
 import { useAppContext } from "../context/appContext";
 
 import {
@@ -57,7 +57,6 @@ const ListRecordings = () => {
         getRecData("645b6e484612a8ebe8525933", "64d0de60d9ac9a34a66b4d45").then((result) => {
           setRecordingList(JSON.stringify(result));
           setRecordingNames(result.map((recording) => recording.recordingName));
-          console.log("Hola mi bro, aqui tienes tu info fiera ;) ", result);
         }).catch((error) => {
           console.log(`Cannot get recordings from database: ${error}`)
           // Handle errors if necessary
@@ -74,7 +73,8 @@ const ListRecordings = () => {
   // Event handler for going back
   const handleGoBack = () => {
     // Use navigate to go back to the previous page
-    navigate(-1);
+    //navigate(-1);
+    navigate(`/all-lessons/${score}`);
   };
 
   // Event handler for click on See
@@ -153,7 +153,7 @@ const ListRecordings = () => {
 
       {/* Button to go back */}
       <button className={ListRecordingsCSS.backbutton} onClick={handleGoBack}>
-        Go Back
+        Back
       </button>
     </div>
   );
