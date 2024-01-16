@@ -1,4 +1,4 @@
-import student_recordings from "../models/studentRecordings.js";
+import student_recordings from "../models/StudentRecordings.js";
 import { StatusCodes } from "http-status-codes";
 import { BadRequestError, UnAuthenticatedError } from "../errors/index.js";
 
@@ -35,7 +35,7 @@ const getRecording = async (req, res) => {
   console.log(
     `in recordingController.js, recordingId is ${recordingId}`);
 
-  let doc = await student_recordings.findOne({recordingId: recordingId});
+  let doc = await student_recordings.findOne({_id: recordingId});
   res.status(StatusCodes.OK).json(doc);
 };
 
@@ -76,7 +76,7 @@ const getRecording = async (req, res) => {
       // Find the recording by ID and update the sharing field
       const updatedRecording = await student_recordings.findOneAndUpdate(
           /* { _id: recordingId }, */
-          { recordingId: recordingId  },
+          { _id: recordingId  },
           { sharing: sharing },
           /* { new: true } // This option returns the updated document */
       );
