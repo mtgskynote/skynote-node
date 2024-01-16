@@ -1,4 +1,4 @@
-import student_recordings from "../models/studentRecordings.js";
+import student_recordings from "../models/StudentRecordings.js";
 import { StatusCodes } from "http-status-codes";
 import { BadRequestError, UnAuthenticatedError } from "../errors/index.js";
 
@@ -35,7 +35,7 @@ const getRecording = async (req, res) => {
   console.log(
     `in recordingController.js, recordingId is ${recordingId}`);
 
-  let doc = await student_recordings.findOne({recordingId: recordingId});
+  let doc = await student_recordings.findOne({_id: recordingId});
   res.status(StatusCodes.OK).json(doc);
 };
 
@@ -49,6 +49,7 @@ const getRecording = async (req, res) => {
       const newRecording = new student_recordings(req.body);
       await newRecording.save();
       console.log(`newRecording infor is ${JSON.stringify({recordingName: newRecording.recordingName, recordingId: newRecording._id})}`) 
+      console.log("Hello im here in recordingController.js for putRecording()")
       // res.status().json(info) puts info in the .data field of the response!!
       res.status(201).json({recordingName: newRecording.recordingName, recordingId: newRecording._id});
     } catch (error) {
