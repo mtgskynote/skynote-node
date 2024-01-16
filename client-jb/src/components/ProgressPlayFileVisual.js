@@ -11,7 +11,8 @@ import Wrapper from "../assets/wrappers/ModeToggle";
 import { Button} from "@material-ui/core";
 import ModeInfoButton from "./ModeInfoButton.js";
 import PopUpWindowDelete from "./PopUpWindowDelete.js";
-import { getRecData, getRecording, putRecording, deleteRecording, patchViewPermissions } from "../utils/studentRecordingMethods.js";
+import {  getRecording} from "../utils/studentRecordingMethods.js";
+import ListRecordingsCSS from './ListRecordings.module.css';
 
 const folderBasePath = "/xmlScores/violin";
 
@@ -37,11 +38,8 @@ const ProgressPlayFileVisual = (props) => {
   const [zoom, setZoom] = useState(1.0);
   const [showPopUpWindow, setShowPopUpWindow]= useState(false);
 
-  const [pitchValue, setPitchValue] = useState(null);
-  const [confidenceValue, setConfidenceValue] = useState(null);
   const [pitch, setPitch] = useState([]);
   const [confidence, setConfidence] = useState([]);
-  var pitchCount =0;
 
   const [startPitchTrack, setStartPitchTrack] = useState(false);
   const [showPitchTrack, setShowPitchTrack] = useState(false);
@@ -97,7 +95,9 @@ const ProgressPlayFileVisual = (props) => {
   };
   ///////////////////////////////////////////////////////////////////////////////////////////////////
 
-
+  const handleGoBack=()=>{
+    navigate(-1);
+  }
 
   const onResetDone = () => {
     setIsResetButtonPressed(false);
@@ -192,7 +192,7 @@ const ProgressPlayFileVisual = (props) => {
       const playButton = document.getElementById("play/stop");
       const handlePlayButtonClick = () => {
         const playbackManager = playbackRef.current;
-        const cursor = cursorRef.current;
+        //const cursor = cursorRef.current;
         if (playbackManager.isPlaying) {
           //Pause/stop audio of recording
           stopAudio();
@@ -277,7 +277,7 @@ const ProgressPlayFileVisual = (props) => {
         //deleteButton.removeEventListener("click", handleDeleteButtonClick);
       }
     };
-  }, [recordVol, zoom, recordInactive, pitchValue, repeatsIterator, visualMode, showRepetitionMessage, json, songFile, cursorFinished, cursorJumped]);
+  }, [recordVol, zoom, recordInactive, repeatsIterator, visualMode, showRepetitionMessage, json, songFile, cursorFinished, cursorJumped]);
 
   return (
     
@@ -335,6 +335,11 @@ const ProgressPlayFileVisual = (props) => {
 
         </div>
     </Wrapper>
+
+    {/* Button to go back */}
+    <button  className={ListRecordingsCSS.back2Listbutton} onClick={handleGoBack}>
+        BACK
+      </button>
       
     </div>
   );
