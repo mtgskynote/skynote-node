@@ -49,7 +49,6 @@ const getRecording = async (req, res) => {
       const newRecording = new student_recordings(req.body);
       await newRecording.save();
       console.log(`newRecording infor is ${JSON.stringify({recordingName: newRecording.recordingName, recordingId: newRecording._id})}`) 
-      console.log("Hello im here in recordingController.js for putRecording()")
       // res.status().json(info) puts info in the .data field of the response!!
       res.status(201).json({recordingName: newRecording.recordingName, recordingId: newRecording._id});
     } catch (error) {
