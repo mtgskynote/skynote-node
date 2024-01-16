@@ -62,13 +62,6 @@ const ListRecordings = () => {
           console.log(`Cannot get recordings from database: ${error}`)
           // Handle errors if necessary
         })
-        // dataBaseCall("read").then((result) => {
-        //   setRecordingList(result);
-        //   setRecordingNames(JSON.parse(result).map((recording) => recording.recordingName));
-        // }).catch((error) => {
-        //   console.log(`Cannot get recordings from database: ${error}`)
-        //   // Handle errors if necessary
-        // })
 
       }
   };   
@@ -90,6 +83,7 @@ const ListRecordings = () => {
       console.log("ID of this recording ", id)
       getRecording(id).then((jsonData)=>{
         console.log("json obtained is ", jsonData)
+        navigate(score, {state:{'id':id}}) //we should pass jsonData when getRecording() works
       })
 
     }

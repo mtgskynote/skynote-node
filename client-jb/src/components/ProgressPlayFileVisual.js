@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useRef } from "react";
-import { useParams, useNavigate } from "react-router-dom";
+import { useParams, useNavigate,useLocation } from "react-router-dom";
 import OpenSheetMusicDisplay from "./OpenSheetMusicDisplay";
 import ControlBarVisual from "./ControlBarVisual.js";
 import SimpleMessaje from "./AnyMessage.js"
@@ -11,11 +11,16 @@ import Wrapper from "../assets/wrappers/ModeToggle";
 import { Button} from "@material-ui/core";
 import ModeInfoButton from "./ModeInfoButton.js";
 import PopUpWindowDelete from "./PopUpWindowDelete.js";
+import { getRecData, getRecording, putRecording, deleteRecording, patchViewPermissions } from "../utils/studentRecordingMethods.js";
 
 const folderBasePath = "/xmlScores/violin";
 
 const ProgressPlayFileVisual = (props) => {
   const params = useParams();
+
+  //THIS IS FOR FILE LOADING, SHOULD BE DEALT WHEN DATABASE IS IMPLEMENTED
+  const fileInputRef = useRef(null);
+  /////////////////////////////////////////////////////////
 
   let audioContext = new (window.AudioContext || window.webkitAudioContext)();
   const [songFile, setSongFile] = useState(null);
@@ -52,7 +57,47 @@ const ProgressPlayFileVisual = (props) => {
   const [visualMode, setVisualMode] = useState(true);
   const [json, setJson] = useState([]);
 
+
+  //const { getCurrentUser } = useAppContext();
+  const location = useLocation();
   const navigate = useNavigate();
+
+  // Access the passed variables from the location object
+  const recordingJSON = location.state?.id;
+  console.log("Id received issssss  ", recordingJSON) //Should be receiving json, not id
+
+
+  ////////////////////LOADING FILES TEMPORARY PATCH//////////////////////////////////////////////////
+  //Since database stuff is not yet implemented, I wrote a few lines to get local files, just so we
+  //can keep working on displaying and listening to said files
+  //THIS CODE SHOULDN'T BE IN THE MAIN BRANCH IT'S TEMPORARY AND SHOULD BE DEALT WITH BEFORE ANY MERGE
+  const handleFileSelect = (event) => {
+    const fileInput = fileInputRef.current;
+    const file = fileInput.files[0];
+
+    if (file) {
+      const reader = new FileReader();
+      reader.onload = function (importedFile) {
+        // Transform data type and load content
+        const uint8Array = new Uint8Array(importedFile.target.result);
+        const jsonString = new TextDecoder().decode(uint8Array);    
+        const jsonContent = JSON.parse(jsonString);
+        console.log('JSON Content:', jsonContent);
+        console.log('BPM:', jsonContent.info.bpm);
+        // Save audio
+        setSongFile(jsonContent.audio);
+        //Save json.info (recording data, pitch, colors...) to send it to osmd
+        setJson(jsonContent.info);
+        //Set bpm
+        setBpm(jsonContent.info.bpm);
+        //The rest of the json info (studentID, user... not used for now)
+        }
+        reader.readAsArrayBuffer(file);
+      };
+  };
+  ///////////////////////////////////////////////////////////////////////////////////////////////////
+
+
 
   const onResetDone = () => {
     setIsResetButtonPressed(false);
@@ -119,8 +164,10 @@ const ProgressPlayFileVisual = (props) => {
   
   const playAudio = async () => {
     try {
-      const copiedSongFile = songFile.slice(0) //so the original is not modified
-      const audioBuffer = await audioContext.decodeAudioData(copiedSongFile);
+      // Transform data type and play
+      var uint8Array = new Uint8Array(songFile.data);
+      var arrayBuffer = uint8Array.buffer;
+      const audioBuffer =await audioContext.decodeAudioData(arrayBuffer)
       const source = audioContext.createBufferSource();
       source.buffer = audioBuffer;
       source.connect(audioContext.destination);
@@ -129,14 +176,11 @@ const ProgressPlayFileVisual = (props) => {
       console.error('Error playing audio:', error);
     }
   };
-
   const stopAudio = () => {
     audioContext.close().then(() => {
       audioContext = new (window.AudioContext || window.webkitAudioContext)();
     });;
   };
-
-
 
   //Handles basically any change
   useEffect(() => {
@@ -238,6 +282,8 @@ const ProgressPlayFileVisual = (props) => {
   return (
     
     <div>
+
+      <input type="file" ref={fileInputRef} onChange={handleFileSelect} />
       {(showRepetitionMessage&&<SimpleMessaje message={repetitionMessage}/>)}
 
       <OpenSheetMusicDisplay
