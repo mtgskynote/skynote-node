@@ -11,7 +11,7 @@ import Wrapper from "../assets/wrappers/ModeToggle";
 import { Button} from "@material-ui/core";
 import ModeInfoButton from "./ModeInfoButton.js";
 import PopUpWindowDelete from "./PopUpWindowDelete.js";
-import {  getRecording} from "../utils/studentRecordingMethods.js";
+import {  getRecording, deleteRecording } from "../utils/studentRecordingMethods.js";
 import ListRecordingsCSS from './ListRecordings.module.css';
 
 const folderBasePath = "/xmlScores/violin";
@@ -127,6 +127,13 @@ const ProgressPlayFileVisual = (props) => {
     if(answer==="1"){ //"yes"
       console.log("You choose option 1")
       setShowPopUpWindow(false)
+      deleteRecording(recordingID).then(() => {
+        navigate(-1);
+      }).catch((error) => {
+        console.log(`Cannot delete recording from database: ${error}`)
+      })
+      
+
       //Delete recording actions required FIXME
 
     }else{ //"no"
