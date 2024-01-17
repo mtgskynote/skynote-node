@@ -1,6 +1,6 @@
 // ListRecordings.js
 import React, { useState, useEffect } from 'react';
-import { useLocation, useNavigate } from 'react-router-dom';
+import { json, useLocation, useNavigate } from 'react-router-dom';
 import ListRecordingsCSS from './ListRecordings.module.css';
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { getRecData, getRecording, deleteRecording } from "../utils/studentRecordingMethods.js";
@@ -80,12 +80,8 @@ const ListRecordings = () => {
   // Event handler for click on See
   const handleSeeClick = (nameOfFile, number)=> {
       const id = JSON.parse(recordingList)[recordingNames.indexOf(nameOfFile)].recordingId;
-      console.log("ID of this recording ", id)
-      getRecording(id).then((jsonData)=>{
-        console.log("json obtained is ", jsonData)
-        navigate(score, {state:{'id':id}}) //we should pass jsonData when getRecording() works
-      })
-
+      //Pass recording ID to ProgressPlayfileVisual
+      navigate(score, {state:{'recordingID':id}})
     }
 
   // Event handler for click on Play
@@ -105,7 +101,6 @@ const ListRecordings = () => {
       deleteRecording(idToDelete).then(() => {
         setRecordingNames(auxArrayNames);
         setRecordingList(auxArrayList);
-        console.log("listooooooooooooo")
         //window.location.reload();
       }).catch((error) => {
         console.log(`Cannot delete recordings from database: ${error}`)

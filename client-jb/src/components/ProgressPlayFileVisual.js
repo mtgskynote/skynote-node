@@ -54,22 +54,33 @@ const ProgressPlayFileVisual = (props) => {
 
   const [visualMode, setVisualMode] = useState(true);
   const [json, setJson] = useState([]);
+  const [containerLoaded, setContainerLoaded]=useState(false)
 
 
   //const { getCurrentUser } = useAppContext();
   const location = useLocation();
   const navigate = useNavigate();
 
-  // Access the passed variables from the location object
-  const recordingJSON = location.state?.id;
-  console.log("Id received issssss  ", recordingJSON) //Should be receiving json, not id
+  const recordingID=location.state?.recordingID
+  
+  // To load JSON data from recordingID passed from ListRecordings
+  useEffect(() => {
+    getRecording(recordingID).then((recordingJSON)=>{
+      //Save json.info (recording data, pitch, colors...) to send it to osmd
+      setJson(recordingJSON.info);
+      //Set bpm
+      setBpm(recordingJSON.info.bpm);
+      // Save audio
+      setSongFile(recordingJSON.audio);
+    })
+  },[recordingID])
 
 
   ////////////////////LOADING FILES TEMPORARY PATCH//////////////////////////////////////////////////
   //Since database stuff is not yet implemented, I wrote a few lines to get local files, just so we
   //can keep working on displaying and listening to said files
   //THIS CODE SHOULDN'T BE IN THE MAIN BRANCH IT'S TEMPORARY AND SHOULD BE DEALT WITH BEFORE ANY MERGE
-  const handleFileSelect = (event) => {
+  /*const handleFileSelect = (event) => {
     const fileInput = fileInputRef.current;
     const file = fileInput.files[0];
 
@@ -92,7 +103,7 @@ const ProgressPlayFileVisual = (props) => {
         }
         reader.readAsArrayBuffer(file);
       };
-  };
+  };*/
   ///////////////////////////////////////////////////////////////////////////////////////////////////
 
   const handleGoBack=()=>{
@@ -283,7 +294,7 @@ const ProgressPlayFileVisual = (props) => {
     
     <div>
 
-      <input type="file" ref={fileInputRef} onChange={handleFileSelect} />
+      
       {(showRepetitionMessage&&<SimpleMessaje message={repetitionMessage}/>)}
 
       <OpenSheetMusicDisplay
