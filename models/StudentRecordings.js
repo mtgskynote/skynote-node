@@ -38,7 +38,7 @@ const student_recordingsSchema = new mongoose.Schema({
         pitchX:[Number],
         pitchY:[Number],
         repetitionNumber: [Number],
-        statistics: String,
+        stars: Number,
     }
 
 })

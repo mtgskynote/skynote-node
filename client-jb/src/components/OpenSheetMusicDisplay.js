@@ -219,6 +219,7 @@ class OpenSheetMusicDisplay extends Component {
     this.totalReps=0;
     this.showingRep=0;
     this.selectionEndReached=false;
+    this.calculatePunctuation=false;
   }
   //this.IPlaybackListener=new IPlaybackListener()
   
@@ -236,6 +237,10 @@ class OpenSheetMusicDisplay extends Component {
       console.log('end');
       // Update the flag when the event occurs
       this.selectionEndReached=true;
+      if(this.props.startPitchTrack){//If we are in recording and cursor finished
+        this.calculatePunctuation=true; //we want to calculate Punctuation stars
+      }
+      
     };
     var myListener = {
       selectionEndReached: handleSelectionEndReached,
@@ -427,9 +432,6 @@ class OpenSheetMusicDisplay extends Component {
       
       //Absolute Position
       const svgElement=gNote.getSVGGElement()
-      /*console.log(this.osmd.cursor.GNotesUnderCursor())
-      console.log("element under the cursor ",gNote.vfpitch[0])
-      console.log("time stamp ", cursorCurrent.RealValue)*/
       
       if (
         svgElement &&
@@ -615,6 +617,21 @@ class OpenSheetMusicDisplay extends Component {
 
     // for downloading
     if (this.props.canDownload === true && this.props.canDownload !== prevProps.canDownload) {
+      var n_stars;
+      if(this.calculatePunctuation===true){ //If recording is complete
+        //Calculate punctuation
+        const aux = this.state.colorNotes.slice()
+        const colors = aux.map(innerArray => innerArray.map(subArray => subArray[1])).flat();
+        const n_green = colors.filter(color => color === "#00FF00").length;
+        const n_total= colors.length;
+        n_stars=Math.floor(3*n_green/n_total) //3 because max = 3 stars
+        this.calculatePunctuation=false
+      }else{ //If recording is only a part of the score
+        //No punctuation
+        n_stars=0;
+      }
+      
+      //Save data
       const dataToSave = {
         pitchTrackPoints: this.state.pitchData,
         pitchX:this.state.pitchPositionX,
@@ -625,7 +642,8 @@ class OpenSheetMusicDisplay extends Component {
         noteNEWIDs: this.state.recordedNoteNEWIDs,
         noteIndex: this.state.recordedNoteIndex,
         noteColors: this.state.colorNotes,
-        bpm: this.props.bpm
+        bpm: this.props.bpm,
+        stars: n_stars
       };
 
       const jsonString = JSON.stringify(dataToSave);
