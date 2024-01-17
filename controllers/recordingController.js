@@ -19,7 +19,7 @@ const getRecData = async (req, res) => {
     let docs = await student_recordings.find({studentId: studentId, scoreId: scoreId});
 
     for (let i = 0; i < docs.length; i++) {
-        recdata.push({recordingName: docs[i].recordingName, recordingId: docs[i]._id} );
+        recdata.push({recordingName: docs[i].recordingName, recordingId: docs[i]._id, recordingStars: docs[i].info.stars} );
     }
     res.status(200).json(recdata);
   };

@@ -32,6 +32,7 @@ const ListRecordings = () => {
   const [userData, setUserData] = useState(null);
   const [recordingList, setRecordingList] = useState(null);
   const [recordingNames, setRecordingNames] = useState(null);
+  const [recordingStars, setRecordingStars] = useState(null);
   const location = useLocation();
   const navigate = useNavigate();
 
@@ -58,6 +59,7 @@ const ListRecordings = () => {
         getRecData("645b6e484612a8ebe8525933", "64d0de60d9ac9a34a66b4d45").then((result) => {
           setRecordingList(JSON.stringify(result));
           setRecordingNames(result.map((recording) => recording.recordingName));
+          setRecordingStars(result.map((recording) => recording.recordingStars));
         }).catch((error) => {
           console.log(`Cannot get recordings from database: ${error}`)
           // Handle errors if necessary
@@ -68,7 +70,7 @@ const ListRecordings = () => {
 
     fetchDataFromAPI();
     
-  }, [userData]);
+  }, [userData, recordingNames]);
 
   //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
   // Event handler for going back
@@ -121,22 +123,22 @@ const ListRecordings = () => {
 
       {/* List of songs */}
       <div className={ListRecordingsCSS.songlist}>
-        {recordingNames.map((nameOfFile) => (
-          <div className={ListRecordingsCSS.songelement} key={recordingNames.indexOf(nameOfFile)}>
-          <li key={recordingNames.indexOf(nameOfFile)}>
+        {recordingNames.map((nameOfFile, index) => (
+          <div className={ListRecordingsCSS.songelement} key={index}>
+          <li key={index}>
               <div>{song} - {nameOfFile}</div>
               <div>
-              <button className={ListRecordingsCSS.iconbutton} onClick={() => handleSeeClick(nameOfFile, recordingNames.indexOf(nameOfFile))}>
+              <button className={ListRecordingsCSS.iconbutton} onClick={() => handleSeeClick(nameOfFile, index)}>
                 <FontAwesomeIcon icon={faEye} />
               </button>
-              <button className={ListRecordingsCSS.iconbutton} onClick={() => handleTrashClick(nameOfFile, recordingNames.indexOf(nameOfFile))}>
+              <button className={ListRecordingsCSS.iconbutton} onClick={() => handleTrashClick(nameOfFile, index)}>
                 <FontAwesomeIcon icon={faTrash} />
               </button>
               </div>
               <div>
-                        <FontAwesomeIcon icon={faStar} className={ListRecordingsCSS.completeStar}/>
-                        <FontAwesomeIcon icon={faStar} className={ListRecordingsCSS.completeStar}/>
-                        <FontAwesomeIcon icon={faStar} className={ListRecordingsCSS.incompleteStar}/>
+                        <FontAwesomeIcon icon={faStar} className={recordingStars[index]>=1 ? ListRecordingsCSS.completeStar : ListRecordingsCSS.incompleteStar}/>
+                        <FontAwesomeIcon icon={faStar} className={recordingStars[index]>=2 ? ListRecordingsCSS.completeStar : ListRecordingsCSS.incompleteStar}/>
+                        <FontAwesomeIcon icon={faStar} className={recordingStars[index]>=3 ? ListRecordingsCSS.completeStar : ListRecordingsCSS.incompleteStar}/>
                       </div>
             </li>
             </div>
