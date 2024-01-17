@@ -93,7 +93,7 @@ const Stats = () => {
         <Grid container spacing={6}>
           <Grid item xs={12}>
             <Box p={2} border={1} textAlign="center">
-              Continue Learning.. Big Puppy
+              Continue Learning... Big Puppy
               <div>
                 <Rating name="read-only" value={3} readOnly />
               </div>
