@@ -10,6 +10,7 @@ import {
   faTrash,
   faPlay,
   faEye,
+  faStar
 } from "@fortawesome/free-solid-svg-icons";
 
 
@@ -84,12 +85,6 @@ const ListRecordings = () => {
       navigate(score, {state:{'recordingID':id}})
     }
 
-  // Event handler for click on Play
-  const handlePlayClick = (score, song, number) => {
-    console.log("Play recording and score of song ", song, " recording ", number);
-
-    //code that simply plays the audio of the recording, without having to get into the actual file
-  };
 
   // Event handler for click on Trash
   const handleTrashClick = (nameOfFile, number) => {
@@ -134,13 +129,15 @@ const ListRecordings = () => {
               <button className={ListRecordingsCSS.iconbutton} onClick={() => handleSeeClick(nameOfFile, recordingNames.indexOf(nameOfFile))}>
                 <FontAwesomeIcon icon={faEye} />
               </button>
-              <button className={ListRecordingsCSS.iconbutton} onClick={() => handlePlayClick(score, song, recordingNames.indexOf(nameOfFile))}>
-                <FontAwesomeIcon icon={faPlay} />
-              </button>
               <button className={ListRecordingsCSS.iconbutton} onClick={() => handleTrashClick(nameOfFile, recordingNames.indexOf(nameOfFile))}>
                 <FontAwesomeIcon icon={faTrash} />
               </button>
               </div>
+              <div>
+                        <FontAwesomeIcon icon={faStar} className={ListRecordingsCSS.completeStar}/>
+                        <FontAwesomeIcon icon={faStar} className={ListRecordingsCSS.completeStar}/>
+                        <FontAwesomeIcon icon={faStar} className={ListRecordingsCSS.incompleteStar}/>
+                      </div>
             </li>
             </div>
         ))}

@@ -75,6 +75,12 @@ body {
     width: 10%;
     align-items:center;
   }
+  .completeStar{
+    color:#e8d73f;
+  }
+  .incompleteStar{
+    color:#909090;
+  }
   .back2Listbutton {
     margin-top: 20px;
     padding: 10px 15px;
