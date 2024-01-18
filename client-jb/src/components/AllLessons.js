@@ -68,7 +68,7 @@ const AllLessons = () => {
         data[level] = {};
 
         for (let skill of skills) {
-          let result = await getAllNames(level, skill); //get all names, and get scoreIds
+          let result = await getAllNames(level, skill); //get all names, scoreIds, scoreLevels and scoreSkills
           let names = result.map((score) => score.scoreXmlName);
           let scoreIds = result.map((score) => score.scoreId);
           data[level][skill] = names.map((name, index) => ({
