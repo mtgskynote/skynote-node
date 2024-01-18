@@ -15,6 +15,7 @@ import ErrorBoundary from "./components/ErrorBoundary";
 import TimbreVisualization from "./components/TimbreVisualization";
 import ListRecordings from "./components/ListRecordings";
 import AudioPlayer from "./components/AudioPlayer";
+import ListAllRecordings from "./components/ListAllRecodings";
 
 function App() {
   return (
@@ -50,6 +51,7 @@ function App() {
                     path="ListRecordings/:files"
                     element={<ProgressPlayFileVisual mode="visual"/>}
                   />
+                <Route path="myrecordings" element={<ListAllRecordings />} />
               </Route>
               
               <Route path="/AudioPlayer" element={<AudioPlayer />} />
