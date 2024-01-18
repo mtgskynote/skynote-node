@@ -19,6 +19,25 @@ async function getRecData(studentId, scoreId) {
     }
 }
 
+/* getAllRecData  --------------
+    return: res.body = [{recordingName, recordingId}, {...}, ...] 
+*/
+async function getAllRecData(studentId) {
+    try {
+        // scoreId: "64d0de60d9ac9a34a66b4d45" is for the score "V_001_Cuerdas_Al_Aire_1_Suelta_A"
+        const response = await axios.get("/api/v1/recordings/getAllRecData", {params: {studentId: studentId}});
+
+        if (response.status===200) {
+            return response.data; // save results locally
+        } else {
+            console.log('geAllRecData response.status is not 200!')
+            return [];
+        }
+    } catch (error) {
+        console.error('Error on axios getAllRecData', error);
+    }
+}
+
 /* putRecording  --------------
     object with all fields including audio for studentRecording model
     returns: {recordingName, recordingId}
@@ -96,4 +115,4 @@ async function deleteRecording(recordingId) {
     }
 }
 
-export { getRecData, getRecording, putRecording, deleteRecording, patchViewPermissions };
+export { getRecData, getAllRecData, getRecording, putRecording, deleteRecording, patchViewPermissions };
