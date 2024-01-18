@@ -24,6 +24,19 @@ const getRecData = async (req, res) => {
     res.status(200).json(recdata);
   };
 
+  const getAllRecData = async (req, res) => {
+
+    var recdata=[];  // list of core recording data [{recordingName, recordingId},{...}, ...] 
+    const studentId=req.query.studentId;
+    
+    let docs = await student_recordings.find({studentId: studentId}); //Find all recordings for a given studentID
+
+    for (let i = 0; i < docs.length; i++) {
+        recdata.push({recordingName: docs[i].recordingName, recordingId: docs[i]._id, scoreID:docs[i].scoreId, recordingStars: docs[i].info.stars} );
+    }
+    res.status(200).json(recdata);
+  };
+
   /*  getRecording -----------
     get a recording from the database
     parameter: req.body = {params: {recordingId: recordingId}}
@@ -112,4 +125,4 @@ const getRecording = async (req, res) => {
     }
   }
   
-export { getRecData, getRecording, putRecording, deleteRecording, patchViewPermissions};
+export { getRecData, getAllRecData, getRecording, putRecording, deleteRecording, patchViewPermissions};
