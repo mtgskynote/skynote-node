@@ -68,11 +68,14 @@ const AllLessons = () => {
         data[level] = {};
 
         for (let skill of skills) {
-          let names = await getAllNames(level, skill); //get all names, and get scoreIds
-          data[level][skill] = names.map((name) => ({
+          let result = await getAllNames(level, skill); //get all names, and get scoreIds
+          let names = result.map((score) => score.scoreXmlName);
+          let scoreIds = result.map((score) => score.scoreId);
+          data[level][skill] = names.map((name, index) => ({
             name,
             path: `${folderBasePath}/${name}.xml`,
-            route_path: `/all-lessons/${name}.xml`, // scoreIds
+            route_path: `/all-lessons/${name}.xml`, // score names
+            //route_path: `/all-lessons/${scoreIds[index]}`, // scoreIds
           }));
         }
       }
@@ -104,14 +107,12 @@ const AllLessons = () => {
     }else{
       setSelectedNodeInfo(null);
       setSelectedNodeActive(false);
-      console.log("Im off ")
     }
     
   };
   const handleNodeMouseOut = (event) => {
       setSelectedNodeInfo(null);
       setSelectedNodeActive(false);
-      console.log("Im off ")
   };
 
   const getNodeDataById = (data, nodeId) => {
