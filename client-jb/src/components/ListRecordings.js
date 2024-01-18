@@ -70,7 +70,7 @@ const ListRecordings = () => {
 
     fetchDataFromAPI();
     
-  }, [userData, recordingNames]);
+  }, [userData,recordingList]);
 
   //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
   // Event handler for going back
