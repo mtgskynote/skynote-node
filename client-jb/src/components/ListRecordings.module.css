@@ -23,6 +23,14 @@ body {
     justify-content: left;
    
   }
+  .songlist2 {
+    background-color: #ffffff;
+    list-style: none;
+    padding: 0;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: left;
+  }
 
   /*Items of list*/
   /*.songlist li {
@@ -45,6 +53,17 @@ body {
     flex-basis: calc(23.00% - 0px); /* Adjust the width based on the number of items per row */
     margin: 10px;
     text-align:center;
+  }
+  .songelement2 {  
+    padding: 5px;
+    background-color: #ffffff;
+    color:#435b38;
+    border-radius: 5px;
+    border: 0.2px solid #59b296;
+    box-shadow: 0 0 3px #59b296;
+    flex-basis: calc(23.00% - 0px); /* Adjust the width based on the number of items per row */
+    margin: 10px;
+    text-align:left;
   }
 
   
@@ -77,9 +96,37 @@ body {
   }
   .completeStar{
     color:#e8d73f;
+    font-size:25px;
+    margin:6px 5px;
   }
   .incompleteStar{
     color:#909090;
+    font-size:25px;
+    margin:6px 5px;
+  }
+  .starsGroup{
+    text-align: center;
+    margin: 5px;
+  }
+  .auxIcon{
+    font-size:22px;
+    color:#b3b3b3;
+    margin:0px 11px;
+  }
+  .textGroup{
+    margin:5px
+  }
+  .recTitle{
+    width:100%;
+    background-color: #cedcc1;
+    text-align: center;
+    border-radius: 5px;
+    padding: 5px;
+  }
+  .dateTime{
+    font-size:13px;
+  text-align: right;
+  margin: 0px 5px 0px 0px;
   }
   .back2Listbutton {
     margin-top: 20px;
@@ -101,14 +148,22 @@ body {
   .iconbutton {
     margin: 4px;
     padding: 2px;
-    color: #b3b3b3;
-    background-color: #ffffff;
+    color: #939393;
+    background-color: transparent;
     cursor: pointer;
     width: 10%;
     border:none;
+    font-size: 20px;
   }
   .iconbutton:hover {
     background-color: #d2e8e1;
+    border-radius: 5px;
+  }
+  .buttonGroup{
+    border: 0.2px solid rgb(213, 223, 206);
+    margin:2px;
+    border-radius: 5px;
+    text-align: center;
   }
 
   

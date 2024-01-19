@@ -10,7 +10,12 @@ import {
   faTrash,
   faPlay,
   faEye,
-  faStar
+  faStar,
+  faPencilSquare,
+  faBoxArchive,
+  faMusic,
+
+
 } from "@fortawesome/free-solid-svg-icons";
 
 
@@ -116,28 +121,46 @@ const ListAllRecordings = () => {
   return (
     <div className={ListAllRecordingsCSS.container}>
       <div> 
-        <h2>Your recordings...</h2>
+        <h2>All recordings...</h2>
       </div>
 
       {/* List of songs */}
-      <div className={ListAllRecordingsCSS.songlist}>
+      <div className={ListAllRecordingsCSS.songlist2}>
         {recordingNames.map((nameOfFile, index) => (
-          <div className={ListAllRecordingsCSS.songelement} key={index}>
+            //Each element/recording
+          <div className={ListAllRecordingsCSS.songelement2} key={index}>
           <li key={index}>
-              <div>{nameOfFile} - {recordingScores[index]}</div>
-              <div>
-              <button className={ListAllRecordingsCSS.iconbutton} onClick={() => handleSeeClick(nameOfFile, index)}>
-                <FontAwesomeIcon icon={faEye} />
-              </button>
-              <button className={ListAllRecordingsCSS.iconbutton} onClick={() => handleTrashClick(nameOfFile, index)}>
-                <FontAwesomeIcon icon={faTrash} />
-              </button>
+              <div className={ListAllRecordingsCSS.recTitle}><h5 >{nameOfFile}</h5></div>
+              <div className={ListAllRecordingsCSS.textGroup}>
+                <div><h7>
+                  <FontAwesomeIcon icon={faMusic} className={ListAllRecordingsCSS.auxIcon}/>
+                  '{recordingScores[index]}
+                </h7></div>
+                <div><h7 >
+                  <FontAwesomeIcon icon={faPencilSquare} className={ListAllRecordingsCSS.auxIcon}/>
+                  First finger
+                </h7></div>
+                <div><h7 >
+                  <FontAwesomeIcon icon={faBoxArchive} className={ListAllRecordingsCSS.auxIcon}/>
+                  Level 1
+                </h7></div>
               </div>
-              <div>
-                        <FontAwesomeIcon icon={faStar} className={recordingStars[index]>=1 ? ListAllRecordingsCSS.completeStar : ListAllRecordingsCSS.incompleteStar}/>
-                        <FontAwesomeIcon icon={faStar} className={recordingStars[index]>=2 ? ListAllRecordingsCSS.completeStar : ListAllRecordingsCSS.incompleteStar}/>
-                        <FontAwesomeIcon icon={faStar} className={recordingStars[index]>=3 ? ListAllRecordingsCSS.completeStar : ListAllRecordingsCSS.incompleteStar}/>
-                      </div>
+              <div className={ListAllRecordingsCSS.starsGroup}>
+                  <FontAwesomeIcon icon={faStar} className={recordingStars[index]>=1 ? ListAllRecordingsCSS.completeStar : ListAllRecordingsCSS.incompleteStar}/>
+                  <FontAwesomeIcon icon={faStar} className={recordingStars[index]>=2 ? ListAllRecordingsCSS.completeStar : ListAllRecordingsCSS.incompleteStar}/>
+                  <FontAwesomeIcon icon={faStar} className={recordingStars[index]>=3 ? ListAllRecordingsCSS.completeStar : ListAllRecordingsCSS.incompleteStar}/>
+                </div>
+              <div className={ListAllRecordingsCSS.dateTime}>
+                <i>19/02/2024 - 09:18</i>
+              </div>
+              <div className={ListAllRecordingsCSS.buttonGroup}>
+                <button className={ListAllRecordingsCSS.iconbutton} onClick={() => handleSeeClick(nameOfFile, index)}>
+                  <FontAwesomeIcon icon={faEye} />
+                </button>
+                <button className={ListAllRecordingsCSS.iconbutton} onClick={() => handleTrashClick(nameOfFile, index)}>
+                  <FontAwesomeIcon icon={faTrash} />
+                </button>
+              </div>
             </li>
             </div>
         ))}
