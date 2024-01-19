@@ -151,16 +151,18 @@ body {
     color: #939393;
     background-color: transparent;
     cursor: pointer;
-    width: 10%;
+    width: 40%;
     border:none;
     font-size: 20px;
+    border: 0.2px solid rgb(213, 223, 206);
+    border-radius: 5px;
   }
   .iconbutton:hover {
     background-color: #d2e8e1;
     border-radius: 5px;
   }
   .buttonGroup{
-    border: 0.2px solid rgb(213, 223, 206);
+    
     margin:2px;
     border-radius: 5px;
     text-align: center;

@@ -128,6 +128,11 @@ const ListRecordings = () => {
           <li key={index}>
               <div>{song} - {nameOfFile}</div>
               <div>
+                <FontAwesomeIcon icon={faStar} className={recordingStars[index]>=1 ? ListRecordingsCSS.completeStar : ListRecordingsCSS.incompleteStar}/>
+                <FontAwesomeIcon icon={faStar} className={recordingStars[index]>=2 ? ListRecordingsCSS.completeStar : ListRecordingsCSS.incompleteStar}/>
+                <FontAwesomeIcon icon={faStar} className={recordingStars[index]>=3 ? ListRecordingsCSS.completeStar : ListRecordingsCSS.incompleteStar}/>
+              </div>
+              <div>
               <button className={ListRecordingsCSS.iconbutton} onClick={() => handleSeeClick(nameOfFile, index)}>
                 <FontAwesomeIcon icon={faEye} />
               </button>
@@ -135,11 +140,7 @@ const ListRecordings = () => {
                 <FontAwesomeIcon icon={faTrash} />
               </button>
               </div>
-              <div>
-                        <FontAwesomeIcon icon={faStar} className={recordingStars[index]>=1 ? ListRecordingsCSS.completeStar : ListRecordingsCSS.incompleteStar}/>
-                        <FontAwesomeIcon icon={faStar} className={recordingStars[index]>=2 ? ListRecordingsCSS.completeStar : ListRecordingsCSS.incompleteStar}/>
-                        <FontAwesomeIcon icon={faStar} className={recordingStars[index]>=3 ? ListRecordingsCSS.completeStar : ListRecordingsCSS.incompleteStar}/>
-                      </div>
+              
             </li>
             </div>
         ))}

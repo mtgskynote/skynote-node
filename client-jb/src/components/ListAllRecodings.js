@@ -131,6 +131,11 @@ const ListAllRecordings = () => {
           <div className={ListAllRecordingsCSS.songelement2} key={index}>
           <li key={index}>
               <div className={ListAllRecordingsCSS.recTitle}><h5 >{nameOfFile}</h5></div>
+              <div className={ListAllRecordingsCSS.starsGroup}>
+                  <FontAwesomeIcon icon={faStar} className={recordingStars[index]>=1 ? ListAllRecordingsCSS.completeStar : ListAllRecordingsCSS.incompleteStar}/>
+                  <FontAwesomeIcon icon={faStar} className={recordingStars[index]>=2 ? ListAllRecordingsCSS.completeStar : ListAllRecordingsCSS.incompleteStar}/>
+                  <FontAwesomeIcon icon={faStar} className={recordingStars[index]>=3 ? ListAllRecordingsCSS.completeStar : ListAllRecordingsCSS.incompleteStar}/>
+              </div>
               <div className={ListAllRecordingsCSS.textGroup}>
                 <div><h7>
                   <FontAwesomeIcon icon={faMusic} className={ListAllRecordingsCSS.auxIcon}/>
@@ -145,11 +150,7 @@ const ListAllRecordings = () => {
                   Level 1
                 </h7></div>
               </div>
-              <div className={ListAllRecordingsCSS.starsGroup}>
-                  <FontAwesomeIcon icon={faStar} className={recordingStars[index]>=1 ? ListAllRecordingsCSS.completeStar : ListAllRecordingsCSS.incompleteStar}/>
-                  <FontAwesomeIcon icon={faStar} className={recordingStars[index]>=2 ? ListAllRecordingsCSS.completeStar : ListAllRecordingsCSS.incompleteStar}/>
-                  <FontAwesomeIcon icon={faStar} className={recordingStars[index]>=3 ? ListAllRecordingsCSS.completeStar : ListAllRecordingsCSS.incompleteStar}/>
-                </div>
+              
               <div className={ListAllRecordingsCSS.dateTime}>
                 <i>19/02/2024 - 09:18</i>
               </div>
