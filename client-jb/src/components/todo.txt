@@ -3,6 +3,15 @@ TO DO list - A small list of things we're currently working on, or stuff we have
 but just some relevant stuff we shouldn't miss :)
 /////////////////////////
 
+- in ListAllRecordings we get all recordings, but from each recording we need info about the score it references 
+   (score name, skill and level)
+- When AllLessons loads, we should store locally all info about scores (id, scorename, skill, level). So that later, when we have scoreID 
+   (because user selects one score to play, or because we are retreiving recordings...) we can get all the other info. Currently AllLessons 
+   calls the database around 20 times each time
+- Once previous point is solved, change all scoreNames in URL to scoresID, and all the consequent changes that have to be made
+- getCurrentUser does not provide the userID, which we need to store the recordings and retrieve them
+
+
 //
 WE NEED
 - In AllLessons line 77, we have "names = getAllNames(level, skill)", we use those names to generate the list of scores, 
