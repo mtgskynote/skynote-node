@@ -10,7 +10,10 @@ import {
   faTrash,
   faPlay,
   faEye,
-  faStar
+  faStar,
+  faPencilSquare,
+  faBoxArchive,
+  faMusic,
 } from "@fortawesome/free-solid-svg-icons";
 
 
@@ -116,9 +119,20 @@ const ListRecordings = () => {
   // Your component logic using the variables
   return (
     <div className={ListRecordingsCSS.container}>
-      <div> 
-        <h2>{song}</h2>
-        <p>Your recordings...</p>
+      <h2>
+        <FontAwesomeIcon icon={faMusic} className={ListRecordingsCSS.auxIcon}/>
+        {song} 
+        <FontAwesomeIcon icon={faMusic} className={ListRecordingsCSS.auxIcon}/>
+      </h2> 
+      <div className={ListRecordingsCSS.textGroup}>
+        <div><h7 >
+          <FontAwesomeIcon icon={faPencilSquare} className={ListRecordingsCSS.auxIcon}/>
+          First finger 
+        </h7></div>
+        <div><h7 >
+          <FontAwesomeIcon icon={faBoxArchive} className={ListRecordingsCSS.auxIcon}/>
+          Level 1
+        </h7></div>
       </div>
 
       {/* List of songs */}
@@ -126,21 +140,23 @@ const ListRecordings = () => {
         {recordingNames.map((nameOfFile, index) => (
           <div className={ListRecordingsCSS.songelement} key={index}>
           <li key={index}>
-              <div>{song} - {nameOfFile}</div>
-              <div>
+          <div className={ListRecordingsCSS.recTitle}><h5 >{nameOfFile}</h5></div>
+              <div className={ListRecordingsCSS.starsGroup}>
                 <FontAwesomeIcon icon={faStar} className={recordingStars[index]>=1 ? ListRecordingsCSS.completeStar : ListRecordingsCSS.incompleteStar}/>
                 <FontAwesomeIcon icon={faStar} className={recordingStars[index]>=2 ? ListRecordingsCSS.completeStar : ListRecordingsCSS.incompleteStar}/>
                 <FontAwesomeIcon icon={faStar} className={recordingStars[index]>=3 ? ListRecordingsCSS.completeStar : ListRecordingsCSS.incompleteStar}/>
               </div>
               <div>
-              <button className={ListRecordingsCSS.iconbutton} onClick={() => handleSeeClick(nameOfFile, index)}>
-                <FontAwesomeIcon icon={faEye} />
-              </button>
-              <button className={ListRecordingsCSS.iconbutton} onClick={() => handleTrashClick(nameOfFile, index)}>
-                <FontAwesomeIcon icon={faTrash} />
-              </button>
+                <button className={ListRecordingsCSS.iconbutton} onClick={() => handleSeeClick(nameOfFile, index)}>
+                  <FontAwesomeIcon icon={faEye} />
+                </button>
+                <button className={ListRecordingsCSS.iconbutton} onClick={() => handleTrashClick(nameOfFile, index)}>
+                  <FontAwesomeIcon icon={faTrash} />
+                </button>
               </div>
-              
+              <div className={ListRecordingsCSS.dateTime}>
+                <i>19/02/2024 - 09:18</i>
+              </div>
             </li>
             </div>
         ))}
