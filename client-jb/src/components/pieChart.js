@@ -167,9 +167,11 @@ React.useImperativeHandle(ref, () => ({
     );
 
     let i = 0;
-    segments.forEach((segmentr) => {
+    //console.log(`segments = ${segments}`)
+    for(let segmentr of segments){
+      if (Number.isNaN(segmentr)) {segmentr=0}
       const arc = document.createElementNS(static_xmlns, "path");
-      // console.log(`segmentr = ${segmentr}, pie.radius=${pie.radius}, circleScale=${circleScale}`)
+      //console.log(`segmentr = ${segmentr}, pie.radius=${pie.radius}, circleScale=${circleScale}, pie.numSegments=${pie.numSegments}`)
       arc.setAttribute(
         "d",
         circleSegmentPath(
@@ -184,9 +186,11 @@ React.useImperativeHandle(ref, () => ({
       // Append the arc element to the SVG container
       svgRef.current.appendChild(arc);
       i = i + 1;
-    });
+    }
   }
-  //}, [segments]);
+
+
+
 
   //const d = new Date();
   //console.log(`-------------  Return new PIECHART at ${d.toISOString()}`)

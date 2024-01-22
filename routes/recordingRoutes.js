@@ -11,4 +11,9 @@ recordingRouter.route("/putRecording").put(putRecording);
 recordingRouter.route("/patchViewPermissions").patch(patchViewPermissions);
 recordingRouter.route('/deleteRecording/:recordingId').delete(deleteRecording);
 
+recordingRouter.route("/testupload").post((req, res) => {
+  res.send({ msg: "!!!!!!!!!!!!!!!!!!!!!!!!!!!                   recordingRouter" });
+}); // this is just a test
+
+
 export default recordingRouter;

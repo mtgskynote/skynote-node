@@ -33,7 +33,7 @@ var makeAudioStreamer = function (
   pitchVectorCallback,
   analysisCb,
 ) {
-  var audioStreamer = {
+  var audioStreamer = {  
     // Create an analyser node to extract amplitude data
     analyserNode: audioContext.createAnalyser(),
     pitch: null,
@@ -56,12 +56,12 @@ var makeAudioStreamer = function (
               audioChunks.push(event.data);
             }
           };
-        
+
           if (recordMode === true) {
             mediaRecorder.start();
             console.log("We're now recording stuff :D");
           };
-          
+
           audioContext.resume();
           const sourceNode = audioContext.createMediaStreamSource(stream);
 
@@ -114,7 +114,7 @@ var makeAudioStreamer = function (
           scriptNode.connect(gain);
 
           gain.connect(audioContext.destination);
-        });
+        })
     },
     close: function (){
       console.log("audiochunks", audioChunks)
@@ -122,7 +122,7 @@ var makeAudioStreamer = function (
       console.log("audiochunks", audioChunks)
       
       //audioContext.suspend();
-    },
+    },    
     close_not_save: function (){
       //mediaRecorder.stop();
       audioContext.suspend();
@@ -143,8 +143,10 @@ var makeAudioStreamer = function (
       audioContext.suspend();
     },
   };
-
+  
   return audioStreamer;
 };
+
+
 
 export { makeAudioStreamer };

@@ -76,6 +76,7 @@ export async function makeCrepeScriptNode(audioContext, bufferSize, pitchCallbac
         try {
             status('Loading Keras model...');
             console.log(`tf is ${tf}`)
+            console.log(`and tf.loadModel is ${tf.loadModel}`)
             //window.model = await tf.loadModel('model/model.json');
             window.model = await tf.loadModel('/model/model.json');
             status('Model loading complete');
