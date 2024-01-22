@@ -88,25 +88,30 @@ const ListAllRecordings = () => {
   const handleSeeClick = (nameOfFile, number)=> {
       const id = JSON.parse(recordingList)[recordingNames.indexOf(nameOfFile)].recordingId;
       //Pass recording ID to ProgressPlayfileVisual
-      //navigate(score, {state:{'recordingID':id}})
+      navigate(`/ListRecordings/V_040_Segundo_Dedo_D.xml`, {state:{'recordingID':id}}); //FIXME , change score according to ID
     }
 
 
   // Event handler for click on Trash
   const handleTrashClick = (nameOfFile, number) => {
-    /*if (recordingNames.indexOf(nameOfFile) !== -1) {
+    if (recordingNames.indexOf(nameOfFile) !== -1) {
       const idToDelete = JSON.parse(recordingList)[recordingNames.indexOf(nameOfFile)].recordingId;
+      // Delete recording entry of state arrays
       const auxArrayNames = recordingNames.filter((item, index) => index !== recordingNames.indexOf(nameOfFile));
       const auxArrayList = JSON.parse(recordingList).filter((item, index) => index !== recordingNames.indexOf(nameOfFile));
+      const auxRecordingStars = recordingNames.filter((item, index) => index !== recordingStars.indexOf(nameOfFile));
+      const auxRecordingScores = recordingNames.filter((item, index) => index !== recordingScores.indexOf(nameOfFile));
+      // Delete recording from database
       console.log("Deleting: ", idToDelete);
       deleteRecording(idToDelete).then(() => {
         setRecordingNames(auxArrayNames);
         setRecordingList(auxArrayList);
-        //window.location.reload();
+        setRecordingStars(auxRecordingStars)
+        setRecordingScores(auxRecordingScores)
       }).catch((error) => {
         console.log(`Cannot delete recordings from database: ${error}`)
       })
-    }*/
+    }
   };
 
 
