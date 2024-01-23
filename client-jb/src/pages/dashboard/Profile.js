@@ -101,36 +101,36 @@ const Profile = () => {
       result += `${name}: ${value}\n`;
     }
     alert(result);
-    //------------------------------------------------- 
-    //------------------------------------------------- 
-    // First post a big blob of data to the server
+    // //------------------------------------------------- 
+    // //------------------------------------------------- 
+    // // First post a big blob of data to the server
 
-    // Generate a large string to simulate file size
-    let sizeInMB = 5; // Size in megabytes
-    let dummyDataString = 'a'.repeat(parseInt(sizeInMB * 1024 * 1024)); // Each character is 1 byte
+    // // Generate a large string to simulate file size
+    // let sizeInMB = 5; // Size in megabytes
+    // let dummyDataString = 'a'.repeat(parseInt(sizeInMB * 1024 * 1024)); // Each character is 1 byte
 
-    // Create a blob from the string
-    const dummyData = new Blob([dummyDataString], { type: "audio/wav" });
+    // // Create a blob from the string
+    // const dummyData = new Blob([dummyDataString], { type: "audio/wav" });
 
-    // Use FormData to send file data
-    let blobbyformData = new FormData();
-    blobbyformData.append("file", dummyData, "example.wav");
+    // // Use FormData to send file data
+    // let blobbyformData = new FormData();
+    // blobbyformData.append("file", dummyData, "example.wav");
 
-    // Send data with Axios
-    axios.post('/api/v1/recordings/testupload', blobbyformData, {
-        headers: {
-            'Content-Type': 'multipart/form-data'
-        },
-        maxContentLength: 16*1024*1024,
-        maxBodyLength: 16*1024*1024,
-    }).then(response => {
-        console.log('File uploaded successfully');
-    }).catch(error => {
-        console.error('Error uploading file', error);
-    });    
+    // // Send data with Axios
+    // axios.post('/api/v1/recordings/testupload', blobbyformData, {
+    //     headers: {
+    //         'Content-Type': 'multipart/form-data'
+    //     },
+    //     maxContentLength: 16*1024*1024,
+    //     maxBodyLength: 16*1024*1024,
+    // }).then(response => {
+    //     console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>> File uploaded successfully');
+    // }).catch(error => {
+    //     console.error('Error uploading file', error);
+    // });    
 
-    //------------------------------------------------- 
-    //------------------------------------------------- 
+    // //------------------------------------------------- 
+    // //------------------------------------------------- 
 
 
     //-----  send the form data to the server. ---
