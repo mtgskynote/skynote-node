@@ -1,6 +1,5 @@
 /node_modules
-.env
 id_ed25519
 **/package-lock.json
-
+**/.env
 ```

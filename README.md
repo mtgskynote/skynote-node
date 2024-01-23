@@ -1,6 +1,16 @@
 This document contains steps for setting up the project and navigating around some common dependency issues.
 
-appskynote.com (143.110.164.154, hosted on DigitalOcean, must have an account with ssh access (ask lonce)
+**Quick setup for local development**
+1) clone from the repo
+2) npm run install-dependencies --legacy-peer-deps
+3) mv your .env file to the root dir (or edit dotenv.txt and save it to .env)
+4) replace everything inside (root)/node_modules/opensheetmusicdisplay/build with the OSMD *extended* version of opensheetmusicdisplay.min.js
+5) npm start to run the development version of the code
+
+<hr>
+
+
+appskynote.com (143.110.164.154), is hosted on DigitalOcean. To access the machine, or to access the database during local code development, you must have an account there with ssh access (ask lonce).
 
 **MongoDB**
 
@@ -14,7 +24,7 @@ appskynote.com (143.110.164.154, hosted on DigitalOcean, must have an account wi
 
 **Code Base** (stored on GitHub)
 
-1. There are two .env files one at the nodeJs(Backend) and another .env for the front-end(client-jb folder). (.env files contain credentials in key-value format for services used by the program they’re building. They’re meant to be stored locally and not be uploaded to code repositories online for everyone to read. Each developer in a team typically carries one or more .env files for each environment.) These .env files must be manually setup each time the github repository is newly setup. Further, this .env file is also ignored in the gitignore file so that it doesn't get uploaded to the remote repository.
+1. The .env file contains credentials in key-value format for services used by the program they’re building. They’re meant to be stored locally and not be uploaded to code repositories online for everyone to read. Each developer in a team typically carries one or more .env files for each environment. The .env files must be manually setup each time the github repository is newly cloned. Further, this .env file is also ignored in the gitignore file.
 
 In order to execute the entire project there are setup processes that need to be done like installing the related npm modules required at both the front-end part and the back-end part which in turn results in creation of node_modules folder in the respective directory. package.json file under the "skynote-node" parent directory contains the npm commands to execute in the terminal such that the setup processes can be done before launching the application.
 
@@ -69,52 +79,30 @@ d) Once you have cloned the osmd-extended repo and built the minified version,
 
 i) first do: npm i opensheetmusicdisplay
 
-ii) then go to your skynote-node/client-jb folder and in your package.json file under dependencies and:
-
-        replace:
+ii) **No need to edit the package.json files** which for the server looks like this:
 
         "dependencies": {
-            "opensheetmusicdisplay": "^1.8.3",
+            "opensheetmusicdisplay": "^1.8.4",
         }
 
-        with:
+    and for the client looks like this: 
 
         “dependencies”: {
             "opensheetmusicdisplay”: “file:opensheetmusicdisplay.min.js",
         }
 
-e) Then go to the "build/" folder you got after building the osmd-extended, copy it and paste it in your Node modules folder under the skynote-node/client-jb/node-modules/opensheetmusicdisplay/.
+e) Then copy /build folder of your extended osmd to  skynote-node/node-modules/opensheetmusicdisplay/ (actually, you really only need to put the ...min.js file there.)
 
-**_ If you already have the opensheetmusicdisplay folder (folder with minified build) and want to use it in the Skynote project_**
-
-a) Get the the zipped version of 'opensheetmusicdisplay.zip' available in skynote google drive, and unzip it. (https://drive.google.com/drive/folders/19KW-vd0flJ-TkBLdoPlNgcyEafIthyyk)
-
-b) Replace the opensheetmusicdisplay dependency in package.json with:
-
-        "dependencies": {
-            "opensheetmusicdisplay": "^1.8.0",
-        }
-
-        with:
-
-        “dependencies”: {
-            "opensheetmusicdisplay”: "file:opensheetmusicdisplay.min.js",
-        }
-
-c) Then go to the "build/" folder you got after unzipping, copy it and paste it in your Node modules folder under the skynote-node/client-jb/node-modules/opensheetmusicdisplay/.
 
 ++++++++++++++++++
 
-4. To run "in development:
-
-   a. Put your .env file into the main appskynote directory
 
 5. ** Production deployment steps**
-   1. Once all packages are installed in your production server folder, To copy the opensheetmusicdisplay related contents to client-jb/node_modules
+   1. Once all packages are installed in your production server folder, copy the opensheetmusicdisplay extended and minified version to the node_modules (as described above) 
    2. Create a .env file and set the necessary values inside of it (removing the values for VPS_PRIVATE_KEY and VPS_USERNAME)
    3. To start process using 'pm2'
-      - run 'pm2 start server.js' (https://pm2.keymetrics.io/docs/usage/process-management/)
-        a. Put your .env file into the main appskynote directory
+      - run 'pm2 (re)start server.js' (https://pm2.keymetrics.io/docs/usage/process-management/)
+       
 
 ### How OSMD works:
 
