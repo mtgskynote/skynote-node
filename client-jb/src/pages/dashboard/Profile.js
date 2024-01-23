@@ -39,7 +39,7 @@ import { getRecData, getRecording, putRecording, deleteRecording, patchViewPermi
 
     //patchViewPermissions(recordingId, sharing)
     try{
-      let result = await patchViewPermissions(recdatalist[0].recorordingId, true);
+      let result = await patchViewPermissions(recdatalist[0].recordingId, true);
       console.log(`patchViewPermissions return OK, and result is ${JSON.stringify(result)}`)
     } catch (error) { 
         console.log(`error in patchViewPermissions`, error)
@@ -47,7 +47,7 @@ import { getRecData, getRecording, putRecording, deleteRecording, patchViewPermi
 
     //getRecording(recordingId)
     try{  
-      let result = await getRecording(recdatalist[0].recorordingId)
+      let result = await getRecording(recdatalist[0].recordingId)
       console.log(`getRecording returns and result is ${JSON.stringify(result)}`)  
     }
     catch (error) { 

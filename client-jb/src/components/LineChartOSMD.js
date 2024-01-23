@@ -14,7 +14,6 @@ const LineChart = (props) => {
       return [x, y]; // Return a coordinate pair as an array [x, y]
     });
     setPolylinePoints(newPolylinePoints);
-  
   }, [props.pitchData, props.zoom, props.showingRep]); //, previousPitchData
 
   return (

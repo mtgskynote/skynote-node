@@ -1,24 +1,63 @@
-To do list - A small list of things we're currently working on, or stuff we have pending. This doesn't neccesarily contain every small detail, 
+/////////////////////////
+TO DO list - A small list of things we're currently working on, or stuff we have pending. This doesn't neccesarily contain every small detail, 
 but just some relevant stuff we shouldn't miss :)
+/////////////////////////
 
-- guardar archivos audio con nombre del score? o con nombre del archivo xml? Quizás archivo xml mejor, pero luego para displayear lista de grabaciones mejor 
-con el nombre del score, mejor para el usuario
-- Botón "ver", símbolo ojo, de la lista de grabaciones, tiene que llevarnos a otro archivo osmd donde aparezca el pitch tracking, con los colores de la nota, 
+- in ListAllRecordings we get all recordings, but from each recording we need info about the score it references 
+   (score name, skill and level)
+- When AllLessons loads, we should store locally all info about scores (id, scorename, skill, level). So that later, when we have scoreID 
+   (because user selects one score to play, or because we are retreiving recordings...) we can get all the other info. Currently AllLessons 
+   calls the database around 20 times each time
+- Once previous point is solved, change all scoreNames in URL to scoresID, and all the consequent changes that have to be made
+- getCurrentUser does not provide the userID, which we need to store the recordings and retrieve them
+
+
+//
+WE NEED
+- In AllLessons line 77, we have "names = getAllNames(level, skill)", we use those names to generate the list of scores, 
+and when we click on one, the URL contains the name... should it be better to have the scoreID in the URL, as it is the 100% unique value?
+In this case, we would need a "scoreIds = getAllScoreIds(level, skill)". Caution! we would still need "names = getAllNames(level, skill)", because 
+we still want to be able to see the names of the scores, but we want to have a unique key for the *clicked* score. The reason for this
+is :see next point.
+
+- Once we *click* on a score, ProgressPlayFile opens, in PracticeMode. Using useparams().file we retrieve from the URL the name of the File/score.
+With that, we fetch from the database using "response = await fetch(`${folderBasePath}/${params.files}`);" and then 
+"xmlFileData = await response.text();".
+As you can see, we are introducing manually the folderBasePath, which is not very correct. Maybe it would be better if in the URL we could have 
+the scoreID, this way we could do something like "xmlFileData = await getScoreData(scoreId);", asking directly to the database.
+This line of code "${folderBasePath}" is repeated several times... ProgressPlayFileVisual, AllLessons, TimbreVisualization...
+
+- If we keep continue through the webpage...we are still in ProgressPlayFile seeing the current score,and we put "RecordMode". We now have a button 
+that takes us to the List of Recordings that the user has recorded of this current score. When we click on that button, the component ListRecordings 
+renders, fetching the recording titles from the database using a) UserID obtained by "const { getCurrentUser } = useAppContext();" and 
+b) Recording ID is currently introduced manually (terrible). This has to be fixed. 
+For that, in ListRecordings, we need a call that works like "recordingIDs=getRecordingIDs(userID,scoreID)" 
+(the userID comes from getCurrentUser, and the scoreID could come from the URL). Consequently, 
+when the user clicks on one of the recordings' eye sign, ProgressPlayFileVisual opens, needing the userID 
+(can get it from appContext), the scoreID (which could still be in the URL), and the recordingID (must be received from ListRecordings). 
+This way, to load this page, we would do "xmlFileData = await getScoreData(scoreId);" as suggested in previous point to get the score info, 
+and somethig like "recordingData = await getRecordingData(recordingId);", so that we get the audio, the pitch points, color of notes...
+
+ To sum up, point by point
+ - We need to be able to have the scoreID available since the moment we are in AllLessons (so that it is set in the URL instead of the scoreName)
+ - We need to be able to get the scoreData just by the scoreID (no need to write "folderBasePath")
+ - We need to be able to get the recordingData using the userID (currently found in AppContect) and the scoreID (could be found in the URL)
+//
+
+
+
+DONE - Botón "ver", símbolo ojo, de la lista de grabaciones, tiene que llevarnos a otro archivo osmd donde aparezca el pitch tracking, con los colores de la nota, 
 y tengas opcion de darle a play/stop, para oir a la vez que se mueve el cursor, lo que has hecho. Por el momento, no permitiría que el usuario eligiera desde 
 qué punto quiere oirlo, sino hacerlo que desde el principio, y si lo paras, vuelve al principio. Luego ya meteremos complicaciones. 
-- Añadir a lo anterior, y a la zona de lista de grabaciones, algo de go back (en la lista de grabaciones ya hay go back), no sé si tambien un boton de go back 
+DONE - Añadir a lo anterior, y a la zona de lista de grabaciones, algo de go back (en la lista de grabaciones ya hay go back), no sé si tambien un boton de go back 
 pero a las lessons? A no ser que aparezca ya la barra lateral? porque creo que desaparece(?) comprobar
 - añadir boton en algun lado que nos lleve a las saved songs generales, no sólo las correspondientes a una cancion, sino en general, tendrá que ir en el menú 
 principal o así. HAcerlo bonito, cómo se mostrarán las grabaciones? Tree (como AllLessons)? más visual chuli?
 - Limpieza general(borrar console.logs, repasar comentarios, etc...)
 - A la hora de mostrar las previews con todos los ficheros guardados, tal vez se podria usar audio .ogg 
-- En ProgressPlayFileVisual no hacemos uso del micro, asi que todo lo relacionado con eso sobra, y deberiamos quitarlo
-
-BUG - Repetition layers have to switch automatically when song is playing in visual mode, they do but bug somewhere, when you stop playing in middle of score 
+- En ProgressPlayFileVisual no hacemos uso del micro, asi que todo lo relacionado con eso sobra, y deberiamos quitarl
+DONE - Repetition layers have to switch automatically when song is playing in visual mode, they do but bug somewhere, when you stop playing in middle of score 
 and go back to the beginning, as well as we have to fix that when play is clicked, showingrep=0 always.
-
-
-
 DONE - Audio buffer to play audio
 DONE - El controlBar del punto anterior solo debe tener play/stop (alternados), el botón de iteracion entre repeticiones(?) para sin escuchar poder ver el 
        recorrido de pitchtrack y color de notas, y los settings(pero sin poder modificar el bpm, de hecho habrá que haber guardado en qué bpm se ha grabado). Nada de grabar.

@@ -219,6 +219,7 @@ class OpenSheetMusicDisplay extends Component {
     this.totalReps=0;
     this.showingRep=0;
     this.selectionEndReached=false;
+    this.calculatePunctuation=false;
   }
   //this.IPlaybackListener=new IPlaybackListener()
   
@@ -236,6 +237,10 @@ class OpenSheetMusicDisplay extends Component {
       console.log('end');
       // Update the flag when the event occurs
       this.selectionEndReached=true;
+      if(this.props.startPitchTrack){//If we are in recording and cursor finished
+        this.calculatePunctuation=true; //we want to calculate Punctuation stars
+      }
+      
     };
     var myListener = {
       selectionEndReached: handleSelectionEndReached,
@@ -359,7 +364,7 @@ class OpenSheetMusicDisplay extends Component {
     }
 
     //In visual mode, check if cursor finishes to update showingRep
-    if(this.previousTimestamp!==null && this.props.visual==="yes" && this.previousTimestamp > cursorCurrent){
+    if(this.previousTimestamp!==null && this.props.visual==="yes" && this.previousTimestamp > cursorCurrent &&this.playbackManager.isPlaying){
       //Increase showingRep
       if (this.showingRep < this.totalReps) {
         this.showingRep++;
@@ -399,6 +404,7 @@ class OpenSheetMusicDisplay extends Component {
               }
             } 
       }
+      this.props.cursorJumpsBack()
       
     }
     
@@ -426,9 +432,6 @@ class OpenSheetMusicDisplay extends Component {
       
       //Absolute Position
       const svgElement=gNote.getSVGGElement()
-      /*console.log(this.osmd.cursor.GNotesUnderCursor())
-      console.log("element under the cursor ",gNote.vfpitch[0])
-      console.log("time stamp ", cursorCurrent.RealValue)*/
       
       if (
         svgElement &&
@@ -614,6 +617,21 @@ class OpenSheetMusicDisplay extends Component {
 
     // for downloading
     if (this.props.canDownload === true && this.props.canDownload !== prevProps.canDownload) {
+      var n_stars;
+      if(this.calculatePunctuation===true){ //If recording is complete
+        //Calculate punctuation
+        const aux = this.state.colorNotes.slice()
+        const colors = aux.map(innerArray => innerArray.map(subArray => subArray[1])).flat();
+        const n_green = colors.filter(color => color === "#00FF00").length;
+        const n_total= colors.length;
+        n_stars=Math.floor(3*n_green/n_total) //3 because max = 3 stars
+        this.calculatePunctuation=false
+      }else{ //If recording is only a part of the score
+        //No punctuation
+        n_stars=0;
+      }
+      
+      //Save data
       const dataToSave = {
         pitchTrackPoints: this.state.pitchData,
         pitchX:this.state.pitchPositionX,
@@ -624,12 +642,13 @@ class OpenSheetMusicDisplay extends Component {
         noteNEWIDs: this.state.recordedNoteNEWIDs,
         noteIndex: this.state.recordedNoteIndex,
         noteColors: this.state.colorNotes,
-        bpm: this.props.bpm
+        bpm: this.props.bpm,
+        stars: n_stars
       };
 
       const jsonString = JSON.stringify(dataToSave);
       const jsonBlob = new Blob([jsonString], { type: "application/json" });
-      this.props.dataToDownload(jsonBlob);
+      this.props.dataToDownload(jsonString);
     }
     
     // newJson import - UPDATE ALL NECCESSARY VALUES
@@ -848,21 +867,60 @@ class OpenSheetMusicDisplay extends Component {
       prevProps.isResetButtonPressed !== this.props.isResetButtonPressed &&
       this.props.isResetButtonPressed
     ) {
-      this.setState({colorNotes:[]});
-      this.setState({ recordedNoteIDs: [] });
-      this.setState({ recordedNoteNEWIDs: [] });
-      this.setState({ recordedNoteIndex:[]});
-      this.setState({ pitchData: [] });
-      this.setState({ pitchPositionX: [] })
-      this.setState({ pitchPositionY: [] })
-      this.setState({ pitchColor: [] })
-      this.setState({ repetitionNumber: []})
-      this.resetNotesColor();
-      this.showingRep=0;
-      this.totalReps=0;
-      this.previousTimestamp=0;
-      this.props.showRepeatsInfo(0,0)
-      this.props.onResetDone(); // call the function passed from the parent component
+      if(this.props.visual==="no"){
+        this.setState({colorNotes:[]});
+        this.setState({ recordedNoteIDs: [] });
+        this.setState({ recordedNoteNEWIDs: [] });
+        this.setState({ recordedNoteIndex:[]});
+        this.setState({ pitchData: [] });
+        this.setState({ pitchPositionX: [] })
+        this.setState({ pitchPositionY: [] })
+        this.setState({ pitchColor: [] })
+        this.setState({ repetitionNumber: []})
+        this.resetNotesColor();
+        this.showingRep=0;
+        this.totalReps=0;
+        this.previousTimestamp=0;
+        this.props.showRepeatsInfo(0,0)
+        this.props.onResetDone(); // call the function passed from the parent component
+      }else{
+        //put showingRep at 0
+        this.showingRep=0;
+        //put note colors corresponding to showingRep=0
+        //Update color of notes
+        let staves = this.osmd.graphic.measureList;
+        for (let stave_index = 0; stave_index < staves.length; stave_index++) {
+          let stave = staves[stave_index][0];
+            for (let note_index = 0; note_index < stave.staffEntries.length; note_index++) {
+                let note = stave.staffEntries[note_index]
+                let noteID= note.graphicalVoiceEntries[0].notes[0].getSVGId();
+                let noteNEWID=this.osmd.IDdict[noteID]
+                //check for notehead color
+                const colorsArray=this.state.colorNotes.slice()
+                const index = colorsArray.findIndex(item => item[0][0] === noteNEWID && item[0][2]===0);
+                if(index!==-1){ 
+                  //note has a color assigned--> color notehead
+                  // this is for all the notes except the quarter and whole notes
+                  const svgElement = note.graphicalVoiceEntries[0].notes[0].getSVGGElement();
+                  svgElement.children[0].children[0].children[0].style.fill =
+                    colorsArray[index][0][1]; // notehead
+                  if (
+                    svgElement &&
+                    svgElement.children[0] &&
+                    svgElement.children[0].children[0] &&
+                    svgElement.children[0].children[1]
+                  ) {
+                    //this is for all the quarter and whole notes
+                    svgElement.children[0].children[0].children[0].style.fill =
+                      colorsArray[index][0][1]; // notehead
+                    svgElement.children[0].children[1].children[0].style.fill =
+                      colorsArray[index][0][1]; // notehead
+                  }
+            }} }
+        //make notice that reset actions were taken care of
+        this.props.onResetDone(); // call the function passed from the parent component
+      }
+      
     }
 
     // resize the osmd when the window is resized

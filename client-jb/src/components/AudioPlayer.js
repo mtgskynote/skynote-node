@@ -12,7 +12,7 @@ const AudioPlayer = () => {
       const reader = new FileReader();
 
       reader.onload = function (importedFile) {
-        if (file.name.endsWith('.wav')) {
+        if (file.name.endsWith('.mp3')) {
           // Handle audio file
           const audioContext = new (window.AudioContext || window.webkitAudioContext)();
           audioContext.decodeAudioData(importedFile.target.result, function (buffer) {

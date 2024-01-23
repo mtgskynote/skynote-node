@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useRef } from "react";
-import { useParams, useNavigate } from "react-router-dom";
+import { useParams, useNavigate,useLocation } from "react-router-dom";
 import OpenSheetMusicDisplay from "./OpenSheetMusicDisplay";
 import ControlBarVisual from "./ControlBarVisual.js";
 import SimpleMessaje from "./AnyMessage.js"
@@ -11,6 +11,8 @@ import Wrapper from "../assets/wrappers/ModeToggle";
 import { Button} from "@material-ui/core";
 import ModeInfoButton from "./ModeInfoButton.js";
 import PopUpWindowDelete from "./PopUpWindowDelete.js";
+import {  getRecording, deleteRecording } from "../utils/studentRecordingMethods.js";
+import ListRecordingsCSS from './ListRecordings.module.css';
 
 const folderBasePath = "/xmlScores/violin";
 
@@ -18,9 +20,9 @@ const ProgressPlayFileVisual = (props) => {
   const params = useParams();
 
   //THIS IS FOR FILE LOADING, SHOULD BE DEALT WHEN DATABASE IS IMPLEMENTED
-  const [audioBuffer, setAudioBuffer] = useState(null);
   const fileInputRef = useRef(null);
   /////////////////////////////////////////////////////////
+
   let audioContext = new (window.AudioContext || window.webkitAudioContext)();
   const [songFile, setSongFile] = useState(null);
   
@@ -36,11 +38,8 @@ const ProgressPlayFileVisual = (props) => {
   const [zoom, setZoom] = useState(1.0);
   const [showPopUpWindow, setShowPopUpWindow]= useState(false);
 
-  const [pitchValue, setPitchValue] = useState(null);
-  const [confidenceValue, setConfidenceValue] = useState(null);
   const [pitch, setPitch] = useState([]);
   const [confidence, setConfidence] = useState([]);
-  var pitchCount =0;
 
   const [startPitchTrack, setStartPitchTrack] = useState(false);
   const [showPitchTrack, setShowPitchTrack] = useState(false);
@@ -51,11 +50,65 @@ const ProgressPlayFileVisual = (props) => {
   const [repetitionMessage, setRepetitionMessage]=useState("No stored recordings yet");
 
   const [cursorFinished, setCursorFinished] = useState(false);
+  const [cursorJumped, setCursorJumped] = useState(false);
 
   const [visualMode, setVisualMode] = useState(true);
   const [json, setJson] = useState([]);
+  const [containerLoaded, setContainerLoaded]=useState(false)
 
+
+  //const { getCurrentUser } = useAppContext();
+  const location = useLocation();
   const navigate = useNavigate();
+
+  const recordingID=location.state?.recordingID
+  
+  // To load JSON data from recordingID passed from ListRecordings
+  useEffect(() => {
+    getRecording(recordingID).then((recordingJSON)=>{
+      //Save json.info (recording data, pitch, colors...) to send it to osmd
+      setJson(recordingJSON.info);
+      //Set bpm
+      setBpm(recordingJSON.info.bpm);
+      // Save audio
+      setSongFile(recordingJSON.audio);
+    })
+  },[recordingID])
+
+
+  ////////////////////LOADING FILES TEMPORARY PATCH//////////////////////////////////////////////////
+  //Since database stuff is not yet implemented, I wrote a few lines to get local files, just so we
+  //can keep working on displaying and listening to said files
+  //THIS CODE SHOULDN'T BE IN THE MAIN BRANCH IT'S TEMPORARY AND SHOULD BE DEALT WITH BEFORE ANY MERGE
+  /*const handleFileSelect = (event) => {
+    const fileInput = fileInputRef.current;
+    const file = fileInput.files[0];
+
+    if (file) {
+      const reader = new FileReader();
+      reader.onload = function (importedFile) {
+        // Transform data type and load content
+        const uint8Array = new Uint8Array(importedFile.target.result);
+        const jsonString = new TextDecoder().decode(uint8Array);    
+        const jsonContent = JSON.parse(jsonString);
+        console.log('JSON Content:', jsonContent);
+        console.log('BPM:', jsonContent.info.bpm);
+        // Save audio
+        setSongFile(jsonContent.audio);
+        //Save json.info (recording data, pitch, colors...) to send it to osmd
+        setJson(jsonContent.info);
+        //Set bpm
+        setBpm(jsonContent.info.bpm);
+        //The rest of the json info (studentID, user... not used for now)
+        }
+        reader.readAsArrayBuffer(file);
+      };
+  };*/
+  ///////////////////////////////////////////////////////////////////////////////////////////////////
+
+  const handleGoBack=()=>{
+    navigate(-1);
+  }
 
   const onResetDone = () => {
     setIsResetButtonPressed(false);
@@ -74,6 +127,13 @@ const ProgressPlayFileVisual = (props) => {
     if(answer==="1"){ //"yes"
       console.log("You choose option 1")
       setShowPopUpWindow(false)
+      deleteRecording(recordingID).then(() => {
+        navigate(-1);
+      }).catch((error) => {
+        console.log(`Cannot delete recording from database: ${error}`)
+      })
+      
+
       //Delete recording actions required FIXME
 
     }else{ //"no"
@@ -92,9 +152,16 @@ const ProgressPlayFileVisual = (props) => {
       setCursorFinished(true);
       const playbackManager = playbackRef.current;
       playbackManager.pause();
+      playbackManager.setPlaybackStart(0);
       setStartPitchTrack(false);
+      setIsResetButtonPressed(true)
       setRecordInactive(true) //Set to true, just like the initial state
     }
+  };
+
+  // When cursor jumps (osmd detects it, we need to generate state)
+  const handleJumpedCursorOSMDCallback = () => {
+    setCursorJumped(!cursorJumped)
   };
   
   const handleFinishedCursorControlBarCallback = (controlBarFinishedCursor) => {
@@ -113,43 +180,12 @@ const ProgressPlayFileVisual = (props) => {
     }
   };
   
-  ////////////////////LOADING FILES TEMPORARY PATCH//////////////////////////////////////////////////
-  //Since database stuff is not yet implemented, I wrote a few lines to get local files, just so we
-  //can keep working on displaying and listening to said files
-  //THIS CODE SHOULDN'T BE IN THE MAIN BRANCH IT'S TEMPORARY AND SHOULD BE DEALT WITH BEFORE ANY MERGE
-  const handleFileSelect = (event) => {
-    const fileInput = fileInputRef.current;
-    const file = fileInput.files[0];
-
-    if (file) {
-      const reader = new FileReader();
-
-      reader.onload = function (importedFile) {
-        if (file.name.endsWith('.wav')) {
-          // Handle audio file
-          setSongFile(importedFile.target.result);
-          
-        } else if (file.name.endsWith('.json')) {
-          // Handle JSON file
-          const uint8Array = new Uint8Array(importedFile.target.result);
-          const jsonString = new TextDecoder().decode(uint8Array);    
-          const jsonContent = JSON.parse(jsonString);
-          console.log('JSON Content:', jsonContent);
-          console.log('BPM:', jsonContent.bpm);
-          setJson(jsonContent);
-          setBpm(jsonContent.bpm);
-        }
-      };
-
-      reader.readAsArrayBuffer(file);
-    }
-  };
-  ///////////////////////////////////////////////////////////////////////////////////////////////////
-  
   const playAudio = async () => {
     try {
-      const copiedSongFile = songFile.slice(0) //so the original is not modified
-      const audioBuffer = await audioContext.decodeAudioData(copiedSongFile);
+      // Transform data type and play
+      var uint8Array = new Uint8Array(songFile.data);
+      var arrayBuffer = uint8Array.buffer;
+      const audioBuffer =await audioContext.decodeAudioData(arrayBuffer)
       const source = audioContext.createBufferSource();
       source.buffer = audioBuffer;
       source.connect(audioContext.destination);
@@ -158,14 +194,11 @@ const ProgressPlayFileVisual = (props) => {
       console.error('Error playing audio:', error);
     }
   };
-
   const stopAudio = () => {
     audioContext.close().then(() => {
       audioContext = new (window.AudioContext || window.webkitAudioContext)();
     });;
   };
-
-
 
   //Handles basically any change
   useEffect(() => {
@@ -177,26 +210,28 @@ const ProgressPlayFileVisual = (props) => {
       const playButton = document.getElementById("play/stop");
       const handlePlayButtonClick = () => {
         const playbackManager = playbackRef.current;
-        const cursor = cursorRef.current;
+        //const cursor = cursorRef.current;
         if (playbackManager.isPlaying) {
           //Pause/stop audio of recording
           stopAudio();
           //Pause/stop osmd
           playbackManager.pause();
-          playbackManager.setPlaybackStart(0);
+          //playbackManager.setPlaybackStart(0);
           playbackManager.reset();
-          cursor.reset();
+          //cursor.reset();
           setStartPitchTrack(false);
           setShowPitchTrack(false)
           setPitch([])
           setConfidence([])
           setRecordInactive(true) //Set to true, just like the initial state
+          setIsResetButtonPressed(true);
           
         } else {
-          //Play osmd
-          playbackManager.play();
           //Play audio of recording
           playAudio();
+          //Play osmd
+          setIsResetButtonPressed(true);
+          playbackManager.play();
         }
       };
       playButton.addEventListener("click", handlePlayButtonClick);
@@ -260,12 +295,13 @@ const ProgressPlayFileVisual = (props) => {
         //deleteButton.removeEventListener("click", handleDeleteButtonClick);
       }
     };
-  }, [recordVol, zoom, recordInactive, pitchValue, repeatsIterator, visualMode, showRepetitionMessage, json, songFile]);
+  }, [recordVol, zoom, recordInactive, repeatsIterator, visualMode, showRepetitionMessage, json, songFile, cursorFinished, cursorJumped]);
 
   return (
     
     <div>
-      <input type="file" ref={fileInputRef} onChange={handleFileSelect} />
+
+      
       {(showRepetitionMessage&&<SimpleMessaje message={repetitionMessage}/>)}
 
       <OpenSheetMusicDisplay
@@ -287,6 +323,7 @@ const ProgressPlayFileVisual = (props) => {
         showRepeatsInfo={handleReceiveRepetitionInfo}
         onResetDone={onResetDone}
         cursorActivity={handleFinishedCursorOSMDCallback}
+        cursorJumpsBack={handleJumpedCursorOSMDCallback}
         mode={visualMode}
         visual={"yes"}
         visualJSON={json}
@@ -316,6 +353,11 @@ const ProgressPlayFileVisual = (props) => {
 
         </div>
     </Wrapper>
+
+    {/* Button to go back */}
+    <button  className={ListRecordingsCSS.back2Listbutton} onClick={handleGoBack}>
+        BACK
+      </button>
       
     </div>
   );

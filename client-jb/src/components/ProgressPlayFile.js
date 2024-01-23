@@ -10,6 +10,11 @@ import SimpleMessaje from "./AnyMessage.js"
 import ModeToggle from "./ModeToggle.js";
 import PopUpWindow from "./PopUpWindow.js";
 import XMLParser from "react-xml-parser";
+import { getRecData, getRecording, putRecording, deleteRecording, patchViewPermissions } from "../utils/studentRecordingMethods.js";
+import { Buffer } from 'buffer';
+// @ts-ignore
+window.Buffer = Buffer;
+
 
 const folderBasePath = "/xmlScores/violin";
 
@@ -23,6 +28,7 @@ const ProgressPlayFile = (props) => {
 
   const [canRecord, setCanRecord] = useState(true);
   const [canDownload, setCanDownload] = useState(false);
+  const [audioReady, setAudioReady] = useState(false);
   const [userFileName, setUserFileName] = useState("");
 
   const [metroVol, setMetroVol] = useState(0);
@@ -52,6 +58,7 @@ const ProgressPlayFile = (props) => {
 
   const [cursorFinished, setCursorFinished] = useState(false);
   const [showPopUpWindow, setShowPopUpWindow]= useState(false);
+  const [jsonToDownload, setJsonToDownload] = useState();
 
   const [practiceMode, setPracticeMode] = useState(true);
   const [recordMode, setRecordMode] = useState(false);
@@ -94,33 +101,59 @@ const ProgressPlayFile = (props) => {
   };
 
   //function in charge of downloading
-  const handleDownload = (dataBlob) => {
-    //Generate name of the file: name-introduced-by-user_date_time
-    const currentDate = new Date();
-    const year = currentDate.getFullYear();
-    const month = (currentDate.getMonth() + 1).toString().padStart(2, '0');
-    const day = currentDate.getDate().toString().padStart(2, '0');
-    const hours = currentDate.getHours().toString().padStart(2, '0');
-    const minutes = currentDate.getMinutes().toString().padStart(2, '0');
-    const seconds = currentDate.getSeconds().toString().padStart(2, '0');
-    let formattedDate = `${userFileName}__${params.files.replace(".xml", "")}_${year}_${month}_${day}-${hours}_${minutes}_${seconds}`;
-
-    if (dataBlob.type === "audio/wav") { //AUDIO
-      formattedDate = formattedDate + ".wav";
-    } else if (dataBlob.type === "application/json") { //TEXT-JSON
-      formattedDate = formattedDate + ".json";
+  async function handleDownload (dataBlob){
+    setAudioReady(false);
+    //console.log("I received audio, i proceed to save everything: ", dataBlob, jsonToDownload)
+    const jsonData = JSON.parse(jsonToDownload)//convert data to json
+    const jsonComplete={
+      studentId: "645b6e484612a8ebe8525933", 
+      scoreId: "64d0de60d9ac9a34a66b4d45", 
+      recordingName: `${userFileName}`, 
+      date: new Date(), 
+      audio: dataBlob,
+      sharing: false,
+      info:jsonData,
     }
-    
-    console.log("DOWNLOADING: ", formattedDate)
-    const downloadLink = document.createElement('a');
-    downloadLink.href = URL.createObjectURL(dataBlob);
-    downloadLink.download = formattedDate;
-    downloadLink.style.display = 'none';
-    document.body.appendChild(downloadLink);
-    downloadLink.click();
-    document.body.removeChild(downloadLink);
-    setCanDownload(false);
+
+    ///////////REMOVE
+    // Convert the combined data to a JSON string
+    const jsonString = JSON.stringify(jsonComplete);
+    // Create a Blob from the JSON string
+    const blob = new Blob([jsonString], { type: "application/json" });
+    // Create a download link
+    const url = URL.createObjectURL(blob);
+    // Create a link element
+    const link = document.createElement("a");
+    link.href = url;
+    link.download = "yourFileName.json"; // Set the desired file name
+    // Append the link to the document
+    document.body.appendChild(link);
+    // Trigger a click on the link to start the download
+    link.click();
+    // Remove the link from the document
+    document.body.removeChild(link);
+    ///////////REMOVE
+
+      // upload to database
+      try{
+        console.log(jsonComplete)
+        let result = await putRecording(jsonComplete);
+        if (result!=null) {
+          //recdatalist.push(result); // save results locally
+          console.log('putRecording return OK, and result is now ', result) 
+          //console.log(`putRecording return OK, and recdatalist is now  ${JSON.stringify(recdatalist)}`)  
+        }
+      } catch (error) { 
+        console.log(`error in putRecording`, error  );
+      }  
+    //}
   }
+  const handleGetJsonCallback = (json) => {
+    setJsonToDownload(json);
+    setCanDownload(false);
+    setAudioReady(true);
+    console.log("im storing json data in state")
+  };
   
   const handleFinishedCursorControlBarCallback = (controlBarFinishedCursor) => {
     if (controlBarFinishedCursor===false){//ControlBar already took cursor finishing actions 
@@ -152,9 +185,8 @@ const ProgressPlayFile = (props) => {
           setConfidence([]);
           setIsResetButtonPressed(true);
         }else if(answer==="save"){
-          console.log("im in saved clicked and the name is ", fileName)
           setUserFileName(fileName) //save file name introduced by the user
-          setCanDownload(true); //raise flag order to initiate downloading process (json in OSMD and audio here)
+          setCanDownload(true); //raise flag order to initiate downloading process (json in OSMD)
           setPitch([]);
           setConfidence([]);
           setIsResetButtonPressed(true);
@@ -173,13 +205,19 @@ const ProgressPlayFile = (props) => {
       
   }
 
-  //when canDownload activates (meaning that we can download the data)
+  //when audioReady activates (meaning that we can download the data)
   useEffect(() => {
-    if(canDownload){
-      const dataToDownload = audioStreamer.save_or_not("save") //save wanted, data prepared
-      handleDownload(dataToDownload); //send data to downloading function
+    if(audioReady){
+      audioStreamer.save_or_not("save")
+        .then(dataToDownload => {
+          const buffer= new Buffer.from(dataToDownload)
+          handleDownload(buffer); // send data to downloading function
+        })
+        .catch(error => {
+          console.error("Error:", error);
+        });
     }
-  }, [canDownload]);
+  }, [audioReady]);
 
   useEffect(() => {
     //This part just gets the tittle of the score, so it can later be used for the saving part
@@ -499,7 +537,7 @@ const ProgressPlayFile = (props) => {
         playButton.removeEventListener("click", handlePlayButtonClick);
       }
     };
-  }, [recordVol, zoom, recordInactive, pitchValue, repeatsIterator, practiceMode, recordMode, showRepetitionMessage, userFileName]);
+  }, [recordVol, zoom, recordInactive, pitchValue, repeatsIterator, practiceMode, recordMode, showRepetitionMessage, userFileName, jsonToDownload]);
 
   return (
     
@@ -526,7 +564,7 @@ const ProgressPlayFile = (props) => {
         onResetDone={onResetDone}
         cursorActivity={handleFinishedCursorOSMDCallback}
         mode={practiceMode}
-        dataToDownload={handleDownload}
+        dataToDownload={handleGetJsonCallback}
         canDownload={canDownload}
         visual={"no"}
       />

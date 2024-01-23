@@ -45,7 +45,7 @@ const names = async (req, res) => {
   let docs = await xmlScores.find(match); //({level: level, skill: skill})
   let docnames = [];
   for (let i = 0; i < docs.length; i++) {
-    docnames.push(formatName(docs[i].fname, format));
+    docnames.push({scoreXmlName : formatName(docs[i].fname, format), scoreId : docs[i]._id, scoreLevel : docs[i].level, scoreSkill : docs[i].skill});
   }
   res.status(StatusCodes.OK).json(docnames);
 };

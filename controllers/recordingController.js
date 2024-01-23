@@ -19,7 +19,20 @@ const getRecData = async (req, res) => {
     let docs = await student_recordings.find({studentId: studentId, scoreId: scoreId});
 
     for (let i = 0; i < docs.length; i++) {
-        recdata.push({recordingName: docs[i].recordingName, recordingId: docs[i]._id} );
+        recdata.push({recordingName: docs[i].recordingName, recordingId: docs[i]._id, recordingStars: docs[i].info.stars} );
+    }
+    res.status(200).json(recdata);
+  };
+
+  const getAllRecData = async (req, res) => {
+
+    var recdata=[];  // list of core recording data [{recordingName, recordingId},{...}, ...] 
+    const studentId=req.query.studentId;
+    
+    let docs = await student_recordings.find({studentId: studentId}); //Find all recordings for a given studentID
+
+    for (let i = 0; i < docs.length; i++) {
+        recdata.push({recordingName: docs[i].recordingName, recordingId: docs[i]._id, scoreID:docs[i].scoreId, recordingStars: docs[i].info.stars} );
     }
     res.status(200).json(recdata);
   };
@@ -35,7 +48,7 @@ const getRecording = async (req, res) => {
   console.log(
     `in recordingController.js, recordingId is ${recordingId}`);
 
-  let doc = await student_recordings.findOne({recordingId: recordingId});
+  let doc = await student_recordings.findOne({_id: recordingId});
   res.status(StatusCodes.OK).json(doc);
 };
 
@@ -76,7 +89,7 @@ const getRecording = async (req, res) => {
       // Find the recording by ID and update the sharing field
       const updatedRecording = await student_recordings.findOneAndUpdate(
           /* { _id: recordingId }, */
-          { recordingId: recordingId  },
+          { _id: recordingId  },
           { sharing: sharing },
           /* { new: true } // This option returns the updated document */
       );
@@ -112,4 +125,4 @@ const getRecording = async (req, res) => {
     }
   }
   
-export { getRecData, getRecording, putRecording, deleteRecording, patchViewPermissions};
+export { getRecData, getAllRecData, getRecording, putRecording, deleteRecording, patchViewPermissions};

@@ -45,13 +45,6 @@
     margin: 10px;
     text-align:center;
   }
-
-  .completeStar{
-    color:#e8d73f;
-  }
-  .incompleteStar{
-    color:#909090;
-  }
   .osmdScore{
     position: fixed;
     margin: 1% 0%;

@@ -27,14 +27,14 @@ const ModeInfoButton = (props) => {
           <div className="mode-description">
             <h5>Practice Mode</h5>
             <p>
-              Practice Mode allows you to... {/* Describe what Practice Mode consists of */}
+              Practice Mode allows you to play as much as you want, but recordings won't be saved {/* Describe what Practice Mode consists of */}
             </p>
           </div>
     
           <div className="mode-description">
             <h5>Record Mode</h5>
             <p>
-              Record Mode lets you... {/* Describe what Record Mode consists of */}
+              Record Mode lets you record and save data, but you must play the whole piece {/* Describe what Record Mode consists of */}
             </p>
           </div>
         </div>

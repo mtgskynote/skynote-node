@@ -1,9 +1,9 @@
-// ListRecordings.js
+// ListAllRecordings.js
 import React, { useState, useEffect } from 'react';
 import { json, useLocation, useNavigate } from 'react-router-dom';
-import ListRecordingsCSS from './ListRecordings.module.css';
+import ListAllRecordingsCSS from './ListRecordings.module.css';
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { getRecData, getRecording, deleteRecording } from "../utils/studentRecordingMethods.js";
+import { getRecData, getAllRecData, deleteRecording } from "../utils/studentRecordingMethods.js";
 import { useAppContext } from "../context/appContext";
 
 import {
@@ -14,6 +14,8 @@ import {
   faPencilSquare,
   faBoxArchive,
   faMusic,
+
+
 } from "@fortawesome/free-solid-svg-icons";
 
 
@@ -29,19 +31,17 @@ import {
 //  UPDATE THE RECORDINGLIST, BUT THAT MIGHT IMPLY REWRITING THE WAY RECORDINGLIST WORKS ATM :(
 
 
-const ListRecordings = () => {
+const ListAllRecordings = () => {
 
   const { getCurrentUser } = useAppContext();
   const [userData, setUserData] = useState(null);
   const [recordingList, setRecordingList] = useState(null);
   const [recordingNames, setRecordingNames] = useState(null);
   const [recordingStars, setRecordingStars] = useState(null);
+  const [recordingScores, setRecordingScores] = useState(null);
   const location = useLocation();
   const navigate = useNavigate();
 
-  // Access the passed variables from the location object
-  const score = location.state?.score || 'DefaultSong';
-  const song = location.state?.song || 'DefaultSong1';
 
   // Starting --> load recordings from userID and scoreID
   useEffect(() => {
@@ -59,10 +59,11 @@ const ListRecordings = () => {
       }
 
       if(userData !== null){
-        getRecData("645b6e484612a8ebe8525933", "64d0de60d9ac9a34a66b4d45").then((result) => {
+        getAllRecData("645b6e484612a8ebe8525933").then((result) => {
           setRecordingList(JSON.stringify(result));
           setRecordingNames(result.map((recording) => recording.recordingName));
           setRecordingStars(result.map((recording) => recording.recordingStars));
+          setRecordingScores(result.map((recording) => recording.scoreID));
         }).catch((error) => {
           console.log(`Cannot get recordings from database: ${error}`)
           // Handle errors if necessary
@@ -73,21 +74,21 @@ const ListRecordings = () => {
 
     fetchDataFromAPI();
     
-  }, [userData,recordingList]);
+  }, [userData, recordingList]);
 
   //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
   // Event handler for going back
   const handleGoBack = () => {
     // Use navigate to go back to the previous page
     //navigate(-1);
-    navigate(`/all-lessons/${score}`);
+    navigate(`/`);
   };
 
   // Event handler for click on See
   const handleSeeClick = (nameOfFile, number)=> {
       const id = JSON.parse(recordingList)[recordingNames.indexOf(nameOfFile)].recordingId;
       //Pass recording ID to ProgressPlayfileVisual
-      navigate(score, {state:{'recordingID':id}})
+      navigate(`/ListRecordings/V_040_Segundo_Dedo_D.xml`, {state:{'recordingID':id}}); //FIXME , change score according to ID
     }
 
 
@@ -95,13 +96,18 @@ const ListRecordings = () => {
   const handleTrashClick = (nameOfFile, number) => {
     if (recordingNames.indexOf(nameOfFile) !== -1) {
       const idToDelete = JSON.parse(recordingList)[recordingNames.indexOf(nameOfFile)].recordingId;
+      // Delete recording entry of state arrays
       const auxArrayNames = recordingNames.filter((item, index) => index !== recordingNames.indexOf(nameOfFile));
       const auxArrayList = JSON.parse(recordingList).filter((item, index) => index !== recordingNames.indexOf(nameOfFile));
+      const auxRecordingStars = recordingNames.filter((item, index) => index !== recordingStars.indexOf(nameOfFile));
+      const auxRecordingScores = recordingNames.filter((item, index) => index !== recordingScores.indexOf(nameOfFile));
+      // Delete recording from database
       console.log("Deleting: ", idToDelete);
       deleteRecording(idToDelete).then(() => {
         setRecordingNames(auxArrayNames);
         setRecordingList(auxArrayList);
-        //window.location.reload();
+        setRecordingStars(auxRecordingStars)
+        setRecordingScores(auxRecordingScores)
       }).catch((error) => {
         console.log(`Cannot delete recordings from database: ${error}`)
       })
@@ -118,44 +124,48 @@ const ListRecordings = () => {
 
   // Your component logic using the variables
   return (
-    <div className={ListRecordingsCSS.container}>
-      <h2>
-        <FontAwesomeIcon icon={faMusic} className={ListRecordingsCSS.auxIcon}/>
-        {song} 
-        <FontAwesomeIcon icon={faMusic} className={ListRecordingsCSS.auxIcon}/>
-      </h2> 
-      <div className={ListRecordingsCSS.textGroup}>
-        <div><h7 >
-          <FontAwesomeIcon icon={faPencilSquare} className={ListRecordingsCSS.auxIcon}/>
-          First finger 
-        </h7></div>
-        <div><h7 >
-          <FontAwesomeIcon icon={faBoxArchive} className={ListRecordingsCSS.auxIcon}/>
-          Level 1
-        </h7></div>
+    <div className={ListAllRecordingsCSS.container}>
+      <div> 
+        <h2>All recordings...</h2>
       </div>
 
       {/* List of songs */}
-      <div className={ListRecordingsCSS.songlist}>
+      <div className={ListAllRecordingsCSS.songlist2}>
         {recordingNames.map((nameOfFile, index) => (
-          <div className={ListRecordingsCSS.songelement} key={index}>
+            //Each element/recording
+          <div className={ListAllRecordingsCSS.songelement2} key={index}>
           <li key={index}>
-          <div className={ListRecordingsCSS.recTitle}><h5 >{nameOfFile}</h5></div>
-              <div className={ListRecordingsCSS.starsGroup}>
-                <FontAwesomeIcon icon={faStar} className={recordingStars[index]>=1 ? ListRecordingsCSS.completeStar : ListRecordingsCSS.incompleteStar}/>
-                <FontAwesomeIcon icon={faStar} className={recordingStars[index]>=2 ? ListRecordingsCSS.completeStar : ListRecordingsCSS.incompleteStar}/>
-                <FontAwesomeIcon icon={faStar} className={recordingStars[index]>=3 ? ListRecordingsCSS.completeStar : ListRecordingsCSS.incompleteStar}/>
+              <div className={ListAllRecordingsCSS.recTitle}><h5 >{nameOfFile}</h5></div>
+              <div className={ListAllRecordingsCSS.starsGroup}>
+                  <FontAwesomeIcon icon={faStar} className={recordingStars[index]>=1 ? ListAllRecordingsCSS.completeStar : ListAllRecordingsCSS.incompleteStar}/>
+                  <FontAwesomeIcon icon={faStar} className={recordingStars[index]>=2 ? ListAllRecordingsCSS.completeStar : ListAllRecordingsCSS.incompleteStar}/>
+                  <FontAwesomeIcon icon={faStar} className={recordingStars[index]>=3 ? ListAllRecordingsCSS.completeStar : ListAllRecordingsCSS.incompleteStar}/>
               </div>
-              <div>
-                <button className={ListRecordingsCSS.iconbutton} onClick={() => handleSeeClick(nameOfFile, index)}>
+              <div className={ListAllRecordingsCSS.textGroup}>
+                <div><h7>
+                  <FontAwesomeIcon icon={faMusic} className={ListAllRecordingsCSS.auxIcon}/>
+                  '{recordingScores[index]}
+                </h7></div>
+                <div><h7 >
+                  <FontAwesomeIcon icon={faPencilSquare} className={ListAllRecordingsCSS.auxIcon}/>
+                  First finger
+                </h7></div>
+                <div><h7 >
+                  <FontAwesomeIcon icon={faBoxArchive} className={ListAllRecordingsCSS.auxIcon}/>
+                  Level 1
+                </h7></div>
+              </div>
+              
+              <div className={ListAllRecordingsCSS.dateTime}>
+                <i>19/02/2024 - 09:18</i>
+              </div>
+              <div className={ListAllRecordingsCSS.buttonGroup}>
+                <button className={ListAllRecordingsCSS.iconbutton} onClick={() => handleSeeClick(nameOfFile, index)}>
                   <FontAwesomeIcon icon={faEye} />
                 </button>
-                <button className={ListRecordingsCSS.iconbutton} onClick={() => handleTrashClick(nameOfFile, index)}>
+                <button className={ListAllRecordingsCSS.iconbutton} onClick={() => handleTrashClick(nameOfFile, index)}>
                   <FontAwesomeIcon icon={faTrash} />
                 </button>
-              </div>
-              <div className={ListRecordingsCSS.dateTime}>
-                <i>19/02/2024 - 09:18</i>
               </div>
             </li>
             </div>
@@ -163,11 +173,11 @@ const ListRecordings = () => {
       </div>
 
       {/* Button to go back */}
-      <button className={ListRecordingsCSS.backbutton} onClick={handleGoBack}>
+      <button className={ListAllRecordingsCSS.backbutton} onClick={handleGoBack}>
         Back
       </button>
     </div>
   );
 };
 
-export default ListRecordings;
+export default ListAllRecordings;
