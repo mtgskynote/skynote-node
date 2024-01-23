@@ -39,6 +39,7 @@ const ListAllRecordings = () => {
   const [recordingNames, setRecordingNames] = useState(null);
   const [recordingStars, setRecordingStars] = useState(null);
   const [recordingScores, setRecordingScores] = useState(null);
+  const [recordingDates, setRecordingDates] = useState(null);
   const location = useLocation();
   const navigate = useNavigate();
 
@@ -50,7 +51,7 @@ const ListAllRecordings = () => {
       if(userData===null){
       getCurrentUser() // fetchData is already an async function
         .then((result) => {
-          //console.log(`getCurentUser() has returnd this result: ${JSON.stringify(result)}`);
+          console.log(`getCurentUser() has returnd this result: ${JSON.stringify(result)}`);
           setUserData(result);
         }).catch((error) => {
           console.log(`getCurentUser() error: ${error}`)
@@ -59,11 +60,26 @@ const ListAllRecordings = () => {
       }
 
       if(userData !== null){
-        getAllRecData("645b6e484612a8ebe8525933").then((result) => {
+        getAllRecData(userData.id).then((result) => {
           setRecordingList(JSON.stringify(result));
+          console.log(result)
+          // Define options for formatting date
+          const options = {
+            year: "numeric",
+            month: "numeric",
+            day: "numeric",
+            hour: "2-digit",
+            minute: "2-digit",
+            second: "2-digit",
+          };
           setRecordingNames(result.map((recording) => recording.recordingName));
           setRecordingStars(result.map((recording) => recording.recordingStars));
           setRecordingScores(result.map((recording) => recording.scoreID));
+          setRecordingDates(result.map((recording) => {
+            //Set correct date format
+            const recordingDate = new Date(recording.recordingDate);
+            return recordingDate.toLocaleDateString("es-ES", options);
+          }))
         }).catch((error) => {
           console.log(`Cannot get recordings from database: ${error}`)
           // Handle errors if necessary
@@ -101,6 +117,7 @@ const ListAllRecordings = () => {
       const auxArrayList = JSON.parse(recordingList).filter((item, index) => index !== recordingNames.indexOf(nameOfFile));
       const auxRecordingStars = recordingNames.filter((item, index) => index !== recordingStars.indexOf(nameOfFile));
       const auxRecordingScores = recordingNames.filter((item, index) => index !== recordingScores.indexOf(nameOfFile));
+      const auxRecordingDates = recordingNames.filter((item, index) => index !== recordingDates.indexOf(nameOfFile));
       // Delete recording from database
       console.log("Deleting: ", idToDelete);
       deleteRecording(idToDelete).then(() => {
@@ -108,6 +125,7 @@ const ListAllRecordings = () => {
         setRecordingList(auxArrayList);
         setRecordingStars(auxRecordingStars)
         setRecordingScores(auxRecordingScores)
+        setRecordingScores(auxRecordingDates)
       }).catch((error) => {
         console.log(`Cannot delete recordings from database: ${error}`)
       })
@@ -157,7 +175,7 @@ const ListAllRecordings = () => {
               </div>
               
               <div className={ListAllRecordingsCSS.dateTime}>
-                <i>19/02/2024 - 09:18</i>
+                <i>{recordingDates[index]}</i>
               </div>
               <div className={ListAllRecordingsCSS.buttonGroup}>
                 <button className={ListAllRecordingsCSS.iconbutton} onClick={() => handleSeeClick(nameOfFile, index)}>
