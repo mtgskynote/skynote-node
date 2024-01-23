@@ -51,7 +51,6 @@ const ListRecordings = () => {
       if(userData===null){
       getCurrentUser() // fetchData is already an async function
         .then((result) => {
-          //console.log(`getCurentUser() has returnd this result: ${JSON.stringify(result)}`);
           setUserData(result);
         }).catch((error) => {
           console.log(`getCurentUser() error: ${error}`)
@@ -60,7 +59,7 @@ const ListRecordings = () => {
       }
 
       if(userData !== null){
-        getRecData("645b6e484612a8ebe8525933", "64d0de60d9ac9a34a66b4d45").then((result) => {
+        getRecData(userData.id, "64d0de60d9ac9a34a66b4d45").then((result) => {
           // Define options for formatting date
           const options = {
             year: "numeric",

@@ -12,6 +12,7 @@ import PopUpWindow from "./PopUpWindow.js";
 import XMLParser from "react-xml-parser";
 import { getRecData, getRecording, putRecording, deleteRecording, patchViewPermissions } from "../utils/studentRecordingMethods.js";
 import { Buffer } from 'buffer';
+import { useAppContext } from "../context/appContext";
 // @ts-ignore
 window.Buffer = Buffer;
 
@@ -19,6 +20,8 @@ window.Buffer = Buffer;
 const folderBasePath = "/xmlScores/violin";
 
 const ProgressPlayFile = (props) => {
+  const { getCurrentUser } = useAppContext();
+  const [userData, setUserData] = useState(null);
   const params = useParams();
 
   const cursorRef = useRef(null);
@@ -69,6 +72,21 @@ const ProgressPlayFile = (props) => {
     setIsResetButtonPressed(false);
   };
 
+  const fetchDataFromAPI = () => {
+    if(userData===null){
+    getCurrentUser() // fetchData is already an async function
+      .then((result) => {
+        console.log(`getCurentUser() has returnd this result: ${JSON.stringify(result)}`);
+        setUserData(result);
+      }).catch((error) => {
+        console.log(`getCurentUser() error: ${error}`)
+        // Handle errors if necessary
+      })
+
+    }};   
+
+  
+
   // Define pitch callback function 
   const handlePitchCallback = (pitchData) => {
     pitchCount=pitchCount+1;
@@ -106,7 +124,7 @@ const ProgressPlayFile = (props) => {
     //console.log("I received audio, i proceed to save everything: ", dataBlob, jsonToDownload)
     const jsonData = JSON.parse(jsonToDownload)//convert data to json
     const jsonComplete={
-      studentId: "645b6e484612a8ebe8525933", 
+      studentId: userData.id, 
       scoreId: "64d0de60d9ac9a34a66b4d45", 
       recordingName: `${userFileName}`, 
       date: new Date(), 
@@ -219,10 +237,18 @@ const ProgressPlayFile = (props) => {
     }
   }, [audioReady]);
 
+  useEffect(()=>{
+    //Now that we know that score is loaded, get userData
+    if(scoreTitle!==null){
+      fetchDataFromAPI();
+    }
+  },[scoreTitle])
+
   useEffect(() => {
     //This part just gets the tittle of the score, so it can later be used for the saving part
     //I don't know if it's the most efficient way, I based the code on the one used in AllLessons.js
     const requestScoreTitle = async () => {
+      //Get score title
       try {
         const response = await fetch(`${folderBasePath}/${params.files}`);
         const xmlFileData = await response.text();
