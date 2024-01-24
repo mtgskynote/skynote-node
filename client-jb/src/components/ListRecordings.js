@@ -44,7 +44,6 @@ const ListRecordings = () => {
   const score = location.state?.score || 'DefaultSong';
   const song = location.state?.song || 'DefaultSong1';
   const scoreID=JSON.parse(localStorage.getItem("scoreData")).find(item => item.fname === score)._id;
-  console.log(scoreID)
 
   // Starting --> load recordings from userID and scoreID
   useEffect(() => {
@@ -110,13 +109,11 @@ const ListRecordings = () => {
 
   // Event handler for click on Trash
   const handleTrashClick = (nameOfFile, number) => {
-    /*if (recordingNames.indexOf(nameOfFile) !== -1) {
+    if (recordingNames.indexOf(nameOfFile) !== -1) {
       const idToDelete = JSON.parse(recordingList)[recordingNames.indexOf(nameOfFile)].recordingId;
       const auxArrayNames = recordingNames.filter((item, index) => index !== recordingNames.indexOf(nameOfFile));
       const auxArrayList = JSON.parse(recordingList).filter((item, index) => index !== recordingNames.indexOf(nameOfFile));
-      console.log("holaaaaa", JSON.parse(recordingDates))
-      const auxArrayDates = JSON.parse(recordingDates).filter((item, index) => index !== recordingDates.indexOf(nameOfFile));
-      console.log("Deleting: ", idToDelete);
+      const auxArrayDates = recordingDates.filter((item, index) => index !== recordingNames.indexOf(nameOfFile));
       deleteRecording(idToDelete).then(() => {
         setRecordingNames(auxArrayNames);
         setRecordingList(auxArrayList);
@@ -125,8 +122,7 @@ const ListRecordings = () => {
       }).catch((error) => {
         console.log(`Cannot delete recordings from database: ${error}`)
       })
-    }*/
-    console.log("not deleting, not working")
+    }
   };
 
 
