@@ -51,7 +51,7 @@ const sxStyles = {
 };
 
 const AllLessons = () => {
-  const { getAllLevels, getAllSkills, getAllNames, getAllScoreData } = useAppContext();
+  const { getAllLevels, getAllSkills, getAllNames, getAllScoreData, getAllScoreData2 } = useAppContext();
 
   const [titles, setTitles] = useState({});
   const [selectedNodeActive, setSelectedNodeActive] = useState(false);
@@ -60,10 +60,14 @@ const AllLessons = () => {
 
   const fetchAllData = async () => {   
     let data = []
+    let data2 = []
     console.log("Fetching all data...");
     try{
-      data = await getAllScoreData();
-      console.log("AllLessons===============================All data fetched:", data); 
+      //Lonce call
+      //data = await getAllScoreData();
+      //console.log("AllLessons===============================All data fetched:", data); 
+      data2 = await getAllScoreData2();
+      console.log("AllLessons===============================All data fetched222:", data2); 
       //return data;
     } catch (error) { 
       console.log(`error in getAllScoreData`, error)

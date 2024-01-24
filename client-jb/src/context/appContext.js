@@ -155,11 +155,23 @@ const AppProvider = ({ children }) => {
     }
   };
 
+  //Lonce`s
   const getAllScoreData = async() => {
     try {
       const response = await axios.get("/api/v1/scores/getAllScoreData", {
       });
       console.log("======================   names returned :");//, response.data);
+      return response.data;
+    } catch (error) {
+      console.error("Error fetching file names:", error);
+    }
+  };  
+
+  //OUR
+  const getAllScoreData2 = async() => {
+    try {
+      const response = await axios.get("/api/v1/scores/getAllScoreData2", {
+      });
       return response.data;
     } catch (error) {
       console.error("Error fetching file names:", error);
@@ -179,6 +191,7 @@ const AppProvider = ({ children }) => {
         getAllSkills,
         getAllNames,
         getAllScoreData,
+        getAllScoreData2, //ours
       }}
     >
       {children}
