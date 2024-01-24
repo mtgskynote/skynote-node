@@ -70,6 +70,7 @@ const AppProvider = ({ children }) => {
     localStorage.removeItem("user");
     localStorage.removeItem("token");
     localStorage.removeItem("location");
+    localStorage.removeItem("scoreData"); //This is technically not User data, but it's simpler if I leave it here cause we have to get rid of it anyways :)
   };
 
   // Set up user with current user, endpoint, and alert text
@@ -172,6 +173,7 @@ const AppProvider = ({ children }) => {
     try {
       const response = await axios.get("/api/v1/scores/getAllScoreData2", {
       });
+      localStorage.setItem("scoreData", JSON.stringify(response.data));
       return response.data;
     } catch (error) {
       console.error("Error fetching file names:", error);
