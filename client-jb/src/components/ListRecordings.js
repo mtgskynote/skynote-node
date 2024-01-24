@@ -37,17 +37,21 @@ const ListRecordings = () => {
   const [recordingNames, setRecordingNames] = useState(null);
   const [recordingStars, setRecordingStars] = useState(null);
   const [recordingDates, setRecordingDates] = useState(null);
+  const [scoreSkill, setScoreSkill] = useState(null);
+  const [scoreLevel, setScoreLevel] = useState(null);
   const location = useLocation();
   const navigate = useNavigate();
 
   // Access the passed variables from the location object
   const score = location.state?.score || 'DefaultSong';
   const song = location.state?.song || 'DefaultSong1';
-  const scoreID=JSON.parse(localStorage.getItem("scoreData")).find(item => item.fname === score)._id;
-  console.log(scoreID)
 
   // Starting --> load recordings from userID and scoreID
   useEffect(() => {
+    const itemFoundLocalStorage=JSON.parse(localStorage.getItem("scoreData")).find(item => item.fname === score)
+    const scoreID=itemFoundLocalStorage._id;
+    setScoreLevel(itemFoundLocalStorage.level)
+    setScoreSkill(itemFoundLocalStorage.skill)
 
     const fetchDataFromAPI = () => {
       if(userData===null){
@@ -88,6 +92,8 @@ const ListRecordings = () => {
   };   
 
     fetchDataFromAPI();
+
+    
     
   }, [userData,recordingList]);
 
@@ -148,11 +154,11 @@ const ListRecordings = () => {
       <div className={ListRecordingsCSS.textGroup}>
         <div><h7 >
           <FontAwesomeIcon icon={faPencilSquare} className={ListRecordingsCSS.auxIcon}/>
-          First finger 
+          {scoreSkill} 
         </h7></div>
         <div><h7 >
           <FontAwesomeIcon icon={faBoxArchive} className={ListRecordingsCSS.auxIcon}/>
-          Level 1
+          Level {scoreLevel}
         </h7></div>
       </div>
 
