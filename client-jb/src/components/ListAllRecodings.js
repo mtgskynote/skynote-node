@@ -40,12 +40,16 @@ const ListAllRecordings = () => {
   const [recordingStars, setRecordingStars] = useState(null);
   const [recordingScores, setRecordingScores] = useState(null);
   const [recordingDates, setRecordingDates] = useState(null);
+  const [recordingSkills, setRecordingSkills] = useState(null);
+  const [recordingLevels, setRecordingLevels] = useState(null);
   const location = useLocation();
   const navigate = useNavigate();
 
 
   // Starting --> load recordings from userID and scoreID
   useEffect(() => {
+
+    const local=JSON.parse(localStorage.getItem("scoreData"))
 
     const fetchDataFromAPI = () => {
       if(userData===null){
@@ -74,11 +78,19 @@ const ListAllRecordings = () => {
           };
           setRecordingNames(result.map((recording) => recording.recordingName));
           setRecordingStars(result.map((recording) => recording.recordingStars));
-          setRecordingScores(result.map((recording) => recording.scoreID));
           setRecordingDates(result.map((recording) => {
             //Set correct date format
             const recordingDate = new Date(recording.recordingDate);
             return recordingDate.toLocaleDateString("es-ES", options);
+          }))
+          setRecordingLevels(result.map((recording)=> {
+            return local.find(item => item._id === recording.scoreID).level
+          }))
+          setRecordingSkills(result.map((recording)=> {
+            return local.find(item => item._id === recording.scoreID).skill
+          }))
+          setRecordingScores(result.map((recording)=> {
+            return local.find(item => item._id === recording.scoreID).fname
           }))
         }).catch((error) => {
           console.log(`Cannot get recordings from database: ${error}`)
@@ -115,9 +127,11 @@ const ListAllRecordings = () => {
       // Delete recording entry of state arrays
       const auxArrayNames = recordingNames.filter((item, index) => index !== recordingNames.indexOf(nameOfFile));
       const auxArrayList = JSON.parse(recordingList).filter((item, index) => index !== recordingNames.indexOf(nameOfFile));
-      const auxRecordingStars = recordingNames.filter((item, index) => index !== recordingStars.indexOf(nameOfFile));
-      const auxRecordingScores = recordingNames.filter((item, index) => index !== recordingScores.indexOf(nameOfFile));
-      const auxRecordingDates = recordingNames.filter((item, index) => index !== recordingDates.indexOf(nameOfFile));
+      const auxRecordingStars = recordingStars.filter((item, index) => index !== recordingNames.indexOf(nameOfFile));
+      const auxRecordingScores = recordingScores.filter((item, index) => index !== recordingNames.indexOf(nameOfFile));
+      const auxRecordingDates = recordingDates.filter((item, index) => index !== recordingNames.indexOf(nameOfFile));
+      const auxRecordingSkills = recordingSkills.filter((item, index) => index !== recordingNames.indexOf(nameOfFile));
+      const auxRecordingLevels = recordingLevels.filter((item, index) => index !== recordingNames.indexOf(nameOfFile));
       // Delete recording from database
       console.log("Deleting: ", idToDelete);
       deleteRecording(idToDelete).then(() => {
@@ -126,6 +140,8 @@ const ListAllRecordings = () => {
         setRecordingStars(auxRecordingStars)
         setRecordingScores(auxRecordingScores)
         setRecordingScores(auxRecordingDates)
+        setRecordingLevels(auxRecordingLevels)
+        setRecordingSkills(auxRecordingSkills)
       }).catch((error) => {
         console.log(`Cannot delete recordings from database: ${error}`)
       })
@@ -162,15 +178,15 @@ const ListAllRecordings = () => {
               <div className={ListAllRecordingsCSS.textGroup}>
                 <div><h7>
                   <FontAwesomeIcon icon={faMusic} className={ListAllRecordingsCSS.auxIcon}/>
-                  '{recordingScores[index]}
+                  {recordingScores[index]}
                 </h7></div>
                 <div><h7 >
                   <FontAwesomeIcon icon={faPencilSquare} className={ListAllRecordingsCSS.auxIcon}/>
-                  First finger
+                  {recordingSkills[index]}
                 </h7></div>
                 <div><h7 >
                   <FontAwesomeIcon icon={faBoxArchive} className={ListAllRecordingsCSS.auxIcon}/>
-                  Level 1
+                  Level {recordingLevels[index]}
                 </h7></div>
               </div>
               
