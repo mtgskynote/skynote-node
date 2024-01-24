@@ -58,33 +58,21 @@ const AllLessons = () => {
   const [selectedNodeInfo, setSelectedNodeInfo] = useState(null);
   const [fetchedData, setFetchedData] = useState({});
 
-  const fetchAllData = async () => {   
-    let data = []
-    try{
-      data = await getAllScoreData2();
-      const treeData = data.reduce((result, item) => {
-        const { level, skill, _id, fname } = item;
-        result[level] = result[level] || {};
-        result[level][skill] = result[level][skill] || [];
-        result[level][skill].push({ id: _id, 
-                                    name:fname, 
-                                    path: `/xmlScores/violin/${fname}.xml`,
-                                    route_path: `/all-lessons/${fname}.xml`,});
-      
-        return result;
-      }, {});
-      return treeData;
-      //return data;
-    } catch (error) { 
-      console.log(`error in getAllScoreData`, error)
-    }    
-    
-  }
-
   useEffect(() => {
-    fetchAllData().then((data) => {
-      setFetchedData(data);
-    });
+    const data= JSON.parse(localStorage.getItem("scoreData"));
+    const treeData = data.reduce((result, item) => {
+      const { level, skill, _id, fname } = item;
+      result[level] = result[level] || {};
+      result[level][skill] = result[level][skill] || [];
+      result[level][skill].push({ id: _id, 
+                                  name:fname, 
+                                  path: `/xmlScores/violin/${fname}.xml`,
+                                  route_path: `/all-lessons/${fname}.xml`,});
+    
+      return result;
+    }, {});
+    setFetchedData(treeData);
+
   }, []); // This useEffect is only for fetching the data
 
   useEffect(() => {
