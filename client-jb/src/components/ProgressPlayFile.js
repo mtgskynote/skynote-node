@@ -67,7 +67,9 @@ const ProgressPlayFile = (props) => {
   const [recordMode, setRecordMode] = useState(false);
 
   const navigate = useNavigate();
+  const scoreID=JSON.parse(localStorage.getItem("scoreData")).find(item => item.fname === params.files)._id;
 
+  
   const onResetDone = () => {
     setIsResetButtonPressed(false);
   };
@@ -125,7 +127,7 @@ const ProgressPlayFile = (props) => {
     const jsonData = JSON.parse(jsonToDownload)//convert data to json
     const jsonComplete={
       studentId: userData.id, 
-      scoreId: "64d0de60d9ac9a34a66b4d45", 
+      scoreId: scoreID, 
       recordingName: `${userFileName}`, 
       date: new Date(), 
       audio: dataBlob,
@@ -250,7 +252,7 @@ const ProgressPlayFile = (props) => {
     const requestScoreTitle = async () => {
       //Get score title
       try {
-        const response = await fetch(`${folderBasePath}/${params.files}`);
+        const response = await fetch(`${folderBasePath}/${params.files}.xml`);
         const xmlFileData = await response.text();
         const arr = Array.from(
           new XMLParser()
@@ -571,7 +573,7 @@ const ProgressPlayFile = (props) => {
       {(showRepetitionMessage&&<SimpleMessaje message={repetitionMessage}/>)}
 
       <OpenSheetMusicDisplay
-        file={`${folderBasePath}/${params.files}`}
+        file={`${folderBasePath}/${params.files}.xml`}
         autoResize={true}
         cursorRef={cursorRef}
         playbackRef={playbackRef}

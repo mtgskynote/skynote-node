@@ -43,6 +43,8 @@ const ListRecordings = () => {
   // Access the passed variables from the location object
   const score = location.state?.score || 'DefaultSong';
   const song = location.state?.song || 'DefaultSong1';
+  const scoreID=JSON.parse(localStorage.getItem("scoreData")).find(item => item.fname === score)._id;
+  console.log(scoreID)
 
   // Starting --> load recordings from userID and scoreID
   useEffect(() => {
@@ -59,7 +61,7 @@ const ListRecordings = () => {
       }
 
       if(userData !== null){
-        getRecData(userData.id, "64d0de60d9ac9a34a66b4d45").then((result) => {
+        getRecData(userData.id, scoreID).then((result) => {
           // Define options for formatting date
           const options = {
             year: "numeric",
@@ -100,6 +102,7 @@ const ListRecordings = () => {
   // Event handler for click on See
   const handleSeeClick = (nameOfFile, number)=> {
       const id = JSON.parse(recordingList)[recordingNames.indexOf(nameOfFile)].recordingId;
+      console.log("ID ", id)
       //Pass recording ID to ProgressPlayfileVisual
       navigate(score, {state:{'recordingID':id}})
     }
@@ -107,10 +110,11 @@ const ListRecordings = () => {
 
   // Event handler for click on Trash
   const handleTrashClick = (nameOfFile, number) => {
-    if (recordingNames.indexOf(nameOfFile) !== -1) {
+    /*if (recordingNames.indexOf(nameOfFile) !== -1) {
       const idToDelete = JSON.parse(recordingList)[recordingNames.indexOf(nameOfFile)].recordingId;
       const auxArrayNames = recordingNames.filter((item, index) => index !== recordingNames.indexOf(nameOfFile));
       const auxArrayList = JSON.parse(recordingList).filter((item, index) => index !== recordingNames.indexOf(nameOfFile));
+      console.log("holaaaaa", JSON.parse(recordingDates))
       const auxArrayDates = JSON.parse(recordingDates).filter((item, index) => index !== recordingDates.indexOf(nameOfFile));
       console.log("Deleting: ", idToDelete);
       deleteRecording(idToDelete).then(() => {
@@ -121,7 +125,8 @@ const ListRecordings = () => {
       }).catch((error) => {
         console.log(`Cannot delete recordings from database: ${error}`)
       })
-    }
+    }*/
+    console.log("not deleting, not working")
   };
 
 

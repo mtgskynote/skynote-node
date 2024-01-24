@@ -67,7 +67,7 @@ const AllLessons = () => {
       result[level][skill].push({ id: _id, 
                                   name:fname, 
                                   path: `/xmlScores/violin/${fname}.xml`,
-                                  route_path: `/all-lessons/${fname}.xml`,});
+                                  route_path: `/all-lessons/${fname}`,});
     
       return result;
     }, {});

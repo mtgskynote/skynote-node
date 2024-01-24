@@ -305,7 +305,7 @@ const ProgressPlayFileVisual = (props) => {
       {(showRepetitionMessage&&<SimpleMessaje message={repetitionMessage}/>)}
 
       <OpenSheetMusicDisplay
-        file={`${folderBasePath}/${params.files}`}
+        file={`${folderBasePath}/${params.files}.xml`}
         autoResize={true}
         cursorRef={cursorRef}
         playbackRef={playbackRef}
