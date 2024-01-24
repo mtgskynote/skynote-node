@@ -96,6 +96,7 @@ const AppProvider = ({ children }) => {
         },
       });
       addUserToLocalStorage(user, token, location );  // why are we doing this?
+      getAllScoreData2();
     } catch (error) {
       dispatch({
         type: SETUP_USER_ERROR,
