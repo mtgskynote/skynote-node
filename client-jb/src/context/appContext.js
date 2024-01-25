@@ -84,8 +84,6 @@ const AppProvider = ({ children }) => {
 
       const { user, token, location } = data;
 
-      console.log(`user from setupUser is ${JSON.stringify(user)}`) 
-      console.log(`_id from setupUser is ${JSON.stringify(user.id)}`)
       dispatch({
         type: SETUP_USER_SUCCESS,
         payload: {
@@ -124,7 +122,6 @@ const AppProvider = ({ children }) => {
       const response = await axios.post("/api/v1/scores/levels", {
         level: level,
       });
-      // console.log(response.data);
       return response.data;
     } catch (error) {
       console.error("Error fetching file names:", error);
@@ -136,7 +133,6 @@ const AppProvider = ({ children }) => {
       const response = await axios.post("/api/v1/scores/skills", {
         level: level,
       });
-      // console.log(response.data);
       return response.data;
     } catch (error) {
       console.error("Error fetching file names:", error);
@@ -149,7 +145,6 @@ const AppProvider = ({ children }) => {
         level: level,
         skill: skill,
       });
-      console.log("names:", response.data);
       return response.data;
     } catch (error) {
       console.error("Error fetching file names:", error);
