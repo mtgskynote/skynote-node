@@ -55,7 +55,6 @@ const ListAllRecordings = () => {
       if(userData===null){
       getCurrentUser() // fetchData is already an async function
         .then((result) => {
-          console.log(`getCurentUser() has returnd this result: ${JSON.stringify(result)}`);
           setUserData(result);
         }).catch((error) => {
           console.log(`getCurentUser() error: ${error}`)

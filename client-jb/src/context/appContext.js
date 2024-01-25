@@ -114,7 +114,6 @@ const AppProvider = ({ children }) => {
   };
 
   const getCurrentUser = async () => {
-    console.log(`getting current user from STATE = ${JSON.stringify(state.user)}  `)
     return state.user;
   }
 
