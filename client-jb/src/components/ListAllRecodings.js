@@ -66,7 +66,6 @@ const ListAllRecordings = () => {
       if(userData !== null){
         getAllRecData(userData.id).then((result) => {
           setRecordingList(JSON.stringify(result));
-          console.log(result)
           // Define options for formatting date
           const options = {
             year: "numeric",
@@ -90,7 +89,7 @@ const ListAllRecordings = () => {
             return local.find(item => item._id === recording.scoreID).skill
           }))
           setRecordingScores(result.map((recording)=> {
-            return local.find(item => item._id === recording.scoreID).fname
+            return local.find(item => item._id === recording.scoreID).title
           }))
         }).catch((error) => {
           console.log(`Cannot get recordings from database: ${error}`)
