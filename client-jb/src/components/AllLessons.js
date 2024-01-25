@@ -18,15 +18,24 @@ const getTitle = async (fileName) => {
   try {
     const response = await fetch(`${folderBasePath}/${fileName}.xml`);
     const xmlFileData = await response.text();
-    const arr = Array.from(
+    const movementTitle = Array.from(
       new XMLParser()
         .parseFromString(xmlFileData)
         .getElementsByTagName("movement-title")
     );
-    if (arr.length > 0) {
-      return arr[0].value;
+    const workTitle = Array.from(
+      new XMLParser()
+        .parseFromString(xmlFileData)
+        .getElementsByTagName("work-title")
+    );
+    //console.log("AQUIAQUIAQUIAQUIAQUIAQUIAQUIAQUI:", arr[0]);
+    if (movementTitle.length > 0) {
+      return movementTitle[0].value;
+    } else if (workTitle.length > 0) {
+      return workTitle[0].value;
     } else {
-      return fileName;
+      //console.log(`NO DATA FOUND FOR ${fileName}.xml`);
+      return fileName
     }
   } catch (err) {
     console.log(err.message);
@@ -36,9 +45,19 @@ const getTitle = async (fileName) => {
 
 const fetchAllTitles = async (files) => {
   const titles = {};
+  var tempScoreData = JSON.parse(localStorage.getItem("scoreData"));
   for (let file of files) {
-    titles[file.name] = await getTitle(file.name);
+    let scoreName = await getTitle(file.name);
+    titles[file.name] = scoreName;
+
+    console.log("Currently at: ", file.name, scoreName);
+    let rUThere = tempScoreData.find(obj => obj.fname === file.name);
+    console.log(rUThere);
+    tempScoreData.find(obj => obj.fname === file.name).title = scoreName;
   }
+  //console.log("Here is a list of the titles:\n", titles);
+  console.log("Here is your new data king:\n", tempScoreData);
+  localStorage.setItem("scoreData", JSON.stringify(tempScoreData));
   return titles;
 };
 
