@@ -174,18 +174,18 @@ const ListAllRecordings = () => {
                   <FontAwesomeIcon icon={faStar} className={recordingStars[index]>=3 ? ListAllRecordingsCSS.completeStar : ListAllRecordingsCSS.incompleteStar}/>
               </div>
               <div className={ListAllRecordingsCSS.textGroup}>
-                <div><h7>
+                <div><h6>
                   <FontAwesomeIcon icon={faMusic} className={ListAllRecordingsCSS.auxIcon}/>
                   {recordingScores[index]}
-                </h7></div>
-                <div><h7 >
+                </h6></div>
+                <div><h6 >
                   <FontAwesomeIcon icon={faPencilSquare} className={ListAllRecordingsCSS.auxIcon}/>
                   {recordingSkills[index]}
-                </h7></div>
-                <div><h7 >
+                </h6></div>
+                <div><h6 >
                   <FontAwesomeIcon icon={faBoxArchive} className={ListAllRecordingsCSS.auxIcon}/>
                   Level {recordingLevels[index]}
-                </h7></div>
+                </h6></div>
               </div>
               
               <div className={ListAllRecordingsCSS.dateTime}>
