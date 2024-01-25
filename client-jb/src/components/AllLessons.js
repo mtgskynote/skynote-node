@@ -49,14 +49,8 @@ const fetchAllTitles = async (files) => {
   for (let file of files) {
     let scoreName = await getTitle(file.name);
     titles[file.name] = scoreName;
-
-    console.log("Currently at: ", file.name, scoreName);
-    let rUThere = tempScoreData.find(obj => obj.fname === file.name);
-    console.log(rUThere);
     tempScoreData.find(obj => obj.fname === file.name).title = scoreName;
   }
-  //console.log("Here is a list of the titles:\n", titles);
-  console.log("Here is your new data king:\n", tempScoreData);
   localStorage.setItem("scoreData", JSON.stringify(tempScoreData));
   return titles;
 };
@@ -80,11 +74,12 @@ const AllLessons = () => {
   useEffect(() => {
     const data= JSON.parse(localStorage.getItem("scoreData"));
     const treeData = data.reduce((result, item) => {
-      const { level, skill, _id, fname } = item;
+      const { level, skill, _id, fname, title } = item;
       result[level] = result[level] || {};
       result[level][skill] = result[level][skill] || [];
       result[level][skill].push({ id: _id, 
-                                  name:fname, 
+                                  name: fname,
+                                  title: title, 
                                   path: `/xmlScores/violin/${fname}.xml`,
                                   route_path: `/all-lessons/${fname}`,});
     
