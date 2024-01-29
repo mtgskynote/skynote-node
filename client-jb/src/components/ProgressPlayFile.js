@@ -68,6 +68,7 @@ const ProgressPlayFile = (props) => {
 
   const navigate = useNavigate();
   const scoreID=JSON.parse(localStorage.getItem("scoreData")).find(item => item.fname === params.files)._id;
+  console.log("scoreID:", scoreID)
 
   
   const onResetDone = () => {
@@ -254,14 +255,21 @@ const ProgressPlayFile = (props) => {
       try {
         const response = await fetch(`${folderBasePath}/${params.files}.xml`);
         const xmlFileData = await response.text();
-        const arr = Array.from(
+        const movementTitle = Array.from(
           new XMLParser()
             .parseFromString(xmlFileData)
             .getElementsByTagName("movement-title")
         );
-        if (arr.length > 0) {
-          setScoreTitle(arr[0].value);
-        }
+        const workTitle = Array.from(
+          new XMLParser()
+            .parseFromString(xmlFileData)
+            .getElementsByTagName("work-title")
+        );
+        if (movementTitle.length > 0) {
+          setScoreTitle(movementTitle[0].value);
+        } else if (workTitle.length > 0) {
+          setScoreTitle(workTitle[0].value);}
+
       } catch (error) {
         console.log(error.message);
       }
@@ -545,6 +553,8 @@ const ProgressPlayFile = (props) => {
         const score = `${params.files}`;
         const song = `${scoreTitle}`;
         const typeList = 'single-song';
+
+        console.log("info ", score, song, typeList)
 
         // Use navigate to go to the ListRecordings page with parameters in the URL
         navigate('/ListRecordings', { state: { score, song, typeList } });
