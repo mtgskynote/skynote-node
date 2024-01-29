@@ -60,7 +60,6 @@ const MainMenu = () => {
         width: "70px",
         height: "30px",
         borderRadius: "10%",
-        display: "flex",
         justifyContent: "center",
         alignItems: "center",
         float: "right",

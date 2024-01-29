@@ -5,7 +5,7 @@ const WhiteLogo = ({ height, width }) => {
       <img
         src={white_logo}
         className="white-logo"
-        altprop="white-logo"
+        alt="white-logo"
         style={{width:'35%',height:'300%'}}
       />
     );

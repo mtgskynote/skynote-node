@@ -3,8 +3,7 @@ const MusicTech = ({ height, width }) => {
   return (
     <img
       src={musictech}
-      className="music-tech"
-      altprop="music-tech"
+      alt="music-tech"
       style={{ width: '100vw', height: '600px' }}
     />
   );

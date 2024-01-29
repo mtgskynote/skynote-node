@@ -4,7 +4,7 @@ const ViolinIpad = ({ height, width }) => {
     <img
       src={Violin_Ipad}
       className="violinipad"
-      altprop="violinipad"
+      alt="violinipad"
       style={{ width: '100vw', height: '600px' }}
     />
   );
