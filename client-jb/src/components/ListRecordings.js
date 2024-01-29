@@ -30,6 +30,7 @@ import {
 
 
 const ListRecordings = () => {
+  
 
   const { getCurrentUser } = useAppContext();
   const [userData, setUserData] = useState(null);
@@ -160,6 +161,7 @@ const ListRecordings = () => {
       </div>
 
       {/* List of songs */}
+      {recordingNames.length !==0?
       <div className={ListRecordingsCSS.songlist}>
         {recordingNames.map((nameOfFile, index) => (
           <div className={ListRecordingsCSS.songelement} key={index}>
@@ -184,7 +186,11 @@ const ListRecordings = () => {
             </li>
             </div>
         ))}
+      </div>  : 
+      <div> No recordings for this score
       </div>
+
+      }
 
       {/* Button to go back */}
       <button className={ListRecordingsCSS.backbutton} onClick={handleGoBack}>

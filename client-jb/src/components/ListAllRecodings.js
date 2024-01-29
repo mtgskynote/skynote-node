@@ -162,47 +162,51 @@ const ListAllRecordings = () => {
       </div>
 
       {/* List of songs */}
+      {recordingNames.length!==0?
       <div className={ListAllRecordingsCSS.songlist2}>
-        {recordingNames.map((nameOfFile, index) => (
-            //Each element/recording
-          <div className={ListAllRecordingsCSS.songelement2} key={index}>
-          <li key={index}>
-              <div className={ListAllRecordingsCSS.recTitle}><h5 >{nameOfFile}</h5></div>
-              <div className={ListAllRecordingsCSS.starsGroup}>
-                  <FontAwesomeIcon icon={faStar} className={recordingStars[index]>=1 ? ListAllRecordingsCSS.completeStar : ListAllRecordingsCSS.incompleteStar}/>
-                  <FontAwesomeIcon icon={faStar} className={recordingStars[index]>=2 ? ListAllRecordingsCSS.completeStar : ListAllRecordingsCSS.incompleteStar}/>
-                  <FontAwesomeIcon icon={faStar} className={recordingStars[index]>=3 ? ListAllRecordingsCSS.completeStar : ListAllRecordingsCSS.incompleteStar}/>
-              </div>
-              <div className={ListAllRecordingsCSS.textGroup}>
-                <div><h6>
-                  <FontAwesomeIcon icon={faMusic} className={ListAllRecordingsCSS.auxIcon}/>
-                  {recordingScores[index]}
-                </h6></div>
-                <div><h6 >
-                  <FontAwesomeIcon icon={faPencilSquare} className={ListAllRecordingsCSS.auxIcon}/>
-                  {recordingSkills[index]}
-                </h6></div>
-                <div><h6 >
-                  <FontAwesomeIcon icon={faBoxArchive} className={ListAllRecordingsCSS.auxIcon}/>
-                  Level {recordingLevels[index]}
-                </h6></div>
-              </div>
-              
-              <div className={ListAllRecordingsCSS.dateTime}>
-                <i>{recordingDates[index]}</i>
-              </div>
-              <div className={ListAllRecordingsCSS.buttonGroup}>
-                <button className={ListAllRecordingsCSS.iconbutton} onClick={() => handleSeeClick(nameOfFile, index)}>
-                  <FontAwesomeIcon icon={faEye} />
-                </button>
-                <button className={ListAllRecordingsCSS.iconbutton} onClick={() => handleTrashClick(nameOfFile, index)}>
-                  <FontAwesomeIcon icon={faTrash} />
-                </button>
-              </div>
-            </li>
+      {recordingNames.map((nameOfFile, index) => (
+          //Each element/recording
+        <div className={ListAllRecordingsCSS.songelement2} key={index}>
+        <li key={index}>
+            <div className={ListAllRecordingsCSS.recTitle}><h5 >{nameOfFile}</h5></div>
+            <div className={ListAllRecordingsCSS.starsGroup}>
+                <FontAwesomeIcon icon={faStar} className={recordingStars[index]>=1 ? ListAllRecordingsCSS.completeStar : ListAllRecordingsCSS.incompleteStar}/>
+                <FontAwesomeIcon icon={faStar} className={recordingStars[index]>=2 ? ListAllRecordingsCSS.completeStar : ListAllRecordingsCSS.incompleteStar}/>
+                <FontAwesomeIcon icon={faStar} className={recordingStars[index]>=3 ? ListAllRecordingsCSS.completeStar : ListAllRecordingsCSS.incompleteStar}/>
             </div>
-        ))}
-      </div>
+            <div className={ListAllRecordingsCSS.textGroup}>
+              <div><h6>
+                <FontAwesomeIcon icon={faMusic} className={ListAllRecordingsCSS.auxIcon}/>
+                {recordingScores[index]}
+              </h6></div>
+              <div><h6 >
+                <FontAwesomeIcon icon={faPencilSquare} className={ListAllRecordingsCSS.auxIcon}/>
+                {recordingSkills[index]}
+              </h6></div>
+              <div><h6 >
+                <FontAwesomeIcon icon={faBoxArchive} className={ListAllRecordingsCSS.auxIcon}/>
+                Level {recordingLevels[index]}
+              </h6></div>
+            </div>
+            
+            <div className={ListAllRecordingsCSS.dateTime}>
+              <i>{recordingDates[index]}</i>
+            </div>
+            <div className={ListAllRecordingsCSS.buttonGroup}>
+              <button className={ListAllRecordingsCSS.iconbutton} onClick={() => handleSeeClick(nameOfFile, index)}>
+                <FontAwesomeIcon icon={faEye} />
+              </button>
+              <button className={ListAllRecordingsCSS.iconbutton} onClick={() => handleTrashClick(nameOfFile, index)}>
+                <FontAwesomeIcon icon={faTrash} />
+              </button>
+            </div>
+          </li>
+          </div>
+      ))}
+      </div>:
+      <div> No recordings yet</div>
+    }
+      
 
       {/* Button to go back */}
       <button className={ListAllRecordingsCSS.backbutton} onClick={handleGoBack}>
