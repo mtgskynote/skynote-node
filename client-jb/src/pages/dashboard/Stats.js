@@ -9,6 +9,7 @@ import Header from "../../components/Header";
 import LineChart from "../../components/LineChart";
 import Wrapper from "../../assets/wrappers/StatsContainer";
 import { useAppContext } from "../../context/appContext";
+import { getAllRecData } from "../../utils/studentRecordingMethods.js";
 
 ChartJS.register(ArcElement, Tooltip, Legend);
 
@@ -87,6 +88,14 @@ export const dataset = {
 const Stats = () => {
   const { getCurrentUser } = useAppContext();
   const [userData, setUserData] = useState(null);
+  const [scoresData, setScoresData] = useState(null);
+  const [recordingList, setRecordingList] = useState(null);
+  const [recordingNames, setRecordingNames] = useState(null);
+  const [recordingStars, setRecordingStars] = useState(null);
+  const [recordingScores, setRecordingScores] = useState(null);
+  const [recordingDates, setRecordingDates] = useState(null);
+  const [recordingSkills, setRecordingSkills] = useState(null);
+  const [recordingLevels, setRecordingLevels] = useState(null);
   const classes = useStyles();
 
   const fetchDataFromAPI = () => {
@@ -102,15 +111,61 @@ const Stats = () => {
 
     };
 
-
-  
+    //get User Data
     useEffect(()=>{
-      //Now that we know that score is loaded, get userData
+      
       if(userData===null){
         fetchDataFromAPI();
       }
       console.log(userData)
     },[userData])
+
+    //get Scores data
+    useEffect(() => {
+      const data= JSON.parse(localStorage.getItem("scoreData"));
+      setScoresData(data);
+    }, []); // Only once
+
+    //get Recordings Data for this user
+    useEffect(()=>{
+      if(userData!==null && scoresData!==null){
+        getAllRecData(userData.id).then((result) => {
+          setRecordingList(JSON.stringify(result));
+          // Define options for formatting date
+          /*const options = {
+            year: "numeric",
+            month: "numeric",
+            day: "numeric",
+            hour: "2-digit",
+            minute: "2-digit",
+            second: "2-digit",
+          };*/
+          /*setRecordingDates(result.map((recording) => {
+            //Set correct date format
+            const recordingDate = new Date(recording.recordingDate);
+            return recordingDate.toLocaleDateString("es-ES", options);
+          }))*/
+          setRecordingNames(result.map((recording) => recording.recordingName));
+          setRecordingStars(result.map((recording) => recording.recordingStars));
+          setRecordingDates(result.map((recording) => recording.recordingDate));
+          setRecordingLevels(result.map((recording)=> {
+            return scoresData.find(item => item._id === recording.scoreID).level
+          }))
+          setRecordingSkills(result.map((recording)=> {
+            return scoresData.find(item => item._id === recording.scoreID).skill
+          }))
+          setRecordingScores(result.map((recording)=> {
+            return scoresData.find(item => item._id === recording.scoreID).title
+          }))
+        }).catch((error) => {
+          console.log(`Cannot get recordings from database: ${error}`)
+          // Handle errors if necessary
+        })
+      }
+      console.log(userData)
+    },[userData, scoresData])
+
+
 
   return (
     <Wrapper>
@@ -171,7 +226,7 @@ const Stats = () => {
           </Grid>
           {/*Placeholder*/}
           <Grid item xs={12}>
-            <div className="grid-tile">Plceholder</div>
+            <div className="grid-tile">{recordingList}</div>
           </Grid>
         </Grid>
       </>
