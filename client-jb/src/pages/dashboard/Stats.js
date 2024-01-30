@@ -1,4 +1,5 @@
 import { ListItem, ListItemText, List, Grid, Box } from "@mui/material";
+import React, { useEffect, useState, useRef } from "react";
 import { makeStyles } from "@material-ui/styles";
 import { Rating } from "@mui/material";
 import { Chart as ChartJS, ArcElement, Tooltip, Legend } from "chart.js";
@@ -7,13 +8,15 @@ import { Doughnut } from "react-chartjs-2";
 import Header from "../../components/Header";
 import LineChart from "../../components/LineChart";
 import Wrapper from "../../assets/wrappers/StatsContainer";
+import { useAppContext } from "../../context/appContext";
 
 ChartJS.register(ArcElement, Tooltip, Legend);
 
+
 const useStyles = makeStyles((theme) => ({
   gridClassName: {
-    boxShadow: "1px 10px 5px",
-    position: "relative",
+   //boxShadow: "1px 10px 5px",
+    //position: "relative",
   },
   // other classes here
 }));
@@ -82,15 +85,43 @@ export const dataset = {
 };
 
 const Stats = () => {
+  const { getCurrentUser } = useAppContext();
+  const [userData, setUserData] = useState(null);
   const classes = useStyles();
+
+  const fetchDataFromAPI = () => {
+
+    getCurrentUser() // fetchData is already an async function
+      .then((result) => {
+        console.log(`getCurentUser() has returnd this result: ${JSON.stringify(result)}`);
+        setUserData(result);
+      }).catch((error) => {
+        console.log(`getCurentUser() error: ${error}`)
+        // Handle errors if necessary
+      })
+
+    };
+
+
+  
+    useEffect(()=>{
+      //Now that we know that score is loaded, get userData
+      if(userData===null){
+        fetchDataFromAPI();
+      }
+      console.log(userData)
+    },[userData])
 
   return (
     <Wrapper>
       <>
+      {/*TITLE*/}
         <Grid>
-          <h3 className="logo-text2">Dashboard</h3>
+          <h3 className="logo-text2">Hello {userData?userData.name:""}</h3>
         </Grid>
+        
         <Grid container spacing={6}>
+          {/*Comment*/}
           <Grid item xs={12}>
             <Box p={2} border={1} textAlign="center">
               Continue Learning... Big Puppy
@@ -99,9 +130,10 @@ const Stats = () => {
               </div>
             </Box>
           </Grid>
+          {/*Note*/}
           <Grid item xs={3}>
             <div container className={`${classes.gridClassName} grid-tile`}>
-              <Box p={2}>Total Progress</Box>
+                
               <Box p={2} sx={{ textAlign: "left" }}>
                 <List sx={{ listStyleType: "disc", pl: 4 }}>
                   <ListItem sx={{ display: "list-item" }}>
@@ -117,6 +149,7 @@ const Stats = () => {
               </Box>
             </div>
           </Grid>
+          {/*Percentajes Chart*/}
           <Grid item xs={3}>
             <div className="grid-tile">
               <Doughnut
@@ -128,7 +161,7 @@ const Stats = () => {
               />
             </div>
           </Grid>
-
+          {/*¿¿¿¿¿*/}
           <Grid item xs={6}>
             <div className="grid-tile">
               <Box height="400px" width="800px" m="-20px 0 0 0">
@@ -136,6 +169,7 @@ const Stats = () => {
               </Box>
             </div>
           </Grid>
+          {/*Placeholder*/}
           <Grid item xs={12}>
             <div className="grid-tile">Plceholder</div>
           </Grid>
