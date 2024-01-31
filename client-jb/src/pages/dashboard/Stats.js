@@ -10,6 +10,8 @@ import LineChart from "../../components/LineChart";
 import Wrapper from "../../assets/wrappers/StatsContainer";
 import { useAppContext } from "../../context/appContext";
 import { getAllRecData } from "../../utils/studentRecordingMethods.js";
+import StatsCSS from './Stats.module.css'
+import PercentagesStarsStats from "../../components/StatsPercentagesStars.js";
 
 ChartJS.register(ArcElement, Tooltip, Legend);
 
@@ -96,13 +98,14 @@ const Stats = () => {
   const [recordingDates, setRecordingDates] = useState(null);
   const [recordingSkills, setRecordingSkills] = useState(null);
   const [recordingLevels, setRecordingLevels] = useState(null);
+  const [starsPerLevel, setStarsPerLevel] = useState(null);
+  const [achievedStarsPerLevel, setAchievedStarsPerLevel] = useState(null);
   const classes = useStyles();
 
   const fetchDataFromAPI = () => {
 
     getCurrentUser() // fetchData is already an async function
       .then((result) => {
-        console.log(`getCurentUser() has returnd this result: ${JSON.stringify(result)}`);
         setUserData(result);
       }).catch((error) => {
         console.log(`getCurentUser() error: ${error}`)
@@ -122,8 +125,24 @@ const Stats = () => {
 
     //get Scores data
     useEffect(() => {
-      const data= JSON.parse(localStorage.getItem("scoreData"));
-      setScoresData(data);
+      // import local data
+      const local= JSON.parse(localStorage.getItem("scoreData"));
+      // save in state
+      setScoresData(local);
+      // Count the total number of stars per level, and save
+      const levelCounts = {};
+      console.log("local ", local)
+      local.forEach(entry => {
+        const level = entry.level;
+        // Check if the level is already in the counts object, if not, initialize it to 1
+        if (levelCounts[level] === undefined) {
+          levelCounts[level] = 3; // 3 stars per score maximum
+        } else {
+          // If the level is already in the counts object, increment the count
+          levelCounts[level]+=3;
+        }
+      });
+      setStarsPerLevel(levelCounts)
     }, []); // Only once
 
     //get Recordings Data for this user
@@ -131,31 +150,17 @@ const Stats = () => {
       if(userData!==null && scoresData!==null){
         getAllRecData(userData.id).then((result) => {
           setRecordingList(JSON.stringify(result));
-          // Define options for formatting date
-          /*const options = {
-            year: "numeric",
-            month: "numeric",
-            day: "numeric",
-            hour: "2-digit",
-            minute: "2-digit",
-            second: "2-digit",
-          };*/
-          /*setRecordingDates(result.map((recording) => {
-            //Set correct date format
-            const recordingDate = new Date(recording.recordingDate);
-            return recordingDate.toLocaleDateString("es-ES", options);
-          }))*/
-          setRecordingNames(result.map((recording) => recording.recordingName));
-          setRecordingStars(result.map((recording) => recording.recordingStars));
-          setRecordingDates(result.map((recording) => recording.recordingDate));
+          setRecordingNames(result.map((recording) => recording.recordingName)); //Not used
+          setRecordingStars(result.map((recording) => recording.recordingStars)); //Not used
+          setRecordingDates(result.map((recording) => recording.recordingDate)); //Not used
           setRecordingLevels(result.map((recording)=> {
-            return scoresData.find(item => item._id === recording.scoreID).level
+            return scoresData.find(item => item._id === recording.scoreID).level  //Not used
           }))
           setRecordingSkills(result.map((recording)=> {
-            return scoresData.find(item => item._id === recording.scoreID).skill
+            return scoresData.find(item => item._id === recording.scoreID).skill  //Not used
           }))
           setRecordingScores(result.map((recording)=> {
-            return scoresData.find(item => item._id === recording.scoreID).title
+            return scoresData.find(item => item._id === recording.scoreID).title  //Not used
           }))
         }).catch((error) => {
           console.log(`Cannot get recordings from database: ${error}`)
@@ -165,72 +170,61 @@ const Stats = () => {
       console.log(userData)
     },[userData, scoresData])
 
+    //When recordings info is loaded, get neeeded info 
+    useEffect(()=>{
+      if(recordingList!==null){
+        console.log("recordingList ", recordingList)
+
+        //number of stars achieved per level/////////////////
+        // store the best score for each scoreID
+        const bestScores = {};
+        const copy=JSON.parse(recordingList)
+        copy.forEach(entry => {
+          const scoreID = entry.scoreID;
+          const recordingStars = entry.recordingStars;
+          const level = scoresData.find(score => score._id === scoreID).level;
+          if (!bestScores[level]) {
+            bestScores[level] = {};
+          }
+          // Check if the scoreID is already in the bestScores object
+          if (!bestScores[level][scoreID] || bestScores[level][scoreID] < recordingStars) {
+            // If not or if the current recordingStars is greater, update the best score
+            bestScores[level][scoreID] = recordingStars;
+          }
+        });
+        // sum up all stars for same level
+        const starSums = {};
+        for (const level in bestScores) {
+          const scoresStars = bestScores[level];
+          let sum = 0;
+          for (const scoreStar in scoresStars) {
+            const stars = scoresStars[scoreStar];
+            sum += stars;
+          }
+          starSums[level] = sum;
+        }
+        setAchievedStarsPerLevel(starSums)
+        console.log("list of stars achieved ", bestScores)
+        ////////////////////////////////////////////////////////
+
+
+
+
+
+      }  
+
+
+    },[recordingList])
 
 
   return (
-    <Wrapper>
-      <>
-      {/*TITLE*/}
-        <Grid>
-          <h3 className="logo-text2">Hello {userData?userData.name:""}</h3>
-        </Grid>
-        
-        <Grid container spacing={6}>
-          {/*Comment*/}
-          <Grid item xs={12}>
-            <Box p={2} border={1} textAlign="center">
-              Continue Learning... Big Puppy
-              <div>
-                <Rating name="read-only" value={3} readOnly />
-              </div>
-            </Box>
-          </Grid>
-          {/*Note*/}
-          <Grid item xs={3}>
-            <div container className={`${classes.gridClassName} grid-tile`}>
-                
-              <Box p={2} sx={{ textAlign: "left" }}>
-                <List sx={{ listStyleType: "disc", pl: 4 }}>
-                  <ListItem sx={{ display: "list-item" }}>
-                    <ListItemText primary="5 Star Scores" />
-                  </ListItem>
-                  <ListItem sx={{ display: "list-item" }}>
-                    <ListItemText primary="3 Star Scores" />
-                  </ListItem>
-                  <ListItem sx={{ display: "list-item" }}>
-                    <ListItemText primary="Not Started" />
-                  </ListItem>
-                </List>
-              </Box>
-            </div>
-          </Grid>
-          {/*Percentajes Chart*/}
-          <Grid item xs={3}>
-            <div className="grid-tile">
-              <Doughnut
-                data={dataset}
-                options={{
-                  responsive: true,
-                  maintainAspectRatio: true,
-                }}
-              />
-            </div>
-          </Grid>
-          {/*¿¿¿¿¿*/}
-          <Grid item xs={6}>
-            <div className="grid-tile">
-              <Box height="400px" width="800px" m="-20px 0 0 0">
-                <LineChart isDashboard={true} />
-              </Box>
-            </div>
-          </Grid>
-          {/*Placeholder*/}
-          <Grid item xs={12}>
-            <div className="grid-tile">{recordingList}</div>
-          </Grid>
-        </Grid>
-      </>
-    </Wrapper>
+    <div>
+      <h2 className={StatsCSS.profile}>Hello {userData?userData.name:""}</h2>
+      <PercentagesStarsStats
+        starsPerLevel={starsPerLevel}
+        achievedStarsPerLevel={achievedStarsPerLevel}
+      />
+    </div>
   );
 };
 
