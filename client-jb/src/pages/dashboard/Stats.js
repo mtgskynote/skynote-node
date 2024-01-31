@@ -12,6 +12,7 @@ import { useAppContext } from "../../context/appContext";
 import { getAllRecData } from "../../utils/studentRecordingMethods.js";
 import StatsCSS from './Stats.module.css'
 import PercentagesStarsStats from "../../components/StatsPercentagesStars.js";
+import StatsRecentRecordings from "../../components/StatsRecentRecordings.js";
 
 ChartJS.register(ArcElement, Tooltip, Legend);
 
@@ -93,13 +94,17 @@ const Stats = () => {
   const [scoresData, setScoresData] = useState(null);
   const [recordingList, setRecordingList] = useState(null);
   const [recordingNames, setRecordingNames] = useState(null);
+  const [recordingIds, setRecordingIds] = useState(null);
   const [recordingStars, setRecordingStars] = useState(null);
-  const [recordingScores, setRecordingScores] = useState(null);
+  const [recordingScoresTitles, setRecordingScoresTitles] = useState(null);
+  const [recordingScoresIds, setRecordingScoresIds] = useState(null);
+  const [recordingScoresXML, setRecordingScoresXML] = useState(null);
   const [recordingDates, setRecordingDates] = useState(null);
   const [recordingSkills, setRecordingSkills] = useState(null);
   const [recordingLevels, setRecordingLevels] = useState(null);
   const [starsPerLevel, setStarsPerLevel] = useState(null);
   const [achievedStarsPerLevel, setAchievedStarsPerLevel] = useState(null);
+  const [recentRecordings, setRecentRecordings] = useState(null);
   const classes = useStyles();
 
   const fetchDataFromAPI = () => {
@@ -150,18 +155,24 @@ const Stats = () => {
       if(userData!==null && scoresData!==null){
         getAllRecData(userData.id).then((result) => {
           setRecordingList(JSON.stringify(result));
-          setRecordingNames(result.map((recording) => recording.recordingName)); //Not used
-          setRecordingStars(result.map((recording) => recording.recordingStars)); //Not used
-          setRecordingDates(result.map((recording) => recording.recordingDate)); //Not used
+          console.log(result)
+          setRecordingNames(result.map((recording) => recording.recordingName)); 
+          setRecordingIds(result.map((recording) => recording.recordingId)); 
+          setRecordingStars(result.map((recording) => recording.recordingStars)); 
+          setRecordingDates(result.map((recording) => recording.recordingDate)); 
           setRecordingLevels(result.map((recording)=> {
-            return scoresData.find(item => item._id === recording.scoreID).level  //Not used
+            return scoresData.find(item => item._id === recording.scoreID).level 
           }))
           setRecordingSkills(result.map((recording)=> {
-            return scoresData.find(item => item._id === recording.scoreID).skill  //Not used
+            return scoresData.find(item => item._id === recording.scoreID).skill 
           }))
-          setRecordingScores(result.map((recording)=> {
-            return scoresData.find(item => item._id === recording.scoreID).title  //Not used
+          setRecordingScoresTitles(result.map((recording)=> {
+            return scoresData.find(item => item._id === recording.scoreID).title  
           }))
+          setRecordingScoresXML(result.map((recording)=> {
+            return scoresData.find(item => item._id === recording.scoreID).fname  
+          }))
+          setRecordingScoresIds(result.map((recording) => recording.scoreID)); 
         }).catch((error) => {
           console.log(`Cannot get recordings from database: ${error}`)
           // Handle errors if necessary
@@ -208,6 +219,31 @@ const Stats = () => {
         ////////////////////////////////////////////////////////
 
 
+        // Get 4 most recent recordings ////////////////////////
+        const lastFourNames = recordingNames.slice(-4);
+        const lastFourScoresTitles = recordingScoresTitles.slice(-4);
+        const lastFourScoresIds = recordingScoresIds.slice(-4);
+        const lastFourScoresXML = recordingScoresXML.slice(-4);
+        const lastFourIds = recordingIds.slice(-4);
+        const lastFourSkills = recordingSkills.slice(-4);
+        const lastFourLevels = recordingLevels.slice(-4);
+        const lastFourStars = recordingStars.slice(-4);
+        const lastFourDates = recordingDates.slice(-4);
+
+        const lastFourEntries = {
+          names:lastFourNames,
+          scoresTitles:lastFourScoresTitles,
+          scoresIds:lastFourScoresIds,
+          scoresXML:lastFourScoresXML,
+          ids:lastFourIds,
+          skills:lastFourSkills,
+          levels:lastFourLevels,
+          stars:lastFourStars,
+          dates:lastFourDates,
+        }
+
+        setRecentRecordings(lastFourEntries)
+        ////////////////////////////////////////////////////////
 
 
 
@@ -218,12 +254,19 @@ const Stats = () => {
 
 
   return (
-    <div>
+    <div className={StatsCSS.container}>
       <h2 className={StatsCSS.profile}>Hello {userData?userData.name:""}</h2>
-      <PercentagesStarsStats
-        starsPerLevel={starsPerLevel}
-        achievedStarsPerLevel={achievedStarsPerLevel}
-      />
+      <div className={StatsCSS.item}> 
+        <PercentagesStarsStats
+          starsPerLevel={starsPerLevel}
+          achievedStarsPerLevel={achievedStarsPerLevel}
+        />
+      </div>
+      <div className={StatsCSS.item}>
+        <StatsRecentRecordings
+          recentRecordings={recentRecordings}
+        />
+       </div>
     </div>
   );
 };
