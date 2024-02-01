@@ -35,7 +35,6 @@ const NumberOfRecStats = (props) => {
   if (props.dates !== null && props.levels !== null) {
     //Remove irrelevant info from dates
     const shortDates = props.dates.map(dateString => dateString.substring(0, 10));
-    console.log("Dates:\n", shortDates);
     //Check how many levels
     const allLevels = [...new Set(props.levels)];
     //This part gets the last 7 days
