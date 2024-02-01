@@ -61,6 +61,7 @@ const TimbreVisualization = () => {
   
   //---- Pass to makeAudioStreamer to get callbaks with object features (with attributes being Meyda features)
   const aCb=function(features){
+    //console.log(`pushing rms on to Queue : ${features.rms}`)
     featureValues.rms.push(features.rms);
     featureValues.spectralCentroid.push(features.spectralCentroid);
     featureValues.spectralFlux.push(features.spectralFlux);
@@ -73,7 +74,7 @@ const TimbreVisualization = () => {
 
   // Start the streaming audio and request your callbacks
   const audioStreamer = makeAudioStreamer(pitchCallback, null, aCb);
-  audioStreamer.init(["rms", "spectralCentroid", "spectralFlux"]);  //LIST ONLY MEYDA FEATURES  !!!!!
+  audioStreamer.init(false, ["rms", "spectralCentroid", "spectralFlux"]);  //LIST ONLY MEYDA FEATURES  !!!!!
     
 
   return (

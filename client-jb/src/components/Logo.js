@@ -5,7 +5,7 @@ const Logo = ({ height, width }) => {
     <img
       src={logo}
       className="logo"
-      altprop="skynote-logo"
+      alt="skynote-logo"
       height={height}
       width={width}
     />

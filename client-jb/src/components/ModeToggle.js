@@ -3,7 +3,7 @@ import Wrapper from "../assets/wrappers/ModeToggle";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { Button} from "@material-ui/core";
 import ModeInfoButton from "./ModeInfoButton.js";
-import { Dropdown } from "react-bootstrap";
+//import { Dropdown } from "react-bootstrap";
 
 import {
     faGamepad, //practice mode

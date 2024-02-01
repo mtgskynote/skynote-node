@@ -1,0 +1,26 @@
+.container{
+    width:100%;
+}
+.dynamicTable{
+    border-collapse: collapse;
+  width: 100%;
+  font-size: 17px;
+}
+.title{
+    font-weight: bold;
+}
+.dynamicTable tr {
+    border: 3px hidden #b1b1b1;
+    text-align: center;
+    padding: 8px;
+  }
+
+  .dynamicTable th {
+    background-color: transparent; /* Gray background for headers */
+    color:#88a2cf;
+  }
+  
+  .iconbutton{
+    border:none;
+    background-color: transparent;
+  }

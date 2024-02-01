@@ -5,7 +5,7 @@ const BackgroundImage = ({ height, width }) => {
     <img
       src={background_image}
       className="background-image"
-      altprop="background-image"
+      alt="background-image"
       height={height}
       width={width}
     />

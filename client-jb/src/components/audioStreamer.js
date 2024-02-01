@@ -19,11 +19,42 @@ import Meyda from "meyda"; //https://meyda.js.org
 
 const meyda_buff_fft_length = 1024; // fft length and buf size are the same for Meyda
 
-// Create an audio context
-const audioContext = new AudioContext({
-  latencyHint: "interactive",
-  sampleRate: 22050,
-}); // must be audioContext.resumed()'d by a user before mic will work.
+function createAudioContext() {
+  var AudioContext = window.AudioContext || window.webkitAudioContext;
+  
+  if (!AudioContext) {
+      console.error("AudioContext is not supported in this browser");
+      return null;
+  }
+
+  var audioContext = new AudioContext({
+    latencyHint: "interactive",
+    sampleRate: 22050,
+  });
+
+  // Check if the audio context is in suspended state (autoplay policy)
+  if (audioContext.state === 'suspended') {
+      // Add a click event listener to resume the AudioContext
+      var resumeAudio = function() {
+          audioContext.resume().then(() => {
+              console.log("AudioContext resumed!");
+              document.removeEventListener('click', resumeAudio);
+          });
+      };
+      if (window.confirm("Start audio processing?")) {
+        console.log("will resume audio"   );
+        resumeAudio();
+      } else {
+        console.log("Oh boy, now you've one it!");
+      }
+  }
+
+  return audioContext;
+}
+
+var audioContext = createAudioContext();
+
+
 
 var mediaRecorder = null;
 var audioChunks = [];
@@ -41,12 +72,13 @@ var makeAudioStreamer = function (
     analyzerCb: analysisCb,
 
     init: function (recordMode, meydaFeatures = []) {
+      console.log("meydaFeatures ", meydaFeatures)
       navigator.mediaDevices
         .getUserMedia({ audio: {
           echoCancellation: false,
           autoGainControl: false,
           noiseSuppression: false,
-          latency: 0,
+          latency: {ideal: 0.01, max: 0.05},
           sampleRate: 22050
         } })
         .then(async (stream) => {
@@ -65,6 +97,7 @@ var makeAudioStreamer = function (
           audioContext.resume();
           const sourceNode = audioContext.createMediaStreamSource(stream);
 
+
           if (typeof Meyda === "undefined") {
             console.log("Meyda could not be found! Have you included it?");
           } else {
@@ -76,7 +109,7 @@ var makeAudioStreamer = function (
               bufferSize: meyda_buff_fft_length,
               featureExtractors: meydaFeatures,
               callback: (features) => {
-                //console.log(features);
+                //console.log(`CALLBACK FEATURES:  +${JSON.parse(features)}`);
                 this.analyzerCb && this.analyzerCb(features);
               },
             });
