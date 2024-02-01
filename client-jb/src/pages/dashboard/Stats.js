@@ -13,6 +13,7 @@ import { getAllRecData } from "../../utils/studentRecordingMethods.js";
 import StatsCSS from './Stats.module.css'
 import PercentagesStarsStats from "../../components/StatsPercentagesStars.js";
 import StatsRecentRecordings from "../../components/StatsRecentRecordings.js";
+import NumberOfRecStats from "../../components/StatsAreaChart.js";
 
 ChartJS.register(ArcElement, Tooltip, Legend);
 
