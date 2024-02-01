@@ -46,10 +46,10 @@ body {
   .songelement {  
     padding: 5px;
     background-color: #ffffff;
-    color:#435b38;
+    color:#000000;
     border-radius: 5px;
-    border: 0.2px solid #59b296;
-    box-shadow: 0 0 3px #59b296;
+    border: 0.2px solid #adc5eb;
+    box-shadow: 0 0 3px #adc5eb;
     flex-basis: calc(23.00% - 0px); /* Adjust the width based on the number of items per row */
     margin: 10px;
     text-align:center;
@@ -57,10 +57,10 @@ body {
   .songelement2 {  
     padding: 5px;
     background-color: #ffffff;
-    color:#435b38;
+    color:#000000;
     border-radius: 5px;
-    border: 0.2px solid #59b296;
-    box-shadow: 0 0 3px #59b296;
+    border: 0.2px solid #adc5eb;
+    box-shadow: 0 0 3px #adc5eb;
     flex-basis: calc(23.00% - 0px); /* Adjust the width based on the number of items per row */
     margin: 10px;
     text-align:left;
@@ -85,7 +85,7 @@ body {
   .backbutton {
     margin-top: 20px;
     padding: 10px 15px;
-    background-color:#A3CD8F;
+    background-color:#9e9e9e;
     color: #fff;
     border: none;
     border-radius: 4px;
@@ -118,7 +118,7 @@ body {
   }
   .recTitle{
     width:100%;
-    background-color: #cedcc1;
+    background-color: #adc5eb;
     text-align: center;
     border-radius: 5px;
     padding: 5px;
@@ -131,7 +131,7 @@ body {
   .back2Listbutton {
     margin-top: 20px;
     padding: 10px 15px;
-    background-color:#DDE172;
+    background-color:#9e9e9e;
     color: #fff;
     border: none;
     border-radius: 4px;
@@ -142,7 +142,7 @@ body {
   }
   
   .backbutton:hover {
-    background-color: #435b38;
+    background-color: rgb(113, 113, 113);
   }
 
   .iconbutton {
