@@ -9,7 +9,7 @@ import { Button} from "@material-ui/core";
 import { Dropdown } from "react-bootstrap";
 
 import {
-  faUndoAlt,
+//  faUndoAlt,
   faPlay,
   faPause,
   faRecordVinyl,
@@ -17,7 +17,7 @@ import {
   faVolumeHigh,
   faGauge,
   faMagnifyingGlassMinus,
-  faWater,
+//  faWater,
   faGear,
   faBookmark,
 } from "@fortawesome/free-solid-svg-icons";

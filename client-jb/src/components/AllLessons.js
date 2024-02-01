@@ -3,10 +3,13 @@
 import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import Box from "@mui/material/Box";
-import TreeView from "@mui/lab/TreeView";
+//import TreeView from "@mui/lab/TreeView";
+import { TreeView } from '@mui/x-tree-view/TreeView';
+// import TreeItem from "@mui/lab/TreeItem";
+import { TreeItem } from '@mui/x-tree-view'
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import ChevronRightIcon from "@mui/icons-material/ChevronRight";
-import TreeItem from "@mui/lab/TreeItem";
+
 import OpenSheetMusicDisplayPreview from "./OpenSheetMusicDisplayPreview";
 import XMLParser from "react-xml-parser";
 import { useAppContext } from "../context/appContext";
@@ -55,13 +58,6 @@ const fetchAllTitles = async (files) => {
   return titles;
 };
 
-const sxStyles = {
-  flexGrow: 1,
-  maxWidth: "80rem",
-  overflowY: "auto",
-  margin: "2rem",
-  fontSize: 30,
-};
 
 const AllLessons = () => {
   const { getAllLevels, getAllSkills, getAllNames, getAllScoreData, getAllScoreData2 } = useAppContext();
@@ -141,7 +137,7 @@ const AllLessons = () => {
     <TreeItem key={level} nodeId={level} label={`Level ${level}`} >
       {Object.entries(skills).map(([skill, names]) => (
         <div className={AllLessonsCSS.skill}>
-        <TreeItem key={skill} nodeId={skill} label={skill}>
+        <TreeItem key={`${level}-${skill}`} nodeId={skill} label={skill}>
           <div className={AllLessonsCSS.songlist}>
           {names.map((nameObj, index) => (
             <div className={AllLessonsCSS.song} >
