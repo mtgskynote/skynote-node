@@ -32,14 +32,12 @@ const formatDate = (date) => {
 }
 
 const NumberOfRecStats = (props) => {
-  console.log(props.dates);
   if (props.dates !== null && props.levels !== null) {
     //Remove irrelevant info from dates
     const shortDates = props.dates.map(dateString => dateString.substring(0, 10));
+    console.log("Dates:\n", shortDates);
     //Check how many levels
     const allLevels = [...new Set(props.levels)];
-    //console.log("You have this levels, ", allLevels);
-
     //This part gets the last 7 days
     const currentDate = new Date();
     const dateArray = [];
@@ -48,7 +46,7 @@ const NumberOfRecStats = (props) => {
       previousDate.setDate(currentDate.getDate() - i);
       dateArray.push(formatDate(previousDate));
     }
-    //console.log("Least recent day is, ", dateArray[dateArray.length-1]);
+
     //Now I filter the recordings to use only the ones in the last week, and array them by level
     const dataPreCount = new Map(); 
     shortDates.forEach((date, index) => {
@@ -59,9 +57,13 @@ const NumberOfRecStats = (props) => {
         } else {
           dataPreCount.set(props.levels[index], [date]);
         }
-        // console.log("Checking date ", date, " Current status is: ", dataPreCount)
       }
     });
+
+    //////////////////////////////////////////////////////////////
+    /////////////////////HASTA AQUI TODO BIEN/////////////////////
+    //////////////////////////////////////////////////////////////
+
     //Finally I check if recordings where done in the same day
     var dataFiltered = {};
     const dataForDrawing = {}
@@ -69,24 +71,11 @@ const NumberOfRecStats = (props) => {
       dataFiltered = {};
       //For every level, I check the dates 
       dateArray.forEach (function(date) {
-        if (value.includes(date)){
-          if (date in dataFiltered) {
-            dataFiltered[date] += 1;
-            //console.log(date, " is repeated :)");
-            console.log(dataFiltered[date]);
-          } else {
-            //console.log(date, " is new :)");
-            dataFiltered[date] = 1;
-          }
-        } else {
-          dataFiltered[date] = 0;
-        }
-        console.log(date, " has ", dataFiltered[date], " repetitions for level ", key);
+        const count = value.filter(element => element === date).length;
+        dataFiltered[date] = count;
       })
       dataForDrawing[key] = dataFiltered;
-      console.log("For level ", key, ", I have this:\n", dataFiltered);
-      console.log("JIAJIAJIAJIA", dataForDrawing);
-    })
+    });
     const data = {
         labels: dateArray.reverse().map(dateString => dateString.substring(5, 10)),
         datasets: [
@@ -100,7 +89,7 @@ const NumberOfRecStats = (props) => {
           {
             fill: true,
             label: `Level ${allLevels[1]}`,
-            data: Object.values(dataForDrawing[allLevels[1]]),
+            data: Object.values(dataForDrawing[allLevels[1]]).reverse(),
             borderColor: 'rgba(255, 0, 235, 0.5)',
             backgroundColor: 'rgb(53, 162, 235)',
           }
