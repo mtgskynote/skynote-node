@@ -48,8 +48,8 @@ body {
     background-color: #ffffff;
     color:#000000;
     border-radius: 5px;
-    border: 0.2px solid #adc5eb;
-    box-shadow: 0 0 3px #adc5eb;
+    border: 0.2px solid #caddfb;
+    box-shadow: 0 0 3px #caddfb;
     flex-basis: calc(23.00% - 0px); /* Adjust the width based on the number of items per row */
     margin: 10px;
     text-align:center;
@@ -59,8 +59,8 @@ body {
     background-color: #ffffff;
     color:#000000;
     border-radius: 5px;
-    border: 0.2px solid #adc5eb;
-    box-shadow: 0 0 3px #adc5eb;
+    border: 0.2px solid #caddfb;
+    box-shadow: 0 0 3px #caddfb;
     flex-basis: calc(23.00% - 0px); /* Adjust the width based on the number of items per row */
     margin: 10px;
     text-align:left;
@@ -118,7 +118,7 @@ body {
   }
   .recTitle{
     width:100%;
-    background-color: #adc5eb;
+    background-color: #caddfb;
     text-align: center;
     border-radius: 5px;
     padding: 5px;

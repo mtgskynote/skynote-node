@@ -52,8 +52,8 @@ const PercentagesStarsStats = (props) => {
       {
         label: '% Stars Achieved per Level',
         data: Object.values(percentagesLevel || {}),
-        backgroundColor: '#92b6f0',
-        borderColor: '#92b6f0',
+        backgroundColor: '#88a2cf',
+        borderColor: '#88a2cf',
         borderWidth: 5,
       },
     ],
