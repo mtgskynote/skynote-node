@@ -1,0 +1,16 @@
+.profile{
+    text-align: center;
+    border: 0.2px solid #000000;
+    padding: 20px;
+}
+.container {
+    min-height: 100vh; /* Ensure the container covers the full viewport height */
+    text-align: left;
+    background-color: #FFFFFF;
+    padding: 10px;
+  }
+.item{
+    border: 0.2px solid #000000;
+    margin: 10px 0px;
+    padding: 10px
+}

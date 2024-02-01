@@ -30,6 +30,7 @@ import {
 
 
 const ListRecordings = () => {
+  
 
   const { getCurrentUser } = useAppContext();
   const [userData, setUserData] = useState(null);
@@ -37,6 +38,8 @@ const ListRecordings = () => {
   const [recordingNames, setRecordingNames] = useState(null);
   const [recordingStars, setRecordingStars] = useState(null);
   const [recordingDates, setRecordingDates] = useState(null);
+  const [scoreSkill, setScoreSkill] = useState(null);
+  const [scoreLevel, setScoreLevel] = useState(null);
   const location = useLocation();
   const navigate = useNavigate();
 
@@ -46,6 +49,10 @@ const ListRecordings = () => {
 
   // Starting --> load recordings from userID and scoreID
   useEffect(() => {
+    const itemFoundLocalStorage=JSON.parse(localStorage.getItem("scoreData")).find(item => item.fname === score)
+    const scoreID=itemFoundLocalStorage._id;
+    setScoreLevel(itemFoundLocalStorage.level)
+    setScoreSkill(itemFoundLocalStorage.skill)
 
     const fetchDataFromAPI = () => {
       if(userData===null){
@@ -59,7 +66,7 @@ const ListRecordings = () => {
       }
 
       if(userData !== null){
-        getRecData(userData.id, "64d0de60d9ac9a34a66b4d45").then((result) => {
+        getRecData(userData.id, scoreID).then((result) => {
           // Define options for formatting date
           const options = {
             year: "numeric",
@@ -86,6 +93,8 @@ const ListRecordings = () => {
   };   
 
     fetchDataFromAPI();
+
+    
     
   }, [userData,recordingList]);
 
@@ -100,6 +109,7 @@ const ListRecordings = () => {
   // Event handler for click on See
   const handleSeeClick = (nameOfFile, number)=> {
       const id = JSON.parse(recordingList)[recordingNames.indexOf(nameOfFile)].recordingId;
+      console.log("ID ", id)
       //Pass recording ID to ProgressPlayfileVisual
       navigate(score, {state:{'recordingID':id}})
     }
@@ -111,8 +121,7 @@ const ListRecordings = () => {
       const idToDelete = JSON.parse(recordingList)[recordingNames.indexOf(nameOfFile)].recordingId;
       const auxArrayNames = recordingNames.filter((item, index) => index !== recordingNames.indexOf(nameOfFile));
       const auxArrayList = JSON.parse(recordingList).filter((item, index) => index !== recordingNames.indexOf(nameOfFile));
-      const auxArrayDates = JSON.parse(recordingDates).filter((item, index) => index !== recordingDates.indexOf(nameOfFile));
-      console.log("Deleting: ", idToDelete);
+      const auxArrayDates = recordingDates.filter((item, index) => index !== recordingNames.indexOf(nameOfFile));
       deleteRecording(idToDelete).then(() => {
         setRecordingNames(auxArrayNames);
         setRecordingList(auxArrayList);
@@ -143,15 +152,16 @@ const ListRecordings = () => {
       <div className={ListRecordingsCSS.textGroup}>
         <div><h7 >
           <FontAwesomeIcon icon={faPencilSquare} className={ListRecordingsCSS.auxIcon}/>
-          First finger 
+          {scoreSkill} 
         </h7></div>
         <div><h7 >
           <FontAwesomeIcon icon={faBoxArchive} className={ListRecordingsCSS.auxIcon}/>
-          Level 1
+          Level {scoreLevel}
         </h7></div>
       </div>
 
       {/* List of songs */}
+      {recordingNames.length !==0?
       <div className={ListRecordingsCSS.songlist}>
         {recordingNames.map((nameOfFile, index) => (
           <div className={ListRecordingsCSS.songelement} key={index}>
@@ -176,7 +186,11 @@ const ListRecordings = () => {
             </li>
             </div>
         ))}
+      </div>  : 
+      <div> No recordings for this score
       </div>
+
+      }
 
       {/* Button to go back */}
       <button className={ListRecordingsCSS.backbutton} onClick={handleGoBack}>

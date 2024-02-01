@@ -70,6 +70,7 @@ const AppProvider = ({ children }) => {
     localStorage.removeItem("user");
     localStorage.removeItem("token");
     localStorage.removeItem("location");
+    localStorage.removeItem("scoreData"); //This is technically not User data, but it's simpler if I leave it here cause we have to get rid of it anyways :)
   };
 
   // Set up user with current user, endpoint, and alert text
@@ -83,8 +84,6 @@ const AppProvider = ({ children }) => {
 
       const { user, token, location } = data;
 
-      console.log(`user from setupUser is ${JSON.stringify(user)}`) 
-      console.log(`_id from setupUser is ${JSON.stringify(user.id)}`)
       dispatch({
         type: SETUP_USER_SUCCESS,
         payload: {
@@ -95,6 +94,7 @@ const AppProvider = ({ children }) => {
         },
       });
       addUserToLocalStorage(user, token, location );  // why are we doing this?
+      getAllScoreData2();
     } catch (error) {
       dispatch({
         type: SETUP_USER_ERROR,
@@ -112,7 +112,6 @@ const AppProvider = ({ children }) => {
   };
 
   const getCurrentUser = async () => {
-    console.log(`getting current user from STATE = ${JSON.stringify(state.user)}  `)
     return state.user;
   }
 
@@ -123,7 +122,6 @@ const AppProvider = ({ children }) => {
       const response = await axios.post("/api/v1/scores/levels", {
         level: level,
       });
-      // console.log(response.data);
       return response.data;
     } catch (error) {
       console.error("Error fetching file names:", error);
@@ -135,7 +133,6 @@ const AppProvider = ({ children }) => {
       const response = await axios.post("/api/v1/scores/skills", {
         level: level,
       });
-      // console.log(response.data);
       return response.data;
     } catch (error) {
       console.error("Error fetching file names:", error);
@@ -148,18 +145,30 @@ const AppProvider = ({ children }) => {
         level: level,
         skill: skill,
       });
-      console.log("names:", response.data);
       return response.data;
     } catch (error) {
       console.error("Error fetching file names:", error);
     }
   };
 
+  //Lonce`s
   const getAllScoreData = async() => {
     try {
       const response = await axios.get("/api/v1/scores/getAllScoreData", {
       });
       console.log("======================   names returned :");//, response.data);
+      return response.data;
+    } catch (error) {
+      console.error("Error fetching file names:", error);
+    }
+  };  
+
+  //OUR
+  const getAllScoreData2 = async() => {
+    try {
+      const response = await axios.get("/api/v1/scores/getAllScoreData2", {
+      });
+      localStorage.setItem("scoreData", JSON.stringify(response.data));
       return response.data;
     } catch (error) {
       console.error("Error fetching file names:", error);
@@ -179,6 +188,7 @@ const AppProvider = ({ children }) => {
         getAllSkills,
         getAllNames,
         getAllScoreData,
+        getAllScoreData2, //ours
       }}
     >
       {children}

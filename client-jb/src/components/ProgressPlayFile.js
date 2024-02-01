@@ -67,7 +67,10 @@ const ProgressPlayFile = (props) => {
   const [recordMode, setRecordMode] = useState(false);
 
   const navigate = useNavigate();
+  const scoreID=JSON.parse(localStorage.getItem("scoreData")).find(item => item.fname === params.files)._id;
+  console.log("scoreID:", scoreID)
 
+  
   const onResetDone = () => {
     setIsResetButtonPressed(false);
   };
@@ -125,7 +128,7 @@ const ProgressPlayFile = (props) => {
     const jsonData = JSON.parse(jsonToDownload)//convert data to json
     const jsonComplete={
       studentId: userData.id, 
-      scoreId: "64d0de60d9ac9a34a66b4d45", 
+      scoreId: scoreID, 
       recordingName: `${userFileName}`, 
       date: new Date(), 
       audio: dataBlob,
@@ -250,16 +253,23 @@ const ProgressPlayFile = (props) => {
     const requestScoreTitle = async () => {
       //Get score title
       try {
-        const response = await fetch(`${folderBasePath}/${params.files}`);
+        const response = await fetch(`${folderBasePath}/${params.files}.xml`);
         const xmlFileData = await response.text();
-        const arr = Array.from(
+        const movementTitle = Array.from(
           new XMLParser()
             .parseFromString(xmlFileData)
             .getElementsByTagName("movement-title")
         );
-        if (arr.length > 0) {
-          setScoreTitle(arr[0].value);
-        }
+        const workTitle = Array.from(
+          new XMLParser()
+            .parseFromString(xmlFileData)
+            .getElementsByTagName("work-title")
+        );
+        if (movementTitle.length > 0) {
+          setScoreTitle(movementTitle[0].value);
+        } else if (workTitle.length > 0) {
+          setScoreTitle(workTitle[0].value);}
+
       } catch (error) {
         console.log(error.message);
       }
@@ -544,6 +554,8 @@ const ProgressPlayFile = (props) => {
         const song = `${scoreTitle}`;
         const typeList = 'single-song';
 
+        console.log("info ", score, song, typeList)
+
         // Use navigate to go to the ListRecordings page with parameters in the URL
         navigate('/ListRecordings', { state: { score, song, typeList } });
   
@@ -571,7 +583,7 @@ const ProgressPlayFile = (props) => {
       {(showRepetitionMessage&&<SimpleMessaje message={repetitionMessage}/>)}
 
       <OpenSheetMusicDisplay
-        file={`${folderBasePath}/${params.files}`}
+        file={`${folderBasePath}/${params.files}.xml`}
         autoResize={true}
         cursorRef={cursorRef}
         playbackRef={playbackRef}

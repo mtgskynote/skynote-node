@@ -1,0 +1,10 @@
+.content{
+    width: 30%;
+    font-size: 10px;
+    margin:10px;
+    text-align: center;
+}
+.completeStar{
+    color:#e8d73f;
+    font-size:25px;
+}

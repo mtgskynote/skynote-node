@@ -120,21 +120,24 @@ const xml = async (req, res) => {
 //   } 
 // }
 
-
+//Lonce's
 const getAllScoreData = async (req, res) => {
   
   try {
     const levels_ = await xmlScores.distinct("level");
+    console.log("call 1")
     const data = {};
 
     for (let level of levels_) {
       let match={level: level} 
       const skills_ = await xmlScores.distinct("skill", match)
       data[level] = {};
+      console.log("call 2")
 
       for (let skill of skills_) {
         let match={level: level, skill: skill}
         let docs = await xmlScores.find(match);
+        console.log("call 3")
 
         let names_ = [];
         for (let i = 0; i < docs.length; i++) {
@@ -159,4 +162,15 @@ const getAllScoreData = async (req, res) => {
   }
 }
 
-export { names, levels, skills, xml, getAllScoreData };
+//Our
+const getAllScoreData2 = async (req, res) => {
+  
+  try {
+    const allScores = await xmlScores.find();
+    res.status(StatusCodes.OK).json(allScores);
+  } catch (error) {
+    console.error("Error fetching data:", error);
+  }
+}
+
+export { names, levels, skills, xml, getAllScoreData, getAllScoreData2 };

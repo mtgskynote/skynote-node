@@ -21,15 +21,24 @@ const getTitle = async (fileName) => {
   try {
     const response = await fetch(`${folderBasePath}/${fileName}.xml`);
     const xmlFileData = await response.text();
-    const arr = Array.from(
+    const movementTitle = Array.from(
       new XMLParser()
         .parseFromString(xmlFileData)
         .getElementsByTagName("movement-title")
     );
-    if (arr.length > 0) {
-      return arr[0].value;
+    const workTitle = Array.from(
+      new XMLParser()
+        .parseFromString(xmlFileData)
+        .getElementsByTagName("work-title")
+    );
+    //console.log("AQUIAQUIAQUIAQUIAQUIAQUIAQUIAQUI:", arr[0]);
+    if (movementTitle.length > 0) {
+      return movementTitle[0].value;
+    } else if (workTitle.length > 0) {
+      return workTitle[0].value;
     } else {
-      return fileName;
+      //console.log(`NO DATA FOUND FOR ${fileName}.xml`);
+      return fileName
     }
   } catch (err) {
     console.log(err.message);
@@ -39,67 +48,41 @@ const getTitle = async (fileName) => {
 
 const fetchAllTitles = async (files) => {
   const titles = {};
+  var tempScoreData = JSON.parse(localStorage.getItem("scoreData"));
   for (let file of files) {
-    titles[file.name] = await getTitle(file.name);
+    let scoreName = await getTitle(file.name);
+    titles[file.name] = scoreName;
+    tempScoreData.find(obj => obj.fname === file.name).title = scoreName;
   }
+  localStorage.setItem("scoreData", JSON.stringify(tempScoreData));
   return titles;
 };
 
 
 const AllLessons = () => {
-  const { getAllLevels, getAllSkills, getAllNames, getAllScoreData } = useAppContext();
+  const { getAllLevels, getAllSkills, getAllNames, getAllScoreData, getAllScoreData2 } = useAppContext();
 
   const [titles, setTitles] = useState({});
   const [selectedNodeActive, setSelectedNodeActive] = useState(false);
   const [selectedNodeInfo, setSelectedNodeInfo] = useState(null);
   const [fetchedData, setFetchedData] = useState({});
 
-  const fetchAllData = async () => {   
-    let data = []
-    console.log("Fetching all data...");
-    try{
-      data = await getAllScoreData();
-      console.log("AllLessons===============================All data fetched:", data); 
-      //return data;
-    } catch (error) { 
-      console.log(`error in getAllScoreData`, error)
-    }    
-    return data;
-  }
-
-  // const fetchAllData = async () => {
-  //   console.log("Fetching all data...");
-  //   try {
-  //     const levels = await getAllLevels();
-  //     const data = {};
-
-  //     for (let level of levels) {
-  //       const skills = await getAllSkills(level);
-  //       data[level] = {};
-
-  //       for (let skill of skills) {
-          
-  //         let names = await getAllNames(level, skill);
-  //         console.log(`names for level ${level} and skill ${skill} are ${JSON.stringify(names)}`  )
-          
-  //         data[level][skill] = names.map((name) => ({
-  //           name,
-  //           path: `${folderBasePath}/${name}.xml`,
-  //           route_path: `/all-lessons/${name}.xml`,
-  //         }));
-  //       }
-  //     }
-  //     console.log("AllLessons===============================All data fetched:", data); 
-  //     return data;
-  //   } catch (error) {
-  //     console.error("Error fetching data:", error);
-  //   }
-  // };
-
   useEffect(() => {
-    fetchAllData().then((data) => {
-      setFetchedData(data);
-    });
+    const data= JSON.parse(localStorage.getItem("scoreData"));
+    const treeData = data.reduce((result, item) => {
+      const { level, skill, _id, fname, title } = item;
+      result[level] = result[level] || {};
+      result[level][skill] = result[level][skill] || [];
+      result[level][skill].push({ id: _id, 
+                                  name: fname,
+                                  title: title, 
+                                  path: `/xmlScores/violin/${fname}.xml`,
+                                  route_path: `/all-lessons/${fname}`,});
+    
+      return result;
+    }, {});
+    setFetchedData(treeData);
+
   }, []); // This useEffect is only for fetching the data
 
   useEffect(() => {
@@ -114,7 +97,6 @@ const AllLessons = () => {
       const selectedData = getNodeDataById(fetchedData, nodeId);
       setSelectedNodeInfo(selectedData);
       setSelectedNodeActive(true);
-      console.log("Im on ", nodeId, selectedData)
     }else{
       setSelectedNodeInfo(null);
       setSelectedNodeActive(false);
