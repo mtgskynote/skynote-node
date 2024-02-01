@@ -12,6 +12,7 @@ import { useAppContext } from "../../context/appContext";
 import { getAllRecData } from "../../utils/studentRecordingMethods.js";
 import StatsCSS from './Stats.module.css'
 import PercentagesStarsStats from "../../components/StatsPercentagesStars.js";
+import NumberOfRecStats from "../../components/StatsAreaChart.js"
 
 ChartJS.register(ArcElement, Tooltip, Legend);
 
@@ -120,7 +121,7 @@ const Stats = () => {
       if(userData===null){
         fetchDataFromAPI();
       }
-      console.log(userData)
+      //console.log(userData)
     },[userData])
 
     //get Scores data
@@ -131,7 +132,7 @@ const Stats = () => {
       setScoresData(local);
       // Count the total number of stars per level, and save
       const levelCounts = {};
-      console.log("local ", local)
+      //console.log("local ", local)
       local.forEach(entry => {
         const level = entry.level;
         // Check if the level is already in the counts object, if not, initialize it to 1
@@ -167,13 +168,13 @@ const Stats = () => {
           // Handle errors if necessary
         })
       }
-      console.log(userData)
+      //console.log(userData)
     },[userData, scoresData])
 
     //When recordings info is loaded, get neeeded info 
     useEffect(()=>{
       if(recordingList!==null){
-        console.log("recordingList ", recordingList)
+        //console.log("recordingList ", recordingList)
 
         //number of stars achieved per level/////////////////
         // store the best score for each scoreID
@@ -204,7 +205,7 @@ const Stats = () => {
           starSums[level] = sum;
         }
         setAchievedStarsPerLevel(starSums)
-        console.log("list of stars achieved ", bestScores)
+        //console.log("list of stars achieved ", bestScores)
         ////////////////////////////////////////////////////////
 
 
@@ -223,6 +224,10 @@ const Stats = () => {
       <PercentagesStarsStats
         starsPerLevel={starsPerLevel}
         achievedStarsPerLevel={achievedStarsPerLevel}
+      />
+      <NumberOfRecStats
+        dates={recordingDates}
+        levels={recordingLevels}
       />
     </div>
   );
