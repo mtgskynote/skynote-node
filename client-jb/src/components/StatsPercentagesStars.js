@@ -50,10 +50,10 @@ const PercentagesStarsStats = (props) => {
     labels: Object.keys(percentagesLevel || {}),
     datasets: [
       {
-        label: '%',
+        label: '% Stars Achieved per Level',
         data: Object.values(percentagesLevel || {}),
-        backgroundColor: '#A3CD8F',
-        borderColor: '#A3CD8F',
+        backgroundColor: '#92b6f0',
+        borderColor: '#92b6f0',
         borderWidth: 5,
       },
     ],
@@ -91,10 +91,10 @@ const PercentagesStarsStats = (props) => {
 
   return (
     <div className={percentagesStarsStatsCSS.content}>
-      <h4>
-        <FontAwesomeIcon icon={faStar} className={percentagesStarsStatsCSS.completeStar}/>
-        Stars Achieved per Level 
-        <FontAwesomeIcon icon={faStar} className={percentagesStarsStatsCSS.completeStar}/>
+      <h4 className={percentagesStarsStatsCSS.title}>
+      
+        Analytics 
+        
       </h4>
       <Bar data={data} options={options} />
     </div>

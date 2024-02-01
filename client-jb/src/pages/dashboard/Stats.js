@@ -167,6 +167,7 @@ const Stats = () => {
             return scoresData.find(item => item._id === recording.scoreID).skill 
           }))
           setRecordingScoresTitles(result.map((recording)=> {
+            console.log(scoresData.find(item => item._id === recording.scoreID).title)
             return scoresData.find(item => item._id === recording.scoreID).title  
           }))
           setRecordingScoresXML(result.map((recording)=> {
@@ -255,17 +256,25 @@ const Stats = () => {
 
   return (
     <div className={StatsCSS.container}>
-      <h2 className={StatsCSS.profile}>Hello {userData?userData.name:""}</h2>
-      <div className={StatsCSS.item}> 
-        <PercentagesStarsStats
-          starsPerLevel={starsPerLevel}
-          achievedStarsPerLevel={achievedStarsPerLevel}
-        />
-      </div>
-      <div className={StatsCSS.item}>
-        <StatsRecentRecordings
-          recentRecordings={recentRecordings}
-        />
+      <h1 className={StatsCSS.profile}>Hello {userData?userData.name:""}</h1>
+      
+      <div className={StatsCSS.dashboard}> 
+        <div className={StatsCSS.left}> 
+        
+          <div className={StatsCSS.item}> 
+            <PercentagesStarsStats
+              starsPerLevel={starsPerLevel}
+              achievedStarsPerLevel={achievedStarsPerLevel}
+            />
+          </div>
+        </div>
+        <div className={StatsCSS.right}>
+          <div className={StatsCSS.item}>
+            <StatsRecentRecordings
+              recentRecordings={recentRecordings}
+            />
+          </div>
+        </div>
        </div>
     </div>
   );
