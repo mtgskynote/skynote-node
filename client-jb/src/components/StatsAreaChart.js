@@ -60,10 +60,6 @@ const NumberOfRecStats = (props) => {
       }
     });
 
-    //////////////////////////////////////////////////////////////
-    /////////////////////HASTA AQUI TODO BIEN/////////////////////
-    //////////////////////////////////////////////////////////////
-
     //Finally I check if recordings where done in the same day
     var dataFiltered = {};
     const dataForDrawing = {}
@@ -76,29 +72,77 @@ const NumberOfRecStats = (props) => {
       })
       dataForDrawing[key] = dataFiltered;
     });
+    
+    /////////////////////////////////////////////////////////////////////////////////////////////////////////
+    ///////////////////THIS CODE ALLOWS TO AUTOMATICALLY CREATE MORE LINES FOR MORE LEVELS///////////////////
+    ////////////////////YOU NEED TO COMMENT THE const data CHUNCK OF CODE BELOW THIS ONE/////////////////////
+    //What I don't like about it, is that we have to automatically update new colors for new lines, and that's
+    //a bit of a pain in the ass. So I don't know if it's really worth it, maybe it can be manually changed when
+    //we allow for more levels (I don't know how are we approaching "new levels" atm) :)
+    /////////////////////////////////////////////////////////////////////////////////////////////////////////
+    // const generateDatasets = (dataForDrawing) => {
+    //   const datasets = [];
+    //   const keys = Object.keys(dataForDrawing);
+    //   keys.forEach((key, index) => {
+    //     const lineData = Object.values(dataForDrawing[key]).reverse();
+    //     const dataset = {
+    //       fill: true,
+    //       label: `Level ${key}`,
+    //       data: lineData,
+    //       borderColor: '#88A2CF',
+    //       backgroundColor: 'rgba(164, 184, 219, 0.5)',
+    //     };
+    //     datasets.push(dataset);
+    //   });
+    //   return datasets;
+    // }
+
+    // const data = {
+    //     labels: dateArray.reverse().map(dateString => dateString.substring(5, 10)),
+    //     datasets: generateDatasets(dataForDrawing),
+    // };
+
+    /////////////////////////////////////////////////////////////////////////////////////////////////////////
+    /////////////////////////////////////////////////////////////////////////////////////////////////////////
+    /////////////////////////////////////////////////////////////////////////////////////////////////////////
+
     const data = {
-        labels: dateArray.reverse().map(dateString => dateString.substring(5, 10)),
-        datasets: [
-          {
-            fill: true,
-            label: `Level ${allLevels[0]}`,
-            data: Object.values(dataForDrawing[allLevels[0]]).reverse(),
-            borderColor: 'rgb(53, 162, 235)',
-            backgroundColor: 'rgba(255, 0, 235, 0.5)',
-          },
-          {
-            fill: true,
-            label: `Level ${allLevels[1]}`,
-            data: Object.values(dataForDrawing[allLevels[1]]).reverse(),
-            borderColor: 'rgba(255, 0, 235, 0.5)',
-            backgroundColor: 'rgb(53, 162, 235)',
-          }
-        ],
-    };
+      labels: dateArray.reverse().map(dateString => dateString.substring(5, 10)),
+      datasets: [
+        {
+          fill: true,
+          label: `Level ${allLevels[0]}`,
+          data: Object.values(dataForDrawing[allLevels[0]]).reverse(),
+          borderColor: 'rgba(136, 162, 207, 0.5)',
+          backgroundColor: 'rgba(164, 184, 219, 0.5)',
+        },
+        {
+          fill: true,
+          label: `Level ${allLevels[1]}`,
+          data: Object.values(dataForDrawing[allLevels[1]]).reverse(),
+          borderColor: 'rgba(164, 184, 219, 0.5)',
+          backgroundColor: 'rgba(136, 162, 207, 0.5)',
+        }
+      ],
+  };
 
     const options = {
       responsive: true,
       maintainAspectRatio: true,
+      scales: {
+        x: {
+          beginAtZero: true,
+          min: 0,
+          ticks: {
+            stepSize: 25,
+          },
+        },
+        y: {
+          ticks: {
+            stepSize: 1,
+          },
+        },
+      },
     };
 
     return (
