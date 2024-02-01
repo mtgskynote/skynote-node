@@ -78,7 +78,7 @@ var makeAudioStreamer = function (
           echoCancellation: false,
           autoGainControl: false,
           noiseSuppression: false,
-          latency: 0,
+          latency: {ideal: 0.01, max: 0.05},
           sampleRate: 22050
         } })
         .then(async (stream) => {
@@ -96,6 +96,7 @@ var makeAudioStreamer = function (
 
           audioContext.resume();
           const sourceNode = audioContext.createMediaStreamSource(stream);
+
 
           if (typeof Meyda === "undefined") {
             console.log("Meyda could not be found! Have you included it?");
