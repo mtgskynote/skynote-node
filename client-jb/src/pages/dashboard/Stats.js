@@ -14,6 +14,7 @@ import StatsCSS from './Stats.module.css'
 import PercentagesStarsStats from "../../components/StatsPercentagesStars.js";
 import StatsRecentRecordings from "../../components/StatsRecentRecordings.js";
 import NumberOfRecStats from "../../components/StatsAreaChart.js";
+import StatsGeneral from "../../components/StatsGeneral.js";
 
 ChartJS.register(ArcElement, Tooltip, Legend);
 
@@ -261,6 +262,9 @@ const Stats = () => {
       
       <div className={StatsCSS.dashboard}> 
         <div className={StatsCSS.left}> 
+          <div className={StatsCSS.item}> 
+            <StatsGeneral/>
+          </div>
         
           <div className={StatsCSS.item}> 
             <PercentagesStarsStats
@@ -275,12 +279,15 @@ const Stats = () => {
               recentRecordings={recentRecordings}
             />
           </div>
+          <div className={StatsCSS.item}>
+          <NumberOfRecStats
+            dates={recordingDates}
+            levels={recordingLevels}
+          />
+          </div>
         </div>
        </div>
-      <NumberOfRecStats
-        dates={recordingDates}
-        levels={recordingLevels}
-      />
+      
     </div>
   );
 };
