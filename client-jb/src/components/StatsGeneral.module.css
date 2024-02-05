@@ -1,0 +1,9 @@
+.list{
+    list-style-type: circle;
+    border: solid;
+    margin: 20px 60px 0px 60px;
+}
+.entry{
+    padding: 5px;
+    margin:15px;
+}

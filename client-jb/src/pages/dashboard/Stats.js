@@ -263,7 +263,7 @@ const Stats = () => {
       <div className={StatsCSS.dashboard}> 
         <div className={StatsCSS.left}> 
           <div className={StatsCSS.item}> 
-            <StatsGeneral/>
+            <StatsGeneral numberRecordings={recordingNames}/>
           </div>
         
           <div className={StatsCSS.item}> 
