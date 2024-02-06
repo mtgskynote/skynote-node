@@ -1,3 +1,5 @@
+@media screen and (min-width: 800px) {
+
 .profile{
     text-align: center;
     padding: 25px 50px;
@@ -32,4 +34,5 @@
     
     padding: 10px;
     margin: 0 0 20px 0
+}
 }
