@@ -35,10 +35,8 @@ const StatsRecentRecordings = (props) => {
 
     // Event handler for click on See
   const handleSeeClick = (nameOfFile, number)=> {
-    console.log("here ", recordingIds[recordingNames.indexOf(nameOfFile)])
     const id = recordingIds[recordingNames.indexOf(nameOfFile)];
     const score = recordingScoresXML[recordingNames.indexOf(nameOfFile)];
-    console.log("ID ", id, "score ", score)
     //Pass recording ID to ProgressPlayfileVisual
     navigate(`/ListRecordings/${score}`, {state:{'recordingID':id}})
   }
@@ -139,7 +137,6 @@ const ButtonGroup = ({ nameOfFile, index }) => {
         data.push(row);
       }
       setData(data)
-      console.log(data);
     }
   }, [props]);
 
