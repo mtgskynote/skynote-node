@@ -145,7 +145,7 @@ const NumberOfRecStats = (props) => {
     };
 
     return (
-      <div className={areaChartCSS.content}>
+      <div className={areaChartCSS.container}>
         <h4 className={areaChartCSS.title}>
           Number of Recordings
         </h4>

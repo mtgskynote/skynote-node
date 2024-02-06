@@ -1,3 +1,13 @@
+.container{
+    width:100%;
+    margin:10px;
+    text-align: left;
+}
+
+.title{
+    font-weight: bold;
+}
+
 .list{
     list-style-type: circle;
     border: solid;

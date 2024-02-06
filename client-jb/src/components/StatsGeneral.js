@@ -29,8 +29,8 @@ const StatsGeneral = (props) => {
   
 
   return (
-    <div >
-      <h4>
+    <div className={StatsGeneralCSS.container} >
+      <h4 className={StatsGeneralCSS.title}>
         General Information 
       </h4>
       <div>
