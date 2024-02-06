@@ -35,8 +35,6 @@ const NumberOfRecStats = (props) => {
   if (props.dates !== null && props.levels !== null) {
     //Remove irrelevant info from dates
     const shortDates = props.dates.map(dateString => dateString.substring(0, 10));
-    //Check how many levels
-    const allLevels = [...new Set(props.levels)];
     //This part gets the last 7 days
     const currentDate = new Date();
     const dateArray = [];
@@ -45,11 +43,10 @@ const NumberOfRecStats = (props) => {
       previousDate.setDate(currentDate.getDate() - i);
       dateArray.push(formatDate(previousDate));
     }
-
     //Now I filter the recordings to use only the ones in the last week, and array them by level
     const dataPreCount = new Map(); 
     shortDates.forEach((date, index) => {
-      if (date > dateArray[dateArray.length-1]){
+      if (date >= dateArray[dateArray.length-1]){
         if (dataPreCount.has(props.levels[index])) {
           const existingValue = dataPreCount.get(props.levels[index]);
           dataPreCount.set(props.levels[index], [...existingValue, date]);
@@ -58,7 +55,6 @@ const NumberOfRecStats = (props) => {
         }
       }
     });
-
     //Finally I check if recordings where done in the same day
     var dataFiltered = {};
     const dataForDrawing = {}
@@ -72,58 +68,39 @@ const NumberOfRecStats = (props) => {
       dataForDrawing[key] = dataFiltered;
     });
     
-    /////////////////////////////////////////////////////////////////////////////////////////////////////////
-    ///////////////////THIS CODE ALLOWS TO AUTOMATICALLY CREATE MORE LINES FOR MORE LEVELS///////////////////
-    ////////////////////YOU NEED TO COMMENT THE const data CHUNCK OF CODE BELOW THIS ONE/////////////////////
-    //What I don't like about it, is that we have to automatically update new colors for new lines, and that's
-    //a bit of a pain in the ass. So I don't know if it's really worth it, maybe it can be manually changed when
-    //we allow for more levels (I don't know how are we approaching "new levels" atm) :)
-    /////////////////////////////////////////////////////////////////////////////////////////////////////////
-    // const generateDatasets = (dataForDrawing) => {
-    //   const datasets = [];
-    //   const keys = Object.keys(dataForDrawing);
-    //   keys.forEach((key, index) => {
-    //     const lineData = Object.values(dataForDrawing[key]).reverse();
-    //     const dataset = {
-    //       fill: true,
-    //       label: `Level ${key}`,
-    //       data: lineData,
-    //       borderColor: '#88A2CF',
-    //       backgroundColor: 'rgba(164, 184, 219, 0.5)',
-    //     };
-    //     datasets.push(dataset);
-    //   });
-    //   return datasets;
-    // }
-
-    // const data = {
-    //     labels: dateArray.reverse().map(dateString => dateString.substring(5, 10)),
-    //     datasets: generateDatasets(dataForDrawing),
-    // };
-
-    /////////////////////////////////////////////////////////////////////////////////////////////////////////
-    /////////////////////////////////////////////////////////////////////////////////////////////////////////
-    /////////////////////////////////////////////////////////////////////////////////////////////////////////
+    const generateColor = (howMany) => {
+      const baseColor = [218, 43, 67];//Hue should change, saturation and brightness should be fixed
+      const colorArray = [];
+      howMany.forEach((key, index) => {
+        const newColor = baseColor[0]+(key*360/howMany.length);
+        const newHue = (newColor >= 360) ? (newColor-360) : newColor;
+        colorArray[index] = [newHue, baseColor[1], baseColor[2]];
+      })
+      return colorArray.reverse()
+    }
+    
+    const generateDatasets = (dataForDrawing) => {
+      const datasets = [];
+      const keys = Object.keys(dataForDrawing);
+      const colorArray = generateColor(keys);
+      keys.forEach((key, index) => {
+        const lineData = Object.values(dataForDrawing[key]).reverse();
+        const dataset = {
+          fill: true,
+          label: `Level ${key}`,
+          data: lineData,
+          borderColor: `hsla(${colorArray[index][0]}, ${colorArray[index][1]}%, ${colorArray[index][2]}%, 1)`,//'#88A2CF'
+          backgroundColor: `hsla(${colorArray[index][0]}, ${colorArray[index][1]}%, ${colorArray[index][2]}%, 0.5)`,
+        };
+        datasets.push(dataset);
+      });
+      return datasets;
+    }
 
     const data = {
-      labels: dateArray.reverse().map(dateString => dateString.substring(5, 10)),
-      datasets: [
-        {
-          fill: true,
-          label: `Level ${allLevels[0]}`,
-          data: Object.values(dataForDrawing[allLevels[0]]).reverse(),
-          borderColor: 'rgba(136, 162, 207, 0.5)',
-          backgroundColor: 'rgba(164, 184, 219, 0.5)',
-        },
-        {
-          fill: true,
-          label: `Level ${allLevels[1]}`,
-          data: Object.values(dataForDrawing[allLevels[1]]).reverse(),
-          borderColor: 'rgba(164, 184, 219, 0.5)',
-          backgroundColor: 'rgba(136, 162, 207, 0.5)',
-        }
-      ],
-  };
+        labels: dateArray.reverse().map(dateString => dateString.substring(5, 10)),
+        datasets: generateDatasets(dataForDrawing),
+    };
 
     const options = {
       responsive: true,
