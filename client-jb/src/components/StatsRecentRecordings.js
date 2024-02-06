@@ -72,7 +72,9 @@ const handleTrashClick = (nameOfFile, number) => {
         setRecordingLevels(auxArrayLevels)
         setRecordingDates(auxArrayDates)
         setData(auxData)
-      //window.location.reload();
+        //send notice to parent component to remove this recording from their arrays and to charge new recent recording
+        props.reloadRecordingsCallBack(idToDelete)
+        //window.location.reload();
     }).catch((error) => {
       console.log(`Cannot delete recordings from database: ${error}`)
     })
@@ -96,7 +98,6 @@ const ButtonGroup = ({ nameOfFile, index }) => {
     const recentRecordings = props.recentRecordings;
 
     if (recentRecordings !== null) {
-        console.log(recentRecordings.scoresTitles)
       setRecordingNames(recentRecordings.names)
       setRecordingIds(recentRecordings.ids)
       setRecordingStars(recentRecordings.stars)

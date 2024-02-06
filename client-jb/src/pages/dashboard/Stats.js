@@ -109,6 +109,21 @@ const Stats = () => {
   const [recentRecordings, setRecentRecordings] = useState(null);
   const classes = useStyles();
 
+  const reloadRecordingsCallback=(idDelete)=>{
+    //delete recording from all arrays
+    setRecordingNames(recordingNames.filter((item, index) => index !== recordingIds.indexOf(idDelete)));
+    setRecordingList(JSON.stringify(JSON.parse(recordingList).filter((item, index) => item.recordingId !== idDelete)));
+    setRecordingStars(recordingStars.filter((item, index) => index !== recordingIds.indexOf(idDelete)));
+    setRecordingScoresTitles(recordingScoresTitles.filter((item, index) => index !== recordingIds.indexOf(idDelete)));
+    setRecordingScoresIds(recordingScoresIds.filter((item, index) => index !== recordingIds.indexOf(idDelete)));
+    setRecordingScoresXML(recordingScoresXML.filter((item, index) => index !== recordingIds.indexOf(idDelete)));
+    setRecordingDates(recordingDates.filter((item, index) => index !== recordingIds.indexOf(idDelete)));
+    setRecordingSkills(recordingSkills.filter((item, index) => index !== recordingIds.indexOf(idDelete)));
+    setRecordingLevels(recordingLevels.filter((item, index) => index !== recordingIds.indexOf(idDelete)));
+    setRecordingIds(recordingIds.filter((item, index) => index !== recordingIds.indexOf(idDelete)));
+    //this will trigger the reloading of the useEffect in charge of sending data to child components
+  }
+
   const fetchDataFromAPI = () => {
 
     getCurrentUser() // fetchData is already an async function
@@ -127,7 +142,6 @@ const Stats = () => {
       if(userData===null){
         fetchDataFromAPI();
       }
-      //console.log(userData)
     },[userData])
 
     //get Scores data
@@ -138,7 +152,6 @@ const Stats = () => {
       setScoresData(local);
       // Count the total number of stars per level, and save
       const levelCounts = {};
-      //console.log("local ", local)
       local.forEach(entry => {
         const level = entry.level;
         // Check if the level is already in the counts object, if not, initialize it to 1
@@ -157,7 +170,6 @@ const Stats = () => {
       if(userData!==null && scoresData!==null){
         getAllRecData(userData.id).then((result) => {
           setRecordingList(JSON.stringify(result));
-          console.log(result)
           setRecordingNames(result.map((recording) => recording.recordingName)); 
           setRecordingIds(result.map((recording) => recording.recordingId)); 
           setRecordingStars(result.map((recording) => recording.recordingStars)); 
@@ -169,7 +181,6 @@ const Stats = () => {
             return scoresData.find(item => item._id === recording.scoreID).skill 
           }))
           setRecordingScoresTitles(result.map((recording)=> {
-            console.log(scoresData.find(item => item._id === recording.scoreID).title)
             return scoresData.find(item => item._id === recording.scoreID).title  
           }))
           setRecordingScoresXML(result.map((recording)=> {
@@ -181,13 +192,11 @@ const Stats = () => {
           // Handle errors if necessary
         })
       }
-      //console.log(userData)
     },[userData, scoresData])
 
     //When recordings info is loaded, get neeeded info 
     useEffect(()=>{
       if(recordingList!==null){
-        //console.log("recordingList ", recordingList)
 
         //number of stars achieved per level/////////////////
         // store the best score for each scoreID
@@ -253,7 +262,7 @@ const Stats = () => {
       }  
 
 
-    },[recordingList])
+    },[recordingList, recordingNames])
 
 
   return (
@@ -277,6 +286,7 @@ const Stats = () => {
           <div className={StatsCSS.item}>
             <StatsRecentRecordings
               recentRecordings={recentRecordings}
+              reloadRecordingsCallBack={reloadRecordingsCallback}
             />
           </div>
           <div className={StatsCSS.item}>
