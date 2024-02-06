@@ -253,8 +253,19 @@ const Stats = () => {
           stars:lastFourStars,
           dates:lastFourDates,
         }
+        const lastFourEntries2 = {
+          names:recordingNames,
+          scoresTitles:recordingScoresTitles,
+          scoresIds:recordingScoresIds,
+          scoresXML:recordingScoresXML,
+          ids:recordingIds,
+          skills:recordingSkills,
+          levels:recordingLevels,
+          stars:recordingStars,
+          dates:recordingDates,
+        }
 
-        setRecentRecordings(lastFourEntries)
+        setRecentRecordings(lastFourEntries2)
         ////////////////////////////////////////////////////////
 
 
@@ -281,6 +292,12 @@ const Stats = () => {
               achievedStarsPerLevel={achievedStarsPerLevel}
             />
           </div>
+          <div className={StatsCSS.item}>
+          <NumberOfRecStats
+            dates={recordingDates}
+            levels={recordingLevels}
+          />
+          </div>
         </div>
         <div className={StatsCSS.right}>
           <div className={StatsCSS.item}>
@@ -288,13 +305,7 @@ const Stats = () => {
               recentRecordings={recentRecordings}
               reloadRecordingsCallBack={reloadRecordingsCallback}
             />
-          </div>
-          <div className={StatsCSS.item}>
-          <NumberOfRecStats
-            dates={recordingDates}
-            levels={recordingLevels}
-          />
-          </div>
+          </div> 
         </div>
        </div>
       

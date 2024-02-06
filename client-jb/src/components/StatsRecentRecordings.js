@@ -96,15 +96,15 @@ const ButtonGroup = ({ nameOfFile, index }) => {
     const recentRecordings = props.recentRecordings;
 
     if (recentRecordings !== null) {
-      setRecordingNames(recentRecordings.names)
-      setRecordingIds(recentRecordings.ids)
-      setRecordingStars(recentRecordings.stars)
-      setRecordingScoresTitles(recentRecordings.scoresTitles)
-      setRecordingScoresIds(recentRecordings.scoresIds)
-      setRecordingScoresXML(recentRecordings.scoresXML)
-      setRecordingSkills(recentRecordings.skills)
-      setRecordingLevels(recentRecordings.levels)
-      setRecordingDates(recentRecordings.dates)
+      setRecordingNames((recentRecordings.names).reverse())
+      setRecordingIds((recentRecordings.ids).reverse())
+      setRecordingStars((recentRecordings.stars).reverse())
+      setRecordingScoresTitles((recentRecordings.scoresTitles).reverse())
+      setRecordingScoresIds((recentRecordings.scoresIds).reverse())
+      setRecordingScoresXML((recentRecordings.scoresXML).reverse())
+      setRecordingSkills((recentRecordings.skills).reverse())
+      setRecordingLevels((recentRecordings.levels).reverse())
+      setRecordingDates((recentRecordings.dates).reverse())
 
       const options = {
         year: "numeric",
@@ -114,8 +114,8 @@ const ButtonGroup = ({ nameOfFile, index }) => {
         minute: "2-digit",
         second: "2-digit",
       };
-      setRecordingDates(recentRecordings.dates)
-      setRecordingDates(recentRecordings.dates.map((date) => {
+      //setRecordingDates(recentRecordings.dates)
+      setRecordingDates((recentRecordings.dates).reverse().map((date) => {
         //Set correct date format
         const newDate = new Date(date);
         return newDate.toLocaleDateString("es-ES", options);
@@ -146,7 +146,7 @@ const ButtonGroup = ({ nameOfFile, index }) => {
       <h4 className={StatsRecentCSS.title}>
         Your latest recordings
       </h4>
-    <div> 
+    <div className={StatsRecentCSS.tableBox}> 
       {data!==null?
       <table className={StatsRecentCSS.dynamicTable}>
       <thead>

@@ -93,7 +93,7 @@ const PercentagesStarsStats = (props) => {
     <div className={percentagesStarsStatsCSS.content}>
       <h4 className={percentagesStarsStatsCSS.title}>
       
-        Analytics 
+        Progress 
         
       </h4>
       <Bar data={data} options={options} />
