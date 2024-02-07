@@ -17,19 +17,6 @@ import {
 
 } from "@fortawesome/free-solid-svg-icons";
 
-
-//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-/////////////////////////////////////////IMPORTANT READ ME!!//////////////////////////////////////////////////////
-//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-//  THIS PART IS FOR DATABASE PETITIONS. ATM YOU CAN READ AND DELETE ENTRIES 
-//  ATM IT GETS THE USER ID FROM getCurrentUser
-//  AND THEN IT REQUESTS THE RECORDINGS FROM THAT USER AND THAT SPECIFIC SONG. WE DON'T HAVE A WAY
-//  TO GET THE SONG ID RIGHT NOW, SO WE HAVE A PLACEHOLDER ONE
-//  THE DELETE OPTION IS WORKING ON THE DATABASE SIDE, BUT DOESN'T PROPERLY DISPLAY ON SCREEN SO
-//  I FORCEFULLY RELOAD THE PAGE. THIS NEEDS TO BE LOOKED INTO, SINCE IT MIGHT BE BETTER TO JUST
-//  UPDATE THE RECORDINGLIST, BUT THAT MIGHT IMPLY REWRITING THE WAY RECORDINGLIST WORKS ATM :(
-
-
 const ListAllRecordings = () => {
 
   const { getCurrentUser } = useAppContext();
@@ -108,7 +95,7 @@ const ListAllRecordings = () => {
     // Use navigate to go back to the previous page
     //navigate(-1);
     navigate(`/`);
-  };
+  }
 
   // Event handler for click on See
   const handleSeeClick = (index)=> {
