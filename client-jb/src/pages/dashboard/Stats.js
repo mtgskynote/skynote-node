@@ -15,6 +15,7 @@ import PercentagesStarsStats from "../../components/StatsPercentagesStars.js";
 import StatsRecentRecordings from "../../components/StatsRecentRecordings.js";
 import NumberOfRecStats from "../../components/StatsAreaChart.js";
 import StatsGeneral from "../../components/StatsGeneral.js";
+import StatsTasksSection from "../../components/StatsTasksSection.js";
 
 ChartJS.register(ArcElement, Tooltip, Legend);
 
@@ -302,6 +303,12 @@ const Stats = () => {
         <div className={StatsCSS.right}>
           <div className={StatsCSS.item}>
             <StatsRecentRecordings
+              recentRecordings={recentRecordings}
+              reloadRecordingsCallBack={reloadRecordingsCallback}
+            />
+          </div> 
+          <div className={StatsCSS.item}>
+            <StatsTasksSection
               recentRecordings={recentRecordings}
               reloadRecordingsCallBack={reloadRecordingsCallback}
             />

@@ -16,6 +16,7 @@ import TimbreVisualization from "./components/TimbreVisualization";
 import ListRecordings from "./components/ListRecordings";
 import AudioPlayer from "./components/AudioPlayer";
 import ListAllRecordings from "./components/ListAllRecodings";
+import Assignments from "./components/Assignments";
 
 function App() {
   return (
@@ -45,6 +46,10 @@ function App() {
                 <Route
                   path="/TimbreVisualization"
                   element={<TimbreVisualization />}
+                />
+                <Route
+                  path="/Assignments"
+                  element={<Assignments />}
                 />
                 <Route path="/ListRecordings" element={<ListRecordings />} />
                 <Route
