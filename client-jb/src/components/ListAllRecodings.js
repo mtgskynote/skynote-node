@@ -35,6 +35,7 @@ const ListAllRecordings = () => {
 
   const { getCurrentUser } = useAppContext();
   const [userData, setUserData] = useState(null);
+  const [localData, setLocalData] = useState(null);
   const [recordingList, setRecordingList] = useState(null);
   const [recordingNames, setRecordingNames] = useState(null);
   const [recordingStars, setRecordingStars] = useState(null);
@@ -50,6 +51,7 @@ const ListAllRecordings = () => {
   useEffect(() => {
 
     const local=JSON.parse(localStorage.getItem("scoreData"))
+    setLocalData(local)
 
     const fetchDataFromAPI = () => {
       if(userData===null){
@@ -111,15 +113,17 @@ const ListAllRecordings = () => {
   };
 
   // Event handler for click on See
-  const handleSeeClick = (nameOfFile, number)=> {
-      const id = JSON.parse(recordingList)[recordingNames.indexOf(nameOfFile)].recordingId;
-      //Pass recording ID to ProgressPlayfileVisual
-      navigate(`/ListRecordings/V_040_Segundo_Dedo_D.xml`, {state:{'recordingID':id}}); //FIXME , change score according to ID
+  const handleSeeClick = (index)=> {
+      const id = JSON.parse(recordingList)[index].recordingId;
+      const scoreName=recordingScores[index]
+      const scoreXML=localData.find(item => item.title == scoreName).fname
+      console.log(id, scoreName, scoreXML, "hola")
+      navigate(`/ListRecordings/${scoreXML}`, {state:{'recordingID':id}})
     }
 
 
   // Event handler for click on Trash
-  const handleTrashClick = (nameOfFile, number) => {
+  const handleTrashClick = (nameOfFile, index) => {
     if (recordingNames.indexOf(nameOfFile) !== -1) {
       const idToDelete = JSON.parse(recordingList)[recordingNames.indexOf(nameOfFile)].recordingId;
       // Delete recording entry of state arrays
@@ -193,7 +197,7 @@ const ListAllRecordings = () => {
               <i>{recordingDates[index]}</i>
             </div>
             <div className={ListAllRecordingsCSS.buttonGroup}>
-              <button className={ListAllRecordingsCSS.iconbutton} onClick={() => handleSeeClick(nameOfFile, index)}>
+              <button className={ListAllRecordingsCSS.iconbutton} onClick={() => handleSeeClick(index)}>
                 <FontAwesomeIcon icon={faEye} />
               </button>
               <button className={ListAllRecordingsCSS.iconbutton} onClick={() => handleTrashClick(nameOfFile, index)}>
