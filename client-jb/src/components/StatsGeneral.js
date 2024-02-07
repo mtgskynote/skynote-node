@@ -1,19 +1,4 @@
 import React, { useEffect, useState } from "react";
-import { Bar } from 'react-chartjs-2';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import {
-    Chart as ChartJS,
-    CategoryScale,
-    LinearScale,
-    BarElement,
-    Title,
-    Tooltip,
-    Legend,
-  } from 'chart.js';
-
-import {
-    faStar,
-} from "@fortawesome/free-solid-svg-icons";
 import StatsGeneralCSS from './StatsGeneral.module.css'
 
 
