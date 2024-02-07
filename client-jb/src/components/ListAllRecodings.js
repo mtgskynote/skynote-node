@@ -1,14 +1,13 @@
 // ListAllRecordings.js
 import React, { useState, useEffect } from 'react';
-import { json, useLocation, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import ListAllRecordingsCSS from './ListRecordings.module.css';
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { getRecData, getAllRecData, deleteRecording } from "../utils/studentRecordingMethods.js";
+import { getAllRecData, deleteRecording } from "../utils/studentRecordingMethods.js";
 import { useAppContext } from "../context/appContext";
 
 import {
   faTrash,
-  faPlay,
   faEye,
   faStar,
   faPencilSquare,
@@ -43,7 +42,6 @@ const ListAllRecordings = () => {
   const [recordingDates, setRecordingDates] = useState(null);
   const [recordingSkills, setRecordingSkills] = useState(null);
   const [recordingLevels, setRecordingLevels] = useState(null);
-  const location = useLocation();
   const navigate = useNavigate();
 
 
@@ -102,7 +100,7 @@ const ListAllRecordings = () => {
 
     fetchDataFromAPI();
     
-  }, [userData, recordingList]);
+  }, [userData, recordingList, getCurrentUser]);
 
   //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
   // Event handler for going back
@@ -116,7 +114,7 @@ const ListAllRecordings = () => {
   const handleSeeClick = (index)=> {
       const id = JSON.parse(recordingList)[index].recordingId;
       const scoreName=recordingScores[index]
-      const scoreXML=localData.find(item => item.title == scoreName).fname
+      const scoreXML=localData.find(item => item.title === scoreName).fname
       console.log(id, scoreName, scoreXML, "hola")
       navigate(`/ListRecordings/${scoreXML}`, {state:{'recordingID':id}})
     }
