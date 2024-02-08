@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from "react";
 import {useNavigate } from 'react-router-dom';
-import percentagesStarsStatsCSS from './StatsPercentagesStars.module.css'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import {deleteRecording } from "../utils/studentRecordingMethods.js";
 import StatsRecentCSS from './StatsRecentRecordings.module.css'
@@ -9,9 +8,6 @@ import {
     faStar,
     faEye,
     faTrash,
-    faMusic,
-    faPencilSquare,
-    faBoxArchive,
 } from "@fortawesome/free-solid-svg-icons";
 import ListRecordingsCSS from './ListRecordings.module.css';
 

@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { Bar } from 'react-chartjs-2';
 import percentagesStarsStatsCSS from './StatsPercentagesStars.module.css'
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import {
     Chart as ChartJS,
     CategoryScale,
@@ -11,11 +10,6 @@ import {
     Tooltip,
     Legend,
   } from 'chart.js';
-
-import {
-    faStar,
-} from "@fortawesome/free-solid-svg-icons";
-
   
 ChartJS.register(
     CategoryScale,
@@ -81,12 +75,6 @@ const PercentagesStarsStats = (props) => {
         },
       },
     },
-  };
-
-  const chartStyles = {
-    width: '500px', // Set the width of the chart
-    margin: '200px auto', // Add some margin
-    fontSize:'5px'
   };
 
   return (
