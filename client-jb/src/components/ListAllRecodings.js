@@ -1,14 +1,13 @@
 // ListAllRecordings.js
 import React, { useState, useEffect } from 'react';
-import { json, useLocation, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import ListAllRecordingsCSS from './ListRecordings.module.css';
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { getRecData, getAllRecData, deleteRecording } from "../utils/studentRecordingMethods.js";
+import { getAllRecData, deleteRecording } from "../utils/studentRecordingMethods.js";
 import { useAppContext } from "../context/appContext";
 
 import {
   faTrash,
-  faPlay,
   faEye,
   faStar,
   faPencilSquare,
@@ -18,23 +17,11 @@ import {
 
 } from "@fortawesome/free-solid-svg-icons";
 
-
-//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-/////////////////////////////////////////IMPORTANT READ ME!!//////////////////////////////////////////////////////
-//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-//  THIS PART IS FOR DATABASE PETITIONS. ATM YOU CAN READ AND DELETE ENTRIES 
-//  ATM IT GETS THE USER ID FROM getCurrentUser
-//  AND THEN IT REQUESTS THE RECORDINGS FROM THAT USER AND THAT SPECIFIC SONG. WE DON'T HAVE A WAY
-//  TO GET THE SONG ID RIGHT NOW, SO WE HAVE A PLACEHOLDER ONE
-//  THE DELETE OPTION IS WORKING ON THE DATABASE SIDE, BUT DOESN'T PROPERLY DISPLAY ON SCREEN SO
-//  I FORCEFULLY RELOAD THE PAGE. THIS NEEDS TO BE LOOKED INTO, SINCE IT MIGHT BE BETTER TO JUST
-//  UPDATE THE RECORDINGLIST, BUT THAT MIGHT IMPLY REWRITING THE WAY RECORDINGLIST WORKS ATM :(
-
-
 const ListAllRecordings = () => {
 
   const { getCurrentUser } = useAppContext();
   const [userData, setUserData] = useState(null);
+  const [localData, setLocalData] = useState(null);
   const [recordingList, setRecordingList] = useState(null);
   const [recordingNames, setRecordingNames] = useState(null);
   const [recordingStars, setRecordingStars] = useState(null);
@@ -42,7 +29,6 @@ const ListAllRecordings = () => {
   const [recordingDates, setRecordingDates] = useState(null);
   const [recordingSkills, setRecordingSkills] = useState(null);
   const [recordingLevels, setRecordingLevels] = useState(null);
-  const location = useLocation();
   const navigate = useNavigate();
 
 
@@ -50,6 +36,7 @@ const ListAllRecordings = () => {
   useEffect(() => {
 
     const local=JSON.parse(localStorage.getItem("scoreData"))
+    setLocalData(local)
 
     const fetchDataFromAPI = () => {
       if(userData===null){
@@ -100,7 +87,7 @@ const ListAllRecordings = () => {
 
     fetchDataFromAPI();
     
-  }, [userData, recordingList]);
+  }, [userData, recordingList, getCurrentUser]);
 
   //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
   // Event handler for going back
@@ -108,18 +95,20 @@ const ListAllRecordings = () => {
     // Use navigate to go back to the previous page
     //navigate(-1);
     navigate(`/`);
-  };
+  }
 
   // Event handler for click on See
-  const handleSeeClick = (nameOfFile, number)=> {
-      const id = JSON.parse(recordingList)[recordingNames.indexOf(nameOfFile)].recordingId;
-      //Pass recording ID to ProgressPlayfileVisual
-      navigate(`/ListRecordings/V_040_Segundo_Dedo_D.xml`, {state:{'recordingID':id}}); //FIXME , change score according to ID
+  const handleSeeClick = (index)=> {
+      const id = JSON.parse(recordingList)[index].recordingId;
+      const scoreName=recordingScores[index]
+      const scoreXML=localData.find(item => item.title === scoreName).fname
+      console.log(id, scoreName, scoreXML, "hola")
+      navigate(`/ListRecordings/${scoreXML}`, {state:{'recordingID':id}})
     }
 
 
   // Event handler for click on Trash
-  const handleTrashClick = (nameOfFile, number) => {
+  const handleTrashClick = (nameOfFile, index) => {
     if (recordingNames.indexOf(nameOfFile) !== -1) {
       const idToDelete = JSON.parse(recordingList)[recordingNames.indexOf(nameOfFile)].recordingId;
       // Delete recording entry of state arrays
@@ -193,7 +182,7 @@ const ListAllRecordings = () => {
               <i>{recordingDates[index]}</i>
             </div>
             <div className={ListAllRecordingsCSS.buttonGroup}>
-              <button className={ListAllRecordingsCSS.iconbutton} onClick={() => handleSeeClick(nameOfFile, index)}>
+              <button className={ListAllRecordingsCSS.iconbutton} onClick={() => handleSeeClick(index)}>
                 <FontAwesomeIcon icon={faEye} />
               </button>
               <button className={ListAllRecordingsCSS.iconbutton} onClick={() => handleTrashClick(nameOfFile, index)}>

@@ -136,7 +136,8 @@ const ProgressPlayFile = (props) => {
       info:jsonData,
     }
 
-    ///////////REMOVE
+    ///////////CODE TO DOWNLOAD LOCALLY THE JSON THAT IS UPLOADED TO DATABASE
+    /*
     // Convert the combined data to a JSON string
     const jsonString = JSON.stringify(jsonComplete);
     // Create a Blob from the JSON string
@@ -153,7 +154,8 @@ const ProgressPlayFile = (props) => {
     link.click();
     // Remove the link from the document
     document.body.removeChild(link);
-    ///////////REMOVE
+    */
+    ///////////////////////////////////////////////////////////////////////////
 
       // upload to database
       try{

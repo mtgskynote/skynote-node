@@ -12,9 +12,7 @@ import ChevronRightIcon from "@mui/icons-material/ChevronRight";
 
 import OpenSheetMusicDisplayPreview from "./OpenSheetMusicDisplayPreview";
 import XMLParser from "react-xml-parser";
-import { useAppContext } from "../context/appContext";
 import AllLessonsCSS from './AllLessons.module.css';
-import { blue } from "@material-ui/core/colors";
 const folderBasePath = "xmlScores/violin";
 
 const getTitle = async (fileName) => {
@@ -60,7 +58,6 @@ const fetchAllTitles = async (files) => {
 
 
 const AllLessons = () => {
-  const { getAllLevels, getAllSkills, getAllNames, getAllScoreData, getAllScoreData2 } = useAppContext();
 
   const [titles, setTitles] = useState({});
   const [selectedNodeActive, setSelectedNodeActive] = useState(false);

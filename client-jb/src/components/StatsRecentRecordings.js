@@ -1,18 +1,17 @@
 import React, { useEffect, useState } from "react";
 import {useNavigate } from 'react-router-dom';
-import percentagesStarsStatsCSS from './StatsPercentagesStars.module.css'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import {deleteRecording } from "../utils/studentRecordingMethods.js";
+import StatsRecentCSS from './StatsRecentRecordings.module.css'
 
 import {
     faStar,
     faEye,
     faTrash,
-    faMusic,
-    faPencilSquare,
-    faBoxArchive,
 } from "@fortawesome/free-solid-svg-icons";
 import ListRecordingsCSS from './ListRecordings.module.css';
+
+
 
 
 const StatsRecentRecordings = (props) => {
@@ -25,14 +24,15 @@ const StatsRecentRecordings = (props) => {
     const [recordingDates, setRecordingDates] = useState(null);
     const [recordingSkills, setRecordingSkills] = useState(null);
     const [recordingLevels, setRecordingLevels] = useState(null);
+    const [data, setData] = useState(null);
     const navigate = useNavigate();
+
+    
 
     // Event handler for click on See
   const handleSeeClick = (nameOfFile, number)=> {
-    console.log("here ", recordingIds[recordingNames.indexOf(nameOfFile)])
     const id = recordingIds[recordingNames.indexOf(nameOfFile)];
     const score = recordingScoresXML[recordingNames.indexOf(nameOfFile)];
-    console.log("ID ", id, "score ", score)
     //Pass recording ID to ProgressPlayfileVisual
     navigate(`/ListRecordings/${score}`, {state:{'recordingID':id}})
   }
@@ -53,6 +53,7 @@ const handleTrashClick = (nameOfFile, number) => {
     const auxArraySkills = recordingSkills.filter((item, index) => index !== recordingNames.indexOf(nameOfFile));
     const auxArrayLevels = recordingLevels.filter((item, index) => index !== recordingNames.indexOf(nameOfFile));
     const auxArrayDates = recordingDates.filter((item, index) => index !== recordingNames.indexOf(nameOfFile));
+    const auxData = data.filter((item, index) => index !== recordingNames.indexOf(nameOfFile));
     //delete from database
     deleteRecording(idToDelete).then(() => {
         setRecordingNames(auxArrayNames)
@@ -64,26 +65,42 @@ const handleTrashClick = (nameOfFile, number) => {
         setRecordingSkills(auxArraySkills)
         setRecordingLevels(auxArrayLevels)
         setRecordingDates(auxArrayDates)
-      //window.location.reload();
+        setData(auxData)
+        //send notice to parent component to remove this recording from their arrays and to charge new recent recording
+        props.reloadRecordingsCallBack(idToDelete)
+        //window.location.reload();
     }).catch((error) => {
       console.log(`Cannot delete recordings from database: ${error}`)
     })
   }
+};
+// Your button group component
+const ButtonGroup = ({ nameOfFile, index }) => {
+  return (
+    <div className={ListRecordingsCSS.buttonGroup}>
+      <button className={StatsRecentCSS.iconbutton} onClick={() => handleSeeClick(nameOfFile, index)}>
+        <FontAwesomeIcon icon={faEye} />
+      </button>
+      <button className={StatsRecentCSS.iconbutton} onClick={() => handleTrashClick(nameOfFile, index)}>
+        <FontAwesomeIcon icon={faTrash} />
+      </button>
+    </div>
+  );
 };
 
   useEffect(() => {
     const recentRecordings = props.recentRecordings;
 
     if (recentRecordings !== null) {
-      setRecordingNames(recentRecordings.names)
-      setRecordingIds(recentRecordings.ids)
-      setRecordingStars(recentRecordings.stars)
-      setRecordingScoresTitles(recentRecordings.scoresTitles)
-      setRecordingScoresIds(recentRecordings.scoresIds)
-      setRecordingScoresXML(recentRecordings.scoresXML)
-      setRecordingSkills(recentRecordings.skills)
-      setRecordingLevels(recentRecordings.levels)
-      setRecordingDates(recentRecordings.dates)
+      setRecordingNames((recentRecordings.names).reverse())
+      setRecordingIds((recentRecordings.ids).reverse())
+      setRecordingStars((recentRecordings.stars).reverse())
+      setRecordingScoresTitles((recentRecordings.scoresTitles).reverse())
+      setRecordingScoresIds((recentRecordings.scoresIds).reverse())
+      setRecordingScoresXML((recentRecordings.scoresXML).reverse())
+      setRecordingSkills((recentRecordings.skills).reverse())
+      setRecordingLevels((recentRecordings.levels).reverse())
+      setRecordingDates((recentRecordings.dates).reverse())
 
       const options = {
         year: "numeric",
@@ -93,67 +110,81 @@ const handleTrashClick = (nameOfFile, number) => {
         minute: "2-digit",
         second: "2-digit",
       };
-      setRecordingDates(recentRecordings.dates)
-      setRecordingDates(recentRecordings.dates.map((date) => {
+      //setRecordingDates(recentRecordings.dates)
+      setRecordingDates((recentRecordings.dates).reverse().map((date) => {
         //Set correct date format
         const newDate = new Date(date);
         return newDate.toLocaleDateString("es-ES", options);
       }))
 
+
+
+      // Combine them into the desired format (array of arrays)
+      const data = [];
+
+      for (let i = 0; i < recentRecordings.ids.length; i++) {
+        const row = [];
+        row.push(recentRecordings.names[i] || ''); 
+        row.push(recentRecordings.scoresTitles[i] || ''); 
+        row.push(recentRecordings.skills[i] || '');
+        row.push(recentRecordings.levels[i] || '');
+        row.push(new Date(recentRecordings.dates[i]).toLocaleDateString("es-ES", options) || '');
+        row.push(recentRecordings.stars[i] || '');
+        data.push(row);
+      }
+      setData(data)
     }
   }, [props]);
 
   
   return (
-    <div className={percentagesStarsStatsCSS.container}>
-      <h4>
+    <div className={StatsRecentCSS.container}>
+      <h4 className={StatsRecentCSS.title}>
         Your latest recordings
       </h4>
-      {/* List of songs */}
-      {recordingNames!==null?
-      <div className={ListRecordingsCSS.songlist2}>
-      {recordingNames.map((nameOfFile, index) => (
-          //Each element/recording
-        <div className={ListRecordingsCSS.songelement2} key={index}>
-        <li key={index}>
-            <div className={ListRecordingsCSS.recTitle}><h5 >{nameOfFile}</h5></div>
-            <div className={ListRecordingsCSS.starsGroup}>
-                <FontAwesomeIcon icon={faStar} className={recordingStars[index]>=1 ? ListRecordingsCSS.completeStar : ListRecordingsCSS.incompleteStar}/>
-                <FontAwesomeIcon icon={faStar} className={recordingStars[index]>=2 ? ListRecordingsCSS.completeStar : ListRecordingsCSS.incompleteStar}/>
-                <FontAwesomeIcon icon={faStar} className={recordingStars[index]>=3 ? ListRecordingsCSS.completeStar : ListRecordingsCSS.incompleteStar}/>
-            </div>
-            <div className={ListRecordingsCSS.textGroup}>
-              <div><h6>
-                <FontAwesomeIcon icon={faMusic} className={ListRecordingsCSS.auxIcon}/>
-                {recordingScoresTitles[index]}
-              </h6></div>
-              <div><h6 >
-                <FontAwesomeIcon icon={faPencilSquare} className={ListRecordingsCSS.auxIcon}/>
-                {recordingSkills[index]}
-              </h6></div>
-              <div><h6 >
-                <FontAwesomeIcon icon={faBoxArchive} className={ListRecordingsCSS.auxIcon}/>
-                Level {recordingLevels[index]}
-              </h6></div>
-            </div>
+    <div className={StatsRecentCSS.tableBox}> 
+      {data!==null?
+      <table className={StatsRecentCSS.dynamicTable}>
+      <thead>
+        <tr>
+          <th>Recording</th>
+          <th>Score</th>
+          <th>Skill</th>
+          <th>Level</th>
+          <th>Date</th>
+          <th>Stars</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody className>
+      {data.map((rowData, rowIndex) => (
+          <tr key={rowIndex}>
+            {rowData.map((cellData, cellIndex) => (
+              <td key={cellIndex}>
+                {cellIndex === 5 ? ( // Assuming the stars column is at index 5
+                  Array.from({ length: cellData }, (_, index) => (
+                    <FontAwesomeIcon
+                      key={index}
+                      icon={faStar}
+                      className={ListRecordingsCSS.completeStar}
+                    />
+                  ))
+                ) : (
+                  cellData
+                )}
+              </td>
+            ))}
             
-            <div className={ListRecordingsCSS.dateTime}>
-              <i>{recordingDates[index]}</i>
-            </div>
-            <div className={ListRecordingsCSS.buttonGroup}>
-              <button className={ListRecordingsCSS.iconbutton} onClick={() => handleSeeClick(nameOfFile, index)}>
-                <FontAwesomeIcon icon={faEye} />
-              </button>
-              <button className={ListRecordingsCSS.iconbutton} onClick={() => handleTrashClick(nameOfFile, index)}>
-                <FontAwesomeIcon icon={faTrash} />
-              </button>
-            </div>
-          </li>
-          </div>
-      ))}
-      </div>:
-      <div> No recordings yet</div>
-    }
+            <td>
+              <ButtonGroup nameOfFile={rowData[0]} index={rowIndex} />
+            </td>
+          </tr>
+        ))}
+      </tbody>
+    </table>
+
+                :<div>No recordings to show</div>}
+    </div>
     </div>
   );
 };

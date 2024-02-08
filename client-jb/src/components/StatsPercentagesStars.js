@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { Bar } from 'react-chartjs-2';
 import percentagesStarsStatsCSS from './StatsPercentagesStars.module.css'
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import {
     Chart as ChartJS,
     CategoryScale,
@@ -11,11 +10,6 @@ import {
     Tooltip,
     Legend,
   } from 'chart.js';
-
-import {
-    faStar,
-} from "@fortawesome/free-solid-svg-icons";
-
   
 ChartJS.register(
     CategoryScale,
@@ -50,10 +44,10 @@ const PercentagesStarsStats = (props) => {
     labels: Object.keys(percentagesLevel || {}),
     datasets: [
       {
-        label: '%',
+        label: '% Stars Achieved per Level',
         data: Object.values(percentagesLevel || {}),
-        backgroundColor: '#A3CD8F',
-        borderColor: '#A3CD8F',
+        backgroundColor: '#88a2cf',
+        borderColor: '#88a2cf',
         borderWidth: 5,
       },
     ],
@@ -83,18 +77,12 @@ const PercentagesStarsStats = (props) => {
     },
   };
 
-  const chartStyles = {
-    width: '500px', // Set the width of the chart
-    margin: '200px auto', // Add some margin
-    fontSize:'5px'
-  };
-
   return (
     <div className={percentagesStarsStatsCSS.content}>
-      <h4>
-        <FontAwesomeIcon icon={faStar} className={percentagesStarsStatsCSS.completeStar}/>
-        Stars Achieved per Level 
-        <FontAwesomeIcon icon={faStar} className={percentagesStarsStatsCSS.completeStar}/>
+      <h4 className={percentagesStarsStatsCSS.title}>
+      
+        Progress 
+        
       </h4>
       <Bar data={data} options={options} />
     </div>

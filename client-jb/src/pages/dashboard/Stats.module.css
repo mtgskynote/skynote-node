@@ -1,16 +1,36 @@
+@media screen and (min-width: 800px) {
+
 .profile{
     text-align: center;
-    border: 0.2px solid #000000;
-    padding: 20px;
+    padding: 25px 50px;
+    font-weight: 800;
 }
 .container {
-    min-height: 100vh; /* Ensure the container covers the full viewport height */
+    height: 100vh; /* Ensure the container covers the full viewport height */
     text-align: left;
-    background-color: #FFFFFF;
-    padding: 10px;
+    background-color: #ffffff;
+  }
+
+  .dashboard{
+    display:flex;
+    padding: 0;
+  }
+
+  .left {
+    background-color: #e7e7e7;
+    height: 100%;
+    width:30%;
+  }
+  
+  .right {
+    background-color: #f4f4f4;
+    padding: 25px 0px 0px 30px; /* Optional: add padding for better spacing */
+    width:70%;
+    height:100hv;
   }
 .item{
-    border: 0.2px solid #000000;
-    margin: 10px 0px;
-    padding: 10px
+    
+    padding: 10px;
+    margin: 0 0 20px 0
+}
 }

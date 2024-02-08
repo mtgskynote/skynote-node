@@ -1,0 +1,14 @@
+.container{
+    width:100%;
+    font-size: 5px;
+    margin:10px;
+    text-align: left;
+}
+.title{
+    font-weight: bold;
+    text-align: left;
+}
+.chart{
+    max-height: 300px;
+}
+

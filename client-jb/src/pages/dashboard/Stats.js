@@ -1,92 +1,15 @@
-import { ListItem, ListItemText, List, Grid, Box } from "@mui/material";
-import React, { useEffect, useState, useRef } from "react";
-import { makeStyles } from "@material-ui/styles";
-import { Rating } from "@mui/material";
+import React, { useEffect, useState } from "react";
 import { Chart as ChartJS, ArcElement, Tooltip, Legend } from "chart.js";
-import { Doughnut } from "react-chartjs-2";
-// import Header and LineChart from components/Header.js
-import Header from "../../components/Header";
-import LineChart from "../../components/LineChart";
-import Wrapper from "../../assets/wrappers/StatsContainer";
 import { useAppContext } from "../../context/appContext";
 import { getAllRecData } from "../../utils/studentRecordingMethods.js";
 import StatsCSS from './Stats.module.css'
 import PercentagesStarsStats from "../../components/StatsPercentagesStars.js";
 import StatsRecentRecordings from "../../components/StatsRecentRecordings.js";
+import NumberOfRecStats from "../../components/StatsAreaChart.js";
+import StatsGeneral from "../../components/StatsGeneral.js";
+import StatsTasksSection from "../../components/StatsTasksSection.js";
 
 ChartJS.register(ArcElement, Tooltip, Legend);
-
-
-const useStyles = makeStyles((theme) => ({
-  gridClassName: {
-   //boxShadow: "1px 10px 5px",
-    //position: "relative",
-  },
-  // other classes here
-}));
-
-const lineChartOptions = {
-  scales: {
-    xAxes: [
-      {
-        type: "time",
-        time: {
-          unit: "month",
-        },
-        ticks: {
-          source: "labels",
-        },
-      },
-    ],
-  },
-};
-
-const lineChartData = {
-  labels: [
-    "2022-01-01",
-    "2022-02-01",
-    "2022-03-01",
-    "2022-04-01",
-    "2022-05-01",
-    "2022-06-01",
-    "2022-07-01",
-  ],
-  datasets: [
-    {
-      label: "My Data",
-      data: [100, 150, 200, 250, 300, 350, 400],
-      fill: false,
-      borderColor: "#8884d8",
-    },
-  ],
-};
-
-export const dataset = {
-  labels: ["Level 1", "Level 2", "Level 3", "Level 4", "Level 5", "Level 6"],
-  datasets: [
-    {
-      label: "# of Votes",
-      data: [12, 19, 3, 5, 2, 3],
-      backgroundColor: [
-        "rgba(255, 99, 132, 0.2)",
-        "rgba(54, 162, 235, 0.2)",
-        "rgba(255, 206, 86, 0.2)",
-        "rgba(75, 192, 192, 0.2)",
-        "rgba(153, 102, 255, 0.2)",
-        "rgba(255, 159, 64, 0.2)",
-      ],
-      borderColor: [
-        "rgba(255, 99, 132, 1)",
-        "rgba(54, 162, 235, 1)",
-        "rgba(255, 206, 86, 1)",
-        "rgba(75, 192, 192, 1)",
-        "rgba(153, 102, 255, 1)",
-        "rgba(255, 159, 64, 1)",
-      ],
-      borderWidth: 1,
-    },
-  ],
-};
 
 const Stats = () => {
   const { getCurrentUser } = useAppContext();
@@ -105,7 +28,21 @@ const Stats = () => {
   const [starsPerLevel, setStarsPerLevel] = useState(null);
   const [achievedStarsPerLevel, setAchievedStarsPerLevel] = useState(null);
   const [recentRecordings, setRecentRecordings] = useState(null);
-  const classes = useStyles();
+
+  const reloadRecordingsCallback=(idDelete)=>{
+    //delete recording from all arrays
+    setRecordingNames(recordingNames.filter((item, index) => index !== recordingIds.indexOf(idDelete)));
+    setRecordingList(JSON.stringify(JSON.parse(recordingList).filter((item, index) => item.recordingId !== idDelete)));
+    setRecordingStars(recordingStars.filter((item, index) => index !== recordingIds.indexOf(idDelete)));
+    setRecordingScoresTitles(recordingScoresTitles.filter((item, index) => index !== recordingIds.indexOf(idDelete)));
+    setRecordingScoresIds(recordingScoresIds.filter((item, index) => index !== recordingIds.indexOf(idDelete)));
+    setRecordingScoresXML(recordingScoresXML.filter((item, index) => index !== recordingIds.indexOf(idDelete)));
+    setRecordingDates(recordingDates.filter((item, index) => index !== recordingIds.indexOf(idDelete)));
+    setRecordingSkills(recordingSkills.filter((item, index) => index !== recordingIds.indexOf(idDelete)));
+    setRecordingLevels(recordingLevels.filter((item, index) => index !== recordingIds.indexOf(idDelete)));
+    setRecordingIds(recordingIds.filter((item, index) => index !== recordingIds.indexOf(idDelete)));
+    //this will trigger the reloading of the useEffect in charge of sending data to child components
+  }
 
   const fetchDataFromAPI = () => {
 
@@ -125,7 +62,6 @@ const Stats = () => {
       if(userData===null){
         fetchDataFromAPI();
       }
-      console.log(userData)
     },[userData])
 
     //get Scores data
@@ -136,7 +72,6 @@ const Stats = () => {
       setScoresData(local);
       // Count the total number of stars per level, and save
       const levelCounts = {};
-      console.log("local ", local)
       local.forEach(entry => {
         const level = entry.level;
         // Check if the level is already in the counts object, if not, initialize it to 1
@@ -155,7 +90,6 @@ const Stats = () => {
       if(userData!==null && scoresData!==null){
         getAllRecData(userData.id).then((result) => {
           setRecordingList(JSON.stringify(result));
-          console.log(result)
           setRecordingNames(result.map((recording) => recording.recordingName)); 
           setRecordingIds(result.map((recording) => recording.recordingId)); 
           setRecordingStars(result.map((recording) => recording.recordingStars)); 
@@ -178,13 +112,11 @@ const Stats = () => {
           // Handle errors if necessary
         })
       }
-      console.log(userData)
     },[userData, scoresData])
 
     //When recordings info is loaded, get neeeded info 
     useEffect(()=>{
       if(recordingList!==null){
-        console.log("recordingList ", recordingList)
 
         //number of stars achieved per level/////////////////
         // store the best score for each scoreID
@@ -215,34 +147,21 @@ const Stats = () => {
           starSums[level] = sum;
         }
         setAchievedStarsPerLevel(starSums)
-        console.log("list of stars achieved ", bestScores)
         ////////////////////////////////////////////////////////
 
-
-        // Get 4 most recent recordings ////////////////////////
-        const lastFourNames = recordingNames.slice(-4);
-        const lastFourScoresTitles = recordingScoresTitles.slice(-4);
-        const lastFourScoresIds = recordingScoresIds.slice(-4);
-        const lastFourScoresXML = recordingScoresXML.slice(-4);
-        const lastFourIds = recordingIds.slice(-4);
-        const lastFourSkills = recordingSkills.slice(-4);
-        const lastFourLevels = recordingLevels.slice(-4);
-        const lastFourStars = recordingStars.slice(-4);
-        const lastFourDates = recordingDates.slice(-4);
-
-        const lastFourEntries = {
-          names:lastFourNames,
-          scoresTitles:lastFourScoresTitles,
-          scoresIds:lastFourScoresIds,
-          scoresXML:lastFourScoresXML,
-          ids:lastFourIds,
-          skills:lastFourSkills,
-          levels:lastFourLevels,
-          stars:lastFourStars,
-          dates:lastFourDates,
+        const allEntries = {
+          names:recordingNames,
+          scoresTitles:recordingScoresTitles,
+          scoresIds:recordingScoresIds,
+          scoresXML:recordingScoresXML,
+          ids:recordingIds,
+          skills:recordingSkills,
+          levels:recordingLevels,
+          stars:recordingStars,
+          dates:recordingDates,
         }
 
-        setRecentRecordings(lastFourEntries)
+        setRecentRecordings(allEntries)
         ////////////////////////////////////////////////////////
 
 
@@ -250,23 +169,48 @@ const Stats = () => {
       }  
 
 
-    },[recordingList])
+    },[recordingList, recordingNames])
 
 
   return (
     <div className={StatsCSS.container}>
-      <h2 className={StatsCSS.profile}>Hello {userData?userData.name:""}</h2>
-      <div className={StatsCSS.item}> 
-        <PercentagesStarsStats
-          starsPerLevel={starsPerLevel}
-          achievedStarsPerLevel={achievedStarsPerLevel}
-        />
-      </div>
-      <div className={StatsCSS.item}>
-        <StatsRecentRecordings
-          recentRecordings={recentRecordings}
-        />
+      <h1 className={StatsCSS.profile}>Hello {userData?userData.name:""}</h1>
+      
+      <div className={StatsCSS.dashboard}> 
+        <div className={StatsCSS.left}> 
+          <div className={StatsCSS.item}> 
+            <StatsGeneral numberRecordings={recordingNames}/>
+          </div>
+        
+          <div className={StatsCSS.item}> 
+            <PercentagesStarsStats
+              starsPerLevel={starsPerLevel}
+              achievedStarsPerLevel={achievedStarsPerLevel}
+            />
+          </div>
+          <div className={StatsCSS.item}>
+          <NumberOfRecStats
+            dates={recordingDates}
+            levels={recordingLevels}
+          />
+          </div>
+        </div>
+        <div className={StatsCSS.right}>
+          <div className={StatsCSS.item}>
+            <StatsRecentRecordings
+              recentRecordings={recentRecordings}
+              reloadRecordingsCallBack={reloadRecordingsCallback}
+            />
+          </div> 
+          <div className={StatsCSS.item}>
+            <StatsTasksSection
+              recentRecordings={recentRecordings}
+              reloadRecordingsCallBack={reloadRecordingsCallback}
+            />
+          </div> 
+        </div>
        </div>
+      
     </div>
   );
 };

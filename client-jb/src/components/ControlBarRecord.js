@@ -1,7 +1,3 @@
-/////////////////////////////////////////////////////////////////////
-//////////////////////UNDER CONSTRUCTION :(//////////////////////////
-///ATM this is just a copy of ControlBar but with a different color//
-/////////////////////////////////////////////////////////////////////
 import {useEffect, useState } from "react";
 import Wrapper from "../assets/wrappers/ControlBarRecord";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";

@@ -1,14 +1,13 @@
 // ListRecordings.js
 import React, { useState, useEffect } from 'react';
-import { json, useLocation, useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import ListRecordingsCSS from './ListRecordings.module.css';
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { getRecData, getRecording, deleteRecording } from "../utils/studentRecordingMethods.js";
+import { getRecData, deleteRecording } from "../utils/studentRecordingMethods.js";
 import { useAppContext } from "../context/appContext";
 
 import {
   faTrash,
-  faPlay,
   faEye,
   faStar,
   faPencilSquare,
@@ -16,21 +15,7 @@ import {
   faMusic,
 } from "@fortawesome/free-solid-svg-icons";
 
-
-//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-/////////////////////////////////////////IMPORTANT READ ME!!//////////////////////////////////////////////////////
-//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-//  THIS PART IS FOR DATABASE PETITIONS. ATM YOU CAN READ AND DELETE ENTRIES 
-//  ATM IT GETS THE USER ID FROM getCurrentUser
-//  AND THEN IT REQUESTS THE RECORDINGS FROM THAT USER AND THAT SPECIFIC SONG. WE DON'T HAVE A WAY
-//  TO GET THE SONG ID RIGHT NOW, SO WE HAVE A PLACEHOLDER ONE
-//  THE DELETE OPTION IS WORKING ON THE DATABASE SIDE, BUT DOESN'T PROPERLY DISPLAY ON SCREEN SO
-//  I FORCEFULLY RELOAD THE PAGE. THIS NEEDS TO BE LOOKED INTO, SINCE IT MIGHT BE BETTER TO JUST
-//  UPDATE THE RECORDINGLIST, BUT THAT MIGHT IMPLY REWRITING THE WAY RECORDINGLIST WORKS ATM :(
-
-
 const ListRecordings = () => {
-  
 
   const { getCurrentUser } = useAppContext();
   const [userData, setUserData] = useState(null);
@@ -96,7 +81,7 @@ const ListRecordings = () => {
 
     
     
-  }, [userData,recordingList]);
+  }, [userData,recordingList, getCurrentUser, score]);
 
   //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
   // Event handler for going back
@@ -200,4 +185,4 @@ const ListRecordings = () => {
   );
 };
 
-export default ListRecordings;
+export default ListRecordings

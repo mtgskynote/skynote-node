@@ -43,7 +43,7 @@ const PitchTuner = React.forwardRef(({
 
     
     const [pval, setPVal] = useState({note: "E", acc:"\u266F", mistuning:.4});
-    const textareaRef = useRef(null);
+    // const textareaRef = useRef(null);
     const notesareaRef = useRef(null);
 
 
@@ -97,7 +97,7 @@ const PitchTuner = React.forwardRef(({
 
       <br />
         <div ref={notesareaRef} className={pitchTunerCSS.notesareaDiv}>
-        <img src={notesimg}  className={pitchTunerCSS.scrollableNotesImage}></img>
+        <img src={notesimg} alt="Unable to load :(" className={pitchTunerCSS.scrollableNotesImage}></img>
         </div>
       </div>
       </>
