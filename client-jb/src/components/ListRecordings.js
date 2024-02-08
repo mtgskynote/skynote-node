@@ -81,7 +81,7 @@ const ListRecordings = () => {
 
     
     
-  }, [userData,recordingList, getCurrentUser, score]);
+  }, [userData,recordingList]);
 
   //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
   // Event handler for going back
@@ -185,4 +185,4 @@ const ListRecordings = () => {
   );
 };
 
-export default ListRecordings
+export default ListRecordings;

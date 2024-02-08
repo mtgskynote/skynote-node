@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useRef } from "react";
+import React, { useEffect, useState, useRef, useCallback } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import OpenSheetMusicDisplay from "./OpenSheetMusicDisplay";
 import ControlBar from "./ControlBar.js";
@@ -564,6 +564,10 @@ const ProgressPlayFile = (props) => {
     };
   }, [recordVol, zoom, recordInactive, pitchValue, repeatsIterator, practiceMode, recordMode, showRepetitionMessage, userFileName, jsonToDownload]);
 
+  const handleComplete = useCallback(() => {
+    setFinishedTimer(true);
+  }, []);
+
   return (
     
     <div>
@@ -593,7 +597,7 @@ const ProgressPlayFile = (props) => {
         canDownload={canDownload}
         visual={"no"}
       />
-      {showTimer ? (<CountdownTimer bpm={bpmChange} mode={practiceMode}  onComplete={() => setFinishedTimer(true)} />):(null)}
+      {showTimer ? (<CountdownTimer bpm={bpmChange} mode={practiceMode}  onComplete={handleComplete} />):(null)}
       
       {(practiceMode ===true && recordMode===false)?<ControlBar 
         cursorFinished={cursorFinished} cursorFinishedCallback={handleFinishedCursorControlBarCallback}
