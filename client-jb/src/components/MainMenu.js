@@ -3,6 +3,7 @@ import { NavLink } from "react-router-dom";
 import MainMenuCSS from './MainMenu.module.css';
 import { useAppContext } from "../context/appContext";
 import { Button } from "react-bootstrap";
+import { SessionTimerDisplay } from './SessionTimer';
 
 const MainMenu = () => {
   const { logoutUser } = useAppContext();
@@ -52,6 +53,12 @@ const MainMenu = () => {
         );
       })}
     </div>
+
+    <div className={MainMenuCSS.timerbuttoncontainer}>
+      {/* Display the timer */}
+      <SessionTimerDisplay />
+      {/* You can control the timer from anywhere using the useTimer hook */}
+
     <Button
       variant="outline-primary"
       onClick={logoutUser}
@@ -67,7 +74,7 @@ const MainMenu = () => {
     >
       Logout
     </Button>
-
+    </div>
 
       </div>
     </div>

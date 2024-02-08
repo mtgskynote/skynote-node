@@ -11,6 +11,7 @@ import {
 import reducer from "./reducer";
 import axios from "axios";
 
+
 // Get user, token, and userLocation from local storage
 const user = localStorage.getItem("user");
 const token = localStorage.getItem("token");

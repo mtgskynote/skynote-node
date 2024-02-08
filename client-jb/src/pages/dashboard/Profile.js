@@ -3,6 +3,7 @@ import { useAppContext } from "../../context/appContext";
 import ProfileCSS from './Profile.module.css';
 import axios from "axios";
 import { getRecData, getRecording, putRecording, deleteRecording, patchViewPermissions } from "../../utils/studentRecordingMethods.js";
+import { useTimer } from '../../components/SessionTimer';
 
   //====================================================================
   //  This is a demo/test of the /recordings/XXX API 
@@ -89,10 +90,17 @@ const Profile = () => {
     setInputs(values => ({...values, [name]: value}))
   }
 
+  const { isRunning, startTimer, pauseTimer, resetTimer, formatTime } = useTimer();
 
   const handleSubmit = async (event) => {
     event.preventDefault();
 
+    if (isRunning) { 
+      pauseTimer()
+    } else {
+      startTimer();
+    }
+    return
   
     //-----  print the form data out just for fun. ---  
     const formData = new FormData(event.target);
