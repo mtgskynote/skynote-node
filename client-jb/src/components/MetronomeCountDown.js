@@ -55,7 +55,7 @@ function CountdownTimer({ bpm, mode, onComplete }) {
         clearInterval(countdownInterval);
       };
 
-  }, [bpm, countDownBeats, onComplete]);
+  }, [bpm, countDownBeats]);
 
   return (
     <div className="countdown-timer">
