@@ -19,10 +19,6 @@ const folderBasePath = "/xmlScores/violin";
 const ProgressPlayFileVisual = (props) => {
   const params = useParams();
 
-  //THIS IS FOR FILE LOADING, SHOULD BE DEALT WHEN DATABASE IS IMPLEMENTED
-  const fileInputRef = useRef(null);
-  /////////////////////////////////////////////////////////
-
   let audioContext = new (window.AudioContext || window.webkitAudioContext)();
   const [songFile, setSongFile] = useState(null);
   
@@ -54,7 +50,6 @@ const ProgressPlayFileVisual = (props) => {
 
   const [visualMode, setVisualMode] = useState(true);
   const [json, setJson] = useState([]);
-  const [containerLoaded, setContainerLoaded]=useState(false)
 
 
   //const { getCurrentUser } = useAppContext();
@@ -74,37 +69,6 @@ const ProgressPlayFileVisual = (props) => {
       setSongFile(recordingJSON.audio);
     })
   },[recordingID])
-
-
-  ////////////////////LOADING FILES TEMPORARY PATCH//////////////////////////////////////////////////
-  //Since database stuff is not yet implemented, I wrote a few lines to get local files, just so we
-  //can keep working on displaying and listening to said files
-  //THIS CODE SHOULDN'T BE IN THE MAIN BRANCH IT'S TEMPORARY AND SHOULD BE DEALT WITH BEFORE ANY MERGE
-  /*const handleFileSelect = (event) => {
-    const fileInput = fileInputRef.current;
-    const file = fileInput.files[0];
-
-    if (file) {
-      const reader = new FileReader();
-      reader.onload = function (importedFile) {
-        // Transform data type and load content
-        const uint8Array = new Uint8Array(importedFile.target.result);
-        const jsonString = new TextDecoder().decode(uint8Array);    
-        const jsonContent = JSON.parse(jsonString);
-        console.log('JSON Content:', jsonContent);
-        console.log('BPM:', jsonContent.info.bpm);
-        // Save audio
-        setSongFile(jsonContent.audio);
-        //Save json.info (recording data, pitch, colors...) to send it to osmd
-        setJson(jsonContent.info);
-        //Set bpm
-        setBpm(jsonContent.info.bpm);
-        //The rest of the json info (studentID, user... not used for now)
-        }
-        reader.readAsArrayBuffer(file);
-      };
-  };*/
-  ///////////////////////////////////////////////////////////////////////////////////////////////////
 
   const handleGoBack=()=>{
     navigate(-1);
@@ -269,23 +233,6 @@ const ProgressPlayFileVisual = (props) => {
       repeatLayersButton.addEventListener("click", handleRepeatLayersButtonClick);
       repeatLayersButton.addEventListener("mousemove", handleRepeatLayersMouseOver);
       repeatLayersButton.addEventListener("mouseout", handleRepeatLayersMouseLeave);
-      //--------------------------------------------------------------------------------
-
-      // DELETE BUTTON -------------------------------------------------------------
-      /*const deleteButton = document.getElementById("delete");
-      const handleDeleteButtonClick = () => {
-        console.log("delete was clicked, progressplayfilevisual")
-        setDeletedWanted(true);
-        //tell controlbar that delete tasks are being taken care of
-        setDeleteHandledVisual(true);
-        //setDeleteHandledVisual(false); FIXME, otherwise it wont work the next time
-        //call function that does tasks for delete
-        handleDeleteTasks();
-      
-      };
-      deleteButton.addEventListener("click", handleDeleteButtonClick);*/
-      //--------------------------------------------------------------------------------
-
     
       return () => {
         repeatLayersButton.removeEventListener("click", handleRepeatLayersButtonClick);
