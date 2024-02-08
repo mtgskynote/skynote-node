@@ -111,7 +111,7 @@ const ButtonGroup = ({ nameOfFile, index }) => {
         second: "2-digit",
       };
       //setRecordingDates(recentRecordings.dates)
-      setRecordingDates((recentRecordings.dates).reverse().map((date) => {
+      setRecordingDates((recentRecordings.dates).map((date) => {
         //Set correct date format
         const newDate = new Date(date);
         return newDate.toLocaleDateString("es-ES", options);
