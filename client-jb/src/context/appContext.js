@@ -1,4 +1,5 @@
 import React, { useReducer, useContext } from "react";
+
 import {
   DISPLAY_ALERT,
   CLEAR_ALERT,
@@ -176,6 +177,7 @@ const AppProvider = ({ children }) => {
     }
   };  
 
+ 
   // Return provider component with context value
   return (
     <AppContext.Provider

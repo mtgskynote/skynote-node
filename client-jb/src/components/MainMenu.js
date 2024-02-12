@@ -3,7 +3,8 @@ import { NavLink } from "react-router-dom";
 import MainMenuCSS from './MainMenu.module.css';
 import { useAppContext } from "../context/appContext";
 import { Button } from "react-bootstrap";
-import { SessionTimerDisplay } from './SessionTimer';
+import SessionTimerDisplay from './SessionTimerDisplay'; // Adjust the import path to where TimerDisplay is located
+
 
 const MainMenu = () => {
   const { logoutUser } = useAppContext();

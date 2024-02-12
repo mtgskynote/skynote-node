@@ -1,75 +1,44 @@
-import React, { createContext, useContext, useState, useRef, useEffect } from 'react';
+// TimerManager.js
+class TimerManager {
+  constructor() {
+    this.interval = null;
+    this.elapsedTime = 0; // Time in seconds
+    this.callbacks = [];
+    this.isRunning=false;
+  }
 
-// Timer context
-const TimerContext = createContext();
-export const useTimer = () => useContext(TimerContext);
+  isRunning=false;
 
-// SessionTimerProvider component
-const SessionTimerProvider = ({ children }) => {
-  const [elapsedTime, setElapsedTime] = useState(0);
-  const [isRunning, setIsRunning] = useState(false);
-  const intervalRef = useRef(null);
-  
-
-  // Timer control methods
-  const startTimer = () => {
-    if (!intervalRef.current) {
-      setIsRunning(true); // Update running status
-      const startTime = Date.now() - elapsedTime;
-      intervalRef.current = setInterval(() => {
-        setElapsedTime(Date.now() - startTime);
+  start() {
+    if (!this.interval) {
+      this.interval = setInterval(() => {
+        this.elapsedTime++;
+        this.callbacks.forEach(callback => callback(this.elapsedTime));
       }, 1000);
     }
-  };
+    this.isRunning=true;
+  }
 
-  const pauseTimer = () => {
-    if (intervalRef.current) {
-      clearInterval(intervalRef.current);
-      intervalRef.current = null;
-      setIsRunning(false); // Update running status
-    }
-  };
+  pause() {
+    clearInterval(this.interval);
+    this.interval = null;
+    this.isRunning=false;
+  }
 
-  const resetTimer = () => {
-    clearInterval(intervalRef.current);
-    intervalRef.current = null;
-    setElapsedTime(0);
-    setIsRunning(false); // Update running status
-  };
+  reset() {
+    this.pause();
+    this.elapsedTime = 0;
+    this.callbacks.forEach(callback => callback(this.elapsedTime));
+  }
 
-  useEffect(() => {
-    return () => clearInterval(intervalRef.current);
-  }, []);
+  subscribe(callback) {
+    this.callbacks.push(callback);
+  }
 
-  // Expose timer controls and elapsed time through context
-  const value = {
-    elapsedTime,
-    isRunning,
-    startTimer,
-    pauseTimer,
-    resetTimer,
-  };
+  unsubscribe(callback) {
+    this.callbacks = this.callbacks.filter(cb => cb !== callback);
+  }
+}
 
-  return <TimerContext.Provider value={value}>{children}</TimerContext.Provider>;
-};
-
-// SessionTimerDisplay component
-const SessionTimerDisplay = () => {
-  const { elapsedTime } = useTimer();
-  
-  // Formatting elapsed time into HH:MM:SS
-  const formatTime = () => {
-    let seconds = Math.floor(elapsedTime / 1000);
-    let minutes = Math.floor(seconds / 60);
-    let hours = Math.floor(minutes / 60);
-
-    seconds = seconds % 60;
-    minutes = minutes % 60;
-
-    return `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
-  };
-
-  return <div>{formatTime()}</div>;
-};
-
-export {SessionTimerProvider, SessionTimerDisplay };
+// Exporting as a singleton
+export const timer = new TimerManager();
