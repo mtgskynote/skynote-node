@@ -3,6 +3,8 @@ import { Register, OurTeam, Demos, Research, Landing, Error, ProtectedRoute } fr
 
 import { Profile, Stats, SharedLayout } from "./pages/dashboard";
 
+import React, { useEffect } from 'react';
+ 
 import AllLessons from "./components/AllLessons";
 import ProgressPlayFile from "./components/ProgressPlayFile";
 import ProgressPlayFileVisual from "./components/ProgressPlayFileVisual";
@@ -18,7 +20,51 @@ import AudioPlayer from "./components/AudioPlayer";
 import ListAllRecordings from "./components/ListAllRecodings";
 import Assignments from "./components/Assignments";
 
+
+
 function App() {
+
+  //  const { startTimer, resetTimer} = useTimer();
+  // useEffect(() => {
+  //   const handleVisibilityChange = () => {
+  //     if (document.hidden) {
+  //       // User has navigated away from the tab, or the tab is now in the background
+  //       console.log('User has left the app - resetting session timer.');
+  //       resetTimer();
+  //     } else {
+  //       // User has returned to the app
+  //       console.log('User has returned to the app - starting session timer.');
+  //       startTimer();
+  //     }
+  //   };
+  //   document.addEventListener('visibilitychange', handleVisibilityChange);
+  //   return () => {
+  //     document.removeEventListener('visibilitychange', handleVisibilityChange);
+  //   };
+  // }, []);
+
+  // useEffect(() => {
+  //   console.log('App loaded or user returned to the app - starting session timer.');
+  //   startTimer();
+  // }, []);
+
+  // useEffect(() => {
+  //   const handleTabClose = (event) => {
+  //     // Perform actions like saving the session state
+  //     console.log('User is trying to leave the app resetting session timer.');
+  //     resetTimer();
+  //     // For some browsers, you must return a string that will be shown to the user in a confirmation dialog
+  //     event.preventDefault();
+  //     event.returnValue = '';
+  //   };
+  //   window.addEventListener('beforeunload', handleTabClose);
+  //   return () => {
+  //     window.removeEventListener('beforeunload', handleTabClose);
+  //   };
+  // }, []);
+
+
+
   return (
     <div>
       <ErrorBoundary>

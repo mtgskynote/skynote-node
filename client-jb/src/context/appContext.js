@@ -1,4 +1,5 @@
 import React, { useReducer, useContext } from "react";
+
 import {
   DISPLAY_ALERT,
   CLEAR_ALERT,
@@ -10,6 +11,7 @@ import {
 
 import reducer from "./reducer";
 import axios from "axios";
+
 
 // Get user, token, and userLocation from local storage
 const user = localStorage.getItem("user");
@@ -175,6 +177,7 @@ const AppProvider = ({ children }) => {
     }
   };  
 
+ 
   // Return provider component with context value
   return (
     <AppContext.Provider

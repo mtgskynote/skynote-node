@@ -3,6 +3,7 @@ import { useAppContext } from "../../context/appContext";
 import ProfileCSS from './Profile.module.css';
 import axios from "axios";
 import { getRecData, getRecording, putRecording, deleteRecording, patchViewPermissions } from "../../utils/studentRecordingMethods.js";
+import { timer } from '../../components/SessionTimer';
 
   //====================================================================
   //  This is a demo/test of the /recordings/XXX API 
@@ -90,6 +91,15 @@ const Profile = () => {
   }
 
 
+  const toggletimer = () => { 
+    if (timer.isRunning) { 
+      timer.pause();
+    } else {
+      timer.start();
+    } 
+  }
+
+
   const handleSubmit = async (event) => {
     event.preventDefault();
 
@@ -153,7 +163,8 @@ const Profile = () => {
 
 
   const { getCurrentUser } = useAppContext();
-  console.log("Hi " + getCurrentUser() + "!");  // Here is prints out Promise 
+  //console.log("Hi " + getCurrentUser() + "!");  // Here is prints out Promise 
+  console.log("Hi .... !");  // Here is prints out Promise 
 
   useEffect(() => {
     const fetchDataFromAPI = () => {
@@ -172,7 +183,7 @@ const Profile = () => {
     };
 
     fetchDataFromAPI();
-  }, [getCurrentUser]);
+  }, []);
 
   /*------------ Return the component! ----------*/
   return (
@@ -239,6 +250,7 @@ const Profile = () => {
       ) }
 
       </div>
+      <button onClick={toggletimer}>toggletimer</button>
       </div>
 
     </div>
