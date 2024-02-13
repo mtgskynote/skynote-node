@@ -1,6 +1,43 @@
-.container{
-    width:100%;
+
+@media screen and (min-width: 800px) {
+    .container{
+        width:100%;
+        display:flex;
+        padding:0;
+    }
+.left {
+    height: 100%;
+    width:70%;
+  }
+  .right {
+    padding: 0px 0px 0px 0px; 
+    width:30%;
+    height:95vh;
+    
+  }
 }
+@media screen and (max-width: 800px) {
+    .container{
+        width:100%;
+        display:flex;
+        padding:0;
+        flex-direction: column;
+        font-size: x-small;
+    }
+    .left {
+        height: 50vh;
+        width:100%;
+        overflow-y: scroll;
+      }
+      .right {
+        padding: 0px 0px 0px 0px; 
+        border-radius: 20px;
+        width:100%;
+        height:50vh;
+        background-color: #af5c5c;
+        
+      }
+    }
 .tableBox{
   height: fit-content;
   overflow-y: scroll;
@@ -13,6 +50,9 @@
 
 .title{
     font-weight: bold;
+    text-align: center;
+    padding: 25px 50px;
+    font-weight: 800;
 }
 .openButton{
     background-color: #c9c9c9;
@@ -115,4 +155,95 @@
 }
 .buttonGroup{
     margin: 0px 0px 0px 30px
+}
+
+
+.chatGroup{
+    margin: 20px 40px;
+    background-color: #ededed;
+    border:#9d9d9d 1px solid;
+    box-shadow: 4px 4px 15px rgba(131, 131, 131, 0.2);
+   border-radius: 20px;
+   position:fixed;
+}
+
+@media screen and (min-width: 800px) {
+.chat{
+    display: flex;
+    flex-direction: column-reverse;
+    height: 400px;
+    overflow-y: scroll;
+
+}}
+@media screen and (max-width: 800px) {
+    .chat{
+        display: flex;
+        flex-direction: column-reverse;
+        height:25vh;
+        overflow-y: scroll;
+    
+    }}
+.chatHeader{
+    background-color: #88a2cf;
+    padding: 10px 50px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    border-radius: 20px 20px 0px 0px;
+    
+}
+
+.chatItemStudent{
+    text-align: right;
+    background-color: #dde7fa;
+    border-radius: 10px;
+    margin:10px;
+    width:70%;
+    align-self: flex-end;
+    padding:10px;
+}
+.chatItemTeacher{
+    text-align: left;
+    align-self: flex-start;
+    background-color: #ffffff;
+    border-radius: 10px;
+    margin:10px;
+    width:70%;
+    padding:10px;
+}
+.chatItemDate{
+    text-align: right;
+    font-style: oblique;
+    font-size: smaller;
+    color:#9d9d9d
+}
+.textGroup{
+    display:flex;
+    flex-direction: column;
+    border-radius: 0px 0px 20px 20px;
+    background-color: #bababa;
+    border-radius: 6px #000000;
+
+}
+.textInput{
+    width: 100%;
+    resize:none;
+  overflow-x: scroll;
+  text-align: left;
+  text-overflow: clip;
+  padding: 10px;
+  box-sizing: border-box;
+  border-radius: 20px ;
+  border: none;
+}
+.button{
+    border: none;
+    background-color: transparent;
+}
+.sendIcon{
+    border-radius: 50%;
+    padding: 5px;
+    margin: 0 5px 0 5px;
+    color: rgb(88, 88, 88);
+    border: none;
 }

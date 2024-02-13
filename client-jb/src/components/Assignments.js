@@ -13,6 +13,7 @@ import {
     faPencilSquare,
     faBoxArchive,
     faRecordVinyl,
+    faPaperPlane
 } from "@fortawesome/free-solid-svg-icons";
 
 const Assignments = (props) => {
@@ -21,34 +22,10 @@ const Assignments = (props) => {
     const [userData, setUserData] = useState(null);
     const [scoresData, setScoresData] = useState(null);
     const [userAnnouncements, setUsertAnnouncements] = useState(null);
-
+    const [userChat, setUsertChat] = useState(null);
     /* FOR NOW THIS CODE DOES NOT DISPLAY ANYTHING REAL */
 
-    // Assuming the following structure of Assingments database (or similar!):
-    /* 
-    {
-        __id: /assignment id/
-        teacher: /teacher id, who emitted it/
-        student:{ 
-                    /student(s) to which this assinment is directed/
-                    0: student_id1
-                    1: student_id2
-                    ... (it can just be one student)
-                }
-        message: /text inside the assingment or announcement/
-        tasks:{
-                    /tasks associated with this announcement, that students should submit, this can be empty/
-                    score_id1 /score to which this task is associated/:{
-                        0: recordingId_answer1 /answer from student_id1, empty if there is no answer yet/
-                        1: recordingId_answer2 /answer from student_id2, empty if there is no answer yet/
-                    }
-                    score_id2:{same}
-                }
-        post: /date when it was posted/
-        due: /date limit/
-    }
-    */
-
+    console.log("holaaa ", userChat!==null)
 
     const fetchDataFromAPI = () => {
 
@@ -68,7 +45,7 @@ const Assignments = (props) => {
         if(userData===null){
         fetchDataFromAPI();
         }
-    },[userData])
+    },[])
     
     //get Scores data
     useEffect(() => {
@@ -78,10 +55,30 @@ const Assignments = (props) => {
         setScoresData(local);
       }, []); // Only once
 
-    //get Tasks Data for this user
+    
     useEffect(()=>{
+        console.log(userData, scoresData)
         if(userData!==null && scoresData!==null){
+            console.log("im innnnnn")
+            //get Tasks Data for this user/////////////////////////////////////////////
             //Call database to get tasks info and do a .then with the processing below:
+            /*
+            0:{
+                    id:"11111111",
+                    teacher:"Anita",
+                    student:{0:"645b6e484612a8ebe8525933", 1:"pepitogrillo"},
+                    message:"Hello User, for this week the assignments include: Practice C major scales. We will have a look at it next week in class.I am opening a submission task for 'The Fireman', make sure you get all 3 stars!",
+                    tasks:{
+                        0: {score:"64d0de60d9ac9a34a66b4d45",
+                            answers:{
+                                        0:{studentId:"645b6e484612a8ebe8525933", recordingID:"recordingId",grade:"9",teacherComment:"very good"},
+                                        1:{studentId:"pepitogrillo", recordingID:"recordingId",grade:"8",teacherComment:"good"}
+                            }
+                    },
+                    post:"date posted",
+                    due:"date due",
+                },
+            */
             //Example of structure extracted from database
             const assignments={
                 0:{
@@ -118,13 +115,13 @@ const Assignments = (props) => {
                 },
             }
             const result=Object.values(assignments) //simulates what the database returns
-            
+            console.log(result)
             //.then()
             //Extract only information relevant for a specific user (actually we could create a callfunction that only retrieved that information)
             let myannouncements={}
+            const studentToCheck = userData.id;
             result.map((assignment,index)=>{
                 //Firstly, extract only assignments that are directed to the current user
-                const studentToCheck = userData.id;
                 const isStudentPresent = Object.values(assignment.student).includes(studentToCheck);
                 if (isStudentPresent) {
                     //current user has this announcement assigned
@@ -161,92 +158,237 @@ const Assignments = (props) => {
                 }
                 setUsertAnnouncements(myannouncements)
             })
+            //////////////////////////////////////////////////////////////////////////
             
             
-            //Get teacher info, get message, get dates
-            //Are there tasks? Show them
+            //get Chat Data for this user/////////////////////////////////////////////
+            /*Data base should return messages like:
+            db.messages.find({
+                $or: [
+                    { sender: teacherId, receiver: studentId },
+                    { sender: studentId, receiver: teacherId }
+                ]
+                }).sort({ timestamp: 1 });
+            */
+            const messages={
+                0:{
+                    _id:"message1",
+                    sender:"645b6e484612a8ebe8525933",
+                    receiver:"Anita",
+                    content:"Okay, I see, thank you!",
+                    date:"date"
+                },
+                1:{
+                    _id:"message2",
+                    sender:"Anita",
+                    receiver:"645b6e484612a8ebe8525933",
+                    content:"You just have to practice at home, in class we will go through it all over again",
+                    date:"date"
+                },
+                2:{
+                    _id:"message4",
+                    sender:"645b6e484612a8ebe8525933",
+                    receiver:"Anita",
+                    content:"I need help with my assignment. I was working all night and I couldnt understand, What do we have to do exactly?",
+                    date:"date"
+                },
+                3:{
+                    _id:"message4",
+                    sender:"645b6e484612a8ebe8525933",
+                    receiver:"Anita",
+                    content:"I need help with my assignment. I was working all night and I couldnt understand, What do we have to do exactly?",
+                    date:"date"
+                },
+                4:{
+                    _id:"message4",
+                    sender:"645b6e484612a8ebe8525933",
+                    receiver:"Anita",
+                    content:"When is the submission date?",
+                    date:"date"
+                },
+                5:{
+                    _id:"message2",
+                    sender:"Anita",
+                    receiver:"645b6e484612a8ebe8525933",
+                    content:"hello you are the bestttt",
+                    date:"date"
+                },
+                6:{
+                    _id:"message2",
+                    sender:"Anita",
+                    receiver:"645b6e484612a8ebe8525933",
+                    content:"good luck",
+                    date:"date"
+                },
+                7:{
+                    _id:"message4",
+                    sender:"645b6e484612a8ebe8525933",
+                    receiver:"Anita",
+                    content:"I need help with my assignment. I was working all night and I couldnt understand, What do we have to do exactly?",
+                    date:"date"
+                },
+                8:{
+                    _id:"message2",
+                    sender:"Anita",
+                    receiver:"645b6e484612a8ebe8525933",
+                    content:"hello you are the bestttt",
+                    date:"date"
+                },
+            }
+            const messages2=Object.values(messages)
+            let mychat={}
+            messages2.map((message,index)=>{
+                console.log(message)
+                if(message.sender===studentToCheck){
+                    //My message
+                    mychat[index]={
+                        id:message._id,
+                        message:message.content,
+                        student:true,
+                        date:message.date,
+                        teacher:message.teacher,
+                    }
+                }else{
+                    //Teacher message
+                    mychat[index]={
+                        id:message._id,
+                        message:message.content,
+                        student:false,
+                        date:message.date,
+                        teacher:message.teacher,
+                    }
+                }
+            })
+            console.log("chat ", mychat)
+            setUsertChat(mychat)
+            //////////////////////////////////////////////////////////////////////////
         }
       },[userData, scoresData])
 
   
   return (
     <div className={AssignmentsCSS.container}>
-      <h4 className={AssignmentsCSS.title}>
-        Teacher announcements
-      </h4>
-    {userAnnouncements!==null?
-    Object.values(userAnnouncements).map((announcement,index)=>{
-        return(
-        <div className={AssignmentsCSS.tableBox}> 
-        <div>
-            <div className={AssignmentsCSS.header}> 
-                <div> 
-                    Posted on : {announcement.postDate} {/* REPLACE BY REAL DATE*/}
-                </div>
-                <div> 
-                    Due on : {announcement.dueDate}{/* REPLACE BY REAL DATE*/}
-                </div>
-            </div>
-            <div className={AssignmentsCSS.announcementBody}> 
-                <div className={AssignmentsCSS.teacher}> 
-                    {announcement.teacher}   <FontAwesomeIcon icon={faUser} className={AssignmentsCSS.userIcon}/>  said...
-                </div>
-                <div className={AssignmentsCSS.message}> {/* REPLACE BY REAL MESSAGE*/}
-                    {announcement.message}
-                </div>
-                <div className={AssignmentsCSS.footNote}>
-                    {Object.values(announcement.tasks).length!==0?
-                    <div className={AssignmentsCSS.note}>
+      
+        <div className={AssignmentsCSS.left} >
+            {userAnnouncements!==null?
+            Object.values(userAnnouncements).map((announcement,index)=>{
+                return(
+                <div className={AssignmentsCSS.tableBox}> 
+                <div>
+                    <div className={AssignmentsCSS.header}> 
+                        <div> 
+                            Posted on : {announcement.postDate} {/* REPLACE BY REAL DATE*/}
+                        </div>
+                        <div> 
+                            Due on : {announcement.dueDate}{/* REPLACE BY REAL DATE*/}
+                        </div>
+                    </div>
+                    <div className={AssignmentsCSS.announcementBody}> 
+                        <div className={AssignmentsCSS.teacher}> 
+                            {announcement.teacher}   <FontAwesomeIcon icon={faUser} className={AssignmentsCSS.userIcon}/>  said...
+                        </div>
+                        <div className={AssignmentsCSS.message}> {/* REPLACE BY REAL MESSAGE*/}
+                            {announcement.message}
+                        </div>
+                        <div className={AssignmentsCSS.footNote}>
+                            {Object.values(announcement.tasks).length!==0?
+                            <div className={AssignmentsCSS.note}>
 
-                    <FontAwesomeIcon icon={faTriangleExclamation} className={AssignmentsCSS.exclamationIcon} />
-                    <div className={AssignmentsCSS.text}>{Object.values(announcement.tasks).length} submission assignment(s) linked to this announcement</div> {/* REPLACE BY REAL number of assignments*/}
-                    <FontAwesomeIcon icon={faTriangleExclamation} className={AssignmentsCSS.exclamationIcon} />
-                </div>:""
-                    }
-                    <div className={AssignmentsCSS.taskGroup}>
-                        {Object.values(announcement.tasks).map((task, index)=>{
-                            return(
-                                <div className={AssignmentsCSS.taskItem}>
-                                    <div className={AssignmentsCSS.taskHeader}>
-                                        <div><h6>
-                                        <FontAwesomeIcon icon={faMusic} className={AssignmentsCSS.simpleIcon}/>
-                                        {task.score.title}
-                                        </h6></div>
-                                        <div><h6 >
-                                            <FontAwesomeIcon icon={faPencilSquare} className={AssignmentsCSS.simpleIcon}/>
-                                            {task.score.skill}
-                                        </h6></div>
-                                        <div><h6 >
-                                            <FontAwesomeIcon icon={faBoxArchive} className={AssignmentsCSS.simpleIcon}/>
-                                            Level {task.score.level}
-                                        </h6></div>
-                                    </div>
-                                    <div>{task.answer.length!==0?
-                                        <div className={AssignmentsCSS.submitted}> 
-                                            <div className={AssignmentsCSS.cursive}>Status: Submitted</div>
-                                            <FontAwesomeIcon title="Go to recording assigned to this submission" icon={faEye} className={AssignmentsCSS.simpleIcon} />
-                                            
-                                        </div>:
-                                        <div className={AssignmentsCSS.notSubmitted}> 
-                                            <div className={AssignmentsCSS.cursive}>Status: Not submitted</div>
-                                            <div className={AssignmentsCSS.buttonGroup}>
-                                                <FontAwesomeIcon title="Record for this submission" icon={faRecordVinyl} className={AssignmentsCSS.simpleIcon} />
-                                                <FontAwesomeIcon title="Assign recording to this submission" icon={faFileImport} className={AssignmentsCSS.simpleIcon} />
+                            <FontAwesomeIcon icon={faTriangleExclamation} className={AssignmentsCSS.exclamationIcon} />
+                            <div className={AssignmentsCSS.text}>{Object.values(announcement.tasks).length} submission assignment(s) linked to this announcement</div> {/* REPLACE BY REAL number of assignments*/}
+                            <FontAwesomeIcon icon={faTriangleExclamation} className={AssignmentsCSS.exclamationIcon} />
+                        </div>:""
+                            }
+                            <div className={AssignmentsCSS.taskGroup}>
+                                {Object.values(announcement.tasks).map((task, index)=>{
+                                    return(
+                                        <div className={AssignmentsCSS.taskItem}>
+                                            <div className={AssignmentsCSS.taskHeader}>
+                                                <div><h6>
+                                                <FontAwesomeIcon icon={faMusic} className={AssignmentsCSS.simpleIcon}/>
+                                                {task.score.title}
+                                                </h6></div>
+                                                <div><h6 >
+                                                    <FontAwesomeIcon icon={faPencilSquare} className={AssignmentsCSS.simpleIcon}/>
+                                                    {task.score.skill}
+                                                </h6></div>
+                                                <div><h6 >
+                                                    <FontAwesomeIcon icon={faBoxArchive} className={AssignmentsCSS.simpleIcon}/>
+                                                    Level {task.score.level}
+                                                </h6></div>
                                             </div>
-                                    </div>}
-                                    </div>
-                                </div>
-                            )
-                        })
-                        }
+                                            <div>{task.answer.length!==0?
+                                                <div className={AssignmentsCSS.submitted}> 
+                                                    <div className={AssignmentsCSS.cursive}>Status: Submitted</div>
+                                                    <FontAwesomeIcon title="Go to recording assigned to this submission" icon={faEye} className={AssignmentsCSS.simpleIcon} />
+                                                    
+                                                </div>:
+                                                <div className={AssignmentsCSS.notSubmitted}> 
+                                                    <div className={AssignmentsCSS.cursive}>Status: Not submitted</div>
+                                                    <div className={AssignmentsCSS.buttonGroup}>
+                                                        <FontAwesomeIcon title="Record for this submission" icon={faRecordVinyl} className={AssignmentsCSS.simpleIcon} />
+                                                        <FontAwesomeIcon title="Assign recording to this submission" icon={faFileImport} className={AssignmentsCSS.simpleIcon} />
+                                                    </div>
+                                            </div>}
+                                            </div>
+                                        </div>
+                                    )
+                                })
+                                }
+                            </div>
+                        </div>
                     </div>
                 </div>
+                </div>
+                )
+            }):<div>No announcements yet</div>}
+        </div>
+        <div className={AssignmentsCSS.right}>
+            <div className={AssignmentsCSS.chatGroup}> 
+                <div className={AssignmentsCSS.chatHeader}> 
+                    <div className={AssignmentsCSS.teacher}> 
+                        Your conversation with Anita   <FontAwesomeIcon icon={faUser} className={AssignmentsCSS.userIcon}/>
+                    </div>
+                </div>
+                <div className={AssignmentsCSS.chat}>
+                    {userChat!==null?
+                    Object.values(userChat).map((message,index)=>{
+                        return(
+                            message.student?
+                                <div className={AssignmentsCSS.chatItemStudent}>
+                                    {message.message}
+                                    <div className={AssignmentsCSS.chatItemDate}>
+                                        {message.date}
+                                    </div>
+                                </div>:
+                                <div className={AssignmentsCSS.chatItemTeacher}>
+                                    {message.message}
+                                    <div className={AssignmentsCSS.chatItemDate}>
+                                        {message.date}
+                                    </div>
+                                </div>
+
+                            
+                            
+                        )
+                    }):
+                    <div>No messages yet</div>
+                    
+                    
+                    }
+                </div>
+                <div className={AssignmentsCSS.textGroup}>
+                    <button className={AssignmentsCSS.button}><FontAwesomeIcon icon={faPaperPlane} className={AssignmentsCSS.sendIcon}/> </button>
+                    <textarea 
+                        type="text"
+                        id="userInput"
+                        placeholder="Type here..."
+                        className={AssignmentsCSS.textInput} 
+                    /> 
+                    
+                </div>
             </div>
         </div>
-        </div>
-        )
-    }):<div>No announcements yet</div>}
-    
     </div>
   );
 };
