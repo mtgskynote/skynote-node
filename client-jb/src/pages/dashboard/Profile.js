@@ -2,72 +2,6 @@ import React, { useState, useEffect } from 'react';
 import { useAppContext } from "../../context/appContext";
 import ProfileCSS from './Profile.module.css';
 import axios from "axios";
-import { getRecData, getRecording, putRecording, deleteRecording, patchViewPermissions } from "../../utils/studentRecordingMethods.js";
-import { timer } from '../../components/SessionTimer';
-
-  //====================================================================
-  //  This is a demo/test of the /recordings/XXX API 
-  //====================================================================
-  function getRandomInt(min, max) {
-    min = Math.ceil(min);
-    max = Math.floor(max);
-    return Math.floor(Math.random() * (max - min + 1)) + min;
-  }
-  
-  const handleRecordingTestSubmit = async (event) => {
-    event.preventDefault();
-    // ---------------------------------------
-    var recdatalist=[];  // list of minimal recording data [{recordingName, recordingId},{...}, ...]
-
-    //getRecData(studentId, scoreId)
-    try {
-      recdatalist = await getRecData("645b6e484612a8ebe8525933", "64d0de60d9ac9a34a66b4d45") // // scoreId: "64d0de60d9ac9a34a66b4d45" is for the score "V_001_Cuerdas_Al_Aire_1_Suelta_A"
-      console.log(`getRecData return OK, and recdatalist is ${JSON.stringify(recdatalist)}`)
-    } catch (error) {
-      console.log(`error in getRecData`, error)
-    }
-
-    //putRecording(recordingObject)
-    try{
-      let result = await putRecording({studentId: "645b6e484612a8ebe8525933", scoreId: "64d0de60d9ac9a34a66b4d45", recordingName: "FooRecording"+getRandomInt(1,5), date: new Date(), sharing: false, info: {bpm: 100}});
-      if (result!=null) {
-        recdatalist.push(result); // save results locally
-        console.log(`putRecording return OK, and recdatalist is now  ${JSON.stringify(recdatalist)}`)  
-      }
-    } catch (error) { 
-      console.log(`error in putRecording`, error  );
-    }  
-
-    //patchViewPermissions(recordingId, sharing)
-    try{
-      let result = await patchViewPermissions(recdatalist[0].recordingId, true);
-      console.log(`patchViewPermissions return OK, and result is ${JSON.stringify(result)}`)
-    } catch (error) { 
-        console.log(`error in patchViewPermissions`, error)
-    }
-
-    //getRecording(recordingId)
-    try{  
-      let result = await getRecording(recdatalist[0].recordingId)
-      console.log(`getRecording returns and result is ${JSON.stringify(result)}`)  
-    }
-    catch (error) { 
-        console.log(`error in getRecording`, error)
-    } 
-
-    //deleteRecording(recordingId)
-    try{
-      var result = await deleteRecording(recdatalist[0].recordingId)
-      console.log(`deleteRecording return OK, and result is ${JSON.stringify(result)}`) 
-    } catch (error) { 
-        console.log(`error in deleteRecording`, error)
-    } 
-  }
-  
-  //====================================================================
-  //  end of Recordings test/demo
-  //====================================================================
- 
 
 /*
 The useEffect hook runs once when the component mounts ([] as a dependency means it runs only once).
@@ -91,14 +25,8 @@ const Profile = () => {
   }
 
 
-  const toggletimer = () => { 
-    if (timer.isRunning) { 
-      timer.pause();
-    } else {
-      timer.start();
-    } 
-  }
 
+ 
 
   const handleSubmit = async (event) => {
     event.preventDefault();
@@ -111,35 +39,6 @@ const Profile = () => {
       result += `${name}: ${value}\n`;
     }
     alert(result);
-    // //------------------------------------------------- 
-    // //------------------------------------------------- 
-    // // First post a big blob of data to the server
-
-    // // Generate a large string to simulate file size
-    // let sizeInMB = 5; // Size in megabytes
-    // let dummyDataString = 'a'.repeat(parseInt(sizeInMB * 1024 * 1024)); // Each character is 1 byte
-
-    // // Create a blob from the string
-    // const dummyData = new Blob([dummyDataString], { type: "audio/wav" });
-
-    // // Use FormData to send file data
-    // let blobbyformData = new FormData();
-    // blobbyformData.append("file", dummyData, "example.wav");
-
-    // // Send data with Axios
-    // axios.post('/api/v1/recordings/testupload', blobbyformData, {
-    //     headers: {
-    //         'Content-Type': 'multipart/form-data'
-    //     },
-    //     maxContentLength: 16*1024*1024,
-    //     maxBodyLength: 16*1024*1024,
-    // }).then(response => {
-    //     console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>> File uploaded successfully');
-    // }).catch(error => {
-    //     console.error('Error uploading file', error);
-    // });    
-
-    // //------------------------------------------------- 
     // //------------------------------------------------- 
 
 
@@ -159,7 +58,6 @@ const Profile = () => {
       console.error('Error submitting form:', error);
     }
   }
-
 
 
   const { getCurrentUser } = useAppContext();
@@ -185,11 +83,12 @@ const Profile = () => {
     fetchDataFromAPI();
   }, []);
 
+
+
   /*------------ Return the component! ----------*/
   return (
     <div>
       <div  align="center">
-      <button onClick={handleRecordingTestSubmit}>Run Recordings DB test</button>
       <h1 >Skynote Profile</h1>
       <div  align="left">
 
@@ -249,11 +148,12 @@ const Profile = () => {
         <p>No data available.</p>
       ) }
 
-      </div>
-      <button onClick={toggletimer}>toggletimer</button>
-      </div>
 
+
+      </div>
+      </div>
     </div>
+      
   );
 };
 

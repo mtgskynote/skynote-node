@@ -13,6 +13,7 @@ import connectDB from "./db/connect.js";
 import authRouter from "./routes/authRoutes.js";
 import scoreRouter from "./routes/scoreRoutes.js";
 import recordingRouter from "./routes/recordingRoutes.js";
+import messageRouter from "./routes/messageRoutes.js";
 
 // middleware
 import notFoundMiddleWare from "./middleware-jb/not-found.js";
@@ -59,6 +60,7 @@ app.get("/api/v1", (req, res) => {
 app.use("/api/v1/auth", authRouter);
 app.use("/api/v1/scores", scoreRouter);
 app.use("/api/v1/recordings", recordingRouter);
+app.use("/api/v1/messages", messageRouter);
 
 // only when ready to deploy
 app.get("*", function (request, response) {

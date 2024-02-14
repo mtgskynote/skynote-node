@@ -20,7 +20,7 @@ import AudioPlayer from "./components/AudioPlayer";
 import ListAllRecordings from "./components/ListAllRecodings";
 import Assignments from "./components/Assignments";
 
-
+import Apitesting from "./components/apitesting";
 
 function App() {
 
@@ -81,6 +81,7 @@ function App() {
               >
                 <Route index element={<Stats />} />
                 <Route path="profile" element={<Profile />} />
+                <Route path="apitesting" element={<Apitesting />} />
                 <Route path="all-lessons" element={<AllLessons />} />
                 <Route
                   path="all-lessons/:files"
