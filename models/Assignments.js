@@ -10,10 +10,9 @@ const assignmentsSchema = new mongoose.Schema({
       },
     students: [
         {
-          studentId: {
             type: mongoose.Schema.Types.ObjectId,
             ref: 'User', // Reference to the User model
-          },
+          
         },
       ],
     
@@ -21,14 +20,15 @@ const assignmentsSchema = new mongoose.Schema({
     post: Date,
     due: Date,
     tasks: [
-        { task:{
+        {
+            _id: false, // Disable _id generation for tasks
             score: {
                 type: mongoose.Schema.Types.ObjectId,
                 ref: 'Score', // Reference to the Score model
-            },
+            }, 
             answers:[
                 {
-                    answer:{
+                        _id: false, // Disable _id generation for answers
                         studentId: {
                             type: mongoose.Schema.Types.ObjectId,
                             ref: 'User', // Reference to the User model
@@ -38,10 +38,10 @@ const assignmentsSchema = new mongoose.Schema({
                         comment: String,
 
                     }
-                }
+                
             ]
         }   
-        },
+        
     ],
 
 })
