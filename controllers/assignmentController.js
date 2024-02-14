@@ -17,7 +17,6 @@ const getAllAssignments = async (req, res) => {
     console.log("student id received ", studentId)
     
     let docs = await assignments.find({students: studentId}); //Find all assignments for a given studentID
-    console.log("sdasdv", docs);
     for (let i = 0; i < docs.length; i++) {
         const assignment=docs[i]
         var task_info=[]
