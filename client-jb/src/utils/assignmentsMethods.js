@@ -32,5 +32,20 @@ async function putAssignment(assignmentObject) {
     }
 }
 
+async function deleteAssignment(assignmentId) {
+    try {
+        // console.log(`will try to delete assignmentId ${assignmentId}`)
+        const response = await axios.delete(`/api/v1/assignments/deleteAssignment/${assignmentId}`);
 
-export { getAllAssignments, putAssignment };
+        if (response.status===200) {
+            return(response.data)
+        } else {
+            console.log('deleteAssignment failed!')
+        }
+    } catch (error) {
+        console.error('Error on axios deleteAssignment', error);
+    }
+}
+
+
+export { getAllAssignments, putAssignment, deleteAssignment };

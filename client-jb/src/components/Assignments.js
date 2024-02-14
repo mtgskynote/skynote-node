@@ -3,7 +3,7 @@ import {useNavigate } from 'react-router-dom';
 import { useAppContext } from "../context/appContext";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import AssignmentsCSS from './Assignments.module.css'
-import { getAllAssignments, putAssignment } from "../utils/assignmentsMethods.js";
+import { getAllAssignments, putAssignment, deleteAssignment } from "../utils/assignmentsMethods.js";
 import {
     faFileImport,
     faUser,
@@ -56,26 +56,7 @@ const Assignments = (props) => {
     
     useEffect(()=>{
         if(userData!==null && scoresData!==null){
-            //get Tasks Data for this user/////////////////////////////////////////////
-            //Call database to get tasks info and do a .then with the processing below:
-            /*
-            0:{
-                    id:"11111111",
-                    teacher:"Anita",
-                    student:{0:"645b6e484612a8ebe8525933", 1:"pepitogrillo"},
-                    message:"Hello User, for this week the assignments include: Practice C major scales. We will have a look at it next week in class.I am opening a submission task for 'The Fireman', make sure you get all 3 stars!",
-                    tasks:{
-                        0: {score:"64d0de60d9ac9a34a66b4d45",
-                            answers:{
-                                        0:{studentId:"645b6e484612a8ebe8525933", recordingID:"recordingId",grade:"9",teacherComment:"very good"},
-                                        1:{studentId:"pepitogrillo", recordingID:"recordingId",grade:"8",teacherComment:"good"}
-                            }
-                    },
-                    post:"date posted",
-                    due:"date due",
-                },
-            */
-            //Example of structure extracted from database
+            
             const assignmentTest = {
                 teacherId: "5d34c59c098c00453a233bf3",
                 students: ["645b6e484612a8ebe8525933"],
@@ -98,8 +79,9 @@ const Assignments = (props) => {
                     
                 ],
             }
-            putAssignment(assignmentTest);
-            console.log("DONZOOOOOO!!");
+            // getAllAssignments();
+            // putAssignment(assignmentTest);
+            // deleteAssignment("65cc93e4b60b63215a289108");
             const assignments={
                 0:{
                     id:"11111111",

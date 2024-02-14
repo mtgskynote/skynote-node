@@ -36,5 +36,21 @@ const putAssignment = async (req, res) => {
   }
 }
 
+const deleteAssignment = async (req, res) => {
+  try {
+    const assignmentId = req.params.assignmentId;
+    console.log(`in deleteAssignment, got a request to delete assignmentId ${assignmentId}`)
+    const result = await assignments.findByIdAndDelete(assignmentId);
+
+    if (!result) {
+        return res.status(404).send('Could not delete, document not found');
+    }
+
+    res.status(200).send('Document successfully deleted');
+  } catch (error) {
+      res.status(500).send('Server error in deleteAssignment function');
+  }
+}
+
   
-export { getAllAssignments, putAssignment };
+export { getAllAssignments, putAssignment, deleteAssignment };
