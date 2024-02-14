@@ -40,6 +40,11 @@ const Assignments = (props) => {
           })
     
     };
+
+    const handleSeeClick = (id, scoreXML)=> {
+        console.log(id, scoreXML, "hola")
+        navigate(`/ListRecordings/${scoreXML}`, {state:{'recordingID':id}})
+    }
     
     //get User Data
     useEffect(()=>{
@@ -61,123 +66,14 @@ const Assignments = (props) => {
     useEffect(()=>{
         console.log(userData, scoresData)
         if(userData!==null && scoresData!==null){
+            //Assignments
             getAllAssignments(userData.id).then((result)=>{
                 console.log("done", result)
                 if(result.length!==0){
                     setUsertAnnouncements(result.reverse())}
-                
             })
+            /////////////
             const studentToCheck = userData.id;
-            //get Tasks Data for this user/////////////////////////////////////////////
-            //Call database to get tasks info and do a .then with the processing below:
-            /*
-            0:{
-                    id:"11111111",
-                    teacher:"Anita",
-                    student:{0:"645b6e484612a8ebe8525933", 1:"pepitogrillo"},
-                    message:"Hello User, for this week the assignments include: Practice C major scales. We will have a look at it next week in class.I am opening a submission task for 'The Fireman', make sure you get all 3 stars!",
-                    tasks:{
-                        0: {score:"64d0de60d9ac9a34a66b4d45",
-                            answers:{
-                                        0:{studentId:"645b6e484612a8ebe8525933", recordingID:"recordingId",grade:"9",comment:"very good"},
-                                        1:{studentId:"pepitogrillo", recordingID:"recordingId",grade:"8",teacherComment:"good"}
-                            }
-                    },
-                    post:"date posted",
-                    due:"date due",
-                },
-            */
-            //Example of structure extracted from database
-            /* const assignments={
-                0:{
-                    id:"11111111",
-                    teacher:"Anita",
-                    student:{0:"645b6e484612a8ebe8525933", 1:"pepitogrillo"},
-                    message:"Hello User, for this week the assignments include: Practice C major scales. We will have a look at it next week in class.I am opening a submission task for 'The Fireman', make sure you get all 3 stars!",
-                    tasks:{
-                        "64d0de60d9ac9a34a66b4d45":{"645b6e484612a8ebe8525933":"answerMe","pepitogrillo":"answerPepito"},
-                    },
-                    post:"date posted",
-                    due:"date due",
-                },
-                1:{
-                    id:"222222222",
-                    teacher:"Anita",
-                    student:{0:"645b6e484612a8ebe8525933"},
-                    message:"No homework this week",
-                    tasks:{},
-                    post:"date posted",
-                    due:"date due",
-                },
-                2:{
-                    id:"333333333",
-                    teacher:"Anita",
-                    student:{0:"645b6e484612a8ebe8525933"},
-                    message:"Hello, as this is Christmas week, look on the internet for a Christmas song and bring it to class on Monday! Also, submit the tasks below before due date!",
-                    tasks:{
-                        "64d0de60d9ac9a34a66b4d45":{"645b6e484612a8ebe8525933":"answerMe"},
-                        "64d0de60d9ac9a34a66b4d47":{"645b6e484612a8ebe8525933":""},
-                    },
-                    post:"date posted",
-                    due:"date due",
-                },
-            }
-            const result=Object.values(assignments) //simulates what the database returns
-            console.log(result)
-            //.then()
-            //Extract only information relevant for a specific user (actually we could create a callfunction that only retrieved that information)
-            let myannouncements={}
-            const studentToCheck = userData.id;
-            result.map((assignment,index)=>{
-                //Firstly, extract only assignments that are directed to the current user
-                const isStudentPresent = Object.values(assignment.student).includes(studentToCheck);
-                if (isStudentPresent) {
-                    //current user has this announcement assigned
-                    //now check for existing tasks and what scores they refer to
-                    const tasks= assignment.tasks
-                    const tasks_scores=Object.keys(tasks)
-                    let mytasks={}
-                    if(tasks_scores.length !== 0){
-                        Object.values(tasks).map((task,index)=>{
-                            const score = scoresData.find(item => item._id === tasks_scores[index])
-                            //All answers associated to this task
-                            const content_tasks= tasks[tasks_scores[index]]
-                            // From that i just want the answers belonging to the current user
-                            const currentUserAnswer=content_tasks[studentToCheck]
-                            mytasks[index]={
-                                score:score,
-                                answer:currentUserAnswer,
-                            }
-
-                        })
-                    }
-                    // Add the announcement details to myannouncements
-                    myannouncements[index] = {
-                        announcement:assignment.id,
-                        teacher:assignment.teacher, //at some point this should be the teachers name maybe?
-                        message: assignment.message,
-                        postDate: assignment.post,
-                        dueDate: assignment.due,
-                        tasks: mytasks
-                    };
-                     
-                } else {
-                    //current user does not have this announcement assigned, ignore
-                } 
-                setUsertAnnouncements(myannouncements)
-            })*/
-            //////////////////////////////////////////////////////////////////////////
-            
-            
-            //get Chat Data for this user/////////////////////////////////////////////
-            /*Data base should return messages like:
-            db.messages.find({
-                $or: [
-                    { sender: teacherId, receiver: studentId },
-                    { sender: studentId, receiver: teacherId }
-                ]
-                }).sort({ timestamp: 1 });
-            */
             const messages={
                 0:{
                     _id:"message1",
@@ -333,7 +229,7 @@ const Assignments = (props) => {
                                                 <div className={AssignmentsCSS.submitted}> 
                                                     <div className={AssignmentsCSS.cursive}>Status: Submitted</div>
                                                     <div className={AssignmentsCSS.buttonGroup}>
-                                                        <FontAwesomeIcon title="Go to recording assigned to this submission" icon={faEye} className={AssignmentsCSS.simpleIcon} />
+                                                        <FontAwesomeIcon title="Go to recording assigned to this submission" icon={faEye} className={AssignmentsCSS.simpleIcon} onClick={() => handleSeeClick(task.answer.recordingId, current_score.fname)}/>
                                                         <FontAwesomeIcon title="See grade and comment" icon={faBookBookmark} className={AssignmentsCSS.simpleIcon} />
                                                     </div>
                                                     
