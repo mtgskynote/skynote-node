@@ -3,6 +3,7 @@ import {useNavigate } from 'react-router-dom';
 import { useAppContext } from "../context/appContext";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import AssignmentsCSS from './Assignments.module.css'
+import { getAllAssignments } from "../utils/assignmentsMethods";
 
 import {
     faFileImport,
@@ -13,7 +14,8 @@ import {
     faPencilSquare,
     faBoxArchive,
     faRecordVinyl,
-    faPaperPlane
+    faPaperPlane,
+    faBookBookmark
 } from "@fortawesome/free-solid-svg-icons";
 
 const Assignments = (props) => {
@@ -25,7 +27,7 @@ const Assignments = (props) => {
     const [userChat, setUsertChat] = useState(null);
     /* FOR NOW THIS CODE DOES NOT DISPLAY ANYTHING REAL */
 
-    console.log("holaaa ", userChat!==null)
+    console.log("holaaa ", userAnnouncements)
 
     const fetchDataFromAPI = () => {
 
@@ -59,7 +61,13 @@ const Assignments = (props) => {
     useEffect(()=>{
         console.log(userData, scoresData)
         if(userData!==null && scoresData!==null){
-            console.log("im innnnnn")
+            getAllAssignments(userData.id).then((result)=>{
+                console.log("done", result)
+                if(result.length!==0){
+                    setUsertAnnouncements(result.reverse())}
+                
+            })
+            const studentToCheck = userData.id;
             //get Tasks Data for this user/////////////////////////////////////////////
             //Call database to get tasks info and do a .then with the processing below:
             /*
@@ -71,7 +79,7 @@ const Assignments = (props) => {
                     tasks:{
                         0: {score:"64d0de60d9ac9a34a66b4d45",
                             answers:{
-                                        0:{studentId:"645b6e484612a8ebe8525933", recordingID:"recordingId",grade:"9",teacherComment:"very good"},
+                                        0:{studentId:"645b6e484612a8ebe8525933", recordingID:"recordingId",grade:"9",comment:"very good"},
                                         1:{studentId:"pepitogrillo", recordingID:"recordingId",grade:"8",teacherComment:"good"}
                             }
                     },
@@ -80,7 +88,7 @@ const Assignments = (props) => {
                 },
             */
             //Example of structure extracted from database
-            const assignments={
+            /* const assignments={
                 0:{
                     id:"11111111",
                     teacher:"Anita",
@@ -155,9 +163,9 @@ const Assignments = (props) => {
                      
                 } else {
                     //current user does not have this announcement assigned, ignore
-                }
+                } 
                 setUsertAnnouncements(myannouncements)
-            })
+            })*/
             //////////////////////////////////////////////////////////////////////////
             
             
@@ -271,56 +279,63 @@ const Assignments = (props) => {
       
         <div className={AssignmentsCSS.left} >
             {userAnnouncements!==null?
-            Object.values(userAnnouncements).map((announcement,index)=>{
+            userAnnouncements.map((announcement,index)=>{
                 return(
                 <div className={AssignmentsCSS.tableBox}> 
                 <div>
                     <div className={AssignmentsCSS.header}> 
+                    {
+                        
+                    }
                         <div> 
-                            Posted on : {announcement.postDate} {/* REPLACE BY REAL DATE*/}
+                            Posted on : {new Date(announcement.postDate).toLocaleDateString("es-ES", {year: "numeric",month: "numeric",day: "numeric",hour: "2-digit",minute: "2-digit",second: "2-digit",})}
                         </div>
                         <div> 
-                            Due on : {announcement.dueDate}{/* REPLACE BY REAL DATE*/}
+                            Due on : {new Date(announcement.dueDate).toLocaleDateString("es-ES", {year: "numeric",month: "numeric",day: "numeric",hour: "2-digit",minute: "2-digit",second: "2-digit",})}
                         </div>
                     </div>
                     <div className={AssignmentsCSS.announcementBody}> 
                         <div className={AssignmentsCSS.teacher}> 
                             {announcement.teacher}   <FontAwesomeIcon icon={faUser} className={AssignmentsCSS.userIcon}/>  said...
                         </div>
-                        <div className={AssignmentsCSS.message}> {/* REPLACE BY REAL MESSAGE*/}
+                        <div className={AssignmentsCSS.message}> 
                             {announcement.message}
                         </div>
                         <div className={AssignmentsCSS.footNote}>
-                            {Object.values(announcement.tasks).length!==0?
+                            {announcement.tasks?
                             <div className={AssignmentsCSS.note}>
 
                             <FontAwesomeIcon icon={faTriangleExclamation} className={AssignmentsCSS.exclamationIcon} />
-                            <div className={AssignmentsCSS.text}>{Object.values(announcement.tasks).length} submission assignment(s) linked to this announcement</div> {/* REPLACE BY REAL number of assignments*/}
+                            <div className={AssignmentsCSS.text}>{announcement.tasks.length} submission assignment(s) linked to this announcement</div>
                             <FontAwesomeIcon icon={faTriangleExclamation} className={AssignmentsCSS.exclamationIcon} />
                         </div>:""
                             }
                             <div className={AssignmentsCSS.taskGroup}>
-                                {Object.values(announcement.tasks).map((task, index)=>{
+                                {announcement.tasks.map((task, index)=>{
+                                    var current_score=scoresData.find(item => item._id === task.score)
                                     return(
                                         <div className={AssignmentsCSS.taskItem}>
                                             <div className={AssignmentsCSS.taskHeader}>
                                                 <div><h6>
                                                 <FontAwesomeIcon icon={faMusic} className={AssignmentsCSS.simpleIcon}/>
-                                                {task.score.title}
+                                                {current_score.title}
                                                 </h6></div>
                                                 <div><h6 >
                                                     <FontAwesomeIcon icon={faPencilSquare} className={AssignmentsCSS.simpleIcon}/>
-                                                    {task.score.skill}
+                                                    {current_score.skill}
                                                 </h6></div>
                                                 <div><h6 >
                                                     <FontAwesomeIcon icon={faBoxArchive} className={AssignmentsCSS.simpleIcon}/>
-                                                    Level {task.score.level}
+                                                    Level {current_score.level}
                                                 </h6></div>
                                             </div>
-                                            <div>{task.answer.length!==0?
+                                            <div>{task.answer?
                                                 <div className={AssignmentsCSS.submitted}> 
                                                     <div className={AssignmentsCSS.cursive}>Status: Submitted</div>
-                                                    <FontAwesomeIcon title="Go to recording assigned to this submission" icon={faEye} className={AssignmentsCSS.simpleIcon} />
+                                                    <div className={AssignmentsCSS.buttonGroup}>
+                                                        <FontAwesomeIcon title="Go to recording assigned to this submission" icon={faEye} className={AssignmentsCSS.simpleIcon} />
+                                                        <FontAwesomeIcon title="See grade and comment" icon={faBookBookmark} className={AssignmentsCSS.simpleIcon} />
+                                                    </div>
                                                     
                                                 </div>:
                                                 <div className={AssignmentsCSS.notSubmitted}> 
