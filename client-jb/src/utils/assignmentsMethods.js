@@ -3,7 +3,7 @@ import axios from "axios";
 async function getAllAssignments(studentId) {
     try {
         // scoreId: "64d0de60d9ac9a34a66b4d45" is for the score "V_001_Cuerdas_Al_Aire_1_Suelta_A"
-        const response = await axios.get("/api/v1/assignments/getAllAssignments"); //{params: {studentId: studentId}}
+        const response = await axios.get("/api/v1/assignments/getAllAssignments", {params: {studentId: studentId}});
 
         if (response.status===200) {
             return response.data; // save results locally
