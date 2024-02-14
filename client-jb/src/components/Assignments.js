@@ -3,7 +3,7 @@ import {useNavigate } from 'react-router-dom';
 import { useAppContext } from "../context/appContext";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import AssignmentsCSS from './Assignments.module.css'
-
+import { getAllAssignments, putAssignment } from "../utils/assignmentsMethods.js";
 import {
     faFileImport,
     faUser,
@@ -24,8 +24,6 @@ const Assignments = (props) => {
     const [userAnnouncements, setUsertAnnouncements] = useState(null);
     const [userChat, setUsertChat] = useState(null);
     /* FOR NOW THIS CODE DOES NOT DISPLAY ANYTHING REAL */
-
-    console.log("holaaa ", userChat!==null)
 
     const fetchDataFromAPI = () => {
 
@@ -57,9 +55,7 @@ const Assignments = (props) => {
 
     
     useEffect(()=>{
-        console.log(userData, scoresData)
         if(userData!==null && scoresData!==null){
-            console.log("im innnnnn")
             //get Tasks Data for this user/////////////////////////////////////////////
             //Call database to get tasks info and do a .then with the processing below:
             /*
@@ -80,6 +76,30 @@ const Assignments = (props) => {
                 },
             */
             //Example of structure extracted from database
+            const assignmentTest = {
+                teacherId: "5d34c59c098c00453a233bf3",
+                students: ["645b6e484612a8ebe8525933"],
+                message:  "This one is just s test :)",
+                post: "2024-01-21T11:08:37.398+00:00",
+                due: "2024-01-31T11:08:37.398+00:00",
+                tasks: [
+                    {
+                        score: "64d0de60d9ac9a34a66b4d45", 
+                        answers:[
+                            {
+                                studentId: "645b6e484612a8ebe8525933",
+                                recordingId: "65ba2a351ca9199e85e76bbe",
+                                grade: 3.6,
+                                comment: "This is the wrong song mate :(",
+                            }
+                            
+                        ]
+                    }   
+                    
+                ],
+            }
+            putAssignment(assignmentTest);
+            console.log("DONZOOOOOO!!");
             const assignments={
                 0:{
                     id:"11111111",
@@ -115,7 +135,6 @@ const Assignments = (props) => {
                 },
             }
             const result=Object.values(assignments) //simulates what the database returns
-            console.log(result)
             //.then()
             //Extract only information relevant for a specific user (actually we could create a callfunction that only retrieved that information)
             let myannouncements={}
@@ -238,7 +257,6 @@ const Assignments = (props) => {
             const messages2=Object.values(messages)
             let mychat={}
             messages2.map((message,index)=>{
-                console.log(message)
                 if(message.sender===studentToCheck){
                     //My message
                     mychat[index]={
@@ -259,7 +277,6 @@ const Assignments = (props) => {
                     }
                 }
             })
-            console.log("chat ", mychat)
             setUsertChat(mychat)
             //////////////////////////////////////////////////////////////////////////
         }

@@ -1,8 +1,5 @@
 import axios from "axios";
 
-/* getRecData  --------------
-    return: res.body = [{recordingName, recordingId}, {...}, ...] 
-*/
 async function getAllAssignments(studentId) {
     try {
         // scoreId: "64d0de60d9ac9a34a66b4d45" is for the score "V_001_Cuerdas_Al_Aire_1_Suelta_A"
@@ -19,5 +16,21 @@ async function getAllAssignments(studentId) {
     }
 }
 
+async function putAssignment(assignmentObject) {           
+    try {
+        const response = await axios.put("/api/v1/assignments/putAssignment", assignmentObject);
+        console.log(`response from putAssignment was ${JSON.stringify(response.data)}`);
+        if (response.status===201) { /* 201 is the status code for a successful PUT */
+            console.log('putAssignment  returned OK')
+            return response.data; 
+        } else {
+            console.log('putAssignment failed!')
+            return null;
+        }
+    } catch (error) {
+        console.error('Error on axios putAssignment', error);
+    }
+}
 
-export { getAllAssignments};
+
+export { getAllAssignments, putAssignment };
