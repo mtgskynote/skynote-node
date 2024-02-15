@@ -1,7 +1,9 @@
-import React from "react";
+import React, { useEffect, useState, useCallback } from "react";
 import {useNavigate } from 'react-router-dom';
+import { useAppContext } from "../context/appContext";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import StatsTasksCSS from './StatsTasksSection.module.css'
+import { getLatestAssignment } from "../utils/assignmentsMethods.js";
 
 import {
     faFileImport,
@@ -11,6 +13,40 @@ import {
 
 const StatsTasksSection = (props) => {
     const navigate = useNavigate();
+    const { getCurrentUser } = useAppContext();
+    const [userData, setUserData] = useState(null);
+    const [assignmentData, setAssignmentData] = useState(null);
+
+    const fetchDataFromAPI = useCallback(() => {
+      getCurrentUser() // fetchData is already an async function
+        .then((result) => {
+          setUserData(result);
+        }).catch((error) => {
+          console.log(`getCurentUser() error: ${error}`)
+          // Handle errors if necessary
+        })
+    }, [setUserData]);
+
+    const fetchAssignment = useCallback((userData) => {
+      getLatestAssignment(userData.id).then((result)=>{
+        setAssignmentData(result)
+        console.log("Resultado", result[0]);
+      })
+    }, [setAssignmentData]);
+
+    //get User Data
+    useEffect(()=>{
+        if(userData===null){
+        fetchDataFromAPI();
+        }
+    },[userData, fetchDataFromAPI]);
+
+    //get latest assignment
+    useEffect(()=>{
+      if(userData!==null){
+          fetchAssignment(userData);
+      }
+    },[userData, fetchAssignment]);
 
     /* FOR NOW THIS CODE DOES NOT DISPLAY ANYTHING REAL */
 
