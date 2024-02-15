@@ -59,7 +59,6 @@ const ListRecordings = () => {
             day: "numeric",
             hour: "2-digit",
             minute: "2-digit",
-            second: "2-digit",
           };
           setRecordingList(JSON.stringify(result));
           setRecordingNames(result.map((recording) => recording.recordingName));
