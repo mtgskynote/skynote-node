@@ -16,6 +16,7 @@ import {
     faPaperPlane,
     faBookBookmark
 } from "@fortawesome/free-solid-svg-icons";
+import PopUpWindowGrades from "./PopUpWindowGrades";
 
 const Assignments = (props) => {
     const navigate = useNavigate();
@@ -24,9 +25,11 @@ const Assignments = (props) => {
     const [scoresData, setScoresData] = useState(null);
     const [userAnnouncements, setUsertAnnouncements] = useState(null);
     const [userChat, setUsertChat] = useState(null);
+    const [popUpWindow, setPopUpWindow] = useState(false);
+    const [taskComment, setTaskComment] = useState(null);
+    const [taskGrade, setTaskGrade] = useState(null);
     /* FOR NOW THIS CODE DOES NOT DISPLAY ANYTHING REAL */
 
-    console.log("holaaa ", userAnnouncements)
 
     const fetchDataFromAPI = () => {
 
@@ -41,8 +44,19 @@ const Assignments = (props) => {
     };
 
     const handleSeeClick = (id, scoreXML)=> {
-        console.log(id, scoreXML, "hola")
         navigate(`/ListRecordings/${scoreXML}`, {state:{'recordingID':id}})
+    }
+    const handleSeeGrades = (option, comment, grade)=> {
+        if(option==="see"){
+            setPopUpWindow(true)
+            setTaskComment(comment)
+            setTaskGrade(grade)
+        }else{
+            setPopUpWindow(false)
+            setTaskComment(null)
+            setTaskGrade(null)
+        }
+        
     }
     
     //get User Data
@@ -66,7 +80,6 @@ const Assignments = (props) => {
         if(userData!==null && scoresData!==null){
             //Assignments
             getAllAssignments(userData.id).then((result)=>{
-                console.log("done", result)
                 if(result.length!==0){
                     setUsertAnnouncements(result.reverse())}
             })
@@ -251,7 +264,7 @@ const Assignments = (props) => {
                                                     <div className={AssignmentsCSS.cursive}>Status: Submitted</div>
                                                     <div className={AssignmentsCSS.buttonGroup}>
                                                         <FontAwesomeIcon title="Go to recording assigned to this submission" icon={faEye} className={AssignmentsCSS.simpleIcon} onClick={() => handleSeeClick(task.answer.recordingId, current_score.fname)}/>
-                                                        <FontAwesomeIcon title="See grade and comment" icon={faBookBookmark} className={AssignmentsCSS.simpleIcon} />
+                                                        <FontAwesomeIcon title="See grade and comment" icon={faBookBookmark} className={AssignmentsCSS.simpleIcon} onClick={() => handleSeeGrades("see", task.answer.comment, task.answer.grade)} />
                                                     </div>
                                                     
                                                 </div>:
@@ -321,6 +334,8 @@ const Assignments = (props) => {
                 </div>
             </div>
         </div>
+        {popUpWindow?<PopUpWindowGrades handlerBack={handleSeeGrades} comment={taskComment} grade={taskGrade}/>:""}
+
     </div>
   );
 };
