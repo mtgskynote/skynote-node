@@ -62,7 +62,6 @@ const Assignments = (props) => {
         
     }
     const handleSelectRecording = (option, scoreId)=> {
-        console.log("open select recordings for ", scoreId)
         if(option==="open"){
             setPopUpWindowRecordings(true)
             setSelectedScore(scoreId)
@@ -231,10 +230,10 @@ const Assignments = (props) => {
                         
                     }
                         <div> 
-                            Posted on : {new Date(announcement.postDate).toLocaleDateString("es-ES", {year: "numeric",month: "numeric",day: "numeric",hour: "2-digit",minute: "2-digit",second: "2-digit",})}
+                            Posted on : {new Date(announcement.postDate).toLocaleDateString("es-ES", {year: "numeric",month: "numeric",day: "numeric",hour: "2-digit",minute: "2-digit",})}
                         </div>
                         <div> 
-                            Due on : {new Date(announcement.dueDate).toLocaleDateString("es-ES", {year: "numeric",month: "numeric",day: "numeric",hour: "2-digit",minute: "2-digit",second: "2-digit",})}
+                            Due on : {new Date(announcement.dueDate).toLocaleDateString("es-ES", {year: "numeric",month: "numeric",day: "numeric",hour: "2-digit",minute: "2-digit",})}
                         </div>
                     </div>
                     <div className={AssignmentsCSS.announcementBody}> 

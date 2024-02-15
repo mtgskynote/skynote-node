@@ -8,6 +8,7 @@ import {
   faMusic,
   faPencilSquare,
   faBoxArchive,
+  faPaperPlane,
 } from "@fortawesome/free-solid-svg-icons";
 import ListRecordingsCSS from './ListRecordings.module.css';
 
@@ -22,7 +23,6 @@ const PopUpWindowRecordings = (props) => {
   const [recordingStars, setRecordingStars] = useState(null);
   const [recordingDates, setRecordingDates] = useState(null);
 
-  console.log("dataaa ", data, userId, scoreId)
 
   // Define options for formatting date
   const options = {
@@ -31,22 +31,17 @@ const PopUpWindowRecordings = (props) => {
     day: "numeric",
     hour: "2-digit",
     minute: "2-digit",
-    second: "2-digit",
   };
 
   const fetchDataFromAPI = () => {
-
-    console.log("im in fetch ", userId, scoreId)
     
     getRecData(userId, scoreId).then((result) => {
 
-      console.log("result ", result)
       //Store everything
       setRecordingNames(result.map((recording) => recording.recordingName)); 
       setRecordingIds(result.map((recording) => recording.recordingId)); 
       setRecordingStars(result.map((recording) => recording.recordingStars));
-      setRecordingDates(result.map((recording) => new Date(recording.recordingDate).toLocaleDateString("es-ES", options)
-      ))
+      setRecordingDates(result.map((recording) => recording.recordingDate))
     
     }).catch((error) => {
       console.log(`Cannot get recordings from database: ${error}`)
@@ -102,7 +97,6 @@ const PopUpWindowRecordings = (props) => {
         stars:recordingStars,
         dates:recordingDates,
       }
-      console.log("all entries ", allEntries)
 
       // Combine them into the desired format (array of arrays)
       const data = [];
@@ -169,7 +163,9 @@ const PopUpWindowRecordings = (props) => {
                 )}
               </td>
             ))}
-            
+            <td>
+            <FontAwesomeIcon icon={faPaperPlane} className={PopUpWindowCSS.icon}/> 
+            </td>
             
           </tr>
         ))}
