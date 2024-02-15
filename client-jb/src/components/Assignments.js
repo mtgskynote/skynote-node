@@ -17,6 +17,7 @@ import {
     faBookBookmark
 } from "@fortawesome/free-solid-svg-icons";
 import PopUpWindowGrades from "./PopUpWindowGrades";
+import PopUpWindowRecordings from "./PopUpWindowRecordings.js";
 
 const Assignments = (props) => {
     const navigate = useNavigate();
@@ -25,9 +26,11 @@ const Assignments = (props) => {
     const [scoresData, setScoresData] = useState(null);
     const [userAnnouncements, setUsertAnnouncements] = useState(null);
     const [userChat, setUsertChat] = useState(null);
-    const [popUpWindow, setPopUpWindow] = useState(false);
+    const [popUpWindowGrade, setPopUpWindowGrade] = useState(false);
+    const [popUpWindowRecordings, setPopUpWindowRecordings] = useState(false);
     const [taskComment, setTaskComment] = useState(null);
     const [taskGrade, setTaskGrade] = useState(null);
+    const [selectedScore, setSelectedScore] = useState(null);
     /* FOR NOW THIS CODE DOES NOT DISPLAY ANYTHING REAL */
 
 
@@ -48,15 +51,25 @@ const Assignments = (props) => {
     }
     const handleSeeGrades = (option, comment, grade)=> {
         if(option==="see"){
-            setPopUpWindow(true)
+            setPopUpWindowGrade(true)
             setTaskComment(comment)
             setTaskGrade(grade)
         }else{
-            setPopUpWindow(false)
+            setPopUpWindowGrade(false)
             setTaskComment(null)
             setTaskGrade(null)
         }
         
+    }
+    const handleSelectRecording = (option, scoreId)=> {
+        console.log("open select recordings for ", scoreId)
+        if(option==="open"){
+            setPopUpWindowRecordings(true)
+            setSelectedScore(scoreId)
+        }else{
+            setPopUpWindowRecordings(false)
+            setSelectedScore(null)
+        }
     }
     
     //get User Data
@@ -272,7 +285,7 @@ const Assignments = (props) => {
                                                     <div className={AssignmentsCSS.cursive}>Status: Not submitted</div>
                                                     <div className={AssignmentsCSS.buttonGroup}>
                                                         <FontAwesomeIcon title="Record for this submission" icon={faRecordVinyl} className={AssignmentsCSS.simpleIcon} />
-                                                        <FontAwesomeIcon title="Assign recording to this submission" icon={faFileImport} className={AssignmentsCSS.simpleIcon} />
+                                                        <FontAwesomeIcon title="Assign recording to this submission" icon={faFileImport} className={AssignmentsCSS.simpleIcon} onClick={() => handleSelectRecording("open", task.score)} />
                                                     </div>
                                             </div>}
                                             </div>
@@ -334,7 +347,8 @@ const Assignments = (props) => {
                 </div>
             </div>
         </div>
-        {popUpWindow?<PopUpWindowGrades handlerBack={handleSeeGrades} comment={taskComment} grade={taskGrade}/>:""}
+        {popUpWindowGrade?<PopUpWindowGrades handlerBack={handleSeeGrades} comment={taskComment} grade={taskGrade}/>:""}
+        {popUpWindowRecordings?<PopUpWindowRecordings handlerBack={handleSelectRecording} scoreId={selectedScore} userId={userData.id}/>:""}
 
     </div>
   );

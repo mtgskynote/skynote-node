@@ -32,7 +32,6 @@
   }
 
   /*CSS for Delete Yes/No PopupWindow*/
-
   .popUpWindowDelete {
     position: fixed;
     top: 50%;
@@ -51,8 +50,7 @@
   .contentDelete {
     padding: 20px;
   }
-  
-  /* Style the buttons */
+
   .buttonDelete {
     margin: 10px 5px;
     padding: 10px 20px;
@@ -70,6 +68,8 @@
   button:hover {
     background-color: #a2a2a2;
   }
+
+  /*CSS for Showing Grades of assignments PopupWindow*/
 
   .popUpWindowGrades {
     position: fixed;
@@ -115,5 +115,36 @@
 
   border-radius: 10px;  }
 
+  /*CSS for showing recordings of a score to choose to submit PopupWindow*/
 
+  .popUpWindowRecordings {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 85%;
+    background: white;
+    border: 2px solid #4f72a1;
+    border-radius: 8px;
+    box-shadow: 0 0 20px #8e9093;
+    z-index: 1000;
+    text-align: center; /* Center text within the container */
+    padding: 20px;
+  }
+
+  .iconGroup{
+
+    display:flex;
+    background-color: rgb(241, 241, 241);
+    flex-direction: row;
+    justify-content: space-around;
+    border-radius: 10px;
+    padding: 5px 0px;
+    margin: 10px 0px
+  }
+  .icon{
+    font-size:22px;
+    color:#b3b3b3;
+    margin:0px 11px;
+  }
   
