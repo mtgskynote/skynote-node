@@ -74,5 +74,41 @@ const getLatestAssignment = async (req, res) => {
 
   res.status(StatusCodes.OK).json(doc);
 };
+
+const updateTaskAssignment = async (req, res) => {    
+    const studentId=req.body.studentId;
+    const assignmentId=req.body.assignmentId;
+    const scoreId=req.body.scoreId;
+    const recordingId=req.body.recordingId;
+    try {
+      let updatedAssignment = await assignments.findOneAndUpdate(
+          {
+              _id: assignmentId,
+              "tasks.score": scoreId,
+          },
+          {
+              $push: {
+                  "tasks.$[task].answers": {
+                      studentId: studentId,
+                      recordingId: recordingId,
+                  },
+              },
+          },
+          {
+              arrayFilters: [{ "task.score": scoreId }],
+              new: true,
+          }
+      );
+
+      if (!updatedAssignment) {
+          return res.status(404).json({ error: "Assignment not found or task with specified scoreId not found" });
+      }
+
+      res.status(200).json(updatedAssignment);
+  } catch (error) {
+      console.error("Error updating assignment:", error);
+      res.status(500).json({ error: "Internal Server Error" });
+  }
+    }
   
-export { getAllAssignments, putAssignment, deleteAssignment, getLatestAssignment };
+export { getAllAssignments, putAssignment, deleteAssignment, getLatestAssignment, updateTaskAssignment};

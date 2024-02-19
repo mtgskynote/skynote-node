@@ -31,6 +31,7 @@ const Assignments = (props) => {
     const [taskComment, setTaskComment] = useState(null);
     const [taskGrade, setTaskGrade] = useState(null);
     const [selectedScore, setSelectedScore] = useState(null);
+    const [selectedAnnouncement, setSelectedAnnouncement] = useState(null);
     /* FOR NOW THIS CODE DOES NOT DISPLAY ANYTHING REAL */
 
 
@@ -49,6 +50,11 @@ const Assignments = (props) => {
     const handleSeeClick = (id, scoreXML)=> {
         navigate(`/ListRecordings/${scoreXML}`, {state:{'recordingID':id}})
     }
+
+    const handleRecord = (scoreXML)=> {
+        navigate(`/all-lessons/${scoreXML}`);
+    }
+
     const handleSeeGrades = (option, comment, grade)=> {
         if(option==="see"){
             setPopUpWindowGrade(true)
@@ -61,13 +67,15 @@ const Assignments = (props) => {
         }
         
     }
-    const handleSelectRecording = (option, scoreId)=> {
+    const handleSelectRecording = (option, scoreId, announcementId)=> {
         if(option==="open"){
             setPopUpWindowRecordings(true)
             setSelectedScore(scoreId)
+            setSelectedAnnouncement(announcementId)
         }else{
             setPopUpWindowRecordings(false)
             setSelectedScore(null)
+            setSelectedAnnouncement(null)
         }
     }
     
@@ -283,8 +291,8 @@ const Assignments = (props) => {
                                                 <div className={AssignmentsCSS.notSubmitted}> 
                                                     <div className={AssignmentsCSS.cursive}>Status: Not submitted</div>
                                                     <div className={AssignmentsCSS.buttonGroup}>
-                                                        <FontAwesomeIcon title="Record for this submission" icon={faRecordVinyl} className={AssignmentsCSS.simpleIcon} />
-                                                        <FontAwesomeIcon title="Assign recording to this submission" icon={faFileImport} className={AssignmentsCSS.simpleIcon} onClick={() => handleSelectRecording("open", task.score)} />
+                                                        <FontAwesomeIcon title="Record for this submission" icon={faRecordVinyl} className={AssignmentsCSS.simpleIcon} onClick={() => handleRecord(current_score.fname)}/>
+                                                        <FontAwesomeIcon title="Assign recording to this submission" icon={faFileImport} className={AssignmentsCSS.simpleIcon} onClick={() => handleSelectRecording("open", task.score, announcement._id)} />
                                                     </div>
                                             </div>}
                                             </div>
@@ -347,7 +355,7 @@ const Assignments = (props) => {
             </div>
         </div>
         {popUpWindowGrade?<PopUpWindowGrades handlerBack={handleSeeGrades} comment={taskComment} grade={taskGrade}/>:""}
-        {popUpWindowRecordings?<PopUpWindowRecordings handlerBack={handleSelectRecording} scoreId={selectedScore} userId={userData.id}/>:""}
+        {popUpWindowRecordings?<PopUpWindowRecordings handlerBack={handleSelectRecording} scoreId={selectedScore} userId={userData.id} announcementId={selectedAnnouncement}/>:""}
 
     </div>
   );
