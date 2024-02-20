@@ -1,0 +1,91 @@
+/* ModeInfoButton.css */
+
+/*General styling*/
+body {
+    margin: 0;
+    font-family: 'Cabin'; /* You can choose the font you prefer */
+  }
+  
+.container {
+    min-height: 100vh; /* Ensure the container covers the full viewport height */
+    text-align: left;
+    background-color: #FFFFFF;
+    padding: 20px;
+  }
+  
+  .songelement {  
+    padding: 5px;
+    background-color: #ffffff;
+    color:#000000;
+    border-radius: 5px;
+    border: 0.2px solid #DDE172;
+    box-shadow: 0 0 3px #DDE172;
+    flex-basis: calc(23.00% - 0px); /* Adjust the width based on the number of items per row */
+    margin: 10px;
+    text-align:center;
+  }
+  .songelement2 {  
+    padding: 5px;
+    background-color: #ffffff;
+    color:#000000;
+    border-radius: 5px;
+    border: 0.2px solid #DDE172;
+    box-shadow: 0 0 3px #DDE172;
+    flex-basis: calc(23.00% - 0px); /* Adjust the width based on the number of items per row */
+    margin: 10px;
+    text-align:left;
+  }
+
+  
+  /* Media queries for responsiveness */
+  @media (max-width: 900px) {
+    .songlist li {
+      flex-basis: calc(50% - 20px);
+    }
+  }
+  
+  @media (max-width: 600px) {
+    .songlist li {
+      flex-basis: calc(100% - 20px);
+    }
+  }
+  
+  .completeStar{
+    color:#e8d73f;
+    font-size:25px;
+    margin:6px 5px;
+  }
+  .incompleteStar{
+    color:#909090;
+    font-size:25px;
+    margin:6px 5px;
+  }
+  .starsGroup{
+    text-align: center;
+    margin: 5px;
+  }
+  .auxIcon{
+    font-size:22px;
+    color:#b3b3b3;
+    margin:0px 11px;
+  }
+  .textGroup{
+    margin:5px
+  }
+  .recTitle{
+    width:100%;
+    background-color: #DDE172;
+    text-align: center;
+    border-radius: 5px;
+    padding: 5px;
+  }
+  .dateTime{
+    font-size:13px;
+    text-align: right;
+    margin: 0px 5px 0px 0px;
+  }
+
+  .message{
+    margin: 0;
+    font-family: 'Cabin';
+  }

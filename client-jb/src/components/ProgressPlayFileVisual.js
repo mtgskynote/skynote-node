@@ -56,7 +56,10 @@ const ProgressPlayFileVisual = (props) => {
   const location = useLocation();
   const navigate = useNavigate();
 
-  const recordingID=location.state?.recordingID
+  const recordingID=location.state?.id
+  const recordingName=location.state?.name
+  const recordingStars=location.state?.stars
+  const recordingDate=location.state?.date
   
   // To load JSON data from recordingID passed from ListRecordings
   useEffect(() => {
@@ -296,7 +299,11 @@ const ProgressPlayFileVisual = (props) => {
             </div>
           </Button>
         </div>
-        <ModeInfoButton message={2}/> 
+        <ModeInfoButton 
+          message={2}
+          title={recordingName}
+          stars={recordingStars}
+          date={recordingDate}/> 
 
         </div>
     </Wrapper>

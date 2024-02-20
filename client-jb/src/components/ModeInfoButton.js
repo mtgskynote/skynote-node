@@ -3,10 +3,12 @@ import {useEffect, useState } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { Button} from "@material-ui/core";
 //import { Dropdown } from "react-bootstrap";
+import ModeInfoButtonCSS from './ModeInfoButton.module.css';
 
 import {
     faInfoCircle, //info circle
 } from "@fortawesome/free-solid-svg-icons";
+import { faStar } from "@fortawesome/free-solid-svg-icons";
 
 const ModeInfoButton = (props) => {
 
@@ -41,12 +43,24 @@ const ModeInfoButton = (props) => {
       );
     }else if(props.message===2){
       return (
-        <div className="mode-info-message">
-          <h4>Info</h4>
-          <p>You are visualizing your recording. Click "play" to listen to it or iterate through the different repetitions</p>
+        <div className={ModeInfoButtonCSS.container}>
+            <div className={ModeInfoButtonCSS.recTitle}><h5 >{props.title}</h5></div>
+              <div className={ModeInfoButtonCSS.starsGroup}>
+                <FontAwesomeIcon icon={faStar} className={props.stars>=1 ? ModeInfoButtonCSS.completeStar : ModeInfoButtonCSS.incompleteStar}/>
+                <FontAwesomeIcon icon={faStar} className={props.stars>=2 ? ModeInfoButtonCSS.completeStar : ModeInfoButtonCSS.incompleteStar}/>
+                <FontAwesomeIcon icon={faStar} className={props.stars>=3 ? ModeInfoButtonCSS.completeStar : ModeInfoButtonCSS.incompleteStar}/>
+              </div>
+            <div className={ModeInfoButtonCSS.dateTime}>
+              <i>{props.date}</i>
+            </div>
+          <div className={ModeInfoButtonCSS.message}>
+            <h4>Info</h4>
+            <p>Click "play" to listen to it or iterate through the different repetitions</p>
+          </div>
         </div>
-      );
-    }
+          
+        );
+      }
     }
     
 
