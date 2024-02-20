@@ -2,108 +2,63 @@ import React, { useState, useEffect } from 'react';
 import { useAppContext } from "../../context/appContext";
 import ProfileCSS from './Profile.module.css';
 import axios from "axios";
-import { getRecData, getRecording, putRecording, deleteRecording, patchViewPermissions } from "../../utils/studentRecordingMethods.js";
-import { timer } from '../../components/SessionTimer';
 
-  //====================================================================
-  //  This is a demo/test of the /recordings/XXX API 
-  //====================================================================
-  function getRandomInt(min, max) {
-    min = Math.ceil(min);
-    max = Math.floor(max);
-    return Math.floor(Math.random() * (max - min + 1)) + min;
-  }
-  
-  const handleRecordingTestSubmit = async (event) => {
-    event.preventDefault();
-    // ---------------------------------------
-    var recdatalist=[];  // list of minimal recording data [{recordingName, recordingId},{...}, ...]
-
-    //getRecData(studentId, scoreId)
-    try {
-      recdatalist = await getRecData("645b6e484612a8ebe8525933", "64d0de60d9ac9a34a66b4d45") // // scoreId: "64d0de60d9ac9a34a66b4d45" is for the score "V_001_Cuerdas_Al_Aire_1_Suelta_A"
-      console.log(`getRecData return OK, and recdatalist is ${JSON.stringify(recdatalist)}`)
-    } catch (error) {
-      console.log(`error in getRecData`, error)
-    }
-
-    //putRecording(recordingObject)
-    try{
-      let result = await putRecording({studentId: "645b6e484612a8ebe8525933", scoreId: "64d0de60d9ac9a34a66b4d45", recordingName: "FooRecording"+getRandomInt(1,5), date: new Date(), sharing: false, info: {bpm: 100}});
-      if (result!=null) {
-        recdatalist.push(result); // save results locally
-        console.log(`putRecording return OK, and recdatalist is now  ${JSON.stringify(recdatalist)}`)  
-      }
-    } catch (error) { 
-      console.log(`error in putRecording`, error  );
-    }  
-
-    //patchViewPermissions(recordingId, sharing)
-    try{
-      let result = await patchViewPermissions(recdatalist[0].recordingId, true);
-      console.log(`patchViewPermissions return OK, and result is ${JSON.stringify(result)}`)
-    } catch (error) { 
-        console.log(`error in patchViewPermissions`, error)
-    }
-
-    //getRecording(recordingId)
-    try{  
-      let result = await getRecording(recdatalist[0].recordingId)
-      console.log(`getRecording returns and result is ${JSON.stringify(result)}`)  
-    }
-    catch (error) { 
-        console.log(`error in getRecording`, error)
-    } 
-
-    //deleteRecording(recordingId)
-    try{
-      var result = await deleteRecording(recdatalist[0].recordingId)
-      console.log(`deleteRecording return OK, and result is ${JSON.stringify(result)}`) 
-    } catch (error) { 
-        console.log(`error in deleteRecording`, error)
-    } 
-  }
-  
-  //====================================================================
-  //  end of Recordings test/demo
-  //====================================================================
- 
-
-/*
-The useEffect hook runs once when the component mounts ([] as a dependency means it runs only once).
-Inside useEffect, an asynchronous operation (fetching data in this case) is performed.
-While the data is being fetched, the component displays a loading message (<p>Loading...</p>).
-Once the data is fetched successfully, the state data is updated, and the loading state is set to false.
-
-This might be overkill for grabbing the user's email, but it's a good pattern to follow for more complex data fetching from the server.
-*/
 
 const Profile = () => {
-  const [data, setData] = useState(null);
-  const [loading, setLoading] = useState(true);
+  // Manage edit state, form values, and loading state
+  const [isEditing, setIsEditing] = useState(false);
+  const [formData, setFormData] = useState(null);
 
-  //--------------------------------------------------------------------
-  const [inputs, setInputs] = useState({});
-  const handleChange = (event) => {
-    const name = event.target.name;
-    const value = event.target.value;
-    setInputs(values => ({...values, [name]: value}))
-  }
+  useEffect(() => {
+    console.log(`In useEffect, formData has been updated to ${JSON.stringify(formData)}`); // This will log the updated state
+    setIsLoading(false); 
+  }, [formData]);
+
+  const { getCurrentUser } = useAppContext();
+  const [isLoading, setIsLoading] = useState(true); // Initially loading
+
+  // Fetch member data from the API
+  useEffect(() => {
+    const fetchDataFromAPI = async () => {
+      try {
+        const result = await getCurrentUser() // fetchData is already an async function
+
+        console.log(`getCurentUser() has returnd this result: ${JSON.stringify(result)}`)
+        console.log(` now call getProfileData with ${result.id}`)
+        const response = await axios.get('/api/v1/auth/getProfileData', {
+          params: {
+            userId: result.id
+          },
+          headers: {
+            'Authorization': `Bearer ${localStorage.getItem("token")}`
+          }
+        });
 
 
-  const toggletimer = () => { 
-    if (timer.isRunning) { 
-      timer.pause();
-    } else {
-      timer.start();
-    } 
-  }
+        if (response.status === 200) {
+          console.log(`setting formData with arg ${JSON.stringify(response.data.user)}`)
+          setFormData(response.data.user);
+        } else {
+          // Handle error (e.g., display error message)
+          console.error('Error fetching profile data:', response.statusText);
+        }
+
+      } catch (error) {
+        // Handle network or other errors
+        console.error('Network error:', error);
+      } finally {
+        //setIsLoading(false); // Ensure loading state is updated
+      }
+    };
+
+    fetchDataFromAPI();
+  }, []);
 
 
+  // Handle form submission
   const handleSubmit = async (event) => {
     event.preventDefault();
 
-  
     //-----  print the form data out just for fun. ---  
     const formData = new FormData(event.target);
     let result = '';
@@ -111,148 +66,124 @@ const Profile = () => {
       result += `${name}: ${value}\n`;
     }
     alert(result);
-    // //------------------------------------------------- 
-    // //------------------------------------------------- 
-    // // First post a big blob of data to the server
+    //--------------------------------------------------
 
-    // // Generate a large string to simulate file size
-    // let sizeInMB = 5; // Size in megabytes
-    // let dummyDataString = 'a'.repeat(parseInt(sizeInMB * 1024 * 1024)); // Each character is 1 byte
-
-    // // Create a blob from the string
-    // const dummyData = new Blob([dummyDataString], { type: "audio/wav" });
-
-    // // Use FormData to send file data
-    // let blobbyformData = new FormData();
-    // blobbyformData.append("file", dummyData, "example.wav");
-
-    // // Send data with Axios
-    // axios.post('/api/v1/recordings/testupload', blobbyformData, {
-    //     headers: {
-    //         'Content-Type': 'multipart/form-data'
-    //     },
-    //     maxContentLength: 16*1024*1024,
-    //     maxBodyLength: 16*1024*1024,
-    // }).then(response => {
-    //     console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>> File uploaded successfully');
-    // }).catch(error => {
-    //     console.error('Error uploading file', error);
-    // });    
-
-    // //------------------------------------------------- 
-    // //------------------------------------------------- 
-
-
-    //-----  send the form data to the server. ---
     try {
-      const response = await axios.post('/api/v1/auth/updateProfileData', {
-        method: 'POST',
-        body: formData
-      });
-  
-      if (response.ok) {
-        console.log('response worked!')
+      const response = await axios.post('/api/v1/auth/updateProfileData', formData, 
+      {
+        headers: {
+          authorization: `Bearer ${localStorage.getItem("token")}`,
+          'Content-Type': 'application/json' //'multipart/form-data' // 'application/x-www-form-urlencoded' //
+      }});
+
+      if (response.status === 200) {
+        // Handle successful update (e.g., display success message, update formData)
+        console.log('Profile updated successfully!');
       } else {
-        console.log('response failed!')
+        // Handle error (e.g., display error message)
+        console.error('Error updating profile:', response.statusText);
       }
     } catch (error) {
-      console.error('Error submitting form:', error);
+      // Handle network or other errors
+      console.error('Network error:', error);
     }
-  }
+  };
 
+  // Handle form field changes
+  const handleChange = (event) => {
+    console.log('handleChange')
+    setFormData({
+      ...formData,
+      [event.target.name]: event.target.value,
+    });
+  };
 
-
-  const { getCurrentUser } = useAppContext();
-  //console.log("Hi " + getCurrentUser() + "!");  // Here is prints out Promise 
-  console.log("Hi .... !");  // Here is prints out Promise 
-
-  useEffect(() => {
-    const fetchDataFromAPI = () => {
-      console.log(`in fetchDataFromAPI, about to call getCurentUser()`)
-      getCurrentUser() // fetchData is already an async function
-        .then((result) => {
-          console.log(`getCurentUser() has returnd this result: ${JSON.stringify(result)}`)
-          setData(result);
-          setLoading(false);
-        })
-        .catch((error) => {
-          setLoading(false);
-          console.log(`getCurentUser() error: ${error}`)
-          // Handle errors if necessary
-        });
-    };
-
-    fetchDataFromAPI();
-  }, []);
-
-  /*------------ Return the component! ----------*/
   return (
-    <div>
+    <div style={{ width: "100%" }}>
       <div  align="center">
-      <button onClick={handleRecordingTestSubmit}>Run Recordings DB test</button>
-      <h1 >Skynote Profile</h1>
-      <div  align="left">
+        <h1 >Skynote Profile</h1>
+      </div>
 
-      {loading ? (
+      <div className={ProfileCSS.profilepage} >
+
+      {isLoading ? (
         <p>Loading...</p>
-      ) : data ? (
+      ) : formData ? (
 
-        <form onSubmit={handleSubmit} width="50%">
+              <form onSubmit={handleSubmit}>
+                <div className={ProfileCSS.field}>
+                  <label htmlFor="firstName" className={ProfileCSS.profilelabel}>First Name:</label>
+                  <input
+                    className={ProfileCSS.profileinput}
+                    type="text"
+                    id="firstName" 
+                    name="name"
+                    value={formData.name || "firstName"}
+                    onChange={handleChange}
+                    required
+                  />
+                </div>
 
-          <label className={ProfileCSS.profilelabel} >First Name:   </label>
-          <input 
-            className={ProfileCSS.profileinput}
-            type="text" 
-            name="name" 
-            value={inputs.name || data.name} 
-            onChange={handleChange}
-          />
+                <div className={ProfileCSS.field}>
+                  <label htmlFor="lastName" className={ProfileCSS.profilelabel}>Last Name:</label>
+                  <input
+                    className={ProfileCSS.profileinput}
+                    type="text"
+                    id="lastName" 
+                    name="lastName"
+                    value={formData.lastName || "lastName"}
+                    onChange={handleChange}
+                    required
+                  />
+                </div>
 
-          <label className={ProfileCSS.profilelabel} >Family Name:   </label>
-          <input 
-            className={ProfileCSS.profileinput}
-            type="text" 
-            name="lastName" 
-            value={inputs.lastName || data.lastName} 
-            onChange={handleChange}
-          />
+                <div className={ProfileCSS.field}>
+                  <label htmlFor="email" className={ProfileCSS.profilelabel}>email:</label>
+                  <input
+                    className={ProfileCSS.profileinput}
+                    type="text"
+                    id="email" 
+                    name="email"
+                    value={formData.email || "email"}
+                    onChange={handleChange}
+                    required
+                  />
+                </div>
 
+                <div className={ProfileCSS.field}>
+                  <label htmlFor="role" className={ProfileCSS.profilelabel}>role:</label>
+                  <input
+                    className={ProfileCSS.profileinput}
+                    type="text"
+                    id="role" 
+                    name="role"
+                    value={formData.role || "student"}
+                    onChange={handleChange}
+                    required
+                  />
+                </div>
 
+                <div className={ProfileCSS.field}>
+                  <label htmlFor="teacher" className={ProfileCSS.profilelabel}>teacher:</label>
+                  <input
+                    className={ProfileCSS.profileinput}
+                    type="text"
+                    id="teacher" 
+                    name="teacher"
+                    value={formData.teacher || "5d34c59c098c00453a233bf3"}
+                    onChange={handleChange}
+                    required
+                  />
+                </div>
 
-          <label className={ProfileCSS.profilelabel} >Email:  </label>
-          <input 
-            className={ProfileCSS.profileinput}
-            type="text" 
-            name="email" 
-            value={inputs.email || data.email} 
-            onChange={handleChange}
-          />
+                <button type="submit">Save Changes</button>
+                <button onClick={() => setIsEditing(false)}>Cancel</button>
+              </form>
 
-          
-          <label className={ProfileCSS.profilelabel} >Age:   </label>
-          <input 
-            className={ProfileCSS.profileinput}
-            type="number" 
-            name="age" 
-            value={inputs.age || data.email} 
-            onChange={handleChange}
-          /><br/>
-          <br/><br/>
-          <div  align="center">
-            <input type="submit"
-              value="Update Data" />
-          </div>
-
-          </form>
-
-      ) : (
-        <p>No data available.</p>
-      ) }
-
+        ): (
+          <p>No data available.</p>
+        ) }
       </div>
-      <button onClick={toggletimer}>toggletimer</button>
-      </div>
-
     </div>
   );
 };

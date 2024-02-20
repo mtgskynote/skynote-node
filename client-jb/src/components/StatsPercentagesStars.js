@@ -44,7 +44,7 @@ const PercentagesStarsStats = (props) => {
     labels: Object.keys(percentagesLevel || {}),
     datasets: [
       {
-        label: '% Stars Achieved per Level',
+        label: '% Stars per Level',
         data: Object.values(percentagesLevel || {}),
         backgroundColor: '#88a2cf',
         borderColor: '#88a2cf',

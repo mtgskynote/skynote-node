@@ -13,6 +13,7 @@ import {
   faPencilSquare,
   faBoxArchive,
   faMusic,
+  faPenToSquare,
 } from "@fortawesome/free-solid-svg-icons";
 
 const ListRecordings = () => {
@@ -149,7 +150,10 @@ const ListRecordings = () => {
         {recordingNames.map((nameOfFile, index) => (
           <div className={ListRecordingsCSS.songelement} key={index}>
           <li key={index}>
-          <div className={ListRecordingsCSS.recTitle}><h5 >{nameOfFile}</h5></div>
+          <div className={ListRecordingsCSS.recTitle}>
+            <h5 >{nameOfFile}  </h5>
+            <FontAwesomeIcon icon={faPenToSquare} className={ListRecordingsCSS.iconModify}/>
+          </div>
               <div className={ListRecordingsCSS.starsGroup}>
                 <FontAwesomeIcon icon={faStar} className={recordingStars[index]>=1 ? ListRecordingsCSS.completeStar : ListRecordingsCSS.incompleteStar}/>
                 <FontAwesomeIcon icon={faStar} className={recordingStars[index]>=2 ? ListRecordingsCSS.completeStar : ListRecordingsCSS.incompleteStar}/>

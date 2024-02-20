@@ -157,6 +157,18 @@ body {
     border: 0.2px solid rgb(213, 223, 206);
     border-radius: 5px;
   }
+  .iconModify {
+    margin: 2px;
+    color: #93939383;
+    background-color: transparent;
+    cursor: pointer;
+    width: 40%;
+    border:none;
+    font-size: 20px;
+    border: 0.2px solid rgb(213, 223, 206);
+    border-radius: 5px;
+    align-self: right;
+  }
   .iconbutton:hover {
     background-color: #d2e8e1;
     border-radius: 5px;

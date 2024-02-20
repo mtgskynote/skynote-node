@@ -1,7 +1,9 @@
 import React, { useState, useEffect } from 'react';
+import { useLocation } from 'react-router-dom';
 import PopUpWindowCSS from './PopUpWindow.module.css';
 import StatsRecentCSS from './StatsRecentRecordings.module.css'
 import {getRecData } from "../utils/studentRecordingMethods.js";
+import {updateAssignment} from "../utils/assignmentsMethods.js";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import {
   faStar,
@@ -9,6 +11,8 @@ import {
   faPencilSquare,
   faBoxArchive,
   faPaperPlane,
+  faCheck,
+  faXmark,
 } from "@fortawesome/free-solid-svg-icons";
 import ListRecordingsCSS from './ListRecordings.module.css';
 
@@ -16,12 +20,16 @@ const PopUpWindowRecordings = (props) => {
 
   const [userId, setUserId] = useState(null);
   const [scoreId, setScoreId] = useState(null);
+  const [announcementId, setAnnouncementId] = useState(null);
   const [scoreData, setScoreData] = useState(null);
   const [data, setData] = useState(null);
   const [recordingNames, setRecordingNames] = useState(null);
   const [recordingIds, setRecordingIds] = useState(null);
   const [recordingStars, setRecordingStars] = useState(null);
   const [recordingDates, setRecordingDates] = useState(null);
+  const [checkOption, setCheckOption]=useState(false);
+  const [recordingIndexSubmit, setRecordingIndexSubmit]=useState(false);
+  const location = useLocation();
 
 
   // Define options for formatting date
@@ -54,6 +62,23 @@ const PopUpWindowRecordings = (props) => {
   const handleClose = () => {
     props.handlerBack("close")
   };
+  const handleSubmitRecording=(option, index)=>{
+    if(option==="check"){
+      setCheckOption(true)
+      setRecordingIndexSubmit(index)
+    }else{
+      setCheckOption(false)
+      setRecordingIndexSubmit(null)
+      if(option==="yes"){
+        //console.log("submit recording ", recordingNames[recordingIndexSubmit], " with id ", recordingIds[recordingIndexSubmit], " to assignment with id ", announcementId, " for task of score ", scoreId)
+        updateAssignment(announcementId, userId, scoreId, recordingIds[recordingIndexSubmit]).then((result)=>{
+        window.location.reload()
+        })
+      }else{
+        //console.log("dont submit")
+      }
+    }
+  }
 
   //get Scores data
   useEffect(() => {
@@ -70,9 +95,10 @@ const PopUpWindowRecordings = (props) => {
 
   //When props are not null, store them
   useEffect(()=>{
-      if (props.userId!==null && props.userId!==undefined && props.scoreId!==null && props.scoreId!==undefined){
+      if (props.userId!==null && props.userId!==undefined && props.scoreId!==null && props.scoreId!==undefined&& props.announcementId!==null && props.announcementId!==undefined){
           setUserId(props.userId)
           setScoreId(props.scoreId)
+          setAnnouncementId(props.announcementId)
       }
   },[props])
 
@@ -118,7 +144,7 @@ const PopUpWindowRecordings = (props) => {
   return (
     <div className={PopUpWindowCSS.popUpWindowRecordings}>
       <h5 className={StatsRecentCSS.title}>
-        Your recordings for:
+        Select recording to submit:
       </h5>
       {scoreData!==null?
       <div className={PopUpWindowCSS.iconGroup}>
@@ -164,15 +190,23 @@ const PopUpWindowRecordings = (props) => {
               </td>
             ))}
             <td>
-            <FontAwesomeIcon icon={faPaperPlane} className={PopUpWindowCSS.icon}/> 
+            <FontAwesomeIcon icon={faPaperPlane} className={PopUpWindowCSS.icon} onClick={() => handleSubmitRecording("check", rowIndex)}/>
             </td>
-            
+
           </tr>
         ))}
       </tbody>
     </table>
     :<div>No recordings to show</div>}
     </div>
+    {!checkOption?
+              "":
+              <div className={PopUpWindowCSS.assurance}>
+                Are you sure you want to submit '{recordingNames[recordingIndexSubmit]}' to this task?
+                <FontAwesomeIcon icon={faCheck} className={PopUpWindowCSS.yesIcon} onClick={() => handleSubmitRecording("yes")}/>
+                <FontAwesomeIcon icon={faXmark} className={PopUpWindowCSS.noIcon} onClick={() => handleSubmitRecording("no")}/>
+              </div>
+            }
 
     <button className={PopUpWindowCSS.buttonCloseGrades} onClick={handleClose}>Close</button>
     </div>

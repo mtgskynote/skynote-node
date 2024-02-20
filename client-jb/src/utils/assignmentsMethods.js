@@ -63,4 +63,20 @@ async function getLatestAssignment(studentId) {
     }
 }
 
-export { getAllAssignments, putAssignment, deleteAssignment, getLatestAssignment };
+async function updateAssignment(assignmentId, studentId, scoreId, recordingId) {           
+    try {
+        const response = await axios.put("/api/v1/assignments/updateTaskAssignment", {studentId: studentId, assignmentId:assignmentId, scoreId:scoreId, recordingId:recordingId});
+        console.log(`response from putAssignment was ${JSON.stringify(response.data)}`);
+        if (response.status===200) { /* 200 is the status code everything okay */
+            console.log('updateAssignment  returned OK')
+            return response.data; 
+        } else {
+            console.log('updateAssignment failed!')
+            return null;
+        }
+    } catch (error) {
+        console.error('Error on axios updateAssignment', error);
+    }
+}
+
+export { getAllAssignments, putAssignment, deleteAssignment, getLatestAssignment, updateAssignment };
