@@ -55,7 +55,7 @@ const ModeInfoButton = (props) => {
             </div>
           <div className={ModeInfoButtonCSS.message}>
             <h4>Info</h4>
-            <p>Click "play" to listen to it or iterate through the different repetitions</p>
+            <p>Click "play" to listen to your recording,  or iterate through the different repetitions</p>
           </div>
         </div>
           
