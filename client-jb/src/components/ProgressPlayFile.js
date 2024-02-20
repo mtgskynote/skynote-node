@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useRef } from "react";
+import React, { useEffect, useState, useRef, useCallback } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import OpenSheetMusicDisplay from "./OpenSheetMusicDisplay";
 import ControlBar from "./ControlBar.js";
@@ -10,7 +10,7 @@ import SimpleMessaje from "./AnyMessage.js"
 import ModeToggle from "./ModeToggle.js";
 import PopUpWindow from "./PopUpWindow.js";
 import XMLParser from "react-xml-parser";
-import { getRecData, getRecording, putRecording, deleteRecording, patchViewPermissions } from "../utils/studentRecordingMethods.js";
+import { putRecording } from "../utils/studentRecordingMethods.js";
 import { Buffer } from 'buffer';
 import { useAppContext } from "../context/appContext";
 // @ts-ignore
@@ -68,8 +68,6 @@ const ProgressPlayFile = (props) => {
 
   const navigate = useNavigate();
   const scoreID=JSON.parse(localStorage.getItem("scoreData")).find(item => item.fname === params.files)._id;
-  console.log("scoreID:", scoreID)
-
   
   const onResetDone = () => {
     setIsResetButtonPressed(false);
@@ -79,7 +77,6 @@ const ProgressPlayFile = (props) => {
     if(userData===null){
     getCurrentUser() // fetchData is already an async function
       .then((result) => {
-        console.log(`getCurentUser() has returnd this result: ${JSON.stringify(result)}`);
         setUserData(result);
       }).catch((error) => {
         console.log(`getCurentUser() error: ${error}`)
@@ -124,7 +121,6 @@ const ProgressPlayFile = (props) => {
   //function in charge of downloading
   async function handleDownload (dataBlob){
     setAudioReady(false);
-    //console.log("I received audio, i proceed to save everything: ", dataBlob, jsonToDownload)
     const jsonData = JSON.parse(jsonToDownload)//convert data to json
     const jsonComplete={
       studentId: userData.id, 
@@ -159,13 +155,7 @@ const ProgressPlayFile = (props) => {
 
       // upload to database
       try{
-        console.log(jsonComplete)
         let result = await putRecording(jsonComplete);
-        if (result!=null) {
-          //recdatalist.push(result); // save results locally
-          console.log('putRecording return OK, and result is now ', result) 
-          //console.log(`putRecording return OK, and recdatalist is now  ${JSON.stringify(recdatalist)}`)  
-        }
       } catch (error) { 
         console.log(`error in putRecording`, error  );
       }  
@@ -175,7 +165,6 @@ const ProgressPlayFile = (props) => {
     setJsonToDownload(json);
     setCanDownload(false);
     setAudioReady(true);
-    console.log("im storing json data in state")
   };
   
   const handleFinishedCursorControlBarCallback = (controlBarFinishedCursor) => {
@@ -202,7 +191,6 @@ const ProgressPlayFile = (props) => {
         setShowPopUpWindow(false)
         //Depending on answer save or delete:
         if(answer==="delete"){
-          //console.log("received delete answer")
           audioStreamer.save_or_not(answer) //No save wanted
           setPitch([]);
           setConfidence([]);
@@ -378,7 +366,6 @@ const ProgressPlayFile = (props) => {
       // RECORD BUTTON -----------------------------------------------------------------
       const recordButton = document.getElementById("record/stopRecording");
       const handleRecordButtonClick = () => {
-        //console.log("Can I record?: ", canRecord);
         //Toggle recording state (FIXME does not work the first time, so recordInactive is started with true value)
         setRecordInactive(!recordInactive)
 
@@ -556,8 +543,6 @@ const ProgressPlayFile = (props) => {
         const song = `${scoreTitle}`;
         const typeList = 'single-song';
 
-        console.log("info ", score, song, typeList)
-
         // Use navigate to go to the ListRecordings page with parameters in the URL
         navigate('/ListRecordings', { state: { score, song, typeList } });
   
@@ -578,6 +563,10 @@ const ProgressPlayFile = (props) => {
       }
     };
   }, [recordVol, zoom, recordInactive, pitchValue, repeatsIterator, practiceMode, recordMode, showRepetitionMessage, userFileName, jsonToDownload]);
+
+  const handleComplete = useCallback(() => {
+    setFinishedTimer(true);
+  }, []);
 
   return (
     
@@ -608,7 +597,7 @@ const ProgressPlayFile = (props) => {
         canDownload={canDownload}
         visual={"no"}
       />
-      {showTimer ? (<CountdownTimer bpm={bpmChange} mode={practiceMode}  onComplete={() => setFinishedTimer(true)} />):(null)}
+      {showTimer ? (<CountdownTimer bpm={bpmChange} mode={practiceMode}  onComplete={handleComplete} />):(null)}
       
       {(practiceMode ===true && recordMode===false)?<ControlBar 
         cursorFinished={cursorFinished} cursorFinishedCallback={handleFinishedCursorControlBarCallback}

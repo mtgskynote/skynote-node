@@ -1,22 +1,12 @@
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import PopUpWindowCSS from './PopUpWindow.module.css';
 
 const PopUpWindowDelete = (props) => {
-    const [showWindow, setShowWindow] = useState(false);
-
-    useEffect(() => {
-        if(props.showWindow){
-            setShowWindow(true)
-        }else{
-            setShowWindow(false)
-        }
-      }, [props]);
 
   const handleOption1 = () => {
     // Handle Option1 logic here
     console.log("Saving recording")
     // Close/tell to hide the window after saving
-    setShowWindow(false); 
     props.handlerBack("1")
   };
 
@@ -24,7 +14,6 @@ const PopUpWindowDelete = (props) => {
     console.log("Deleting recording")
     // Handle Option2 logic here
     // Close/tell to hide the window after deleting
-    setShowWindow(false); 
     props.handlerBack("2")
   };
 

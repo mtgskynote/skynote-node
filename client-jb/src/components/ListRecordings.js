@@ -59,7 +59,6 @@ const ListRecordings = () => {
             day: "numeric",
             hour: "2-digit",
             minute: "2-digit",
-            second: "2-digit",
           };
           setRecordingList(JSON.stringify(result));
           setRecordingNames(result.map((recording) => recording.recordingName));
@@ -81,7 +80,7 @@ const ListRecordings = () => {
 
     
     
-  }, [userData,recordingList, getCurrentUser, score]);
+  }, [userData,recordingList]);
 
   //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
   // Event handler for going back
@@ -185,4 +184,4 @@ const ListRecordings = () => {
   );
 };
 
-export default ListRecordings
+export default ListRecordings;

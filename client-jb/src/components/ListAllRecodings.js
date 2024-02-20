@@ -59,7 +59,6 @@ const ListAllRecordings = () => {
             day: "numeric",
             hour: "2-digit",
             minute: "2-digit",
-            second: "2-digit",
           };
           setRecordingNames(result.map((recording) => recording.recordingName));
           setRecordingStars(result.map((recording) => recording.recordingStars));
