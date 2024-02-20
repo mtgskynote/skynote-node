@@ -7,7 +7,6 @@ body {
   }
   
 .container {
-    min-height: 100vh; /* Ensure the container covers the full viewport height */
     text-align: left;
     background-color: #FFFFFF;
     padding: 20px;
