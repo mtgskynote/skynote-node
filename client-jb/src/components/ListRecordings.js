@@ -93,9 +93,9 @@ const ListRecordings = () => {
 
   // Event handler for click on See
   const handleSeeClick = (nameOfFile, number)=> {
-    const recToShow = JSON.parse(recordingList)[0];
+    const recordingId = JSON.parse(recordingList)[0].recordingId;
     //Pass recording ID to ProgressPlayfileVisual
-    navigate(score, {state:{'id':recToShow.recordingId, 'name':recToShow.recordingName, 'stars':recToShow.recordingStars, 'date':recToShow.recordingDate}})
+    navigate(score, {state:{'id':recordingId, 'name':recordingNames, 'stars':recordingStars, 'date':recordingDates}})
   }
 
 
