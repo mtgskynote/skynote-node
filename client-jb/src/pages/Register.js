@@ -16,6 +16,7 @@ const initialState = {
   name: "",
   email: "",
   password: "",
+  role: "student",
   isMember: true,
 };
 // if possible prefer local state
@@ -39,12 +40,12 @@ function Register() {
 
   const onSubmit = (e) => {
     e.preventDefault();
-    const { name, email, password, isMember } = values;
+    const { name, email, role, password, isMember } = values;
     if (!email || !password || (!isMember && !name)) {
       displayAlert();
       return;
     }
-    const currentUser = { name, email, password };
+    const currentUser = { name, email, role, password };
 
     if (isMember) {
       setupUser({
@@ -96,6 +97,16 @@ function Register() {
           handleChange={handleChange}
         />
 
+        {/* show role only for new registration */}
+        {!values.isMember && ( 
+          <FormRow
+            type="role"
+            name="role"
+            value={values.role}
+            handleChange={handleChange}
+          />
+        )}
+
         <FormRow
           type="password"
           name="password"
@@ -108,9 +119,10 @@ function Register() {
         </button>
         <p>
           {values.isMember ? "Not a Member yet?" : "Already a Member?"}
-          {/* <button type="button" onClick={toggleMember} className="member-btn"> */}
-          <button type="button" className="member-btn">
-            {values.isMember ? "We're sorry, new registrations are temporarily disabled " : "Login"}
+          {/* <button type="button" onClick={toggleMember} className="member-btn"> */}  
+          <button type="button" className="member-btn"> 
+            {values.isMember ? "We're sorry, new registrations are temporarily disabled " : "Login"} 
+            {/* {values.isMember ?   "Register" : "Login"} */}
           </button>
         </p>
         <div className="g-signin2" data-onsuccess="onSignIn">
