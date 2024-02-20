@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { timer } from './SessionTimer.js';
+import { timer } from './SessionTimer';
 
 const SessionTimerDisplay = () => {
   const [time, setTime] = useState(timer.elapsedTime);

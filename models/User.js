@@ -45,6 +45,27 @@ const UserSchema = new mongoose.Schema({
     trim: true, // trims extra space.
     default: "my city",
   },
+  role: {
+    type: String,
+    required: true,
+    enum: ['teacher', 'student'],
+    validate: {
+      validator: (val) => ['teacher', 'student'].includes(val),
+      message: 'Role must be either "teacher" or "student"',
+    },
+  },
+  teacher: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'User',
+    required: true,
+    validate: {
+      validator: async (value) => {
+        const user = await mongoose.model('User').findById(value);
+        return !!user; // Returns true if user exists, false otherwise
+      },
+      message: 'Invalid teacher ID. Must reference an existing user',
+    },
+  },
 });
 
 // Hash the password before saving the user
