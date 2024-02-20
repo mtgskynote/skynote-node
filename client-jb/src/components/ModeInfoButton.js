@@ -65,11 +65,11 @@ const ModeInfoButton = (props) => {
     
 
   const handleMouseOver = (event) => {
-    console.log("Show message")
+    // console.log("Show message")
     setShowMessage(true);
   };
   const handleMouseLeave = () => {
-    console.log("Hide message")
+    // console.log("Hide message")
     setShowMessage(false);
     
   };
