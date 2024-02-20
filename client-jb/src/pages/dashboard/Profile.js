@@ -3,35 +3,62 @@ import { useAppContext } from "../../context/appContext";
 import ProfileCSS from './Profile.module.css';
 import axios from "axios";
 
-/*
-The useEffect hook runs once when the component mounts ([] as a dependency means it runs only once).
-Inside useEffect, an asynchronous operation (fetching data in this case) is performed.
-While the data is being fetched, the component displays a loading message (<p>Loading...</p>).
-Once the data is fetched successfully, the state data is updated, and the loading state is set to false.
-
-This might be overkill for grabbing the user's email, but it's a good pattern to follow for more complex data fetching from the server.
-*/
 
 const Profile = () => {
-  const [data, setData] = useState(null);
-  const [loading, setLoading] = useState(true);
+  // Manage edit state, form values, and loading state
+  const [isEditing, setIsEditing] = useState(false);
+  const [formData, setFormData] = useState(null);
 
-  //--------------------------------------------------------------------
-  const [inputs, setInputs] = useState({});
-  const handleChange = (event) => {
-    const name = event.target.name;
-    const value = event.target.value;
-    setInputs(values => ({...values, [name]: value}))
-  }
+  useEffect(() => {
+    console.log(`In useEffect, formData has been updated to ${JSON.stringify(formData)}`); // This will log the updated state
+    setIsLoading(false); 
+  }, [formData]);
+
+  const { getCurrentUser } = useAppContext();
+  const [isLoading, setIsLoading] = useState(true); // Initially loading
+
+  // Fetch member data from the API
+  useEffect(() => {
+    const fetchDataFromAPI = async () => {
+      try {
+        const result = await getCurrentUser() // fetchData is already an async function
+
+        console.log(`getCurentUser() has returnd this result: ${JSON.stringify(result)}`)
+        console.log(` now call getProfileData with ${result.id}`)
+        const response = await axios.get('/api/v1/auth/getProfileData', {
+          params: {
+            userId: result.id
+          },
+          headers: {
+            'Authorization': `Bearer ${localStorage.getItem("token")}`
+          }
+        });
 
 
+        if (response.status === 200) {
+          console.log(`setting formData with arg ${JSON.stringify(response.data.user)}`)
+          setFormData(response.data.user);
+        } else {
+          // Handle error (e.g., display error message)
+          console.error('Error fetching profile data:', response.statusText);
+        }
 
- 
+      } catch (error) {
+        // Handle network or other errors
+        console.error('Network error:', error);
+      } finally {
+        //setIsLoading(false); // Ensure loading state is updated
+      }
+    };
 
+    fetchDataFromAPI();
+  }, []);
+
+
+  // Handle form submission
   const handleSubmit = async (event) => {
     event.preventDefault();
 
-  
     //-----  print the form data out just for fun. ---  
     const formData = new FormData(event.target);
     let result = '';
@@ -39,121 +66,125 @@ const Profile = () => {
       result += `${name}: ${value}\n`;
     }
     alert(result);
-    // //------------------------------------------------- 
+    //--------------------------------------------------
 
-
-    //-----  send the form data to the server. ---
     try {
-      const response = await axios.post('/api/v1/auth/updateProfileData', {
-        method: 'POST',
-        body: formData
-      });
-  
-      if (response.ok) {
-        console.log('response worked!')
+      const response = await axios.post('/api/v1/auth/updateProfileData', formData, 
+      {
+        headers: {
+          authorization: `Bearer ${localStorage.getItem("token")}`,
+          'Content-Type': 'application/json' //'multipart/form-data' // 'application/x-www-form-urlencoded' //
+      }});
+
+      if (response.status === 200) {
+        // Handle successful update (e.g., display success message, update formData)
+        console.log('Profile updated successfully!');
       } else {
-        console.log('response failed!')
+        // Handle error (e.g., display error message)
+        console.error('Error updating profile:', response.statusText);
       }
     } catch (error) {
-      console.error('Error submitting form:', error);
+      // Handle network or other errors
+      console.error('Network error:', error);
     }
-  }
+  };
 
+  // Handle form field changes
+  const handleChange = (event) => {
+    console.log('handleChange')
+    setFormData({
+      ...formData,
+      [event.target.name]: event.target.value,
+    });
+  };
 
-  const { getCurrentUser } = useAppContext();
-  //console.log("Hi " + getCurrentUser() + "!");  // Here is prints out Promise 
-  console.log("Hi .... !");  // Here is prints out Promise 
-
-  useEffect(() => {
-    const fetchDataFromAPI = () => {
-      console.log(`in fetchDataFromAPI, about to call getCurentUser()`)
-      getCurrentUser() // fetchData is already an async function
-        .then((result) => {
-          console.log(`getCurentUser() has returnd this result: ${JSON.stringify(result)}`)
-          setData(result);
-          setLoading(false);
-        })
-        .catch((error) => {
-          setLoading(false);
-          console.log(`getCurentUser() error: ${error}`)
-          // Handle errors if necessary
-        });
-    };
-
-    fetchDataFromAPI();
-  }, []);
-
-
-
-  /*------------ Return the component! ----------*/
   return (
-    <div>
+    <div style={{ width: "100%" }}>
       <div  align="center">
-      <h1 >Skynote Profile</h1>
-      <div  align="left">
-
-      {loading ? (
-        <p>Loading...</p>
-      ) : data ? (
-
-        <form onSubmit={handleSubmit} width="50%">
-
-          <label className={ProfileCSS.profilelabel} >First Name:   </label>
-          <input 
-            className={ProfileCSS.profileinput}
-            type="text" 
-            name="name" 
-            value={inputs.name || data.name} 
-            onChange={handleChange}
-          />
-
-          <label className={ProfileCSS.profilelabel} >Family Name:   </label>
-          <input 
-            className={ProfileCSS.profileinput}
-            type="text" 
-            name="lastName" 
-            value={inputs.lastName || data.lastName} 
-            onChange={handleChange}
-          />
-
-
-
-          <label className={ProfileCSS.profilelabel} >Email:  </label>
-          <input 
-            className={ProfileCSS.profileinput}
-            type="text" 
-            name="email" 
-            value={inputs.email || data.email} 
-            onChange={handleChange}
-          />
-
-          
-          <label className={ProfileCSS.profilelabel} >Age:   </label>
-          <input 
-            className={ProfileCSS.profileinput}
-            type="number" 
-            name="age" 
-            value={inputs.age || data.email} 
-            onChange={handleChange}
-          /><br/>
-          <br/><br/>
-          <div  align="center">
-            <input type="submit"
-              value="Update Data" />
-          </div>
-
-          </form>
-
-      ) : (
-        <p>No data available.</p>
-      ) }
-
-
-
+        <h1 >Skynote Profile</h1>
       </div>
+
+      <div className={ProfileCSS.profilepage} >
+
+      {isLoading ? (
+        <p>Loading...</p>
+      ) : formData ? (
+
+              <form onSubmit={handleSubmit}>
+                <div className={ProfileCSS.field}>
+                  <label htmlFor="firstName" className={ProfileCSS.profilelabel}>First Name:</label>
+                  <input
+                    className={ProfileCSS.profileinput}
+                    type="text"
+                    id="firstName" 
+                    name="name"
+                    value={formData.name || "firstName"}
+                    onChange={handleChange}
+                    required
+                  />
+                </div>
+
+                <div className={ProfileCSS.field}>
+                  <label htmlFor="lastName" className={ProfileCSS.profilelabel}>Last Name:</label>
+                  <input
+                    className={ProfileCSS.profileinput}
+                    type="text"
+                    id="lastName" 
+                    name="lastName"
+                    value={formData.lastName || "lastName"}
+                    onChange={handleChange}
+                    required
+                  />
+                </div>
+
+                <div className={ProfileCSS.field}>
+                  <label htmlFor="email" className={ProfileCSS.profilelabel}>email:</label>
+                  <input
+                    className={ProfileCSS.profileinput}
+                    type="text"
+                    id="email" 
+                    name="email"
+                    value={formData.email || "email"}
+                    onChange={handleChange}
+                    required
+                  />
+                </div>
+
+                <div className={ProfileCSS.field}>
+                  <label htmlFor="role" className={ProfileCSS.profilelabel}>role:</label>
+                  <input
+                    className={ProfileCSS.profileinput}
+                    type="text"
+                    id="role" 
+                    name="role"
+                    value={formData.role || "student"}
+                    onChange={handleChange}
+                    required
+                  />
+                </div>
+
+                <div className={ProfileCSS.field}>
+                  <label htmlFor="teacher" className={ProfileCSS.profilelabel}>teacher:</label>
+                  <input
+                    className={ProfileCSS.profileinput}
+                    type="text"
+                    id="teacher" 
+                    name="teacher"
+                    value={formData.teacher || "5d34c59c098c00453a233bf3"}
+                    onChange={handleChange}
+                    required
+                  />
+                </div>
+
+                <button type="submit">Save Changes</button>
+                <button onClick={() => setIsEditing(false)}>Cancel</button>
+              </form>
+
+        ): (
+          <p>No data available.</p>
+        ) }
       </div>
     </div>
-      
   );
 };
 

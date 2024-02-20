@@ -84,29 +84,35 @@ const updateUser = async (req, res) => {
 const updateProfileData = async (req, res) => {
   console.log("req.body", req.body);
   const { email, name } = req.body;
+
+  console.log(`In updateProfileData, the req.body looks like this: ${JSON.stringify(req.body)}`)
   if (!email || !name) {
     throw new BadRequestError("Please provide at least name and email");
   }
-  const user = await User.findOne({ _id: req.user.userId });
-  // user.email = email;
-  // user.name = name;
+  User.updateOne({ _id: req.user.userId }, req.body, function(err, result) {
+    if (err) {
+      console.error(err);
+    } else {
+      console.log('Document updated successfully:', result);
+    }
+  });
 
-  // await user.save();
+  // const user = await User.findOne({ _id: req.user.userId });
+  // console.log(`req.user.userId is ${req.user.userId}`)
+  // console.log(`found one: ${JSON.stringify(user)}')`)
 
-  // const token = user.createJWT();
   res.status(StatusCodes.OK).json({
-    user,
-    token,
-    location: user.location,
+    "success": true,
+    "message": "Document updated successfully",
   });
 };
 
 
-// getCurrentUser is used to get the user's email and name
-const getCurrentUser = async (req, res) => {
+// getProfileData is used to get the user's email and name
+const getProfileData = async (req, res) => {
   console.log(`getting current user from the database`)
-  const user = await User.findOne({ _id: req.user.userId });
-  res.status(StatusCodes.OK).json({ user, location: user.location });
+  const user = await User.findOne({ _id: req.query.userId });
+  res.status(StatusCodes.OK).json({ user });
 };
 
 // logout is used to logout the user
@@ -118,4 +124,4 @@ const logout = async (req, res) => {
   res.status(StatusCodes.OK).json({ msg: "user logged out!" });
 };
 
-export { register, login, updateUser, updateProfileData, getCurrentUser, logout };
+export { register, login, updateUser, updateProfileData, getProfileData, logout };
