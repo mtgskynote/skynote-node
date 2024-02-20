@@ -94,13 +94,12 @@ const ListRecordings = () => {
 
   // Event handler for click on See
   const handleSeeClick = (nameOfFile, number)=> {
-      const id = JSON.parse(recordingList)[recordingNames.indexOf(nameOfFile)].recordingId;
-      console.log("ID ", id)
-      //Pass recording ID to ProgressPlayfileVisual
-      navigate(score, {state:{'recordingID':id}})
-    }
+    const prueba = JSON.parse(recordingList)[recordingNames.indexOf(nameOfFile)];
+    //Pass recording ID to ProgressPlayfileVisual
+    navigate(score, {state:{'id':prueba.recordingId, 'name':prueba.recordingName , 'stars':prueba.recordingStars , 'date':prueba.recordingDate }})
+  };
   
-    // Event handler for click on Edit
+  // Event handler for click on Edit
   const handleEditClick = (action, nameOfFile)=> {
     if(action==="open"){
       const id = JSON.parse(recordingList)[recordingNames.indexOf(nameOfFile)].recordingId;
