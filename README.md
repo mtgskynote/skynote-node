@@ -98,6 +98,7 @@ e) Then copy /build folder of your extended osmd to  skynote-node/node-modules/o
 
 
 5. ** Production deployment steps**
+   0. sudo npm run setup-production --legacy-peer-deps
    1. Once all packages are installed in your production server folder, copy the opensheetmusicdisplay extended and minified version to the node_modules (as described above) 
    2. Create a .env file and set the necessary values inside of it (removing the values for VPS_PRIVATE_KEY and VPS_USERNAME)
    3. To start process using 'pm2'

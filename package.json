@@ -34,7 +34,6 @@
     "jsonwebtoken": "^9.0.0",
     "mongoose": "^6.9.0",
     "morgan": "^1.10.0",
-    "opensheetmusicdisplay": "^1.8.4",
     "react-responsive": "^9.0.2",
     "tunnel-ssh": "^5.0.5",
     "validator": "^13.7.0"
