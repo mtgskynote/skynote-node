@@ -3,6 +3,45 @@ TO DO list - A small list of things we're currently working on, or stuff we have
 but just some relevant stuff we shouldn't miss :)
 /////////////////////////
 
+BEFORE AMAIA LEAVES:
+
+- Chat (Amaia in Progress)
+- in Visual mode, info button should display stars, lesson, skill, name of recording (Alvaro in progress)
+- Add field in user where it specifies if teacher/student type, 
+  add field to student-user where "teacher" is specified, 
+  add field in teacher-user where we assign which students
+- Allow students to change name to recordings
+- Related to the above, when student logs in, store locally new information: student/teacher type of profile 
+  and teacher assigned or list of students (with Id and Names? so that they are available always?)
+- Eventhough it will be used by the teacher in the future (meaning that this page would only appear on the teachers account) 
+  we could build the page where the teacher introduces assignments, because it is helpful to try out other parts (like submissions, submission dates, 
+  grading), so that we dont have to create a new assignment from the database... uncomfortable... easier if that page is ready.
+  
+With this the students part is ready: a student can see the available lessons, can record, can store, can delete, can modify names, 
+can see what assignments are assigned to them, can provide answers to the tasks, can see the grades, can chat with teacher.
+
+For the future:
+- Teacher dashboard should have a display of answers to assignments, and a notice board for pending messages to answer (chat messages)
+- Teacher must have a page with the assignments (most recent at the top) and different buttons that take them to other pages:
+  --> button to create "new assignment", takes you to another page to introduce a new assignment (page that we already have). When finished,
+      takes you back to the list of assignments page automatically
+  --> button on each announcement that has tasks assigned, that takes you to another page where you can see the answers of students, and you 
+      can give them grades
+  --> button on each announcement to delete them, another one to modify them?
+- Teacher must have a page with all their students, for each student displayed:
+  --> see their info (progress? tasksPending/totalTasks? whatever),
+  --> button that takes you to the list of submissions of that student Score | Posted date | Due date | answered recording | grade | buttons (modify grade?)
+  --> button that takes you to the chat with that student
+
+
+
+CAREFULL: 
+!!! Those scores that dont have a title cause problems, remove them, or live with them knowing that is better not to use them.
+
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+
 - in ListAllRecordings we get all recordings, but from each recording we need info about the score it references 
    (score name, skill and level)
 - When AllLessons loads, we should store locally all info about scores (id, scorename, skill, level). So that later, when we have scoreID 
