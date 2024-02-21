@@ -9,57 +9,12 @@ import { TreeView } from '@mui/x-tree-view/TreeView';
 import { TreeItem } from '@mui/x-tree-view'
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import ChevronRightIcon from "@mui/icons-material/ChevronRight";
-
 import OpenSheetMusicDisplayPreview from "./OpenSheetMusicDisplayPreview";
-import XMLParser from "react-xml-parser";
 import AllLessonsCSS from './AllLessons.module.css';
-const folderBasePath = "xmlScores/violin";
 
-const getTitle = async (fileName) => {
-  try {
-    const response = await fetch(`${folderBasePath}/${fileName}.xml`);
-    const xmlFileData = await response.text();
-    const movementTitle = Array.from(
-      new XMLParser()
-        .parseFromString(xmlFileData)
-        .getElementsByTagName("movement-title")
-    );
-    const workTitle = Array.from(
-      new XMLParser()
-        .parseFromString(xmlFileData)
-        .getElementsByTagName("work-title")
-    );
-    //console.log("AQUIAQUIAQUIAQUIAQUIAQUIAQUIAQUI:", arr[0]);
-    if (movementTitle.length > 0) {
-      return movementTitle[0].value;
-    } else if (workTitle.length > 0) {
-      return workTitle[0].value;
-    } else {
-      //console.log(`NO DATA FOUND FOR ${fileName}.xml`);
-      return fileName
-    }
-  } catch (err) {
-    console.log(err.message);
-    return fileName;
-  }
-};
-
-const fetchAllTitles = async (files) => {
-  const titles = {};
-  var tempScoreData = JSON.parse(localStorage.getItem("scoreData"));
-  for (let file of files) {
-    let scoreName = await getTitle(file.name);
-    titles[file.name] = scoreName;
-    tempScoreData.find(obj => obj.fname === file.name).title = scoreName;
-  }
-  localStorage.setItem("scoreData", JSON.stringify(tempScoreData));
-  return titles;
-};
 
 
 const AllLessons = () => {
-
-  const [titles, setTitles] = useState({});
   const [selectedNodeActive, setSelectedNodeActive] = useState(false);
   const [selectedNodeInfo, setSelectedNodeInfo] = useState(null);
   const [fetchedData, setFetchedData] = useState({});
@@ -82,12 +37,6 @@ const AllLessons = () => {
 
   }, []); // This useEffect is only for fetching the data
 
-  useEffect(() => {
-    const allFiles = Object.values(fetchedData).flatMap((level) =>
-      Object.values(level).flatMap((skill) => skill)
-    );
-    fetchAllTitles(allFiles).then(setTitles);
-  }, [fetchedData]); // This useEffect is dependent on fetchedData
 
   const handleNodeMouseOver = (event, nodeId) => {
     if(nodeId!==undefined){
@@ -121,14 +70,9 @@ const AllLessons = () => {
     }
     return null;
   };
-/*
-.osmdScore{
-    position: fixed;
-  top: 0;
-  right: 0;
-  margin: 10px;
-  z-index: 999
-  } */ 
+
+
+
   const renderTree = (level, skills) => (
     <div className={AllLessonsCSS.level}>
     <TreeItem key={level} nodeId={level} label={`Level ${level}`} >
@@ -148,7 +92,7 @@ const AllLessons = () => {
                 onMouseOut={(e) => handleNodeMouseOut(e)}
                 >
                     <Link to={nameObj.route_path} className={AllLessonsCSS.link}>
-                      <span>{titles[nameObj.name] || nameObj.name}</span>
+                      <span>{nameObj.title || nameObj.name}</span>
                     </Link>
                     
                 </div>

@@ -11,6 +11,7 @@ import {
 
 import reducer from "./reducer";
 import axios from "axios";
+import XMLParser from "react-xml-parser";
 
 
 // Get user, token, and userLocation from local storage
@@ -170,12 +171,45 @@ const AppProvider = ({ children }) => {
     try {
       const response = await axios.get("/api/v1/scores/getAllScoreData2", {
       });
-      localStorage.setItem("scoreData", JSON.stringify(response.data));
-      return response.data;
+      var tempScoreData=response.data;
+      for (let file of tempScoreData) {
+        let scoreName = await getTitle(file.fname);
+        tempScoreData.find(obj => obj.fname === file.fname).title = scoreName;
+      }
+      localStorage.setItem("scoreData", JSON.stringify(tempScoreData));
+      return tempScoreData;
     } catch (error) {
       console.error("Error fetching file names:", error);
     }
-  };  
+  }; 
+
+  const getTitle = async (fileName) => {
+    try {
+      const response = await fetch(`xmlScores/violin/${fileName}.xml`);
+      const xmlFileData = await response.text();
+      const movementTitle = Array.from(
+        new XMLParser()
+          .parseFromString(xmlFileData)
+          .getElementsByTagName("movement-title")
+      );
+      const workTitle = Array.from(
+        new XMLParser()
+          .parseFromString(xmlFileData)
+          .getElementsByTagName("work-title")
+      );
+      if (movementTitle.length > 0) {
+        return movementTitle[0].value;
+      } else if (workTitle.length > 0) {
+        return workTitle[0].value;
+      } else {
+        //console.log(`NO DATA FOUND FOR ${fileName}.xml`);
+        return fileName
+      }
+    } catch (err) {
+      console.log(err.message);
+      return fileName;
+    }
+  };
 
  
   // Return provider component with context value
