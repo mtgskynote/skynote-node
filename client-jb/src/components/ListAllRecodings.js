@@ -105,7 +105,7 @@ const ListAllRecordings = () => {
       const scoreName=recordingScores[index]
       const scoreXML=localData.find(item => item.title === scoreName).fname
       console.log(id, scoreName, scoreXML, "hola")
-      navigate(`/ListRecordings/${scoreXML}`, {state:{'recordingID':id}})
+      navigate(`/ListRecordings/${scoreXML}`, {state:{'id':id}})
     }
 
     // Event handler for click on Edit

@@ -64,6 +64,7 @@ const ProgressPlayFileVisual = (props) => {
   // To load JSON data from recordingID passed from ListRecordings
   useEffect(() => {
     getRecording(recordingID).then((recordingJSON)=>{
+      console.log("heyo ", recordingJSON)
       //Save json.info (recording data, pitch, colors...) to send it to osmd
       setJson(recordingJSON.info);
       //Set bpm
