@@ -30,6 +30,14 @@ const ListRecordings = () => {
   const [showPopUpEdit, setShowPopUpEdit] = useState(false);
   const location = useLocation();
   const navigate = useNavigate();
+  // Define options for formatting date
+  const options = {
+    year: "numeric",
+    month: "numeric",
+    day: "numeric",
+    hour: "2-digit",
+    minute: "2-digit",
+  };
 
   // Access the passed variables from the location object
   const score = location.state?.score || 'DefaultSong';
@@ -54,14 +62,6 @@ const ListRecordings = () => {
 
       if(userData !== null){
         getRecData(userData.id, scoreID).then((result) => {
-          // Define options for formatting date
-          const options = {
-            year: "numeric",
-            month: "numeric",
-            day: "numeric",
-            hour: "2-digit",
-            minute: "2-digit",
-          };
           setRecordingList(JSON.stringify(result));
           setRecordingNames(result.map((recording) => recording.recordingName));
           setRecordingStars(result.map((recording) => recording.recordingStars));
@@ -94,9 +94,10 @@ const ListRecordings = () => {
 
   // Event handler for click on See
   const handleSeeClick = (nameOfFile, number)=> {
-    const prueba = JSON.parse(recordingList)[recordingNames.indexOf(nameOfFile)];
+    const recording = JSON.parse(recordingList)[recordingNames.indexOf(nameOfFile)];
+    const recordingDate = new Date(recording.recordingDate);
     //Pass recording ID to ProgressPlayfileVisual
-    navigate(score, {state:{'id':prueba.recordingId, 'name':prueba.recordingName , 'stars':prueba.recordingStars , 'date':prueba.recordingDate }})
+    navigate(score, {state:{'id':recording.recordingId, 'name':recording.recordingName , 'stars':recording.recordingStars , 'date':recordingDate.toLocaleDateString("es-ES", options) }})
   };
   
   // Event handler for click on Edit

@@ -33,6 +33,14 @@ const ListAllRecordings = () => {
   const [idSelectedEdit, setIdSelectedEdit] = useState(null);
   const [showPopUpEdit, setShowPopUpEdit] = useState(false);
   const navigate = useNavigate();
+  // Define options for formatting date
+  const options = {
+    year: "numeric",
+    month: "numeric",
+    day: "numeric",
+    hour: "2-digit",
+    minute: "2-digit",
+  };
 
 
   // Starting --> load recordings from userID and scoreID
@@ -55,14 +63,6 @@ const ListAllRecordings = () => {
       if(userData !== null){
         getAllRecData(userData.id).then((result) => {
           setRecordingList(JSON.stringify(result));
-          // Define options for formatting date
-          const options = {
-            year: "numeric",
-            month: "numeric",
-            day: "numeric",
-            hour: "2-digit",
-            minute: "2-digit",
-          };
           setRecordingNames(result.map((recording) => recording.recordingName));
           setRecordingStars(result.map((recording) => recording.recordingStars));
           setRecordingDates(result.map((recording) => {
@@ -101,11 +101,11 @@ const ListAllRecordings = () => {
 
   // Event handler for click on See
   const handleSeeClick = (index)=> {
-      const id = JSON.parse(recordingList)[index].recordingId;
+      const recording = JSON.parse(recordingList)[index];
+      const recordingDate = new Date(recording.recordingDate);
       const scoreName=recordingScores[index]
       const scoreXML=localData.find(item => item.title === scoreName).fname
-      console.log(id, scoreName, scoreXML, "hola")
-      navigate(`/ListRecordings/${scoreXML}`, {state:{'id':id}})
+      navigate(`/ListRecordings/${scoreXML}`, {state:{'id':recording.recordingId, 'name':recording.recordingName , 'stars':recording.recordingStars , 'date':recordingDate.toLocaleDateString("es-ES", options) }})
     }
 
     // Event handler for click on Edit
