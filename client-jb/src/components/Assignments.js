@@ -4,6 +4,7 @@ import { useAppContext } from "../context/appContext";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import AssignmentsCSS from './Assignments.module.css'
 import { getAllAssignments, putAssignment, deleteAssignment } from "../utils/assignmentsMethods.js";
+import {getMessages} from "../utils/messagesMethods.js";
 import {
     faFileImport,
     faUser,
@@ -14,7 +15,8 @@ import {
     faBoxArchive,
     faRecordVinyl,
     faPaperPlane,
-    faBookBookmark
+    faBookBookmark,
+    faCheck,
 } from "@fortawesome/free-solid-svg-icons";
 import PopUpWindowGrades from "./PopUpWindowGrades";
 import PopUpWindowRecordings from "./PopUpWindowRecordings.js";
@@ -130,95 +132,43 @@ const Assignments = (props) => {
             // putAssignment(assignmentTest);
             // deleteAssignment("65cc93e4b60b63215a289108");
             const studentToCheck = userData.id;
-            const messages={
-                0:{
-                    _id:"message1",
-                    sender:"645b6e484612a8ebe8525933",
-                    receiver:"Anita",
-                    content:"Okay, I see, thank you!",
-                    date:"date"
-                },
-                1:{
-                    _id:"message2",
-                    sender:"Anita",
-                    receiver:"645b6e484612a8ebe8525933",
-                    content:"You just have to practice at home, in class we will go through it all over again",
-                    date:"date"
-                },
-                2:{
-                    _id:"message4",
-                    sender:"645b6e484612a8ebe8525933",
-                    receiver:"Anita",
-                    content:"I need help with my assignment. I was working all night and I couldnt understand, What do we have to do exactly?",
-                    date:"date"
-                },
-                3:{
-                    _id:"message4",
-                    sender:"645b6e484612a8ebe8525933",
-                    receiver:"Anita",
-                    content:"I need help with my assignment. I was working all night and I couldnt understand, What do we have to do exactly?",
-                    date:"date"
-                },
-                4:{
-                    _id:"message4",
-                    sender:"645b6e484612a8ebe8525933",
-                    receiver:"Anita",
-                    content:"When is the submission date?",
-                    date:"date"
-                },
-                5:{
-                    _id:"message2",
-                    sender:"Anita",
-                    receiver:"645b6e484612a8ebe8525933",
-                    content:"hello you are the bestttt",
-                    date:"date"
-                },
-                6:{
-                    _id:"message2",
-                    sender:"Anita",
-                    receiver:"645b6e484612a8ebe8525933",
-                    content:"good luck",
-                    date:"date"
-                },
-                7:{
-                    _id:"message4",
-                    sender:"645b6e484612a8ebe8525933",
-                    receiver:"Anita",
-                    content:"I need help with my assignment. I was working all night and I couldnt understand, What do we have to do exactly?",
-                    date:"date"
-                },
-                8:{
-                    _id:"message2",
-                    sender:"Anita",
-                    receiver:"645b6e484612a8ebe8525933",
-                    content:"hello you are the bestttt",
-                    date:"date"
-                },
-            }
-            const messages2=Object.values(messages)
             let mychat={}
-            messages2.map((message,index)=>{
-                if(message.sender===studentToCheck){
-                    //My message
-                    mychat[index]={
-                        id:message._id,
-                        message:message.content,
-                        student:true,
-                        date:message.date,
-                        teacher:message.teacher,
+            const options = {
+                year: "numeric",
+                month: "numeric",
+                day: "numeric",
+                hour: "2-digit",
+                minute: "2-digit",
+              };
+            getMessages(userData.id, "5d34c59c098c00453a233bf3").then((result)=>{
+                const messages=result.reverse()
+                //console.log("Messages from database ", messages);
+                messages.map((message,index)=>{
+                    if(message.sender===studentToCheck){
+                        //My message
+                        mychat[index]={
+                            id:message._id,
+                            message:message.content,
+                            student:true,
+                            date:new Date(message.timestamp).toLocaleDateString("es-ES", options),
+                            teacher:message.teacher,
+                            seen:message.seen,
+                        }
+                    }else{
+                        //Teacher message
+                        mychat[index]={
+                            id:message._id,
+                            message:message.content,
+                            student:false,
+                            date:new Date(message.timestamp).toLocaleDateString("es-ES", options),
+                            teacher:message.teacher,
+                            
+                        }
                     }
-                }else{
-                    //Teacher message
-                    mychat[index]={
-                        id:message._id,
-                        message:message.content,
-                        student:false,
-                        date:message.date,
-                        teacher:message.teacher,
-                    }
-                }
-            })
-            setUsertChat(mychat)
+                })
+                console.log(mychat) 
+                setUsertChat(mychat)
+            }) 
             //////////////////////////////////////////////////////////////////////////
         }
       },[userData, scoresData])
@@ -324,12 +274,14 @@ const Assignments = (props) => {
                                     {message.message}
                                     <div className={AssignmentsCSS.chatItemDate}>
                                         {message.date}
+                                        {message.seen?<FontAwesomeIcon icon={faCheck} className={AssignmentsCSS.seenIcon}/>:""}
                                     </div>
                                 </div>:
                                 <div className={AssignmentsCSS.chatItemTeacher}>
                                     {message.message}
                                     <div className={AssignmentsCSS.chatItemDate}>
                                         {message.date}
+
                                     </div>
                                 </div>
 

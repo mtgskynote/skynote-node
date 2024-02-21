@@ -247,3 +247,10 @@
     color: rgb(88, 88, 88);
     border: none;
 }
+.seenIcon{
+    border-radius: 50%;
+    margin-left: 5px;
+    color: rgb(43, 200, 35);
+    border: none;
+    font-size:15px;
+}

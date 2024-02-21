@@ -7,9 +7,9 @@ import mongoose from 'mongoose';
 
 const getAllMessages = async (req, res) => {
   console.log(`server getAllMessages `)
-  const { sender, receiver, limit, skip } = req.query;
+  const { sender, receiver, limit} = req.query;
 
-  //console.log(`sender: ${sender}, receiver: ${receiver}, limit: ${limit}, skip: ${skip}`)
+  console.log(`sender: ${sender}, receiver: ${receiver}, limit: ${limit}`)
 
   // Validation (optional)
   if (!sender || !receiver) {
@@ -28,9 +28,9 @@ const getAllMessages = async (req, res) => {
     {
       $sort: { createdAt: 1 }, // Sort by date ascending
     },
-    {
+    /* {
       $skip: parseInt(skip) || 0, // Skip documents for pagination
-    },
+    }, */
     {
       $limit: parseInt(limit) || 10, // Limit documents per page
     },
