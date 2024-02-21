@@ -50,21 +50,28 @@ const ProgressPlayFileVisual = (props) => {
 
   const [visualMode, setVisualMode] = useState(true);
   const [json, setJson] = useState([]);
+  const [metaData, setMetaData] = useState({"name":null, "stars":null, "date":null});
 
 
   //const { getCurrentUser } = useAppContext();
   const location = useLocation();
   const navigate = useNavigate();
+  const options = {
+    year: "numeric",
+    month: "numeric",
+    day: "numeric",
+    hour: "2-digit",
+    minute: "2-digit",
+  };
 
   const recordingID=location.state?.id
-  const recordingName=location.state?.name
-  const recordingStars=location.state?.stars
-  const recordingDate=location.state?.date
   
   // To load JSON data from recordingID passed from ListRecordings
   useEffect(() => {
     getRecording(recordingID).then((recordingJSON)=>{
-      console.log("heyo ", recordingJSON)
+      //Set metaData
+      const recordingDate = new Date(recordingJSON.date);
+      setMetaData({"name":recordingJSON.recordingName, "stars":recordingJSON.info.stars, "date":recordingDate.toLocaleDateString("es-ES", options)});
       //Save json.info (recording data, pitch, colors...) to send it to osmd
       setJson(recordingJSON.info);
       //Set bpm
@@ -302,9 +309,9 @@ const ProgressPlayFileVisual = (props) => {
         </div>
         <ModeInfoButton 
           message={2}
-          title={recordingName}
-          stars={recordingStars}
-          date={recordingDate}/> 
+          title={metaData.name}
+          stars={metaData.stars}
+          date={metaData.date}/> 
 
         </div>
     </Wrapper>

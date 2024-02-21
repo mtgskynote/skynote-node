@@ -48,7 +48,7 @@ const Assignments = (props) => {
     };
 
     const handleSeeClick = (id, scoreXML)=> {
-        navigate(`/ListRecordings/${scoreXML}`, {state:{'recordingID':id}})
+        navigate(`/ListRecordings/${scoreXML}`, {state:{'id':id}})
     }
 
     const handleRecord = (scoreXML)=> {

@@ -102,10 +102,9 @@ const ListAllRecordings = () => {
   // Event handler for click on See
   const handleSeeClick = (index)=> {
       const recording = JSON.parse(recordingList)[index];
-      const recordingDate = new Date(recording.recordingDate);
       const scoreName=recordingScores[index]
       const scoreXML=localData.find(item => item.title === scoreName).fname
-      navigate(`/ListRecordings/${scoreXML}`, {state:{'id':recording.recordingId, 'name':recording.recordingName , 'stars':recording.recordingStars , 'date':recordingDate.toLocaleDateString("es-ES", options) }})
+      navigate(`/ListRecordings/${scoreXML}`, {state:{'id':recording.recordingId}})
     }
 
     // Event handler for click on Edit
