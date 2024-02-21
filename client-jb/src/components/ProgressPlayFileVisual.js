@@ -29,7 +29,7 @@ const ProgressPlayFileVisual = (props) => {
   const [metroVol, setMetroVol] = useState(0);
   const [bpmChange, setBpm] = useState(100);
 
-  const [recordVol, setRecordVol] = useState(0.5);
+  const [recordVol, setRecordVol] = useState(0);
   const [recordInactive, setRecordInactive] = useState(true)
 
   const [zoom, setZoom] = useState(1.0);
