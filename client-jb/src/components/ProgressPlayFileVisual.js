@@ -15,11 +15,12 @@ import {  getRecording, deleteRecording } from "../utils/studentRecordingMethods
 import ListRecordingsCSS from './ListRecordings.module.css';
 
 const folderBasePath = "/xmlScores/violin";
+let audioContext = new (window.AudioContext)();
 
 const ProgressPlayFileVisual = (props) => {
   const params = useParams();
 
-  let audioContext = new (window.AudioContext || window.webkitAudioContext)();
+  
   const [songFile, setSongFile] = useState(null);
   
   const cursorRef = useRef(null);
@@ -28,7 +29,7 @@ const ProgressPlayFileVisual = (props) => {
   const [metroVol, setMetroVol] = useState(0);
   const [bpmChange, setBpm] = useState(100);
 
-  const [recordVol, setRecordVol] = useState(0.5);
+  const [recordVol, setRecordVol] = useState(0);
   const [recordInactive, setRecordInactive] = useState(true)
 
   const [zoom, setZoom] = useState(1.0);
@@ -63,6 +64,7 @@ const ProgressPlayFileVisual = (props) => {
     hour: "2-digit",
     minute: "2-digit",
   };
+  const newUrl = window.location.href;
 
   const recordingID=location.state?.id
   
@@ -169,9 +171,10 @@ const ProgressPlayFileVisual = (props) => {
       console.error('Error playing audio:', error);
     }
   };
-  const stopAudio = () => {
+  
+  const stopAudio = async () => {
     audioContext.close().then(() => {
-      audioContext = new (window.AudioContext || window.webkitAudioContext)();
+      audioContext = new (window.AudioContext)();
     });;
   };
 
@@ -243,7 +246,7 @@ const ProgressPlayFileVisual = (props) => {
       };
       repeatLayersButton.addEventListener("click", handleRepeatLayersButtonClick);
       repeatLayersButton.addEventListener("mousemove", handleRepeatLayersMouseOver);
-      repeatLayersButton.addEventListener("mouseout", handleRepeatLayersMouseLeave);
+      repeatLayersButton.addEventListener("mouseout", handleRepeatLayersMouseLeave); 
     
       return () => {
         repeatLayersButton.removeEventListener("click", handleRepeatLayersButtonClick);
@@ -254,6 +257,13 @@ const ProgressPlayFileVisual = (props) => {
       }
     };
   }, [recordVol, zoom, recordInactive, repeatsIterator, visualMode, showRepetitionMessage, json, songFile, cursorFinished, cursorJumped]);
+
+  useEffect(() => {
+    return () => {
+      stopAudio();
+    };
+  }, [newUrl])
+
 
   return (
     
