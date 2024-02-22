@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useAppContext } from "../context/appContext.js";
 import axios from "axios";
 import { timer } from './SessionTimer.js';
+import PopUpWindowAssignments from "./PopUpWindowAssignments";
 
 /*
 The useEffect hook runs once when the component mounts ([] as a dependency means it runs only once).
@@ -40,6 +41,15 @@ const Apitesting = () => {
     };
     fetchDataFromAPI();
   }, []);
+  //===========================================================================
+  const [popUpWindowAssignment, setPopUpWindowAssignment] = useState(false);
+  const createTask = (option) => {
+    if(option==="see"){
+      setPopUpWindowAssignment(true)
+    }else{
+      setPopUpWindowAssignment(false)
+    }
+  }
 
   //===========================================================================
 
@@ -102,7 +112,11 @@ const Apitesting = () => {
       <div>
         <div>
           <button onClick={toggletimer}>toggletimer</button>
-        </div>    
+        </div>  
+        <div>
+          <button onClick={() => createTask("see")}>Create task</button>
+          {popUpWindowAssignment?<PopUpWindowAssignments handlerBack={createTask} comment={"taskComment"} grade={"taskGrade"}/>:""}
+        </div>   
         <div>
           <button onClick={() => postMessage("Your message here")}>postMessage</button>
         </div>
