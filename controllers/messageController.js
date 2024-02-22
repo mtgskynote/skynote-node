@@ -26,7 +26,7 @@ const getAllMessages = async (req, res) => {
       },
     },
     {
-      $sort: { createdAt: 1 }, // Sort by date ascending
+      $sort: { timestamp: -1 }, // Sort by date descending
     },
     /* {
       $skip: parseInt(skip) || 0, // Skip documents for pagination

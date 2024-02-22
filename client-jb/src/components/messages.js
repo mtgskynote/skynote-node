@@ -68,7 +68,7 @@ const Messages = (props) => {
             let mychat={}
             
             getMessages(userId, teacherId).then((result)=>{ 
-                const messages=result.reverse()
+                const messages=result
                 //console.log("Messages from database ", messages);
                 messages.map((message,index)=>{
                     if(message.sender===userId){
