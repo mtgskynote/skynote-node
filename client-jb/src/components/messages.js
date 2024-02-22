@@ -51,6 +51,12 @@ const Messages = (props) => {
             // Nothing, no message is sent
         }
     }
+    const handleKey=(event)=>{
+        if (event.key === 'Enter') {
+            handleSend();
+          }
+
+    }
 
     useEffect(()=>{
         if(props.user!==null && props.user!==undefined && props.teacher!==null && props.teacher!==undefined ){
@@ -143,6 +149,7 @@ const Messages = (props) => {
                         placeholder="Type here..."
                         className={AssignmentsCSS.textInput} 
                         ref={chatInputRef}
+                        onKeyUp={handleKey}
                     /> 
                     
                 </div>
