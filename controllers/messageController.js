@@ -109,7 +109,7 @@ const getAllMessages = async (req, res) => {
         console.log(`server putMessage - return status `)
 
         // Send response with the saved message details
-        res.status(201).json({ message: newMessage });
+        res.status(201).json({ newMessage });
       } catch (err) {
         console.error('Error saving message:', err);
         res.status(500).json({ error: 'Error uploading message' });

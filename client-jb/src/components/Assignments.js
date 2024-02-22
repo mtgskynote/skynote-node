@@ -1,10 +1,10 @@
-import React, { useEffect, useState } from "react";
-import {useNavigate } from 'react-router-dom';
+import React, { useEffect, useState, useRef } from "react";
+import {createRoutesFromElements, useNavigate } from 'react-router-dom';
 import { useAppContext } from "../context/appContext";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import AssignmentsCSS from './Assignments.module.css'
 import { getAllAssignments, putAssignment, deleteAssignment } from "../utils/assignmentsMethods.js";
-import {getMessages} from "../utils/messagesMethods.js";
+import {getMessages, putMessage} from "../utils/messagesMethods.js";
 import {
     faFileImport,
     faUser,
@@ -20,6 +20,7 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 import PopUpWindowGrades from "./PopUpWindowGrades";
 import PopUpWindowRecordings from "./PopUpWindowRecordings.js";
+import Messages from "./messages.js";
 
 const Assignments = (props) => {
     const navigate = useNavigate();
@@ -34,6 +35,14 @@ const Assignments = (props) => {
     const [taskGrade, setTaskGrade] = useState(null);
     const [selectedScore, setSelectedScore] = useState(null);
     const [selectedAnnouncement, setSelectedAnnouncement] = useState(null);
+    const chatInputRef = useRef();
+    const options = {
+        year: "numeric",
+        month: "numeric",
+        day: "numeric",
+        hour: "2-digit",
+        minute: "2-digit",
+      };
     /* FOR NOW THIS CODE DOES NOT DISPLAY ANYTHING REAL */
 
 
@@ -80,6 +89,39 @@ const Assignments = (props) => {
             setSelectedAnnouncement(null)
         }
     }
+    const handleSend=()=>{
+        // Update database
+        const chatInputValue = chatInputRef.current.value;
+        console.log('User Input in chat:', chatInputValue);
+        if(chatInputValue!==""){
+            console.log("send message")
+            
+            //Put message on DB
+            putMessage(chatInputValue, userData.id, "5d34c59c098c00453a233bf3").then((message)=>{ //FIXME teacher ID
+                //To not reload the page, add this message to userChat in state directly
+                console.log("userChat ", userChat)
+                const currentChat=userChat
+                console.log(message)
+                
+                currentChat[Object.keys(currentChat).length]=
+                    {
+                        id:message._id,
+                        message:message.content,
+                        student:true,
+                        date:new Date(message.timestamp).toLocaleDateString("es-ES", options),
+                        teacher:message.teacher,
+                        seen:message.seen,
+                    }
+            
+                console.log("updated current Chat: ", currentChat)
+                setUsertChat(currentChat)
+                //Clear input chat box
+                chatInputRef.current.value=""
+            }) 
+        }else{
+            console.log("dont send message")
+        }
+    }
     
     //get User Data
     useEffect(()=>{
@@ -105,73 +147,9 @@ const Assignments = (props) => {
                 if(result.length!==0){
                     setUsertAnnouncements(result.reverse())}
             })
-            /////////////
-            const assignmentTest = {
-                teacherId: "5d34c59c098c00453a233bf3",
-                students: ["645b6e484612a8ebe8525933"],
-                message:  "This one is just s test :)",
-                post: "2024-01-21T11:08:37.398+00:00",
-                due: "2024-01-31T11:08:37.398+00:00",
-                tasks: [
-                    {
-                        score: "64d0de60d9ac9a34a66b4d45", 
-                        answers:[
-                            {
-                                studentId: "645b6e484612a8ebe8525933",
-                                recordingId: "65ba2a351ca9199e85e76bbe",
-                                grade: 3.6,
-                                comment: "This is the wrong song mate :(",
-                            }
-                            
-                        ]
-                    }   
-                    
-                ],
-            }
-            // getAllAssignments();
-            // putAssignment(assignmentTest);
-            // deleteAssignment("65cc93e4b60b63215a289108");
-            const studentToCheck = userData.id;
-            let mychat={}
-            const options = {
-                year: "numeric",
-                month: "numeric",
-                day: "numeric",
-                hour: "2-digit",
-                minute: "2-digit",
-              };
-            getMessages(userData.id, "5d34c59c098c00453a233bf3").then((result)=>{
-                const messages=result.reverse()
-                //console.log("Messages from database ", messages);
-                messages.map((message,index)=>{
-                    if(message.sender===studentToCheck){
-                        //My message
-                        mychat[index]={
-                            id:message._id,
-                            message:message.content,
-                            student:true,
-                            date:new Date(message.timestamp).toLocaleDateString("es-ES", options),
-                            teacher:message.teacher,
-                            seen:message.seen,
-                        }
-                    }else{
-                        //Teacher message
-                        mychat[index]={
-                            id:message._id,
-                            message:message.content,
-                            student:false,
-                            date:new Date(message.timestamp).toLocaleDateString("es-ES", options),
-                            teacher:message.teacher,
-                            
-                        }
-                    }
-                })
-                console.log(mychat) 
-                setUsertChat(mychat)
-            }) 
-            //////////////////////////////////////////////////////////////////////////
         }
       },[userData, scoresData])
+
 
   
   return (
@@ -259,52 +237,7 @@ const Assignments = (props) => {
             }):<div>No announcements yet</div>}
         </div>
         <div className={AssignmentsCSS.right}>
-            <div className={AssignmentsCSS.chatGroup}> 
-                <div className={AssignmentsCSS.chatHeader}> 
-                    <div className={AssignmentsCSS.teacher}> 
-                        Your conversation with Anita   <FontAwesomeIcon icon={faUser} className={AssignmentsCSS.userIcon}/>
-                    </div>
-                </div>
-                <div className={AssignmentsCSS.chat}>
-                    {userChat!==null?
-                    Object.values(userChat).map((message,index)=>{
-                        return(
-                            message.student?
-                                <div className={AssignmentsCSS.chatItemStudent}>
-                                    {message.message}
-                                    <div className={AssignmentsCSS.chatItemDate}>
-                                        {message.date}
-                                        {message.seen?<FontAwesomeIcon icon={faCheck} className={AssignmentsCSS.seenIcon}/>:""}
-                                    </div>
-                                </div>:
-                                <div className={AssignmentsCSS.chatItemTeacher}>
-                                    {message.message}
-                                    <div className={AssignmentsCSS.chatItemDate}>
-                                        {message.date}
-
-                                    </div>
-                                </div>
-
-                            
-                            
-                        )
-                    }):
-                    <div>No messages yet</div>
-                    
-                    
-                    }
-                </div>
-                <div className={AssignmentsCSS.textGroup}>
-                    <button className={AssignmentsCSS.button}><FontAwesomeIcon icon={faPaperPlane} className={AssignmentsCSS.sendIcon}/> </button>
-                    <textarea 
-                        type="text"
-                        id="userInput"
-                        placeholder="Type here..."
-                        className={AssignmentsCSS.textInput} 
-                    /> 
-                    
-                </div>
-            </div>
+            {userData!==null?<Messages user={userData.id} teacher="5d34c59c098c00453a233bf3"/>:<Messages/> /*FIXME*/} 
         </div>
         {popUpWindowGrade?<PopUpWindowGrades handlerBack={handleSeeGrades} comment={taskComment} grade={taskGrade}/>:""}
         {popUpWindowRecordings?<PopUpWindowRecordings handlerBack={handleSelectRecording} scoreId={selectedScore} userId={userData.id} announcementId={selectedAnnouncement}/>:""}
