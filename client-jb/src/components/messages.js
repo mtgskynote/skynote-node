@@ -12,6 +12,7 @@ const Messages = (props) => {
     const [userId, setUserId] = useState(null);
     const [teacherId, setTeacherId] = useState(null);
     const [userChat, setUserChat] = useState(null);
+    const [aux, setAux] = useState(0);
     const chatInputRef = useRef();
     const options = {
         year: "numeric",
@@ -20,21 +21,17 @@ const Messages = (props) => {
         hour: "2-digit",
         minute: "2-digit",
       };
+
+    
     const handleSend=()=>{
         // Update database
         const chatInputValue = chatInputRef.current.value;
-        console.log('User Input in chat:', chatInputValue);
         if(chatInputValue!==""){
-            console.log("send message")
             
             //Put message on DB
-            putMessage(chatInputValue, userId, teacherId).then((message)=>{ //FIXME teacher ID
+            putMessage(chatInputValue, userId, teacherId).then((message)=>{ 
                 //To not reload the page, add this message to userChat in state directly
-                console.log("userChat ", userChat)
-                const currentChat=userChat
-                console.log(message)
-                
-                currentChat[Object.keys(currentChat).length]=
+                const newMessage=
                     {
                         id:message._id,
                         message:message.content,
@@ -43,14 +40,15 @@ const Messages = (props) => {
                         teacher:message.teacher,
                         seen:message.seen,
                     }
-            
-                console.log("updated current Chat: ", currentChat)
-                setUserChat(currentChat)
+                const currentChat=Object.values(userChat).reverse()
+                currentChat[currentChat.length]=newMessage //add message
+                //Update chat
+                setUserChat(currentChat.reverse())
                 //Clear input chat box
                 chatInputRef.current.value=""
             }) 
         }else{
-            console.log("dont send message")
+            // Nothing, no message is sent
         }
     }
 
@@ -69,7 +67,6 @@ const Messages = (props) => {
             
             getMessages(userId, teacherId).then((result)=>{ 
                 const messages=result
-                //console.log("Messages from database ", messages);
                 messages.map((message,index)=>{
                     if(message.sender===userId){
                         //My message
@@ -93,8 +90,8 @@ const Messages = (props) => {
                         }
                     }
                 })
-                console.log(mychat) 
                 setUserChat(mychat)
+                setAux(aux+1)
             }) 
 
         }
@@ -103,11 +100,13 @@ const Messages = (props) => {
 
 
 
+
+
   return (
     <div className={AssignmentsCSS.chatGroup}> 
                 <div className={AssignmentsCSS.chatHeader}> 
                     <div className={AssignmentsCSS.teacher}> 
-                        Your conversation with Anita   <FontAwesomeIcon icon={faUser} className={AssignmentsCSS.userIcon}/>
+                        Your conversation with {teacherId}  <FontAwesomeIcon icon={faUser} className={AssignmentsCSS.userIcon}/>
                     </div>
                 </div>
                 <div className={AssignmentsCSS.chat}>
@@ -129,9 +128,6 @@ const Messages = (props) => {
 
                                     </div>
                                 </div>
-
-                            
-                            
                         )
                     }):
                     <div>No messages yet</div>
@@ -140,7 +136,7 @@ const Messages = (props) => {
                     }
                 </div>
                 <div className={AssignmentsCSS.textGroup}>
-                    <button className={AssignmentsCSS.button}><FontAwesomeIcon icon={faPaperPlane} className={AssignmentsCSS.sendIcon} onClick={() => handleSend()}/>  </button>
+                    <button className={AssignmentsCSS.button} onClick={() => handleSend()}><FontAwesomeIcon icon={faPaperPlane} className={AssignmentsCSS.sendIcon} />  </button>
                     <textarea 
                         type="text"
                         id="userInput"

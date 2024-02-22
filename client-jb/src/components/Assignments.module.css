@@ -34,7 +34,7 @@
         border-radius: 20px;
         width:100%;
         height:50vh;
-        background-color: #af5c5c;
+        border:solid #bababa 2px;
         
       }
     }
@@ -77,10 +77,11 @@
 }
 .teacher{
     display: flex;
+    align-items: left;
     width: fit-content;
-    padding: 10px;
     border-radius: 8px;
     align-items: center;
+    width: 100%;
 }
 .userIcon{
     border-radius: 50%;
@@ -160,6 +161,7 @@
 
 .chatGroup{
     margin: 20px 40px;
+    width: 25%;
     background-color: #ededed;
     border:#9d9d9d 1px solid;
     box-shadow: 4px 4px 15px rgba(131, 131, 131, 0.2);
@@ -168,13 +170,22 @@
 }
 
 @media screen and (min-width: 800px) {
-.chat{
-    display: flex;
-    flex-direction: column-reverse;
-    height: 400px;
-    overflow-y: scroll;
+    .chatGroup{
+        margin: 20px 40px;
+        width: 25%;
+        background-color: #ededed;
+        border:#9d9d9d 1px solid;
+        box-shadow: 4px 4px 15px rgba(131, 131, 131, 0.2);
+       border-radius: 20px;
+       position:fixed;
+    }
+    .chat{
+        display: flex;
+        flex-direction: column-reverse;
+        height: 400px;
+        overflow-y: scroll;
 
-}}
+    }}
 @media screen and (max-width: 800px) {
     .chat{
         display: flex;
@@ -182,14 +193,25 @@
         height:25vh;
         overflow-y: scroll;
     
+    }
+    .chatGroup{
+        margin: 20px 40px;
+        width: 70%;
+        background-color: #ededed;
+        border:#9d9d9d 1px solid;
+        box-shadow: 4px 4px 15px rgba(131, 131, 131, 0.2);
+       border-radius: 20px;
+       position:fixed;
     }}
+    
 .chatHeader{
     background-color: #88a2cf;
-    padding: 10px 50px;
+    padding: 10px 10px;
     display: flex;
     align-items: center;
     justify-content: space-between;
     border-radius: 20px 20px 0px 0px;
+    width: 100%;
     
 }
 

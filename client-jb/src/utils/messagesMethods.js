@@ -5,7 +5,7 @@ async function getMessages(user1, user2, limit = 12) {
       const response = await axios.get("/api/v1/messages/getAllMessages", {params: {sender: user1, receiver: user2, limit:limit}});
 
       const messages = response.data.messages;
-      console.log(`getMessages response: ${JSON.stringify(response.data.messages)}`)
+      //console.log(`getMessages response: ${JSON.stringify(response.data.messages)}`)
       return messages; // Return the retrieved messages
   
     } catch (error) {
