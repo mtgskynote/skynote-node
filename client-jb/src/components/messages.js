@@ -6,6 +6,7 @@ import {
     faUser,
     faPaperPlane,
     faCheck,
+    faArrowRotateLeft,
 } from "@fortawesome/free-solid-svg-icons";
 
 const Messages = (props) => {
@@ -21,6 +22,39 @@ const Messages = (props) => {
         hour: "2-digit",
         minute: "2-digit",
       };
+    const fetchChat =()=>{
+        let mychat={}
+
+        getMessages(userId, teacherId).then((result)=>{ 
+            const messages=result
+            messages.map((message,index)=>{
+                if(message.sender===userId){
+                    //My message
+                    mychat[index]={
+                        id:message._id,
+                        message:message.content,
+                        student:true,
+                        date:new Date(message.timestamp).toLocaleDateString("es-ES", options),
+                        teacher:message.teacher,
+                        seen:message.seen,
+                    }
+                }else{
+                    //Teacher message
+                    mychat[index]={
+                        id:message._id,
+                        message:message.content,
+                        student:false,
+                        date:new Date(message.timestamp).toLocaleDateString("es-ES", options),
+                        teacher:message.teacher,
+                        
+                    }
+                }
+            })
+            setUserChat(mychat)
+            setAux(aux+1)
+        }) 
+        
+    }
 
     
     const handleSend=()=>{
@@ -51,6 +85,12 @@ const Messages = (props) => {
             // Nothing, no message is sent
         }
     }
+
+    const handleReload=()=>{
+        fetchChat();
+    }
+
+
     const handleKey=(event)=>{
         if (event.key === 'Enter') {
             handleSend();
@@ -69,37 +109,7 @@ const Messages = (props) => {
 
     useEffect(()=>{
         if(userId!==null && teacherId!==null){
-            let mychat={}
-            
-            getMessages(userId, teacherId).then((result)=>{ 
-                const messages=result
-                messages.map((message,index)=>{
-                    if(message.sender===userId){
-                        //My message
-                        mychat[index]={
-                            id:message._id,
-                            message:message.content,
-                            student:true,
-                            date:new Date(message.timestamp).toLocaleDateString("es-ES", options),
-                            teacher:message.teacher,
-                            seen:message.seen,
-                        }
-                    }else{
-                        //Teacher message
-                        mychat[index]={
-                            id:message._id,
-                            message:message.content,
-                            student:false,
-                            date:new Date(message.timestamp).toLocaleDateString("es-ES", options),
-                            teacher:message.teacher,
-                            
-                        }
-                    }
-                })
-                setUserChat(mychat)
-                setAux(aux+1)
-            }) 
-
+            fetchChat()
         }
 
     }, [userId, teacherId])
@@ -142,7 +152,10 @@ const Messages = (props) => {
                     }
                 </div>
                 <div className={AssignmentsCSS.textGroup}>
-                    <button className={AssignmentsCSS.button} onClick={() => handleSend()}><FontAwesomeIcon icon={faPaperPlane} className={AssignmentsCSS.sendIcon} />  </button>
+                    <div className={AssignmentsCSS.buttonGroup}>
+                    <button title="reload chat" className={AssignmentsCSS.button} onClick={() => handleReload()}><FontAwesomeIcon icon={faArrowRotateLeft} className={AssignmentsCSS.sendIcon} />  </button>
+                    <button title="send" className={AssignmentsCSS.button} onClick={() => handleSend()}><FontAwesomeIcon icon={faPaperPlane} className={AssignmentsCSS.sendIcon} />  </button>
+                    </div>
                     <textarea 
                         type="text"
                         id="userInput"

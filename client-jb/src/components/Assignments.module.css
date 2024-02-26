@@ -155,7 +155,9 @@
     font-style: oblique;
 }
 .buttonGroup{
-    margin: 0px 0px 0px 30px
+    margin: 0px 0px 0px 0px;
+    display: flex;
+    justify-content: space-between;
 }
 
 
@@ -258,9 +260,12 @@
   border-radius: 20px ;
   border: none;
 }
+
+
 .button{
     border: none;
     background-color: transparent;
+    
 }
 .sendIcon{
     border-radius: 50%;
