@@ -1,5 +1,5 @@
-import React from 'react';
-import { useRef } from 'react';
+import React, { useRef, useState } from 'react';
+import Select from 'react-select';
 import PopUpWindowCSS from './PopUpWindow.module.css';
 
 const PopUpWindowAssignments = (props) => {
@@ -11,8 +11,23 @@ const PopUpWindowAssignments = (props) => {
   const postInputRef = useRef();
   const tasksInputRef = useRef();
 
+  // Assuming you have an array of students
+  const students = [
+    { id: '645b6e484612a8ebe8525933', name: 'Luna' },
+    { id: 'anotherStudentId', name: 'Sam' },
+    { id: 'anotherStudentId', name: 'Lonce' },
+    { id: 'anotherStudentId', name: 'Amaia' },
+    { id: 'anotherStudentId', name: 'Alvaro' },
+    // Add more students as needed
+  ];
+
   const handleClose = () => {
     props.handlerBack("no_see")
+  };
+
+  const handleChange = (selectedOptions) => {
+    // Handle the selected options
+    console.log('Selected Options:', selectedOptions);
   };
 
   const handleCreate = () => {
@@ -28,50 +43,38 @@ const PopUpWindowAssignments = (props) => {
   }
 
   return (
-    <div className={PopUpWindowCSS.popUpWindowGrades}>
-        <div className={PopUpWindowCSS.contentGrades}>
+    <div className={PopUpWindowCSS.popUpWindowAssignments}>
+        <div className={PopUpWindowCSS.titleAssignments}>Create new assignment</div>
+        <div className={PopUpWindowCSS.contentAssignments}>
         <form onSubmit={handleCreate}>
-                <div className={PopUpWindowCSS.field}>
-                  <label htmlFor="studentIds" className={PopUpWindowCSS.profilelabel}>StudentIds(Array of ObjectIds):</label>
+                <div className={PopUpWindowCSS.itemAssignments}>
+                  <label htmlFor="studentIds" className={PopUpWindowCSS.profilelabel}> Select students</label>
                   <input
-                    className={PopUpWindowCSS.profileinput}
+                    className={PopUpWindowCSS.checkboxAssignments}
                     type="text"
                     id="studentIds" 
                     name="name"
-                    placeholder='645b6e484612a8ebe8525933'
+                    placeholder='work in progress - checkbox list dropdown'
                     ref={studentsInputRef}
                     required
                   />
                 </div>
 
-                <div className={PopUpWindowCSS.field}>
-                  <label htmlFor="teacherId" className={PopUpWindowCSS.profilelabel}>TeacherId(ObjectId):</label>
+                <div className={PopUpWindowCSS.itemAssignments}>
+                  <label htmlFor="message" className={PopUpWindowCSS.profilelabel}>Message</label>
                   <input
-                    className={PopUpWindowCSS.profileinput}
-                    type="text"
-                    id="teacherId" 
-                    name="teacherId"
-                    placeholder='5d34c59c098c00453a233bf3'
-                    ref={teacherInputRef}
-                    required
-                  />
-                </div>
-
-                <div className={PopUpWindowCSS.field}>
-                  <label htmlFor="message" className={PopUpWindowCSS.profilelabel}>Message(String):</label>
-                  <input
-                    className={PopUpWindowCSS.profileinput}
+                    className={PopUpWindowCSS.inputTextAssignments}
                     type="text"
                     id="message" 
                     name="message"
-                    placeholder='Hola como estas?'
+                    placeholder='Write your message here'
                     ref={messageInputRef}
                     required
                   />
                 </div>
 
-                <div className={PopUpWindowCSS.field}>
-                  <label htmlFor="due" className={PopUpWindowCSS.profilelabel}>Due(Date):</label>
+                <div className={PopUpWindowCSS.itemAssignments}>
+                  <label htmlFor="due" className={PopUpWindowCSS.profilelabel}>Due date:</label>
                   <input
                     className={PopUpWindowCSS.profileinput}
                     type="date"
@@ -82,32 +85,21 @@ const PopUpWindowAssignments = (props) => {
                   />
                 </div>
 
-                <div className={PopUpWindowCSS.field}>
-                  <label htmlFor="post" className={PopUpWindowCSS.profilelabel}>Post(Date):</label>
+                <div className={PopUpWindowCSS.itemAssignments}>
+                  <label htmlFor="tasks" className={PopUpWindowCSS.profilelabel}>Select tasks (optional)</label>
                   <input
-                    className={PopUpWindowCSS.profileinput}
-                    type="date"
-                    id="post" 
-                    name="post"
-                    ref={postInputRef}
-                    required
-                  />
-                </div>
-
-                <div className={PopUpWindowCSS.field}>
-                  <label htmlFor="tasks" className={PopUpWindowCSS.profilelabel}>Tasks(Array):</label>
-                  <input
-                    className={PopUpWindowCSS.profileinput}
+                    className={PopUpWindowCSS.checkboxAssignments}
                     type="text"
                     id="tasks" 
                     name="tasks"
-                    placeholder='Work in progress'
+                    placeholder='Work in progress - checkbox list dropdown'
                     ref={tasksInputRef}
-                    required
                   />
                 </div>
-                <button className={PopUpWindowCSS.buttonCloseGrades} type="submit">Save Changes</button>
-                <button className={PopUpWindowCSS.buttonCloseGrades} onClick={handleClose}>Close</button>
+                <div className={PopUpWindowCSS.buttonGroupAssignments}  >
+                <button className={PopUpWindowCSS.buttonCloseAssignments} type="submit">Save Changes</button>
+                <button className={PopUpWindowCSS.buttonCloseAssignments} onClick={handleClose}>Close</button>
+                </div>
               </form>
         </div>
     </div>

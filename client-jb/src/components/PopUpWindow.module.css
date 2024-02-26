@@ -220,4 +220,77 @@ border: 1px solid #caddfb;
   margin-bottom: 10px;
 }
 
+/*CSS for creating assignments PopupWindow*/
+
+.popUpWindowAssignments {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 50%;
+  background: white;
+  border: 2px solid #4f72a1;
+  border-radius: 8px;
+  box-shadow: 0 0 20px #8e9093;
+  z-index: 1000;
+  text-align: center; /* Center text within the container */
+}
+.contentAssignments {
+  padding: 20px 40px;
+  display: flex;
+  text-align: left;
+}
+.itemAssignments{
+  display: flex;
+  flex-direction: column;
+  margin: 20px;
+
+}
+.buttonCloseAssignments {
+  margin: 20px 5px;
+  padding: 10px 20px;
+  cursor: pointer;
+  background-color: #4f72a1;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  font-size: 14px;
+}
+.titleAssignments{
+  font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
+  padding: 10px;
+}
+.profilelabel{
+  font-size: larger;
+  color: #4f72a1;
+}
+.inputTextAssignments{
+  width: 70vh;
+  height: 20vh;
+  background-color: #eeeeee;
+  text-align: justify;
+  text-overflow:clip;
+  border:#a2a2a2 1px solid;
+  border-radius: 15px;
+  padding:10px;
+}
+.gradeAssignments{
+  font-size:x-large;
+  font-weight: bolder;
+  padding: 10px;
+}
+.buttonGroupAssignments{
+  text-align: center;
+  width: 78vh;
+}
+
+.commentAssignments{
+  font-weight: lighter;
+  font-style: oblique;
+  background-color: #e8ebee;
+  box-shadow: 0 0 20px rgba(187, 187, 187, 0.2);
+  padding: 10px;
+
+border-radius: 10px;  }
+
   
