@@ -44,14 +44,19 @@ const ModeInfoButton = (props) => {
     }else if(props.message===2){
       return (
         <div className={ModeInfoButtonCSS.container}>
-            <div className={ModeInfoButtonCSS.recTitle}><h5 >{props.title}</h5></div>
+          <div className={ModeInfoButtonCSS.message}>
+            <p>Your recording...</p>
+          </div>
+            <div className={ModeInfoButtonCSS.recBox}>
+              <div className={ModeInfoButtonCSS.recTitle}><h5 >{props.title}</h5></div>
               <div className={ModeInfoButtonCSS.starsGroup}>
                 <FontAwesomeIcon icon={faStar} className={props.stars>=1 ? ModeInfoButtonCSS.completeStar : ModeInfoButtonCSS.incompleteStar}/>
                 <FontAwesomeIcon icon={faStar} className={props.stars>=2 ? ModeInfoButtonCSS.completeStar : ModeInfoButtonCSS.incompleteStar}/>
                 <FontAwesomeIcon icon={faStar} className={props.stars>=3 ? ModeInfoButtonCSS.completeStar : ModeInfoButtonCSS.incompleteStar}/>
               </div>
-            <div className={ModeInfoButtonCSS.dateTime}>
-              <i>{props.date}</i>
+              <div className={ModeInfoButtonCSS.dateTime}>
+                <i>{props.date}</i>
+              </div>
             </div>
           <div className={ModeInfoButtonCSS.message}>
             <h4>Info</h4>
@@ -90,7 +95,7 @@ const ModeInfoButton = (props) => {
             />
         </div>
       </Button> 
-      {showMessage && <div className="message">{ModeInfoMessage()}</div>} 
+      {showMessage && <div className={ModeInfoButtonCSS.body}>{ModeInfoMessage()}</div>} 
     </div>             
   );
 
