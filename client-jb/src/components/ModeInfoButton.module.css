@@ -64,3 +64,12 @@
     margin: 10px;
     text-align:center;
   }
+  .auxIcon{
+    font-size:22px;
+    color:#b3b3b3;
+    margin:0px 11px;
+  }
+  .textGroup{
+    margin:5px;
+    text-align: left;
+  }

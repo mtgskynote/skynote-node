@@ -71,9 +71,16 @@ const ProgressPlayFileVisual = (props) => {
   // To load JSON data from recordingID passed from ListRecordings
   useEffect(() => {
     getRecording(recordingID).then((recordingJSON)=>{
+      // get score info
+      const scoreInfo=JSON.parse(localStorage.getItem("scoreData")).find(item => item.fname === params.files);
       //Set metaData
       const recordingDate = new Date(recordingJSON.date);
-      setMetaData({"name":recordingJSON.recordingName, "stars":recordingJSON.info.stars, "date":recordingDate.toLocaleDateString("es-ES", options)});
+      setMetaData({"name":recordingJSON.recordingName, 
+                  "stars":recordingJSON.info.stars, 
+                  "date":recordingDate.toLocaleDateString("es-ES", options),
+                  "skill":scoreInfo.skill,
+                  "lesson": scoreInfo.lesson,
+                  "score": scoreInfo.title});
       //Save json.info (recording data, pitch, colors...) to send it to osmd
       setJson(recordingJSON.info);
       //Set bpm
@@ -102,7 +109,6 @@ const ProgressPlayFileVisual = (props) => {
   const handleWindowPopUp =(answer)=> {
 
     if(answer==="1"){ //"yes"
-      console.log("You choose option 1")
       setShowPopUpWindow(false)
       deleteRecording(recordingID).then(() => {
         navigate(-1);
@@ -114,7 +120,6 @@ const ProgressPlayFileVisual = (props) => {
       //Delete recording actions required FIXME
 
     }else{ //"no"
-      console.log("You choose option 2")
       setShowPopUpWindow(false)
       //No other actions required
     }
@@ -321,7 +326,10 @@ const ProgressPlayFileVisual = (props) => {
           message={2}
           title={metaData.name}
           stars={metaData.stars}
-          date={metaData.date}/> 
+          date={metaData.date}
+          skill={metaData.skill}
+          lesson={metaData.lesson}
+          score={metaData.score}/> 
 
         </div>
     </Wrapper>

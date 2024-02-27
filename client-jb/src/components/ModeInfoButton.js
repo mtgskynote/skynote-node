@@ -8,15 +8,11 @@ import ModeInfoButtonCSS from './ModeInfoButton.module.css';
 import {
     faInfoCircle, //info circle
 } from "@fortawesome/free-solid-svg-icons";
-import { faStar } from "@fortawesome/free-solid-svg-icons";
+import { faStar, faMusic, faPencilSquare, faBoxArchive } from "@fortawesome/free-solid-svg-icons";
 
 const ModeInfoButton = (props) => {
 
   const [showMessage, setShowMessage] = useState(false);
-
-  useEffect(() => {
-    
-  }, [props]);
 
   const ModeInfoMessage = () => {
 
@@ -49,6 +45,20 @@ const ModeInfoButton = (props) => {
           </div>
             <div className={ModeInfoButtonCSS.recBox}>
               <div className={ModeInfoButtonCSS.recTitle}><h5 >{props.title}</h5></div>
+              <div className={ModeInfoButtonCSS.textGroup}>
+              <div><h6>
+                <FontAwesomeIcon icon={faMusic} className={ModeInfoButtonCSS.auxIcon}/>
+                {props.score}
+              </h6></div>
+              <div><h6 >
+                <FontAwesomeIcon icon={faPencilSquare} className={ModeInfoButtonCSS.auxIcon}/>
+                {props.skill}
+              </h6></div>
+              <div><h6 >
+                <FontAwesomeIcon icon={faBoxArchive} className={ModeInfoButtonCSS.auxIcon}/>
+                Level {props.level}
+              </h6></div>
+            </div>
               <div className={ModeInfoButtonCSS.starsGroup}>
                 <FontAwesomeIcon icon={faStar} className={props.stars>=1 ? ModeInfoButtonCSS.completeStar : ModeInfoButtonCSS.incompleteStar}/>
                 <FontAwesomeIcon icon={faStar} className={props.stars>=2 ? ModeInfoButtonCSS.completeStar : ModeInfoButtonCSS.incompleteStar}/>
