@@ -3,37 +3,58 @@ import React, {useState, useEffect, useRef} from "react";
 //Pitch track line component
 const LineChart = (props) => {
   const containerRef = useRef(null);
-  const [polylinePoints, setPolylinePoints] = useState([]);
+  const canvasRef = useRef(null);
 
-  useEffect(()=> {
+  useEffect(() => {
+    const canvas = canvasRef.current;
+    const ctx = canvas.getContext('2d');
+
     const containerElement = containerRef.current;
     const rect = containerElement.getBoundingClientRect();
-    const newPolylinePoints = props.pitchDataPosX.map((value, index) => {
-      const x = props.pitchDataPosX[index] + props.pitchIndex[index] - rect.left;
-      const y =  props.pitchDataPosY[index] - rect.top; 
-      return [x, y]; // Return a coordinate pair as an array [x, y]
-    });
-    setPolylinePoints(newPolylinePoints);
-  }, [props.pitchData, props.zoom, props.showingRep]); //, previousPitchData
+
+    // Clear the canvas
+    ctx.clearRect(0, 0, rect.width, rect.height);
+
+    ctx.lineWidth = 2*props.zoom; // Adjust the thickness as needed
+
+    // Draw the line
+    ctx.beginPath();
+    ctx.moveTo(props.pitchDataPosX[0] + props.pitchIndex[0] - rect.left, props.pitchDataPosY[0] - rect.top);
+
+
+    // Set a threshold for the distance; adjust as needed
+    const distanceThreshold = props.pitchIndex[1]!==0?(props.pitchIndex[1]+1):(props.pitchIndex[2]+1);
+    for (let i = 1; i < (props.pitchDataPosX).length; i++) {
+      if(props.showingRep===props.repetitionNumber[i] && props.pitchColor[i]!=="#FFFFFF"){
+        // get coordinates (x,y)
+        var x= props.pitchDataPosX[i] + props.pitchIndex[i] - rect.left
+        var y= props.pitchDataPosY[i] - rect.top
+
+        // if previous pitch input was "invalid", force the jump
+        if(props.pitchColor[i-1]==="#FFFFFF"){
+          ctx.moveTo(x, y);
+        }else{
+          //calculate distance
+          var distance=Math.abs(x - (props.pitchDataPosX[i-1] + props.pitchIndex[i-1] - rect.left))
+          // check distance from previous pitch (note change=bigger distance normally)
+          if (distance > distanceThreshold) {
+            ctx.moveTo(x, y); // force jump
+          } else {
+            ctx.lineTo(x, y); // continue line
+          }
+        }
+
+        
+      }
+      
+    }
+
+    ctx.stroke();
+  }, [props.pitchData, props.zoom, props.showingRep]);
 
   return (
     <div ref={containerRef}>
-      <svg width={props.width} height={props.height}>
-        {polylinePoints.map(([x, y], index) => {
-          if (props.repetitionNumber[index] === props.showingRep) {
-            return(
-            <circle
-              key={index}
-              cx={x}
-              cy={y}
-              r={2*props.zoom}
-              fill={props.pitchColor[index]}
-              
-            />
-            )
-          }
-        })}
-      </svg>
+      <canvas ref={canvasRef} width={props.width} height={props.height}/>;
     </div>
   );
 };
