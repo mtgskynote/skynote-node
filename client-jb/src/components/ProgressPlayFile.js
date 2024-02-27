@@ -208,7 +208,7 @@ const ProgressPlayFile = (props) => {
         playbackManager.pause();
         playbackManager.setPlaybackStart(0);
         playbackManager.reset();
-        cursor.reset();
+        //cursor.reset();
         setStartPitchTrack(false);
         setShowPitchTrack(false)
         setRecordInactive(true) //Set to true, just like the initial state        
@@ -259,6 +259,9 @@ const ProgressPlayFile = (props) => {
           setScoreTitle(movementTitle[0].value);
         } else if (workTitle.length > 0) {
           setScoreTitle(workTitle[0].value);}
+          else{
+            setScoreTitle("untitledScore")
+          }
 
       } catch (error) {
         console.log(error.message);
@@ -343,7 +346,8 @@ const ProgressPlayFile = (props) => {
       playbackManager.pause();
       playbackManager.setPlaybackStart(0);
       playbackManager.reset();
-      cursor.reset();
+      console.log("cursor ", cursor)
+      //cursor.reset();
       setStartPitchTrack(false);
       setShowPitchTrack(false)
       setRecordInactive(true) //Set to true, just like the initial state
@@ -396,7 +400,7 @@ const ProgressPlayFile = (props) => {
         playbackManager.pause();
         playbackManager.setPlaybackStart(0);
         playbackManager.reset();
-        cursor.reset();
+        //cursor.reset();
         setStartPitchTrack(false);
         setShowPitchTrack(false)
         setPitch([])
