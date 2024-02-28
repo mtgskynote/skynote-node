@@ -2,6 +2,8 @@ import React, { useEffect, useState } from "react";
 import { Chart as ChartJS, ArcElement, Tooltip, Legend } from "chart.js";
 import { useAppContext } from "../../context/appContext";
 import { getAllRecData } from "../../utils/studentRecordingMethods.js";
+import {getMessages} from "../../utils/messagesMethods.js";
+import { getAllAssignments} from "../../utils/assignmentsMethods.js";
 import StatsCSS from './Stats.module.css'
 import PercentagesStarsStats from "../../components/StatsPercentagesStars.js";
 import StatsRecentRecordings from "../../components/StatsRecentRecordings.js";
@@ -28,6 +30,8 @@ const Stats = () => {
   const [starsPerLevel, setStarsPerLevel] = useState(null);
   const [achievedStarsPerLevel, setAchievedStarsPerLevel] = useState(null);
   const [recentRecordings, setRecentRecordings] = useState(null);
+  const [unreadMessages, setUnreadMessages] = useState(null);
+  const [unansweredTasks, setUnansweredTasks] = useState(null);
 
   const reloadRecordingsCallback=(idDelete)=>{
     //delete recording from all arrays
@@ -111,6 +115,38 @@ const Stats = () => {
           console.log(`Cannot get recordings from database: ${error}`)
           // Handle errors if necessary
         })
+        getMessages(userData.id, userData.teacher).then((result)=>{
+          var messageCount=0
+          //I have to filter the messages sent by the teacher that have seen=false
+          result.map((message, index)=>{
+            if(message.sender===userData.teacher && message.seen===false){
+                messageCount=messageCount+1;
+            }
+          })
+          setUnreadMessages(messageCount)
+        }).catch((error) => {
+          console.log(`Cannot get number of chat messages from database: ${error}`)
+          // Handle errors if necessary
+        })
+
+        getAllAssignments(userData.id).then((result)=>{
+          var taskCount=0;
+          if(result.length!==0){
+              result.map((assignment,index)=>{   
+                assignment.tasks.map((task, index)=>{
+                  if(task.answer===null || task.answer===undefined){
+                    taskCount=taskCount+1;
+                  }
+                })
+
+              })
+          }
+          setUnansweredTasks(taskCount)
+        }).catch((error) => {
+          console.log(`Cannot get number of pending tasks from database: ${error}`)
+          // Handle errors if necessary
+        })
+
       }
     },[userData, scoresData])
 
@@ -179,7 +215,10 @@ const Stats = () => {
       <div className={StatsCSS.dashboard}> 
         <div className={StatsCSS.left}> 
           <div className={StatsCSS.item}> 
-            <StatsGeneral numberRecordings={recordingNames}/>
+            <StatsGeneral 
+              numberRecordings={recordingNames}
+              unreadMessages={unreadMessages}
+              unansweredTasks={unansweredTasks}/>
           </div>
         
           <div className={StatsCSS.item}> 

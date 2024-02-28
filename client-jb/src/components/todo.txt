@@ -13,24 +13,52 @@ BEFORE AMAIA LEAVES:
 - (DONE)Allow students to change name to recordings 
 - Related to the above, when student logs in, store locally new information: student/teacher type of profile 
   and teacher assigned or list of students (with Id,so that they are available always?) DONE (teacherID is saved)
-- (AMAIA IN PROGRESS) Change teacher ID manually introduced by the one stored locally, and additionally, call DB to get teachers name 
+- (DONE) Change teacher ID manually introduced by the one stored locally, and additionally, call DB to get teachers name 
   when needed (stats and assignments) 
 - (ALVARO IN PROGRESS) Eventhough it will be used by the teacher in the future (meaning that this page would only appear on the teachers account) 
   we could build the page where the teacher introduces assignments, because it is helpful to try out other parts 
   (like submissions, submission dates, grading), so that we dont have to create a new assignment from the database... 
   uncomfortable... easier if that page is ready. 
+- (AMAIA IN PROGRESS) - when user opens chat, change to "seen" messages sent from the teacher
+- (AMAIA IN PROGRESS ) "General information" section in dashboard Stats.js is not finished, it is fixed and should show DB info.
   
 With this the students part is ready: a student can see the available lessons, can record, can store, can delete, can modify names, 
 can see what assignments are assigned to them, can provide answers to the tasks, can see the grades, can chat with teacher.
 
-For the future:
+
+
+FOR THE FUTURE (AMAIA's THOUGHTS) ############################################################
+
+- Page to upload scores (similar to the form created to generate assignments). Who can upload scores? those uploaded scores,
+  are visible for whom? In case we want to restrict visibility, before being able to upload scores we should take care of editing
+    -->database(each score should have an entry that specifies which users,id, have access to that score), 
+    -->allLessons (so that you can when a user is logged in, they only see those scores that they have available)
+    -->when creating an assignment, the displayed list of scores that you are allowed to select to create a task, should only
+    display the scores available for the teacher/user (WARNING!!! see below**)
+
+    **Be careful with visibility and who has access to it. The simplest way would be that the only one that can upload scores is the teacher,
+    then, in the score DB, we would specify which teacherId is the "owner" and "sharer" of that score, and consequently, all students assigned to
+    that teacher, would have that score available. 
+    However, if we allow students also to upload scores, we have two options:
+      1) student , their teacher and their teacher's students are able to see that score:
+          When a student uploads one score, then that score is uploaded to the DB with two fields: "owner" with studentId, and "sharer" the teacherId
+          assigned to the student, meaning that all students assigned to the teacher of the students will have the score available. This would be simpler than
+          option 2, because it would be similar to only allowing the teacher to upload scores
+      2) only student and their teacher is able to see that score:
+          This complicates things when teacher creates assignments with tasks (Score tasks), because if the teacher wants to create an assignment with 
+          tasks for several students at the same time, not all students have access to the same scores! so.... how will we manage that? Forcing the teacher
+          to create assignments separately for each student (very uncomfortable and annoying when you have a big class).... too complex i think...
+
+Related to the teacher's side:
 - Teacher dashboard should have a display of answers to assignments, and a notice board for pending messages to answer (chat messages)
+
 - Teacher must have a page with the assignments (most recent at the top) and different buttons that take them to other pages:
   --> button to create "new assignment", takes you to another page to introduce a new assignment (page that we already have). When finished,
       takes you back to the list of assignments page automatically
   --> button on each announcement that has tasks assigned, that takes you to another page where you can see the answers of students, and you 
       can give them grades
   --> button on each announcement to delete them, another one to modify them?
+
 - Teacher must have a page with all their students, for each student displayed:
   --> see their info (progress? tasksPending/totalTasks? whatever),
   --> button that takes you to the list of submissions of that student Score | Posted date | Due date | answered recording | grade | buttons (modify grade?)
@@ -39,8 +67,10 @@ For the future:
 
 
 CAREFULL: 
-!!! Those scores that dont have a title cause problems, remove them, or live with them knowing that is better not to use them.
-
+!!! Those scores that dont have a title cause some problems, make sure somehow that when new scores are uploaded, we check inside the xml for a title
+and if we dont find any, request the user to input a personalized name, and with that name, we manually edit the xml to add it, so that everything works
+perfectly later on
+####################################################################################################################################################################################
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 

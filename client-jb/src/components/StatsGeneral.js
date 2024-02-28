@@ -3,12 +3,18 @@ import StatsGeneralCSS from './StatsGeneral.module.css'
 
 
 const StatsGeneral = (props) => {
-  const [num, setNum] = useState(null);
+  const [numRec, setNumRec] = useState(null);
+  const [numMes, setNumMes] = useState(null);
+  const [numTask, setNumTask] = useState(null);
 
   useEffect(()=>{
     if(props.numberRecordings!==null){
       const recNames=props.numberRecordings
-      setNum(recNames.length)
+      setNumRec(recNames.length)
+      const unreadMessages= props.unreadMessages
+      setNumMes(unreadMessages)
+      const unansweredTasks=props.unansweredTasks
+      setNumTask(unansweredTasks)
     }
   },[props])
   
@@ -20,9 +26,9 @@ const StatsGeneral = (props) => {
       </h4>
       <div>
         <ul className={StatsGeneralCSS.list}>
-          <li className={StatsGeneralCSS.entry}>Pending tasks to submit: 0</li>
-          <li className={StatsGeneralCSS.entry}>Tasks submitted: 0</li>
-          <li className={StatsGeneralCSS.entry}>Total number of recordings: {num}</li>
+          <li className={StatsGeneralCSS.entry}>Pending tasks to submit: {numTask}</li>
+          <li className={StatsGeneralCSS.entry}>Pending messages to read: {numMes}</li>
+          <li className={StatsGeneralCSS.entry}>Total number of recordings: {numRec}</li>
         </ul>
       </div>
     </div>
