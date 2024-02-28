@@ -1,15 +1,14 @@
 import React, { useEffect, useRef, useState } from 'react';
 import PopUpWindowCSS from './PopUpWindow.module.css';
+import { putAssignment } from "../utils/assignmentsMethods.js";
 
 const PopUpWindowAssignments = (props) => {
 
   const [fetchedData, setFetchedData] = useState({});
   const [listOptions, setListOptions] = useState(null);
   const studentsInputRef = useRef();
-  const teacherInputRef = useRef();
   const messageInputRef = useRef();
   const dueInputRef = useRef();
-  const postInputRef = useRef();
   const tasksInputRef = useRef();
 
   // Assuming you have an array of students
@@ -26,39 +25,34 @@ const PopUpWindowAssignments = (props) => {
     props.handlerBack("no_see")
   };
 
-  const handleChange = (selectedOptions) => {
-    // Handle the selected options
-    console.log('Selected Options:', selectedOptions);
-  };
-
   const handleCreate = (event) => {
     console.log("Submitting...(not really:/)")
     event.preventDefault();
     const studentsInputValue = studentsInputRef.current.value;
-    const teacherInputValue = teacherInputRef.current.value;
     const messageInputValue = messageInputRef.current.value;
-    const dueInputValue = dueInputRef.current.value;
-    const postInputValue = postInputRef.current.value;
+    const dueInputValue = dueInputRef.current.value + "T23:59:59.000+00:00";
     const tasksInputValue = tasksInputRef.current.value;
+    const postDate = new Date().toISOString();
 
-    console.log("TODOOOO:\n", studentsInputValue, teacherInputValue, messageInputValue, dueInputValue, postInputValue, tasksInputValue);
+    console.log("TODOOOO:\n", studentsInputValue, messageInputValue, dueInputValue, tasksInputValue, postDate);
+    //Now I need to create an assignmentObject with all the info (add teacherId and postDate), and then upload it to the DB
+    // assignmentObject = 
+    // putAssignment(assignmentObject);
+    
+    // handleClose();
   }
   useEffect(() => {
-    const loadData = async () => {
-      const data= JSON.parse(localStorage.getItem("scoreData"));
-      const auxArray = [];
-      data.forEach(score => {
-        auxArray.push([score.title, score.level]);
-      })
-      setFetchedData(data);
-      setListOptions(auxArray);
-      console.log("Holaaaa", auxArray);
-    };
 
-    loadData();
-    
+    const data= JSON.parse(localStorage.getItem("scoreData"));
+    const auxArray = [];
+    data.forEach(score => {
+      auxArray.push({title: score.title, level:score.level});
+    })
+    setFetchedData(data);
+    setListOptions(auxArray);
+
   }, [])
-  if (listOptions === null) {
+  if (listOptions === null || students === null) {
     return <div>Loading...</div>
   } else {
     return (
@@ -66,17 +60,20 @@ const PopUpWindowAssignments = (props) => {
           <div className={PopUpWindowCSS.titleAssignments}>Create new assignment</div>
           <div className={PopUpWindowCSS.contentAssignments}>
           <form onSubmit={handleCreate}>
-                  <div className={PopUpWindowCSS.itemAssignments}>
-                    <label htmlFor="studentIds" className={PopUpWindowCSS.profilelabel}> Select students</label>
-                    <input
-                      className={PopUpWindowCSS.checkboxAssignments}
-                      type="text"
-                      id="studentIds" 
-                      name="name"
-                      placeholder='work in progress - checkbox list dropdown'
+                  <div className={PopUpWindowCSS.field}>
+                    <label htmlFor="studentIds" className={PopUpWindowCSS.profilelabel}>Students (Ctrl+click to select more than one)</label>
+                    <select
+                      className={PopUpWindowCSS.profileinput}
+                      id="studentIds"
+                      name="studentIds"
                       ref={studentsInputRef}
+                      multiple
                       required
-                    />
+                    >
+                      {students.map((student, index) => (
+                        <option key={index} value={student.id}>{`${student.name}`}</option>
+                      ))}
+                    </select>
                   </div>
 
                   <div className={PopUpWindowCSS.itemAssignments}>
@@ -93,7 +90,7 @@ const PopUpWindowAssignments = (props) => {
                   </div>
 
                   <div className={PopUpWindowCSS.itemAssignments}>
-                    <label htmlFor="due" className={PopUpWindowCSS.profilelabel}>Due date:</label>
+                    <label htmlFor="due" className={PopUpWindowCSS.profilelabel}>Due date</label>
                     <input
                       className={PopUpWindowCSS.profileinput}
                       type="date"
@@ -105,7 +102,7 @@ const PopUpWindowAssignments = (props) => {
                   </div>
 
                   <div className={PopUpWindowCSS.field}>
-                    <label htmlFor="tasks" className={PopUpWindowCSS.profilelabel}>Tasks (Ctrl+click to select more than one):</label>
+                    <label htmlFor="tasks" className={PopUpWindowCSS.profilelabel}>Tasks (Ctrl+click to select more than one)</label>
                     <select
                       className={PopUpWindowCSS.profileinput}
                       id="tasks"
@@ -114,9 +111,8 @@ const PopUpWindowAssignments = (props) => {
                       multiple
                       required
                     >
-                      {/* Dynamically generate options from allTitles array */}
-                      {listOptions.map((title, index) => (
-                        <option key={index} value={title}>{`${title[0]} (level ${title[1]})`}</option>
+                      {fetchedData.map((title, index) => (
+                        <option key={index} value={title._id}>{`${title.title} (level ${title.level})`}</option>
                       ))}
                     </select>
                   </div>
