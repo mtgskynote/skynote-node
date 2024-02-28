@@ -4,7 +4,7 @@ import { useAppContext } from "../context/appContext";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import AssignmentsCSS from './Assignments.module.css'
 import { getAllAssignments, putAssignment, deleteAssignment } from "../utils/assignmentsMethods.js";
-import {getMessages, putMessage} from "../utils/messagesMethods.js";
+import { getProfileData } from "../utils/usersMethods.js";
 import {
     faFileImport,
     faUser,
@@ -26,6 +26,7 @@ const Assignments = (props) => {
     const navigate = useNavigate();
     const { getCurrentUser } = useAppContext();
     const [userData, setUserData] = useState(null);
+    const [teacherData, setTeacherData] = useState(null);
     const [scoresData, setScoresData] = useState(null);
     const [userAnnouncements, setUsertAnnouncements] = useState(null);
     const [userChat, setUsertChat] = useState(null);
@@ -89,47 +90,27 @@ const Assignments = (props) => {
             setSelectedAnnouncement(null)
         }
     }
-    const handleSend=()=>{
-        // Update database
-        const chatInputValue = chatInputRef.current.value;
-        console.log('User Input in chat:', chatInputValue);
-        if(chatInputValue!==""){
-            console.log("send message")
-            
-            //Put message on DB
-            putMessage(chatInputValue, userData.id, "5d34c59c098c00453a233bf3").then((message)=>{ //FIXME teacher ID
-                //To not reload the page, add this message to userChat in state directly
-                console.log("userChat ", userChat)
-                const currentChat=userChat
-                console.log(message)
-                
-                currentChat[Object.keys(currentChat).length]=
-                    {
-                        id:message._id,
-                        message:message.content,
-                        student:true,
-                        date:new Date(message.timestamp).toLocaleDateString("es-ES", options),
-                        teacher:message.teacher,
-                        seen:message.seen,
-                    }
-            
-                console.log("updated current Chat: ", currentChat)
-                setUsertChat(currentChat)
-                //Clear input chat box
-                chatInputRef.current.value=""
-            }) 
-        }else{
-            console.log("dont send message")
-        }
-    }
+
+    const fetchTeacherInfo = async(teacherId)=>{
+        getProfileData(teacherId).then((result)=>{
+          setTeacherData({
+                        id:result.user._id,
+                        name:result.user.name,
+                        lastName:result.user.lastName,
+                        email:result.user.email
+          })
+        })
+      }
     
     //get User Data
     useEffect(()=>{
         
         if(userData===null){
         fetchDataFromAPI();
+        }else{
+            fetchTeacherInfo(userData.teacher)
         }
-    },[])
+    },[userData])
     
     //get Scores data
     useEffect(() => {
@@ -141,14 +122,14 @@ const Assignments = (props) => {
 
     
     useEffect(()=>{
-        if(userData!==null && scoresData!==null){
+        if(userData!==null && scoresData!==null && teacherData!==null){
             //Assignments
             getAllAssignments(userData.id).then((result)=>{
                 if(result.length!==0){
                     setUsertAnnouncements(result.reverse())}
             })
         }
-      },[userData, scoresData])
+      },[userData, scoresData, teacherData])
 
 
   
@@ -159,7 +140,7 @@ const Assignments = (props) => {
             {userAnnouncements!==null?
             userAnnouncements.map((announcement,index)=>{
                 return(
-                <div className={AssignmentsCSS.tableBox}> 
+                <div className={AssignmentsCSS.tableBox} key={index}> 
                 <div>
                     <div className={AssignmentsCSS.header}> 
                     {
@@ -174,7 +155,7 @@ const Assignments = (props) => {
                     </div>
                     <div className={AssignmentsCSS.announcementBody}> 
                         <div className={AssignmentsCSS.teacher}> 
-                            {announcement.teacher}   <FontAwesomeIcon icon={faUser} className={AssignmentsCSS.userIcon}/>  said...
+                            {teacherData.name}   <FontAwesomeIcon icon={faUser} className={AssignmentsCSS.userIcon}/>  said...
                         </div>
                         <div className={AssignmentsCSS.message}> 
                             {announcement.message}
@@ -237,7 +218,7 @@ const Assignments = (props) => {
             }):<div>No announcements yet</div>}
         </div>
         <div className={AssignmentsCSS.right}>
-            {userData!==null?<Messages user={userData.id} teacher="5d34c59c098c00453a233bf3"/>:<Messages/> /*FIXME*/} 
+            {userData!==null?<Messages user={userData} teacher={teacherData}/>:<Messages/> /*FIXME*/} 
         </div>
         {popUpWindowGrade?<PopUpWindowGrades handlerBack={handleSeeGrades} comment={taskComment} grade={taskGrade}/>:""}
         {popUpWindowRecordings?<PopUpWindowRecordings handlerBack={handleSelectRecording} scoreId={selectedScore} userId={userData.id} announcementId={selectedAnnouncement}/>:""}

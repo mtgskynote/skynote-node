@@ -10,8 +10,8 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 
 const Messages = (props) => {
-    const [userId, setUserId] = useState(null);
-    const [teacherId, setTeacherId] = useState(null);
+    const [user, setUser] = useState(null);
+    const [teacher, setTeacher] = useState(null);
     const [userChat, setUserChat] = useState(null);
     const [aux, setAux] = useState(0);
     const chatInputRef = useRef();
@@ -25,10 +25,10 @@ const Messages = (props) => {
     const fetchChat =()=>{
         let mychat={}
 
-        getMessages(userId, teacherId).then((result)=>{ 
+        getMessages(user.id, teacher.id).then((result)=>{ 
             const messages=result
             messages.map((message,index)=>{
-                if(message.sender===userId){
+                if(message.sender===user.id){
                     //My message
                     mychat[index]={
                         id:message._id,
@@ -63,7 +63,7 @@ const Messages = (props) => {
         if(chatInputValue!==""){
             
             //Put message on DB
-            putMessage(chatInputValue, userId, teacherId).then((message)=>{ 
+            putMessage(chatInputValue, user.id, teacher.id).then((message)=>{ 
                 //To not reload the page, add this message to userChat in state directly
                 const newMessage=
                     {
@@ -100,73 +100,79 @@ const Messages = (props) => {
 
     useEffect(()=>{
         if(props.user!==null && props.user!==undefined && props.teacher!==null && props.teacher!==undefined ){
-            setUserId(props.user)
-            setTeacherId(props.teacher)
+            setUser(props.user)
+            setTeacher(props.teacher)
             
         }
 
     },[props])
 
     useEffect(()=>{
-        if(userId!==null && teacherId!==null){
+        if(user!==null && teacher!==null){
             fetchChat()
         }
 
-    }, [userId, teacherId])
+    }, [user, teacher])
 
 
 
 
 
   return (
+    
     <div className={AssignmentsCSS.chatGroup}> 
-                <div className={AssignmentsCSS.chatHeader}> 
-                    <div className={AssignmentsCSS.teacher}> 
-                        Your conversation with {teacherId}  <FontAwesomeIcon icon={faUser} className={AssignmentsCSS.userIcon}/>
-                    </div>
-                </div>
-                <div className={AssignmentsCSS.chat}>
-                    {userChat!==null?
-                    Object.values(userChat).map((message,index)=>{
-                        return(
-                            message.student?
-                                <div className={AssignmentsCSS.chatItemStudent}>
-                                    {message.message}
-                                    <div className={AssignmentsCSS.chatItemDate}>
-                                        {message.date}
-                                        {message.seen?<FontAwesomeIcon icon={faCheck} className={AssignmentsCSS.seenIcon}/>:""}
-                                    </div>
-                                </div>:
-                                <div className={AssignmentsCSS.chatItemTeacher}>
-                                    {message.message}
-                                    <div className={AssignmentsCSS.chatItemDate}>
-                                        {message.date}
-
-                                    </div>
-                                </div>
-                        )
-                    }):
-                    <div>No messages yet</div>
-                    
-                    
-                    }
-                </div>
-                <div className={AssignmentsCSS.textGroup}>
-                    <div className={AssignmentsCSS.buttonGroup}>
-                    <button title="reload chat" className={AssignmentsCSS.button} onClick={() => handleReload()}><FontAwesomeIcon icon={faArrowRotateLeft} className={AssignmentsCSS.sendIcon} />  </button>
-                    <button title="send" className={AssignmentsCSS.button} onClick={() => handleSend()}><FontAwesomeIcon icon={faPaperPlane} className={AssignmentsCSS.sendIcon} />  </button>
-                    </div>
-                    <textarea 
-                        type="text"
-                        id="userInput"
-                        placeholder="Type here..."
-                        className={AssignmentsCSS.textInput} 
-                        ref={chatInputRef}
-                        onKeyUp={handleKey}
-                    /> 
-                    
+        {(user!==null && teacher!==null)?
+        <div>
+            <div className={AssignmentsCSS.chatHeader}> 
+                <div className={AssignmentsCSS.teacher}> 
+                    Your conversation with {teacher.name}  <FontAwesomeIcon icon={faUser} className={AssignmentsCSS.userIcon}/>
                 </div>
             </div>
+            <div className={AssignmentsCSS.chat}>
+                {userChat!==null?
+                Object.values(userChat).map((message,index)=>{
+                    return(
+                        message.student?
+                            <div className={AssignmentsCSS.chatItemStudent}>
+                                {message.message}
+                                <div className={AssignmentsCSS.chatItemDate}>
+                                    {message.date}
+                                    {message.seen?<FontAwesomeIcon icon={faCheck} className={AssignmentsCSS.seenIcon}/>:""}
+                                </div>
+                            </div>:
+                            <div className={AssignmentsCSS.chatItemTeacher}>
+                                {message.message}
+                                <div className={AssignmentsCSS.chatItemDate}>
+                                    {message.date}
+
+                                </div>
+                            </div>
+                    )
+                }):
+                <div>No messages yet</div>
+                
+                
+                }
+            </div>
+            <div className={AssignmentsCSS.textGroup}>
+                <div className={AssignmentsCSS.buttonGroup}>
+                <button title="reload chat" className={AssignmentsCSS.button} onClick={() => handleReload()}><FontAwesomeIcon icon={faArrowRotateLeft} className={AssignmentsCSS.sendIcon} />  </button>
+                <button title="send" className={AssignmentsCSS.button} onClick={() => handleSend()}><FontAwesomeIcon icon={faPaperPlane} className={AssignmentsCSS.sendIcon} />  </button>
+                </div>
+                <textarea 
+                    type="text"
+                    id="userInput"
+                    placeholder="Type here..."
+                    className={AssignmentsCSS.textInput} 
+                    ref={chatInputRef}
+                    onKeyUp={handleKey}
+                /> 
+                
+            </div>
+        </div>
+        :""}
+        
+    </div>
     
   );
 };
