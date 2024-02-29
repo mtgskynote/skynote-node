@@ -26,7 +26,7 @@ const PopUpWindowAssignments = (props) => {
   };
 
   const handleCreate = (event) => {
-    console.log("Submitting...(not really:/)")
+    console.log("Submitting...");
     event.preventDefault();
     const studentsInputValue = Array.from(studentsInputRef.current.selectedOptions).map(option => option.value);
     const messageInputValue = messageInputRef.current.value;
@@ -50,6 +50,7 @@ const PopUpWindowAssignments = (props) => {
     // UNCOMMENT THIS AFTER DEBUGGING
     putAssignment(assignmentTest);
     handleClose();
+    console.log("Submited :)");
   }
   useEffect(() => {
 
