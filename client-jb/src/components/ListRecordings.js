@@ -5,7 +5,6 @@ import ListRecordingsCSS from './ListRecordings.module.css';
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { getRecData, deleteRecording } from "../utils/studentRecordingMethods.js";
 import { useAppContext } from "../context/appContext";
-
 import {
   faTrash,
   faEye,
@@ -13,7 +12,9 @@ import {
   faPencilSquare,
   faBoxArchive,
   faMusic,
+  faPenToSquare,
 } from "@fortawesome/free-solid-svg-icons";
+import PopUpWindowEdit from './PopUpWindowEdit.js';
 
 const ListRecordings = () => {
 
@@ -25,8 +26,18 @@ const ListRecordings = () => {
   const [recordingDates, setRecordingDates] = useState(null);
   const [scoreSkill, setScoreSkill] = useState(null);
   const [scoreLevel, setScoreLevel] = useState(null);
+  const [idSelectedEdit, setIdSelectedEdit] = useState(null);
+  const [showPopUpEdit, setShowPopUpEdit] = useState(false);
   const location = useLocation();
   const navigate = useNavigate();
+  // Define options for formatting date
+  const options = {
+    year: "numeric",
+    month: "numeric",
+    day: "numeric",
+    hour: "2-digit",
+    minute: "2-digit",
+  };
 
   // Access the passed variables from the location object
   const score = location.state?.score || 'DefaultSong';
@@ -38,7 +49,6 @@ const ListRecordings = () => {
     const scoreID=itemFoundLocalStorage._id;
     setScoreLevel(itemFoundLocalStorage.level)
     setScoreSkill(itemFoundLocalStorage.skill)
-
     const fetchDataFromAPI = () => {
       if(userData===null){
       getCurrentUser() // fetchData is already an async function
@@ -52,14 +62,6 @@ const ListRecordings = () => {
 
       if(userData !== null){
         getRecData(userData.id, scoreID).then((result) => {
-          // Define options for formatting date
-          const options = {
-            year: "numeric",
-            month: "numeric",
-            day: "numeric",
-            hour: "2-digit",
-            minute: "2-digit",
-          };
           setRecordingList(JSON.stringify(result));
           setRecordingNames(result.map((recording) => recording.recordingName));
           setRecordingStars(result.map((recording) => recording.recordingStars));
@@ -92,11 +94,27 @@ const ListRecordings = () => {
 
   // Event handler for click on See
   const handleSeeClick = (nameOfFile, number)=> {
+    const recording = JSON.parse(recordingList)[recordingNames.indexOf(nameOfFile)];
+    //Pass recording ID to ProgressPlayfileVisual
+    navigate(score, {state:{'id':recording.recordingId }})
+  };
+  
+  // Event handler for click on Edit
+  const handleEditClick = (action, nameOfFile)=> {
+    if(action==="open"){
       const id = JSON.parse(recordingList)[recordingNames.indexOf(nameOfFile)].recordingId;
-      console.log("ID ", id)
-      //Pass recording ID to ProgressPlayfileVisual
-      navigate(score, {state:{'recordingID':id}})
+      //Store id to edit so that popupwindow can access it
+      setIdSelectedEdit(id)
+      // Show pop up window component
+      setShowPopUpEdit(true)
+    }else{
+      // Dont show pop up window component
+      setShowPopUpEdit(false)
+      //Delete stored id
+      setIdSelectedEdit(null)
     }
+    
+  }
 
 
   // Event handler for click on Trash
@@ -150,7 +168,10 @@ const ListRecordings = () => {
         {recordingNames.map((nameOfFile, index) => (
           <div className={ListRecordingsCSS.songelement} key={index}>
           <li key={index}>
-          <div className={ListRecordingsCSS.recTitle}><h5 >{nameOfFile}</h5></div>
+          <div className={ListRecordingsCSS.recTitle}>
+            <h5 >{nameOfFile} <FontAwesomeIcon icon={faPenToSquare} className={ListRecordingsCSS.iconModify} onClick={() => handleEditClick("open",nameOfFile)}/> </h5>
+            
+          </div>
               <div className={ListRecordingsCSS.starsGroup}>
                 <FontAwesomeIcon icon={faStar} className={recordingStars[index]>=1 ? ListRecordingsCSS.completeStar : ListRecordingsCSS.incompleteStar}/>
                 <FontAwesomeIcon icon={faStar} className={recordingStars[index]>=2 ? ListRecordingsCSS.completeStar : ListRecordingsCSS.incompleteStar}/>
@@ -180,6 +201,8 @@ const ListRecordings = () => {
       <button className={ListRecordingsCSS.backbutton} onClick={handleGoBack}>
         Back
       </button>
+      {showPopUpEdit?< PopUpWindowEdit idEdit={idSelectedEdit} handlerBack={handleEditClick}/>:""}
+
     </div>
   );
 };

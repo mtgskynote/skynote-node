@@ -7,9 +7,9 @@ import mongoose from 'mongoose';
 
 const getAllMessages = async (req, res) => {
   console.log(`server getAllMessages `)
-  const { sender, receiver, limit, skip } = req.query;
+  const { sender, receiver, limit} = req.query;
 
-  //console.log(`sender: ${sender}, receiver: ${receiver}, limit: ${limit}, skip: ${skip}`)
+  console.log(`sender: ${sender}, receiver: ${receiver}, limit: ${limit}`)
 
   // Validation (optional)
   if (!sender || !receiver) {
@@ -26,11 +26,11 @@ const getAllMessages = async (req, res) => {
       },
     },
     {
-      $sort: { createdAt: 1 }, // Sort by date ascending
+      $sort: { timestamp: -1 }, // Sort by date descending
     },
-    {
+    /* {
       $skip: parseInt(skip) || 0, // Skip documents for pagination
-    },
+    }, */
     {
       $limit: parseInt(limit) || 10, // Limit documents per page
     },
@@ -109,13 +109,37 @@ const getAllMessages = async (req, res) => {
         console.log(`server putMessage - return status `)
 
         // Send response with the saved message details
-        res.status(201).json({ message: newMessage });
+        res.status(201).json({ newMessage });
       } catch (err) {
         console.error('Error saving message:', err);
         res.status(500).json({ error: 'Error uploading message' });
       }
     }
 
+    const updateMessageSeen = async (req, res) => {   
+      const user1Id=req.body.user1;
+      const user2Id=req.body.user2;
+      try {
+        let updatedMessage = await Message.updateMany(
+            {
+              sender: mongoose.Types.ObjectId(user2Id), receiver: mongoose.Types.ObjectId(user1Id)
+            },
+            {
+                $set:
+                    {seen:true}
+                
+            },
+        );
   
+        if (!updatedMessage) {
+            return res.status(404).json({ error: "Message not found" });
+        }
+  
+        res.status(200).json(updatedMessage);
+    } catch (error) {
+        console.error("Error updating message:", error);
+        res.status(500).json({ error: "Internal Server Error" });
+    }
+      }
 
-export { putMessage, getAllMessages };
+export { putMessage, getAllMessages, updateMessageSeen };

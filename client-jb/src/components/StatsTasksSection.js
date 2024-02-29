@@ -4,6 +4,7 @@ import { useAppContext } from "../context/appContext";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import StatsTasksCSS from './StatsTasksSection.module.css'
 import { getLatestAssignment } from "../utils/assignmentsMethods.js";
+import { getProfileData } from "../utils/usersMethods.js";
 
 import {
     faFileImport,
@@ -16,6 +17,7 @@ const StatsTasksSection = () => {
     const { getCurrentUser } = useAppContext();
     const [userData, setUserData] = useState(null);
     const [assignmentData, setAssignmentData] = useState(null);
+    const [teacherData, setTeacherData] = useState(null);
 
     const fetchDataFromAPI = useCallback(() => {
       getCurrentUser() // fetchData is already an async function
@@ -33,21 +35,35 @@ const StatsTasksSection = () => {
       })
     }, [setAssignmentData]);
 
-    //get User Data
+    const fetchTeacherInfo = async(teacherId)=>{
+      getProfileData(teacherId).then((result)=>{
+        setTeacherData({
+                      id:result.user._id,
+                      name:result.user.name,
+                      lastName:result.user.lastName,
+                      email:result.user.email
+        })
+      })
+    }
+
+    //get User Data and when it is ready, teacher Data
     useEffect(()=>{
         if(userData===null){
         fetchDataFromAPI();
+        }else{
+          const teacherId=userData.teacher
+          fetchTeacherInfo(teacherId)
+
         }
     },[userData, fetchDataFromAPI]);
 
-    //get latest assignment
+    //get latest assignment when user and teacher data is loaded
     useEffect(()=>{
-      if(userData!==null){
+      if(userData!==null && teacherData!==null){
           fetchAssignment(userData);
       }
-    },[userData]);
+    },[userData, teacherData]);
 
-    /* FOR NOW THIS CODE DOES NOT DISPLAY ANYTHING REAL */
 
     // Event handler for click on OPEN
   const handleOpen = ()=> {
@@ -84,7 +100,7 @@ const StatsTasksSection = () => {
               </div>
               <div className={StatsTasksCSS.announcementBody}> 
                   <div className={StatsTasksCSS.teacher}> 
-                      TEACHER   <FontAwesomeIcon icon={faUser} className={StatsTasksCSS.userIcon}/>  said...
+                        {teacherData.name}   <FontAwesomeIcon icon={faUser} className={StatsTasksCSS.userIcon}/>  said...
                   </div>
                   <div className={StatsTasksCSS.message}> 
                     {assignmentData.message}

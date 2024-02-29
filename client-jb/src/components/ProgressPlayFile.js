@@ -259,6 +259,9 @@ const ProgressPlayFile = (props) => {
           setScoreTitle(movementTitle[0].value);
         } else if (workTitle.length > 0) {
           setScoreTitle(workTitle[0].value);}
+          else{
+            setScoreTitle("untitledScore")
+          }
 
       } catch (error) {
         console.log(error.message);

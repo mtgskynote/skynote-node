@@ -5,6 +5,7 @@ import ListAllRecordingsCSS from './ListRecordings.module.css';
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { getAllRecData, deleteRecording } from "../utils/studentRecordingMethods.js";
 import { useAppContext } from "../context/appContext";
+import PopUpWindowEdit from './PopUpWindowEdit.js';
 
 import {
   faTrash,
@@ -13,7 +14,7 @@ import {
   faPencilSquare,
   faBoxArchive,
   faMusic,
-
+  faPenToSquare,
 
 } from "@fortawesome/free-solid-svg-icons";
 
@@ -29,7 +30,17 @@ const ListAllRecordings = () => {
   const [recordingDates, setRecordingDates] = useState(null);
   const [recordingSkills, setRecordingSkills] = useState(null);
   const [recordingLevels, setRecordingLevels] = useState(null);
+  const [idSelectedEdit, setIdSelectedEdit] = useState(null);
+  const [showPopUpEdit, setShowPopUpEdit] = useState(false);
   const navigate = useNavigate();
+  // Define options for formatting date
+  const options = {
+    year: "numeric",
+    month: "numeric",
+    day: "numeric",
+    hour: "2-digit",
+    minute: "2-digit",
+  };
 
 
   // Starting --> load recordings from userID and scoreID
@@ -52,14 +63,6 @@ const ListAllRecordings = () => {
       if(userData !== null){
         getAllRecData(userData.id).then((result) => {
           setRecordingList(JSON.stringify(result));
-          // Define options for formatting date
-          const options = {
-            year: "numeric",
-            month: "numeric",
-            day: "numeric",
-            hour: "2-digit",
-            minute: "2-digit",
-          };
           setRecordingNames(result.map((recording) => recording.recordingName));
           setRecordingStars(result.map((recording) => recording.recordingStars));
           setRecordingDates(result.map((recording) => {
@@ -98,12 +101,28 @@ const ListAllRecordings = () => {
 
   // Event handler for click on See
   const handleSeeClick = (index)=> {
-      const id = JSON.parse(recordingList)[index].recordingId;
+      const recording = JSON.parse(recordingList)[index];
       const scoreName=recordingScores[index]
       const scoreXML=localData.find(item => item.title === scoreName).fname
-      console.log(id, scoreName, scoreXML, "hola")
-      navigate(`/ListRecordings/${scoreXML}`, {state:{'recordingID':id}})
+      navigate(`/ListRecordings/${scoreXML}`, {state:{'id':recording.recordingId}})
     }
+
+    // Event handler for click on Edit
+  const handleEditClick = (action, nameOfFile)=> {
+    if(action==="open"){
+      const id = JSON.parse(recordingList)[recordingNames.indexOf(nameOfFile)].recordingId;
+      //Store id to edit so that popupwindow can access it
+      setIdSelectedEdit(id)
+      // Show pop up window component
+      setShowPopUpEdit(true)
+    }else{
+      // Dont show pop up window component
+      setShowPopUpEdit(false)
+      //Delete stored id
+      setIdSelectedEdit(null)
+    }
+    
+  }
 
 
   // Event handler for click on Trash
@@ -156,7 +175,9 @@ const ListAllRecordings = () => {
           //Each element/recording
         <div className={ListAllRecordingsCSS.songelement2} key={index}>
         <li key={index}>
-            <div className={ListAllRecordingsCSS.recTitle}><h5 >{nameOfFile}</h5></div>
+            <div className={ListAllRecordingsCSS.recTitle}>
+              <h5 >{nameOfFile} <FontAwesomeIcon icon={faPenToSquare} className={ListAllRecordingsCSS.iconModify} onClick={() => handleEditClick("open",nameOfFile)}/> </h5>
+            </div>
             <div className={ListAllRecordingsCSS.starsGroup}>
                 <FontAwesomeIcon icon={faStar} className={recordingStars[index]>=1 ? ListAllRecordingsCSS.completeStar : ListAllRecordingsCSS.incompleteStar}/>
                 <FontAwesomeIcon icon={faStar} className={recordingStars[index]>=2 ? ListAllRecordingsCSS.completeStar : ListAllRecordingsCSS.incompleteStar}/>
@@ -200,6 +221,9 @@ const ListAllRecordings = () => {
       <button className={ListAllRecordingsCSS.backbutton} onClick={handleGoBack}>
         Back
       </button>
+
+      {showPopUpEdit?< PopUpWindowEdit idEdit={idSelectedEdit} handlerBack={handleEditClick}/>:""}
+
     </div>
   );
 };

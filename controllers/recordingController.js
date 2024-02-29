@@ -124,5 +124,29 @@ const getRecording = async (req, res) => {
         res.status(500).send('Server error in deleteRecording function');
     }
   }
+
+  /* editRecording -----------
+    put a recording into the database
+    parameter: req.body = student_recordings
+    return: status code
+  */
+    const editRecording = async (req, res) => {    
+      
+        try {
+          const recordingId = req.body.id;
+          const recordingName = req.body.name;
+          let updatedRecording = await student_recordings.findOneAndUpdate(
+            { _id: recordingId  },
+            { recordingName: recordingName }
+          );
+          if (!updatedRecording) {
+              return res.status(404).json({ error: "Recording not found" });
+          }
+          res.status(200).json(updatedRecording);
+      } catch (error) {
+          console.error("Error updating recording:", error);
+          res.status(500).json({ error: "Internal Server Error" });
+      }
+     }
   
-export { getRecData, getAllRecData, getRecording, putRecording, deleteRecording, patchViewPermissions};
+export { getRecData, getAllRecData, getRecording, putRecording, deleteRecording, patchViewPermissions, editRecording};

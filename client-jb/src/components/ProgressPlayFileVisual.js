@@ -15,11 +15,12 @@ import {  getRecording, deleteRecording } from "../utils/studentRecordingMethods
 import ListRecordingsCSS from './ListRecordings.module.css';
 
 const folderBasePath = "/xmlScores/violin";
+let audioContext = new (window.AudioContext)();
 
 const ProgressPlayFileVisual = (props) => {
   const params = useParams();
 
-  let audioContext = new (window.AudioContext || window.webkitAudioContext)();
+  
   const [songFile, setSongFile] = useState(null);
   
   const cursorRef = useRef(null);
@@ -28,7 +29,7 @@ const ProgressPlayFileVisual = (props) => {
   const [metroVol, setMetroVol] = useState(0);
   const [bpmChange, setBpm] = useState(100);
 
-  const [recordVol, setRecordVol] = useState(0.5);
+  const [recordVol, setRecordVol] = useState(0);
   const [recordInactive, setRecordInactive] = useState(true)
 
   const [zoom, setZoom] = useState(1.0);
@@ -50,17 +51,36 @@ const ProgressPlayFileVisual = (props) => {
 
   const [visualMode, setVisualMode] = useState(true);
   const [json, setJson] = useState([]);
+  const [metaData, setMetaData] = useState({"name":null, "stars":null, "date":null});
 
 
   //const { getCurrentUser } = useAppContext();
   const location = useLocation();
   const navigate = useNavigate();
+  const options = {
+    year: "numeric",
+    month: "numeric",
+    day: "numeric",
+    hour: "2-digit",
+    minute: "2-digit",
+  };
+  const newUrl = window.location.href;
 
-  const recordingID=location.state?.recordingID
+  const recordingID=location.state?.id
   
   // To load JSON data from recordingID passed from ListRecordings
   useEffect(() => {
     getRecording(recordingID).then((recordingJSON)=>{
+      // get score info
+      const scoreInfo=JSON.parse(localStorage.getItem("scoreData")).find(item => item.fname === params.files);
+      //Set metaData
+      const recordingDate = new Date(recordingJSON.date);
+      setMetaData({"name":recordingJSON.recordingName, 
+                  "stars":recordingJSON.info.stars, 
+                  "date":recordingDate.toLocaleDateString("es-ES", options),
+                  "skill":scoreInfo.skill,
+                  "lesson": scoreInfo.lesson,
+                  "score": scoreInfo.title});
       //Save json.info (recording data, pitch, colors...) to send it to osmd
       setJson(recordingJSON.info);
       //Set bpm
@@ -89,7 +109,6 @@ const ProgressPlayFileVisual = (props) => {
   const handleWindowPopUp =(answer)=> {
 
     if(answer==="1"){ //"yes"
-      console.log("You choose option 1")
       setShowPopUpWindow(false)
       deleteRecording(recordingID).then(() => {
         navigate(-1);
@@ -101,7 +120,6 @@ const ProgressPlayFileVisual = (props) => {
       //Delete recording actions required FIXME
 
     }else{ //"no"
-      console.log("You choose option 2")
       setShowPopUpWindow(false)
       //No other actions required
     }
@@ -158,9 +176,10 @@ const ProgressPlayFileVisual = (props) => {
       console.error('Error playing audio:', error);
     }
   };
-  const stopAudio = () => {
+  
+  const stopAudio = async () => {
     audioContext.close().then(() => {
-      audioContext = new (window.AudioContext || window.webkitAudioContext)();
+      audioContext = new (window.AudioContext)();
     });;
   };
 
@@ -232,7 +251,7 @@ const ProgressPlayFileVisual = (props) => {
       };
       repeatLayersButton.addEventListener("click", handleRepeatLayersButtonClick);
       repeatLayersButton.addEventListener("mousemove", handleRepeatLayersMouseOver);
-      repeatLayersButton.addEventListener("mouseout", handleRepeatLayersMouseLeave);
+      repeatLayersButton.addEventListener("mouseout", handleRepeatLayersMouseLeave); 
     
       return () => {
         repeatLayersButton.removeEventListener("click", handleRepeatLayersButtonClick);
@@ -243,6 +262,13 @@ const ProgressPlayFileVisual = (props) => {
       }
     };
   }, [recordVol, zoom, recordInactive, repeatsIterator, visualMode, showRepetitionMessage, json, songFile, cursorFinished, cursorJumped]);
+
+  useEffect(() => {
+    return () => {
+      stopAudio();
+    };
+  }, [newUrl])
+
 
   return (
     
@@ -296,7 +322,14 @@ const ProgressPlayFileVisual = (props) => {
             </div>
           </Button>
         </div>
-        <ModeInfoButton message={2}/> 
+        <ModeInfoButton 
+          message={2}
+          title={metaData.name}
+          stars={metaData.stars}
+          date={metaData.date}
+          skill={metaData.skill}
+          lesson={metaData.lesson}
+          score={metaData.score}/> 
 
         </div>
     </Wrapper>

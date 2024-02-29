@@ -34,7 +34,7 @@ const StatsRecentRecordings = (props) => {
     const id = recordingIds[recordingNames.indexOf(nameOfFile)];
     const score = recordingScoresXML[recordingNames.indexOf(nameOfFile)];
     //Pass recording ID to ProgressPlayfileVisual
-    navigate(`/ListRecordings/${score}`, {state:{'recordingID':id}})
+    navigate(`/ListRecordings/${score}`, {state:{'id':id}})
   }
 
 

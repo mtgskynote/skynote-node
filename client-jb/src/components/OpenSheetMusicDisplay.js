@@ -624,7 +624,17 @@ class OpenSheetMusicDisplay extends Component {
         const colors = aux.map(innerArray => innerArray.map(subArray => subArray[1])).flat();
         const n_green = colors.filter(color => color === "#00FF00").length;
         const n_total= colors.length;
-        n_stars=Math.floor(3*n_green/n_total) //3 because max = 3 stars
+        const proportion=n_green/n_total;
+        if (proportion>=0.8){
+          n_stars=3
+        }else if(proportion>=0.6 && proportion<0.8){
+          n_stars=2
+        }else if(proportion>=0.3 && proportion<0.6){
+          n_stars=1
+        }else{
+          n_stars=0
+        }
+        
         this.calculatePunctuation=false
       }else{ //If recording is only a part of the score
         //No punctuation

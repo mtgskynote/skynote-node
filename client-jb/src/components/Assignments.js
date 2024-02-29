@@ -1,9 +1,10 @@
-import React, { useEffect, useState } from "react";
-import {useNavigate } from 'react-router-dom';
+import React, { useEffect, useState, useRef } from "react";
+import {createRoutesFromElements, useNavigate } from 'react-router-dom';
 import { useAppContext } from "../context/appContext";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import AssignmentsCSS from './Assignments.module.css'
 import { getAllAssignments, putAssignment, deleteAssignment } from "../utils/assignmentsMethods.js";
+import { getProfileData } from "../utils/usersMethods.js";
 import {
     faFileImport,
     faUser,
@@ -14,15 +15,18 @@ import {
     faBoxArchive,
     faRecordVinyl,
     faPaperPlane,
-    faBookBookmark
+    faBookBookmark,
+    faCheck,
 } from "@fortawesome/free-solid-svg-icons";
 import PopUpWindowGrades from "./PopUpWindowGrades";
 import PopUpWindowRecordings from "./PopUpWindowRecordings.js";
+import Messages from "./messages.js";
 
 const Assignments = (props) => {
     const navigate = useNavigate();
     const { getCurrentUser } = useAppContext();
     const [userData, setUserData] = useState(null);
+    const [teacherData, setTeacherData] = useState(null);
     const [scoresData, setScoresData] = useState(null);
     const [userAnnouncements, setUsertAnnouncements] = useState(null);
     const [userChat, setUsertChat] = useState(null);
@@ -32,6 +36,14 @@ const Assignments = (props) => {
     const [taskGrade, setTaskGrade] = useState(null);
     const [selectedScore, setSelectedScore] = useState(null);
     const [selectedAnnouncement, setSelectedAnnouncement] = useState(null);
+    const chatInputRef = useRef();
+    const options = {
+        year: "numeric",
+        month: "numeric",
+        day: "numeric",
+        hour: "2-digit",
+        minute: "2-digit",
+      };
     /* FOR NOW THIS CODE DOES NOT DISPLAY ANYTHING REAL */
 
 
@@ -48,7 +60,7 @@ const Assignments = (props) => {
     };
 
     const handleSeeClick = (id, scoreXML)=> {
-        navigate(`/ListRecordings/${scoreXML}`, {state:{'recordingID':id}})
+        navigate(`/ListRecordings/${scoreXML}`, {state:{'id':id}})
     }
 
     const handleRecord = (scoreXML)=> {
@@ -78,14 +90,27 @@ const Assignments = (props) => {
             setSelectedAnnouncement(null)
         }
     }
+
+    const fetchTeacherInfo = async(teacherId)=>{
+        getProfileData(teacherId).then((result)=>{
+          setTeacherData({
+                        id:result.user._id,
+                        name:result.user.name,
+                        lastName:result.user.lastName,
+                        email:result.user.email
+          })
+        })
+      }
     
     //get User Data
     useEffect(()=>{
         
         if(userData===null){
         fetchDataFromAPI();
+        }else{
+            fetchTeacherInfo(userData.teacher)
         }
-    },[])
+    },[userData])
     
     //get Scores data
     useEffect(() => {
@@ -97,131 +122,15 @@ const Assignments = (props) => {
 
     
     useEffect(()=>{
-        if(userData!==null && scoresData!==null){
+        if(userData!==null && scoresData!==null && teacherData!==null){
             //Assignments
             getAllAssignments(userData.id).then((result)=>{
                 if(result.length!==0){
                     setUsertAnnouncements(result.reverse())}
             })
-            /////////////
-            const assignmentTest = {
-                teacherId: "5d34c59c098c00453a233bf3",
-                students: ["645b6e484612a8ebe8525933"],
-                message:  "This one is just s test :)",
-                post: "2024-01-21T11:08:37.398+00:00",
-                due: "2024-01-31T11:08:37.398+00:00",
-                tasks: [
-                    {
-                        score: "64d0de60d9ac9a34a66b4d45", 
-                        answers:[
-                            {
-                                studentId: "645b6e484612a8ebe8525933",
-                                recordingId: "65ba2a351ca9199e85e76bbe",
-                                grade: 3.6,
-                                comment: "This is the wrong song mate :(",
-                            }
-                            
-                        ]
-                    }   
-                    
-                ],
-            }
-            // getAllAssignments();
-            // putAssignment(assignmentTest);
-            // deleteAssignment("65cc93e4b60b63215a289108");
-            const studentToCheck = userData.id;
-            const messages={
-                0:{
-                    _id:"message1",
-                    sender:"645b6e484612a8ebe8525933",
-                    receiver:"Anita",
-                    content:"Okay, I see, thank you!",
-                    date:"date"
-                },
-                1:{
-                    _id:"message2",
-                    sender:"Anita",
-                    receiver:"645b6e484612a8ebe8525933",
-                    content:"You just have to practice at home, in class we will go through it all over again",
-                    date:"date"
-                },
-                2:{
-                    _id:"message4",
-                    sender:"645b6e484612a8ebe8525933",
-                    receiver:"Anita",
-                    content:"I need help with my assignment. I was working all night and I couldnt understand, What do we have to do exactly?",
-                    date:"date"
-                },
-                3:{
-                    _id:"message4",
-                    sender:"645b6e484612a8ebe8525933",
-                    receiver:"Anita",
-                    content:"I need help with my assignment. I was working all night and I couldnt understand, What do we have to do exactly?",
-                    date:"date"
-                },
-                4:{
-                    _id:"message4",
-                    sender:"645b6e484612a8ebe8525933",
-                    receiver:"Anita",
-                    content:"When is the submission date?",
-                    date:"date"
-                },
-                5:{
-                    _id:"message2",
-                    sender:"Anita",
-                    receiver:"645b6e484612a8ebe8525933",
-                    content:"hello you are the bestttt",
-                    date:"date"
-                },
-                6:{
-                    _id:"message2",
-                    sender:"Anita",
-                    receiver:"645b6e484612a8ebe8525933",
-                    content:"good luck",
-                    date:"date"
-                },
-                7:{
-                    _id:"message4",
-                    sender:"645b6e484612a8ebe8525933",
-                    receiver:"Anita",
-                    content:"I need help with my assignment. I was working all night and I couldnt understand, What do we have to do exactly?",
-                    date:"date"
-                },
-                8:{
-                    _id:"message2",
-                    sender:"Anita",
-                    receiver:"645b6e484612a8ebe8525933",
-                    content:"hello you are the bestttt",
-                    date:"date"
-                },
-            }
-            const messages2=Object.values(messages)
-            let mychat={}
-            messages2.map((message,index)=>{
-                if(message.sender===studentToCheck){
-                    //My message
-                    mychat[index]={
-                        id:message._id,
-                        message:message.content,
-                        student:true,
-                        date:message.date,
-                        teacher:message.teacher,
-                    }
-                }else{
-                    //Teacher message
-                    mychat[index]={
-                        id:message._id,
-                        message:message.content,
-                        student:false,
-                        date:message.date,
-                        teacher:message.teacher,
-                    }
-                }
-            })
-            setUsertChat(mychat)
-            //////////////////////////////////////////////////////////////////////////
         }
-      },[userData, scoresData])
+      },[userData, scoresData, teacherData])
+
 
   
   return (
@@ -231,7 +140,7 @@ const Assignments = (props) => {
             {userAnnouncements!==null?
             userAnnouncements.map((announcement,index)=>{
                 return(
-                <div className={AssignmentsCSS.tableBox}> 
+                <div className={AssignmentsCSS.tableBox} key={index}> 
                 <div>
                     <div className={AssignmentsCSS.header}> 
                     {
@@ -246,7 +155,7 @@ const Assignments = (props) => {
                     </div>
                     <div className={AssignmentsCSS.announcementBody}> 
                         <div className={AssignmentsCSS.teacher}> 
-                            {announcement.teacher}   <FontAwesomeIcon icon={faUser} className={AssignmentsCSS.userIcon}/>  said...
+                            {teacherData.name}   <FontAwesomeIcon icon={faUser} className={AssignmentsCSS.userIcon}/>  said...
                         </div>
                         <div className={AssignmentsCSS.message}> 
                             {announcement.message}
@@ -309,50 +218,7 @@ const Assignments = (props) => {
             }):<div>No announcements yet</div>}
         </div>
         <div className={AssignmentsCSS.right}>
-            <div className={AssignmentsCSS.chatGroup}> 
-                <div className={AssignmentsCSS.chatHeader}> 
-                    <div className={AssignmentsCSS.teacher}> 
-                        Your conversation with Anita   <FontAwesomeIcon icon={faUser} className={AssignmentsCSS.userIcon}/>
-                    </div>
-                </div>
-                <div className={AssignmentsCSS.chat}>
-                    {userChat!==null?
-                    Object.values(userChat).map((message,index)=>{
-                        return(
-                            message.student?
-                                <div className={AssignmentsCSS.chatItemStudent}>
-                                    {message.message}
-                                    <div className={AssignmentsCSS.chatItemDate}>
-                                        {message.date}
-                                    </div>
-                                </div>:
-                                <div className={AssignmentsCSS.chatItemTeacher}>
-                                    {message.message}
-                                    <div className={AssignmentsCSS.chatItemDate}>
-                                        {message.date}
-                                    </div>
-                                </div>
-
-                            
-                            
-                        )
-                    }):
-                    <div>No messages yet</div>
-                    
-                    
-                    }
-                </div>
-                <div className={AssignmentsCSS.textGroup}>
-                    <button className={AssignmentsCSS.button}><FontAwesomeIcon icon={faPaperPlane} className={AssignmentsCSS.sendIcon}/> </button>
-                    <textarea 
-                        type="text"
-                        id="userInput"
-                        placeholder="Type here..."
-                        className={AssignmentsCSS.textInput} 
-                    /> 
-                    
-                </div>
-            </div>
+            {userData!==null?<Messages user={userData} teacher={teacherData}/>:<Messages/> /*FIXME*/} 
         </div>
         {popUpWindowGrade?<PopUpWindowGrades handlerBack={handleSeeGrades} comment={taskComment} grade={taskGrade}/>:""}
         {popUpWindowRecordings?<PopUpWindowRecordings handlerBack={handleSelectRecording} scoreId={selectedScore} userId={userData.id} announcementId={selectedAnnouncement}/>:""}

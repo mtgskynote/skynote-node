@@ -17,12 +17,11 @@ import {
 
 const ControlBarVisual = (props) => {
   //Volume and zoom variables
-  const [volume, setVolume] = useState(0.5);
+  const [volume, setVolume] = useState(0);
   const [zoom, setZoom] = useState(1);
   const [metronomeVol, setMetronomeVol] = useState(0);
   const [bpm, setBPM] = useState(100);
-  //const [deleteWanted, setDeletedWanted] = useState(false);
-  const [setDeletedWanted] = useState(false);
+  const [deleteWanted, setDeletedWanted] = useState(false);
 
   useEffect(() => {
 
@@ -164,6 +163,7 @@ const ControlBarVisual = (props) => {
                             value={volume}
                             onChange={handleVolumeChange}
                             title="audio-volume"
+                            disabled={true}
                           />
                         </div>
                         <div>

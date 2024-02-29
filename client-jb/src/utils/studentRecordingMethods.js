@@ -115,4 +115,25 @@ async function deleteRecording(recordingId) {
     }
 }
 
-export { getRecData, getAllRecData, getRecording, putRecording, deleteRecording, patchViewPermissions };
+/* editRecording  --------------
+*/
+async function editRecording(id, name) {           
+    try {
+        const response = await axios.put("/api/v1/recordings/editRecording", {id: id, name:name});
+        //console.log(`response from putRecording was ${JSON.stringify(response.data)}`);
+        if (response.status===200) { /* 200 is the status code for a successful PUT */
+            console.log('editRecording  returned OK')
+            return response.data; 
+        } else {
+            console.log('editRecording failed!')
+            return null;
+        }
+    } catch (error) {
+        console.error('Error on axios editRecording', error);
+    }
+}
+
+
+
+
+export { getRecData, getAllRecData, getRecording, putRecording, deleteRecording, patchViewPermissions, editRecording};

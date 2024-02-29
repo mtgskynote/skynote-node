@@ -3,18 +3,16 @@ import {useEffect, useState } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { Button} from "@material-ui/core";
 //import { Dropdown } from "react-bootstrap";
+import ModeInfoButtonCSS from './ModeInfoButton.module.css';
 
 import {
     faInfoCircle, //info circle
 } from "@fortawesome/free-solid-svg-icons";
+import { faStar, faMusic, faPencilSquare, faBoxArchive } from "@fortawesome/free-solid-svg-icons";
 
 const ModeInfoButton = (props) => {
 
   const [showMessage, setShowMessage] = useState(false);
-
-  useEffect(() => {
-    
-  }, [props]);
 
   const ModeInfoMessage = () => {
 
@@ -41,21 +39,52 @@ const ModeInfoButton = (props) => {
       );
     }else if(props.message===2){
       return (
-        <div className="mode-info-message">
-          <h4>Info</h4>
-          <p>You are visualizing your recording. Click "play" to listen to it or iterate through the different repetitions</p>
+        <div className={ModeInfoButtonCSS.container}>
+          <div className={ModeInfoButtonCSS.message}>
+            <p>Your recording...</p>
+          </div>
+            <div className={ModeInfoButtonCSS.recBox}>
+              <div className={ModeInfoButtonCSS.recTitle}><h5 >{props.title}</h5></div>
+              <div className={ModeInfoButtonCSS.textGroup}>
+              <div><h6>
+                <FontAwesomeIcon icon={faMusic} className={ModeInfoButtonCSS.auxIcon}/>
+                {props.score}
+              </h6></div>
+              <div><h6 >
+                <FontAwesomeIcon icon={faPencilSquare} className={ModeInfoButtonCSS.auxIcon}/>
+                {props.skill}
+              </h6></div>
+              <div><h6 >
+                <FontAwesomeIcon icon={faBoxArchive} className={ModeInfoButtonCSS.auxIcon}/>
+                Level {props.level}
+              </h6></div>
+            </div>
+              <div className={ModeInfoButtonCSS.starsGroup}>
+                <FontAwesomeIcon icon={faStar} className={props.stars>=1 ? ModeInfoButtonCSS.completeStar : ModeInfoButtonCSS.incompleteStar}/>
+                <FontAwesomeIcon icon={faStar} className={props.stars>=2 ? ModeInfoButtonCSS.completeStar : ModeInfoButtonCSS.incompleteStar}/>
+                <FontAwesomeIcon icon={faStar} className={props.stars>=3 ? ModeInfoButtonCSS.completeStar : ModeInfoButtonCSS.incompleteStar}/>
+              </div>
+              <div className={ModeInfoButtonCSS.dateTime}>
+                <i>{props.date}</i>
+              </div>
+            </div>
+          <div className={ModeInfoButtonCSS.message}>
+            <h4>Info</h4>
+            <p>Click "play" to listen to your recording,  or iterate through the different repetitions</p>
+          </div>
         </div>
-      );
-    }
+          
+        );
+      }
     }
     
 
   const handleMouseOver = (event) => {
-    console.log("Show message")
+    // console.log("Show message")
     setShowMessage(true);
   };
   const handleMouseLeave = () => {
-    console.log("Hide message")
+    // console.log("Hide message")
     setShowMessage(false);
     
   };
@@ -76,7 +105,7 @@ const ModeInfoButton = (props) => {
             />
         </div>
       </Button> 
-      {showMessage && <div className="message">{ModeInfoMessage()}</div>} 
+      {showMessage && <div className={ModeInfoButtonCSS.body}>{ModeInfoMessage()}</div>} 
     </div>             
   );
 
