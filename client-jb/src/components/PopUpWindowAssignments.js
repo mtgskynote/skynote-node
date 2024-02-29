@@ -14,7 +14,7 @@ const PopUpWindowAssignments = (props) => {
   // Assuming you have an array of students
   const students = [
     { id: '645b6e484612a8ebe8525933', name: 'Luna' },
-    { id: 'anotherStudentId', name: 'Sam' },
+    { id: '63f5ec964b6cde570ab031f9', name: 'Abhishek Choubey' },
     { id: 'anotherStudentId', name: 'Lonce' },
     { id: 'anotherStudentId', name: 'Amaia' },
     { id: 'anotherStudentId', name: 'Alvaro' },
@@ -28,18 +28,28 @@ const PopUpWindowAssignments = (props) => {
   const handleCreate = (event) => {
     console.log("Submitting...(not really:/)")
     event.preventDefault();
-    const studentsInputValue = studentsInputRef.current.value;
+    const studentsInputValue = Array.from(studentsInputRef.current.selectedOptions).map(option => option.value);
     const messageInputValue = messageInputRef.current.value;
     const dueInputValue = dueInputRef.current.value + "T23:59:59.000+00:00";
-    const tasksInputValue = tasksInputRef.current.value;
+    // const tasksInputValue = Array.from(tasksInputRef.current.selectedOptions).map(option => option.value);
+    const tasksInputValue = Array.from(tasksInputRef.current.selectedOptions).map(option => ({ score: option.value }));
     const postDate = new Date().toISOString();
 
-    console.log("TODOOOO:\n", studentsInputValue, messageInputValue, dueInputValue, tasksInputValue, postDate);
-    //Now I need to create an assignmentObject with all the info (add teacherId and postDate), and then upload it to the DB
-    // assignmentObject = 
-    // putAssignment(assignmentObject);
-    
-    // handleClose();
+    //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    //TEACHER ID IS FIXED CAUSE WE CURRENTLY DON'T HAVE TEACHER SPECIFIC ACCOUNTS, PLUS, THIS IS JUST FOR TESTING SO IT NEEDS TO
+    // REVIEWED BEFORE MOVING IT TO THE ACTUAL CODE
+    const assignmentTest = {
+      teacherId: "5d34c59c098c00453a233bf3",
+      students: studentsInputValue,
+      message:  messageInputValue,
+      post: postDate,
+      due: dueInputValue,
+      tasks: tasksInputValue,
+    }
+    //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    // UNCOMMENT THIS AFTER DEBUGGING
+    putAssignment(assignmentTest);
+    handleClose();
   }
   useEffect(() => {
 
@@ -57,71 +67,71 @@ const PopUpWindowAssignments = (props) => {
   } else {
     return (
       <div className={PopUpWindowCSS.popUpWindowAssignments}>
-          <div className={PopUpWindowCSS.titleAssignments}>Create new assignment</div>
-          <div className={PopUpWindowCSS.contentAssignments}>
+        <div className={PopUpWindowCSS.titleAssignments}>Create new assignment</div>
+        <div className={PopUpWindowCSS.contentAssignments}>
           <form onSubmit={handleCreate}>
-                  <div className={PopUpWindowCSS.field}>
-                    <label htmlFor="studentIds" className={PopUpWindowCSS.profilelabel}>Students (Ctrl+click to select more than one)</label>
-                    <select
-                      className={PopUpWindowCSS.profileinput}
-                      id="studentIds"
-                      name="studentIds"
-                      ref={studentsInputRef}
-                      multiple
-                      required
-                    >
-                      {students.map((student, index) => (
-                        <option key={index} value={student.id}>{`${student.name}`}</option>
-                      ))}
-                    </select>
-                  </div>
+            <div className={PopUpWindowCSS.field}>
+              <label htmlFor="studentIds" className={PopUpWindowCSS.profilelabel}>Students (Select only one)</label>
+              <select
+                className={PopUpWindowCSS.profileinput}
+                id="studentIds"
+                name="studentIds"
+                ref={studentsInputRef}
+                multiple
+                required
+              >
+                {students.map((student, index) => (
+                  <option key={index} value={student.id}>{`${student.name}`}</option>
+                ))}
+              </select>
+            </div>
 
-                  <div className={PopUpWindowCSS.itemAssignments}>
-                    <label htmlFor="message" className={PopUpWindowCSS.profilelabel}>Message</label>
-                    <input
-                      className={PopUpWindowCSS.inputTextAssignments}
-                      type="text"
-                      id="message" 
-                      name="message"
-                      placeholder='Write your message here'
-                      ref={messageInputRef}
-                      required
-                    />
-                  </div>
+            <div className={PopUpWindowCSS.itemAssignments}>
+              <label htmlFor="message" className={PopUpWindowCSS.profilelabel}>Message</label>
+              <input
+                className={PopUpWindowCSS.inputTextAssignments}
+                type="text"
+                id="message" 
+                name="message"
+                placeholder='Write your message here'
+                ref={messageInputRef}
+                required
+              />
+            </div>
 
-                  <div className={PopUpWindowCSS.itemAssignments}>
-                    <label htmlFor="due" className={PopUpWindowCSS.profilelabel}>Due date</label>
-                    <input
-                      className={PopUpWindowCSS.profileinput}
-                      type="date"
-                      id="due" 
-                      name="due"
-                      ref={dueInputRef}
-                      required
-                    />
-                  </div>
+            <div className={PopUpWindowCSS.itemAssignments}>
+              <label htmlFor="due" className={PopUpWindowCSS.profilelabel}>Due date</label>
+              <input
+                className={PopUpWindowCSS.profileinput}
+                type="date"
+                id="due" 
+                name="due"
+                ref={dueInputRef}
+                required
+              />
+            </div>
 
-                  <div className={PopUpWindowCSS.field}>
-                    <label htmlFor="tasks" className={PopUpWindowCSS.profilelabel}>Tasks (Ctrl+click to select more than one)</label>
-                    <select
-                      className={PopUpWindowCSS.profileinput}
-                      id="tasks"
-                      name="tasks"
-                      ref={tasksInputRef}
-                      multiple
-                      required
-                    >
-                      {fetchedData.map((title, index) => (
-                        <option key={index} value={title._id}>{`${title.title} (level ${title.level})`}</option>
-                      ))}
-                    </select>
-                  </div>
-                  <div className={PopUpWindowCSS.buttonGroupAssignments}  >
-                  <button className={PopUpWindowCSS.buttonCloseAssignments} type="submit">Save Changes</button>
-                  <button className={PopUpWindowCSS.buttonCloseAssignments} onClick={handleClose}>Close</button>
-                  </div>
-                </form>
-          </div>
+            <div className={PopUpWindowCSS.field}>
+              <label htmlFor="tasks" className={PopUpWindowCSS.profilelabel}>Tasks (Select only one)</label>
+              <select
+                className={PopUpWindowCSS.profileinput}
+                id="tasks"
+                name="tasks"
+                ref={tasksInputRef}
+                multiple
+                required
+              >
+                {fetchedData.map((title, index) => (
+                  <option key={index} value={title._id}>{`${title.title} (level ${title.level})`}</option>
+                ))}
+              </select>
+            </div>
+            <div className={PopUpWindowCSS.buttonGroupAssignments}  >
+            <button className={PopUpWindowCSS.buttonCloseAssignments} type="submit">Save Changes</button>
+            <button className={PopUpWindowCSS.buttonCloseAssignments} onClick={handleClose}>Close</button>
+            </div>
+          </form>
+        </div>
       </div>
     );
   };
