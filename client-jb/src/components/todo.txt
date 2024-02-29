@@ -15,7 +15,7 @@ BEFORE AMAIA LEAVES:
   and teacher assigned or list of students (with Id,so that they are available always?) DONE (teacherID is saved)
 - (DONE) Change teacher ID manually introduced by the one stored locally, and additionally, call DB to get teachers name 
   when needed (stats and assignments) 
-- (ALVARO IN PROGRESS) Eventhough it will be used by the teacher in the future (meaning that this page would only appear on the teachers account) 
+- (DONE but needs to be reviewed before moving it, there is not a way to grade/comment yet) Eventhough it will be used by the teacher in the future (meaning that this page would only appear on the teachers account) 
   we could build the page where the teacher introduces assignments, because it is helpful to try out other parts 
   (like submissions, submission dates, grading), so that we dont have to create a new assignment from the database... 
   uncomfortable... easier if that page is ready. 
