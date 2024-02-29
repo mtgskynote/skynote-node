@@ -22,7 +22,7 @@
         display:flex;
         padding:0;
         flex-direction: column;
-        font-size: x-small;
+        font-size: 15px;
     }
     .left {
         height: 50vh;
@@ -36,6 +36,9 @@
         height:50vh;
         border:solid #bababa 2px;
         
+      }
+      body{
+        font-size: smaller;
       }
     }
 .tableBox{
