@@ -23,7 +23,10 @@ const LineChart = (props) => {
 
 
     // Set a threshold for the distance; adjust as needed
-    const distanceThreshold = props.pitchIndex[1]!==0?(props.pitchIndex[1]+1):(props.pitchIndex[2]+1);
+    const distanceThreshold = rect.width*0.6;
+          //To jump between notes: props.pitchIndex[1]!==0?(props.pitchIndex[1]+1):(props.pitchIndex[2]+1);
+          //To avoid line joining when jumping score lines: rect.width*0.6 (0.6 or whatever ratio <0.9)
+                                            
     for (let i = 1; i < (props.pitchDataPosX).length; i++) {
       if(props.showingRep===props.repetitionNumber[i] && props.pitchColor[i]!=="#FFFFFF"){
         // get coordinates (x,y)
