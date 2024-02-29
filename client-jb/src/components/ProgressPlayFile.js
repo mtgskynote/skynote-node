@@ -351,6 +351,7 @@ const ProgressPlayFile = (props) => {
       setStartPitchTrack(false);
       setShowPitchTrack(false)
       setRecordInactive(true) //Set to true, just like the initial state
+      setBpm(100) //set bpm to original value, 100
       
     };
    recordModeButton.addEventListener("click", handleRecordModeButtonClick);
