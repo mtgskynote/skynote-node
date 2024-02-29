@@ -1,4 +1,4 @@
-// opensheetmusicdisplay.js
+// opensheetmusicdisplay.jsimports
 // necessary imports
 import React, { Component } from "react";
 import { OpenSheetMusicDisplay as OSMD } from "opensheetmusicdisplay"; //RepetitionInstruction

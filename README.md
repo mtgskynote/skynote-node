@@ -79,17 +79,18 @@ d) Once you have cloned the osmd-extended repo and built the minified version,
 
 i) first do: npm i opensheetmusicdisplay
 
-ii) **No need to edit the package.json files** which for the server looks like this:
+ii) **No need to edit the package.json files** which for the client looks like this: 
 
         "dependencies": {
             "opensheetmusicdisplay": "^1.8.4",
         }
+    
+    but after the build, make sure to get the extended ver min.js file into
+          /client-jb/node_modules/opensheetmusicdisplay/build/ 
+    
+    the server should have no mention of osmd at all.
+    
 
-    and for the client looks like this: 
-
-        “dependencies”: {
-            "opensheetmusicdisplay”: “file:opensheetmusicdisplay.min.js",
-        }
 
 e) Then copy /build folder of your extended osmd to  skynote-node/node-modules/opensheetmusicdisplay/ (actually, you really only need to put the ...min.js file there.)
 
