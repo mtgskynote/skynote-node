@@ -19,8 +19,8 @@ BEFORE AMAIA LEAVES:
   we could build the page where the teacher introduces assignments, because it is helpful to try out other parts 
   (like submissions, submission dates, grading), so that we dont have to create a new assignment from the database... 
   uncomfortable... easier if that page is ready. 
-- (AMAIA IN PROGRESS) - when user opens chat, change to "seen" messages sent from the teacher
-- (AMAIA IN PROGRESS ) "General information" section in dashboard Stats.js is not finished, it is fixed and should show DB info.
+- DONE - when user opens chat, change to "seen" messages sent from the teacher
+- DONE "General information" section in dashboard Stats.js is not finished, it is fixed and should show DB info.
   
 With this the students part is ready: a student can see the available lessons, can record, can store, can delete, can modify names, 
 can see what assignments are assigned to them, can provide answers to the tasks, can see the grades, can chat with teacher.

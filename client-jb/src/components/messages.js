@@ -1,6 +1,6 @@
 import React, { useEffect, useState, useRef} from 'react';
 import AssignmentsCSS from './Assignments.module.css'
-import {getMessages, putMessage} from "../utils/messagesMethods.js";
+import {getMessages, putMessage, updateMessageSeen} from "../utils/messagesMethods.js";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
     faUser,
@@ -24,7 +24,7 @@ const Messages = (props) => {
       };
     const fetchChat =()=>{
         let mychat={}
-
+        // get chat messages to display
         getMessages(user.id, teacher.id).then((result)=>{ 
             const messages=result
             messages.map((message,index)=>{
@@ -52,7 +52,17 @@ const Messages = (props) => {
             })
             setUserChat(mychat)
             setAux(aux+1)
-        }) 
+        }).catch((error) => {
+            console.log(`getMessages() error: ${error}`)
+            // Handle errors if necessary
+          })
+
+        // set to seen=true all messages sent by teacher to current student
+        //(if student opens the chat we understand that they read all the messages)
+        updateMessageSeen(user.id, teacher.id).catch((error) => {
+            console.log(`updateMessageSeen() error: ${error}`)
+            // Handle errors if necessary
+          })
         
     }
 

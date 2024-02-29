@@ -116,6 +116,30 @@ const getAllMessages = async (req, res) => {
       }
     }
 
+    const updateMessageSeen = async (req, res) => {   
+      const user1Id=req.body.user1;
+      const user2Id=req.body.user2;
+      try {
+        let updatedMessage = await Message.updateMany(
+            {
+              sender: mongoose.Types.ObjectId(user2Id), receiver: mongoose.Types.ObjectId(user1Id)
+            },
+            {
+                $set:
+                    {seen:true}
+                
+            },
+        );
   
+        if (!updatedMessage) {
+            return res.status(404).json({ error: "Message not found" });
+        }
+  
+        res.status(200).json(updatedMessage);
+    } catch (error) {
+        console.error("Error updating message:", error);
+        res.status(500).json({ error: "Internal Server Error" });
+    }
+      }
 
-export { putMessage, getAllMessages };
+export { putMessage, getAllMessages, updateMessageSeen };
