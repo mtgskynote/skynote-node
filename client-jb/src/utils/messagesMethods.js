@@ -40,9 +40,8 @@ async function getMessages(user1, user2, limit = 12) {
 
 async function updateMessageSeen(user1, user2) {           
   try {
-    console.log("helloooo")
       const response = await axios.put("/api/v1/messages/updateMessageSeen", {user1: user1, user2:user2});
-      console.log(`response from updateMessageSeen was ${JSON.stringify(response.data)}`);
+      //console.log(`response from updateMessageSeen was ${JSON.stringify(response.data)}`);
       if (response.status===200) { /* 200 is the status code everything okay */
           console.log('updateAssignment  returned OK')
           return response.data; 
