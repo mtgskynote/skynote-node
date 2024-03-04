@@ -70,66 +70,68 @@ const PopUpWindowAssignments = (props) => {
       <div className={PopUpWindowCSS.popUpWindowAssignments}>
         <div className={PopUpWindowCSS.titleAssignments}>Create new assignment</div>
         <div className={PopUpWindowCSS.contentAssignments}>
-          <form onSubmit={handleCreate}>
-            <div className={PopUpWindowCSS.field}>
-              <label htmlFor="studentIds" className={PopUpWindowCSS.profilelabel}>Students (Select only one)</label>
-              <select
-                className={PopUpWindowCSS.profileinput}
-                id="studentIds"
-                name="studentIds"
-                ref={studentsInputRef}
-                multiple
-                required
-              >
-                {students.map((student, index) => (
-                  <option key={index} value={student.id}>{`${student.name}`}</option>
-                ))}
-              </select>
-            </div>
-
+          <form className={PopUpWindowCSS.form} onSubmit={handleCreate}>
             <div className={PopUpWindowCSS.itemAssignments}>
-              <label htmlFor="message" className={PopUpWindowCSS.profilelabel}>Message</label>
-              <input
-                className={PopUpWindowCSS.inputTextAssignments}
-                type="text"
-                id="message" 
-                name="message"
-                placeholder='Write your message here'
-                ref={messageInputRef}
-                required
-              />
-            </div>
+              <div className={PopUpWindowCSS.inputElementAssignments}>
+                <label htmlFor="studentIds" className={PopUpWindowCSS.formlabel}>Students</label>
+                <select
+                  className={PopUpWindowCSS.inputTextAssignments}
+                  id="studentIds"
+                  name="studentIds"
+                  ref={studentsInputRef}
+                  multiple
+                  required
+                >
+                  {students.map((student, index) => (
+                    <option key={index} value={student.id}>{`${student.name}`}</option>
+                  ))}
+                </select>
+              </div>
 
-            <div className={PopUpWindowCSS.itemAssignments}>
-              <label htmlFor="due" className={PopUpWindowCSS.profilelabel}>Due date</label>
-              <input
-                className={PopUpWindowCSS.profileinput}
-                type="date"
-                id="due" 
-                name="due"
-                ref={dueInputRef}
-                required
-              />
-            </div>
+              <div className={PopUpWindowCSS.inputElementAssignments}>
+                <label htmlFor="message" className={PopUpWindowCSS.formlabel}>Message</label>
+                <input
+                  className={PopUpWindowCSS.inputTextAssignments}
+                  type="text"
+                  id="message" 
+                  name="message"
+                  placeholder='Write your message here'
+                  ref={messageInputRef}
+                  required
+                />
+              </div>
 
-            <div className={PopUpWindowCSS.field}>
-              <label htmlFor="tasks" className={PopUpWindowCSS.profilelabel}>Tasks (Select only one)</label>
-              <select
-                className={PopUpWindowCSS.profileinput}
-                id="tasks"
-                name="tasks"
-                ref={tasksInputRef}
-                multiple
-                required
-              >
-                {fetchedData.map((title, index) => (
-                  <option key={index} value={title._id}>{`${title.title} (level ${title.level})`}</option>
-                ))}
-              </select>
+              <div className={PopUpWindowCSS.inputElementAssignments}>
+                <label htmlFor="due" className={PopUpWindowCSS.formlabel}>Due date</label>
+                <input
+                  className={PopUpWindowCSS.inputTextAssignments}
+                  type="date"
+                  id="due" 
+                  name="due"
+                  ref={dueInputRef}
+                  required
+                />
+              </div>
+
+              <div className={PopUpWindowCSS.inputElementAssignments}>
+                <label htmlFor="tasks" className={PopUpWindowCSS.formlabel}>Tasks</label>
+                <select
+                  className={PopUpWindowCSS.inputTextAssignments}
+                  id="tasks"
+                  name="tasks"
+                  ref={tasksInputRef}
+                  multiple
+                  required
+                >
+                  {fetchedData.map((title, index) => (
+                    <option key={index} value={title._id}>{`${title.title} (level ${title.level})`}</option>
+                  ))}
+                </select>
+              </div>
             </div>
-            <div className={PopUpWindowCSS.buttonGroupAssignments}  >
-            <button className={PopUpWindowCSS.buttonCloseAssignments} type="submit">Save Changes</button>
-            <button className={PopUpWindowCSS.buttonCloseAssignments} onClick={handleClose}>Close</button>
+            <div className={PopUpWindowCSS.buttonGroupAssignments}>
+            <button className={PopUpWindowCSS.buttonAssignments} type="submit">Save Changes</button>
+            <button className={PopUpWindowCSS.buttonAssignments} onClick={handleClose}>Close</button>
             </div>
           </form>
         </div>
