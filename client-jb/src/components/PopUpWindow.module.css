@@ -299,6 +299,7 @@ border: 1px solid #caddfb;
   border:#a2a2a2 1px solid;
   border-radius: 15px;
   padding: 10px 10px 10px;
+  resize: none;
 }
 .gradeAssignments{
   font-size:x-large;

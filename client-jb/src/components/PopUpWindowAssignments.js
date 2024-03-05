@@ -15,9 +15,9 @@ const PopUpWindowAssignments = (props) => {
   const students = [
     { id: '645b6e484612a8ebe8525933', name: 'Luna' },
     { id: '63f5ec964b6cde570ab031f9', name: 'Abhishek Choubey' },
-    { id: 'anotherStudentId', name: 'Lonce' },
-    { id: 'anotherStudentId', name: 'Amaia' },
-    { id: 'anotherStudentId', name: 'Alvaro' },
+    { id: '64086d1a35ae091d3376f383', name: 'Foo' },
+    { id: '641b001fb6f4609169b11e2b', name: 'Kristen' },
+    { id: '640b1a85d101afc9710bd7f3', name: 'Lonce' },
     // Add more students as needed
   ];
 
@@ -90,9 +90,8 @@ const PopUpWindowAssignments = (props) => {
 
               <div className={PopUpWindowCSS.inputElementAssignments}>
                 <label htmlFor="message" className={PopUpWindowCSS.formlabel}>Message</label>
-                <input
-                  className={PopUpWindowCSS.inputTextAssignments}
-                  type="text"
+                <textarea
+                  className={PopUpWindowCSS.inputTextAssignments} 
                   id="message" 
                   name="message"
                   placeholder='Write your message here'
