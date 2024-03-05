@@ -128,8 +128,8 @@ const Stats = () => {
         getAllAssignments(userData.id).then((result)=>{
           var taskCount=0;
           if(result.length!==0){
-              result.foreach((assignment,index)=>{   
-                assignment.tasks.foreach((task, index)=>{
+              result.map((assignment,index)=>{   
+                assignment.tasks.map((task, index)=>{
                   if(task.answer===null || task.answer===undefined){
                     taskCount=taskCount+1;
                   }
