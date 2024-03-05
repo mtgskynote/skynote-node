@@ -79,7 +79,6 @@ const ListAllRecordings = () => {
           setRecordingScores(result.map((recording)=> {
             return local.find(item => item._id === recording.scoreID).title
           }))
-          console.log("Llamaditaaaaaa!!");
         }).catch((error) => {
           console.log(`Cannot get recordings from database: ${error}`)
           // Handle errors if necessary
