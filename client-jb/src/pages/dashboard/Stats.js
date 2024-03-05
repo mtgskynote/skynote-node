@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { Chart as ChartJS, ArcElement, Tooltip, Legend } from "chart.js";
 import { useAppContext } from "../../context/appContext";
 import { getAllRecData } from "../../utils/studentRecordingMethods.js";
-import {getMessages} from "../../utils/messagesMethods.js";
+import { getMessages } from "../../utils/messagesMethods.js";
 import { getAllAssignments} from "../../utils/assignmentsMethods.js";
 import StatsCSS from './Stats.module.css'
 import PercentagesStarsStats from "../../components/StatsPercentagesStars.js";
@@ -118,11 +118,12 @@ const Stats = () => {
         getMessages(userData.id, userData.teacher).then((result)=>{
           var messageCount=0
           //I have to filter the messages sent by the teacher that have seen=false
-          result.map((message, index)=>{
-            if(message.sender===userData.teacher && message.seen===false){
-                messageCount=messageCount+1;
+          result.forEach((message, index) => {
+            // Check if the message is sent by the teacher and not seen
+            if (message.sender === userData.teacher && message.seen === false) {
+                messageCount = messageCount + 1;
             }
-          })
+          });
           setUnreadMessages(messageCount)
         }).catch((error) => {
           console.log(`Cannot get number of chat messages from database: ${error}`)
@@ -132,8 +133,8 @@ const Stats = () => {
         getAllAssignments(userData.id).then((result)=>{
           var taskCount=0;
           if(result.length!==0){
-              result.map((assignment,index)=>{   
-                assignment.tasks.map((task, index)=>{
+              result.foreach((assignment,index)=>{   
+                assignment.tasks.foreach((task, index)=>{
                   if(task.answer===null || task.answer===undefined){
                     taskCount=taskCount+1;
                   }
