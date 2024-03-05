@@ -320,4 +320,28 @@ border: 1px solid #caddfb;
   padding: 10px;
   border-radius: 10px;  }
 
-  
+/*CSS for grading assignments PopupWindow*/
+
+.popUpWindowGrading {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 400px;
+  max-width: 80%;
+  height: 800px;
+  max-height: 95%;
+  background: white;
+  border: 2px solid #4f72a1;
+  border-radius: 8px;
+  box-shadow: 0 0 20px #8e9093;
+  z-index: 1000;
+  text-align: center; /* Center text within the container */
+}
+.titleGrading{
+  padding: 20px 40px 20px;
+  font-size: 20px;
+  font-family: 'Poppins', sans-serif;
+  font-weight: bold;
+  /* padding: 10px; */
+}
