@@ -86,10 +86,10 @@ const Research = () => {
             </div>
 
 
-            <div class="dropdown">
-            <input type="checkbox" id="dropdown-toggle" class="dropdown-toggle"></input>
-            <label class="dropbtn" htmlFor="dropdown-toggle">Menu</label>
-            <div class="dropdown-content">
+            <div className="dropdown">
+            <input type="checkbox" id="dropdown-toggle" className="dropdown-toggle"></input>
+            <label className="dropbtn" htmlFor="dropdown-toggle">Menu</label>
+            <div className="dropdown-content">
               <ul>
                 <li><Link to="/landing" className="tab-link"> Home </Link></li>
                 <li><Link to="/demos" className="tab-link"> Demos </Link></li>
@@ -134,22 +134,22 @@ const Research = () => {
         <div className="addspace4"></div>
         <div className="work-section-bottom">
           {publications.map((data) => (  
-            <div class="posts">
-              <div class="card">
+            <div className="posts">
+              <div className="card">
                 <div>
-                  <div class="centercontainer">
-                    <img src={data.imagelink} class="img2" />
+                  <div className="centercontainer">
+                    <img src={data.imagelink} className="img2" />
                   </div>
                   <div align="center">
                       <p>{data.text}</p>
                     </div>
                   <div>
                   <Link
-                      // class="btn btn-outline-dark"
+                      // className="btn btn-outline-dark"
                       to={data.publicationlink}
                       target="_blank"
                     >
-                     <div class="publicationbtn">
+                     <div className="publicationbtn">
                       <p>Link</p>
                      </div> 
                     </Link>

@@ -23,10 +23,10 @@ const OurTeam = () => {
             </div>
 
 
-          <div class="dropdown">
-            <input type="checkbox" id="dropdown-toggle" class="dropdown-toggle"></input>
-            <label class="dropbtn" htmlFor="dropdown-toggle">Menu</label>
-            <div class="dropdown-content">
+          <div className="dropdown">
+            <input type="checkbox" id="dropdown-toggle" className="dropdown-toggle"></input>
+            <label className="dropbtn" htmlFor="dropdown-toggle">Menu</label>
+            <div className="dropdown-content">
               <ul>
                 <li><Link to="/landing" className="tab-link"> Home </Link></li>
                 <li><Link to="/demos" className="tab-link"> Demos </Link></li>
@@ -49,7 +49,7 @@ const OurTeam = () => {
         </div>
         <div className="addspace1"></div>
          <div className="work-section-top">
-         <div class="top-p-container">
+         <div className="top-p-container">
         <h1> Our Team</h1>
         <div>
           <br></br>
@@ -60,9 +60,9 @@ const OurTeam = () => {
         </h2>
         </div>
         </div>
-        <div class="row">
-                <div class="column">
-                <div class="card">
+        <div className="row">
+                <div className="column">
+                <div className="card">
                     <div className="img-container">
                     <img src={lonceimg} />
                     </div>
@@ -77,7 +77,7 @@ const OurTeam = () => {
                     real-time musical  communication and notation, and audio technologies
                     for music education.
                     </p>
-                    <div class="icons">
+                    <div className="icons">
                     <a href="https://www.linkedin.com/in/lonce/" target="_blank">
                         <FaLinkedinIn />
                     </a>
@@ -85,8 +85,8 @@ const OurTeam = () => {
                 </div>
                 </div> 
 
-                <div class="column">
-                <div class="card">
+                <div className="column">
+                <div className="card">
                     <div className="img-container">
                     <img src={rafaelimg} />
                     </div>
@@ -99,7 +99,7 @@ const OurTeam = () => {
                     am passionate about Artificial Intelligence and Music, and how they can
                     help improving people's lives.
                     </p>
-                    <div class="icons">
+                    <div className="icons">
                     <a href="https://www.linkedin.com/in/rafaelr2/" target="_blank">
                         <FaLinkedinIn />
                     </a>
@@ -107,8 +107,8 @@ const OurTeam = () => {
                 </div>
                 </div>
 
-                <div class="column">
-                <div class="card">
+                <div className="column">
+                <div className="card">
                     <div className="img-container">
                     <img src={waddellimg} />
                     </div>
@@ -116,7 +116,7 @@ const OurTeam = () => {
                     <p>
                     Dr. George Waddell is Performance Research and Innovation Fellow and BMus Area Leader in Performance Science at the Royal College of Music. He is also a Module Leader and Honorary Research Associate in the Faculty of Medicine at Imperial College London. His research focusses on the evaluation of performance, including decision-making among judges and audiences and the development of evaluative skills, as well as how technology can be used to feed analytics data back to performers to enhance their practice.
                     </p>
-                    <div class="icons">
+                    <div className="icons">
                     <a
                         href="https://www.linkedin.com/in/drgeorgewaddell/"
                         target="_blank">
