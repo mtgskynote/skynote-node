@@ -56,13 +56,12 @@ const ListAllRecordings = () => {
           setUserData(result);
         }).catch((error) => {
           console.log(`getCurentUser() error: ${error}`)
-          // Handle errors if necessary
         })
       }
 
       if(userData !== null && recordingList === null){
         getAllRecData(userData.id).then((result) => {
-          setRecordingList(JSON.stringify(result));
+          setRecordingList(result);
           setRecordingNames(result.map((recording) => recording.recordingName));
           setRecordingStars(result.map((recording) => recording.recordingStars));
           setRecordingDates(result.map((recording) => {
@@ -81,14 +80,13 @@ const ListAllRecordings = () => {
           }))
         }).catch((error) => {
           console.log(`Cannot get recordings from database: ${error}`)
-          // Handle errors if necessary
         })
 
       }
-  };   
+    };   
 
     fetchDataFromAPI();
-    
+    // eslint-disable-next-line
   }, [userData, recordingList, getCurrentUser]);
 
   //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -101,11 +99,13 @@ const ListAllRecordings = () => {
 
   // Event handler for click on See
   const handleSeeClick = (index)=> {
-      const recording = JSON.parse(recordingList)[index];
-      const scoreName=recordingScores[index]
-      const scoreXML=localData.find(item => item.title === scoreName).fname
-      navigate(`/ListRecordings/${scoreXML}`, {state:{'id':recording.recordingId}})
-    }
+    console.log("recordingList:\n", typeof recordingList, recordingList);
+    console.log("recording:\n", recordingList[index]);
+    const recording = recordingList[index];
+    const scoreName=recordingScores[index]
+    const scoreXML=localData.find(item => item.title === scoreName).fname
+    navigate(`/ListRecordings/${scoreXML}`, {state:{'id':recording.recordingId}})
+  }
 
     // Event handler for click on Edit
   const handleEditClick = (action, nameOfFile)=> {
@@ -127,26 +127,26 @@ const ListAllRecordings = () => {
 
   // Event handler for click on Trash
   const handleTrashClick = (nameOfFile, index) => {
+    console.log("Deleting:\n", nameOfFile, "\nwith number:\n", index)
     if (recordingNames.indexOf(nameOfFile) !== -1) {
-      const idToDelete = JSON.parse(recordingList)[recordingNames.indexOf(nameOfFile)].recordingId;
+      const idToDelete = recordingList[recordingNames.indexOf(nameOfFile)].recordingId;
       // Delete recording entry of state arrays
       const auxArrayNames = recordingNames.filter((item, index) => index !== recordingNames.indexOf(nameOfFile));
-      const auxArrayList = JSON.parse(recordingList).filter((item, index) => index !== recordingNames.indexOf(nameOfFile));
+      const auxArrayList = recordingList.filter((item, index) => index !== recordingNames.indexOf(nameOfFile));
       const auxRecordingStars = recordingStars.filter((item, index) => index !== recordingNames.indexOf(nameOfFile));
       const auxRecordingScores = recordingScores.filter((item, index) => index !== recordingNames.indexOf(nameOfFile));
       const auxRecordingDates = recordingDates.filter((item, index) => index !== recordingNames.indexOf(nameOfFile));
       const auxRecordingSkills = recordingSkills.filter((item, index) => index !== recordingNames.indexOf(nameOfFile));
       const auxRecordingLevels = recordingLevels.filter((item, index) => index !== recordingNames.indexOf(nameOfFile));
       // Delete recording from database
-      console.log("Deleting: ", idToDelete);
       deleteRecording(idToDelete).then(() => {
         setRecordingNames(auxArrayNames);
-        setRecordingList(auxArrayList);
+        setRecordingList((auxArrayList));
         setRecordingStars(auxRecordingStars)
         setRecordingScores(auxRecordingScores)
-        setRecordingScores(auxRecordingDates)
-        setRecordingLevels(auxRecordingLevels)
+        setRecordingDates(auxRecordingDates)
         setRecordingSkills(auxRecordingSkills)
+        setRecordingLevels(auxRecordingLevels)
       }).catch((error) => {
         console.log(`Cannot delete recordings from database: ${error}`)
       })
