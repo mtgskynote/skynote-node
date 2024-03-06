@@ -28,7 +28,7 @@ const MainMenu = () => {
   return (
     <div className={MainMenuCSS.dropdown} position="absolute"> 
       <input type="checkbox" id="dropdown-toggle" className={MainMenuCSS.dropdown_toggle}></input>
-      <label className={MainMenuCSS.dropbtn} for="dropdown-toggle">Menu</label>
+      <label className={MainMenuCSS.dropbtn} htmlFor="dropdown-toggle">Menu</label>
       <div className={MainMenuCSS.dropdown_content}>
 
       <div className="nav-links" id="dropdown-content">

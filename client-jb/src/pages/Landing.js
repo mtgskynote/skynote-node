@@ -34,7 +34,7 @@ const Landing = () => {
 
           <div class="dropdown">
             <input type="checkbox" id="dropdown-toggle" class="dropdown-toggle"></input>
-            <label class="dropbtn" for="dropdown-toggle">Menu</label>
+            <label class="dropbtn" htmlFor="dropdown-toggle">Menu</label>
             <div class="dropdown-content">
               <ul>
                 <li><Link to="/landing" className="tab-link"> Home </Link></li>
