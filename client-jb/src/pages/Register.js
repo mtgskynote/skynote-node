@@ -3,8 +3,8 @@ import { useNavigate } from "react-router-dom";
 import { Logo, FormRow, Alert } from "../components";
 import Wrapper from "../assets/wrappers/RegisterPage";
 import { useAppContext } from "../context/appContext";
-import { Link } from "react-router-dom";
-import WhiteLogo from "../components/WhiteLogo";
+// import { Link } from "react-router-dom";
+// import WhiteLogo from "../components/WhiteLogo";
 import "bootstrap/dist/css/bootstrap.min.css";
 
 // import { useGoogleLogin } from "@react-oauth/google";
@@ -28,9 +28,9 @@ function Register() {
   const { user, isLoading, showAlert, displayAlert, setupUser } =
     useAppContext();
 
-  const toggleMember = () => {
-    setValues({ ...values, isMember: !values.isMember });
-  };
+  // const toggleMember = () => {
+  //   setValues({ ...values, isMember: !values.isMember });
+  // };
   // global context and useNavigate later
 
   const handleChange = (e) => {

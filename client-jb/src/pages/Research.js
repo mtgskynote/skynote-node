@@ -138,7 +138,7 @@ const Research = () => {
               <div className="card">
                 <div>
                   <div className="centercontainer">
-                    <img src={data.imagelink} className="img2" />
+                    <img src={data.imagelink} alt="Write description here" className="img2" />
                   </div>
                   <div align="center">
                       <p>{data.text}</p>
