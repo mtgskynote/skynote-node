@@ -62,7 +62,7 @@ const ListRecordings = () => {
 
       if(userData !== null){
         getRecData(userData.id, scoreID).then((result) => {
-          setRecordingList(JSON.stringify(result));
+          setRecordingList(result);
           setRecordingNames(result.map((recording) => recording.recordingName));
           setRecordingStars(result.map((recording) => recording.recordingStars));
           setRecordingDates(result.map((recording) => {
@@ -94,7 +94,7 @@ const ListRecordings = () => {
 
   // Event handler for click on See
   const handleSeeClick = (nameOfFile, number)=> {
-    const recording = JSON.parse(recordingList)[recordingNames.indexOf(nameOfFile)];
+    const recording = recordingList[recordingNames.indexOf(nameOfFile)];
     //Pass recording ID to ProgressPlayfileVisual
     navigate(score, {state:{'id':recording.recordingId }})
   };
@@ -102,7 +102,7 @@ const ListRecordings = () => {
   // Event handler for click on Edit
   const handleEditClick = (action, nameOfFile)=> {
     if(action==="open"){
-      const id = JSON.parse(recordingList)[recordingNames.indexOf(nameOfFile)].recordingId;
+      const id = recordingList[recordingNames.indexOf(nameOfFile)].recordingId;
       //Store id to edit so that popupwindow can access it
       setIdSelectedEdit(id)
       // Show pop up window component
@@ -120,9 +120,9 @@ const ListRecordings = () => {
   // Event handler for click on Trash
   const handleTrashClick = (nameOfFile, number) => {
     if (recordingNames.indexOf(nameOfFile) !== -1) {
-      const idToDelete = JSON.parse(recordingList)[recordingNames.indexOf(nameOfFile)].recordingId;
+      const idToDelete = recordingList[recordingNames.indexOf(nameOfFile)].recordingId;
       const auxArrayNames = recordingNames.filter((item, index) => index !== recordingNames.indexOf(nameOfFile));
-      const auxArrayList = JSON.parse(recordingList).filter((item, index) => index !== recordingNames.indexOf(nameOfFile));
+      const auxArrayList = recordingList.filter((item, index) => index !== recordingNames.indexOf(nameOfFile));
       const auxArrayDates = recordingDates.filter((item, index) => index !== recordingNames.indexOf(nameOfFile));
       deleteRecording(idToDelete).then(() => {
         setRecordingNames(auxArrayNames);
