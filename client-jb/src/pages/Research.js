@@ -133,8 +133,8 @@ const Research = () => {
       <div className="work-section-wrapper">
         <div className="addspace4"></div>
         <div className="work-section-bottom">
-          {publications.map((data) => (  
-            <div className="posts">
+          {publications.map((data, index) => (  
+            <div className="posts" key={index}>
               <div className="card">
                 <div>
                   <div className="centercontainer">
