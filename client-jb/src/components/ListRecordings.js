@@ -51,15 +51,13 @@ const ListRecordings = () => {
     setScoreSkill(itemFoundLocalStorage.skill)
     const fetchDataFromAPI = () => {
       if(userData===null){
-      getCurrentUser() // fetchData is already an async function
-        .then((result) => {
-          setUserData(result);
-        }).catch((error) => {
-          console.log(`getCurentUser() error: ${error}`)
-          // Handle errors if necessary
-        })
+        getCurrentUser() // fetchData is already an async function
+          .then((result) => {
+            setUserData(result);
+          }).catch((error) => {
+            console.log(`getCurentUser() error: ${error}`)
+          })
       }
-
       if(userData !== null){
         getRecData(userData.id, scoreID).then((result) => {
           setRecordingList(result);
@@ -72,17 +70,16 @@ const ListRecordings = () => {
           }))
         }).catch((error) => {
           console.log(`Cannot get recordings from database: ${error}`)
-          // Handle errors if necessary
         })
 
       }
-  };   
+    };   
 
     fetchDataFromAPI();
 
     
     
-  }, [userData,recordingList]);
+  }, [userData]);
 
   //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
   // Event handler for going back
@@ -152,14 +149,14 @@ const ListRecordings = () => {
         <FontAwesomeIcon icon={faMusic} className={ListRecordingsCSS.auxIcon}/>
       </h2> 
       <div className={ListRecordingsCSS.textGroup}>
-        <div><h7 >
+        <div><h6 >
           <FontAwesomeIcon icon={faPencilSquare} className={ListRecordingsCSS.auxIcon}/>
           {scoreSkill} 
-        </h7></div>
-        <div><h7 >
+        </h6></div>
+        <div><h6 >
           <FontAwesomeIcon icon={faBoxArchive} className={ListRecordingsCSS.auxIcon}/>
           Level {scoreLevel}
-        </h7></div>
+        </h6></div>
       </div>
 
       {/* List of songs */}
