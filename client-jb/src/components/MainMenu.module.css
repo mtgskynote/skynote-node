@@ -1,6 +1,6 @@
 .dropdown {
     display: inline-block;
-    position: absolute;
+    position: fixed;
   }
 
   /* Style the dropdown button (label) */

@@ -6,12 +6,10 @@ const SharedLayout = () => {
   return (
     <Wrapper>
       <main className="dashboard">
-        <MainMenu position="absolute"></MainMenu> 
-        <div margin-top="-100px">
-          {/* <Navbar /> */}
-          <div className="dashboard-page">
-            <Outlet />
-          </div>
+        <MainMenu ></MainMenu> 
+        {/* <Navbar /> */}
+        <div className="dashboard-page">
+          <Outlet />
         </div>
       </main>
     </Wrapper>

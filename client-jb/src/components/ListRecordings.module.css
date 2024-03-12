@@ -11,6 +11,12 @@ body {
   background-color: #FFFFFF;
   padding: 20px;
 }
+.container h2 {
+  margin-bottom: 20px;
+  margin-top: 20px;
+  padding: 25px 50px;
+  text-align: center;
+}
   /*List of songs*/
 .songlist {
   background-color: #ffffff;

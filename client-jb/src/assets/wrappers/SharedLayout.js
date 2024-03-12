@@ -8,7 +8,6 @@ const Wrapper = styled.section`
   .dashboard-page {
     width: 100vw;
     margin: 0 auto;
-    padding: 2rem 0;
   }
 
   /*
