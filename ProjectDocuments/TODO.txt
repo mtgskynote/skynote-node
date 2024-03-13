@@ -1,0 +1,56 @@
+
+CUREENT TODO
+
+	"All Lessons" Page
+		Style to match rest of app
+		Default to "expanded" level view (now you have to click to expand levels)
+
+
+	OVERVIEW software documentation 
+
+	Add your own XML score
+		Design - probably show on the "All Lessons" page
+			Should be private (so need to add to student DB schema)
+
+	Music "Quality" visualizaitons on score (like the iOS version)
+
+	Get Timbre Visualization signal processing working the right way
+
+	Test Essentia.js signal processing for pitch tracking, musical qualities - compare with current Crepe/Meyda libraries for speed & ease-of-use.
+
+	Platform test: PC, Mac, Android tablets, iOs tablets, Android Phone, iPhone, (screen-size look&feel, functionality, speed/responsiveness)
+	Browser test: Chrome, Firefox, Brave, Safari (display, audio functionality)
+
+	Login through Google and Facebook accounts (? People are used to this, but it seems to have negative security and ethical implications)
+
+	Session/Practice time timer and tracking on Dashboard
+
+
+MEDIUM TERM
+
+	Teacher view design -> then teacher DB schema
+
+	Other (monophonic) instruments
+		Design interface - maybe select on Profile page, store instrument globally so that all pages are as they are now, but for correct instrument
+		Priorities:
+			Voice, cello, viola, 
+
+
+LONG TERM TODO
+
+	Score following (cursor position on music score follows user as the play)
+
+	User-generated exercises to address specific needs.
+		examples
+			exercise for trills on the 'A' string
+			scale exercises for different keys
+
+		Design 
+			Doesn't need to be private like uploaded scores, so uers can share if they want.
+
+
+
+	Polyphonic Instruments
+		Oi.
+
+
