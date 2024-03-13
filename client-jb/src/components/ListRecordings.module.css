@@ -9,7 +9,6 @@ body {
   min-height: 100vh; /* Ensure the container covers the full viewport height */
   text-align: left;
   background-color: #FFFFFF;
-  padding: 20px;
 }
 .container h2 {
   margin-bottom: 20px;

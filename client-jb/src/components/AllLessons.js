@@ -110,7 +110,9 @@ const AllLessons = () => {
   return (
     <div>
       <div className={AllLessonsCSS.title}>
-        <h1>All Lessons</h1>
+        <div>
+          <h2>All Lessons</h2>
+        </div>
       </div>
       <Box >
         <TreeView
