@@ -27,7 +27,7 @@ const Messages = (props) => {
         // get chat messages to display
         getMessages(user.id, teacher.id).then((result)=>{ 
             const messages=result
-            messages.map((message,index)=>{
+            messages.foreach((message,index)=>{
                 if(message.sender===user.id){
                     //My message
                     mychat[index]={
@@ -54,8 +54,7 @@ const Messages = (props) => {
             setAux(aux+1)
         }).catch((error) => {
             console.log(`getMessages() error: ${error}`)
-            // Handle errors if necessary
-          })
+        })
 
         // set to seen=true all messages sent by teacher to current student
         //(if student opens the chat we understand that they read all the messages)
