@@ -155,7 +155,7 @@ const ProgressPlayFile = (props) => {
 
       // upload to database
       try{
-        let result = await putRecording(jsonComplete);
+        await putRecording(jsonComplete);
       } catch (error) { 
         console.log(`error in putRecording`, error  );
       }  
@@ -204,7 +204,7 @@ const ProgressPlayFile = (props) => {
         }
         //Do like a reset:
         const playbackManager = playbackRef.current;
-        const cursor = cursorRef.current;
+        // const cursor = cursorRef.current;
         playbackManager.pause();
         playbackManager.setPlaybackStart(0);
         playbackManager.reset();
@@ -273,13 +273,13 @@ const ProgressPlayFile = (props) => {
     //Ignoring permissions allows to use the page, but audio won't be picked up and an error will show when the recorging process is finished  
     const requestMicrophonePermission = async () => {
       try {
-        const stream = await navigator.mediaDevices.getUserMedia({ audio: {
-          echoCancellation: false,
-          autoGainControl: false,
-          noiseSuppression: false,
-          latency: 0,
-          sampleRate: 22050
-        } });
+        // const stream = await navigator.mediaDevices.getUserMedia({ audio: {
+        //   echoCancellation: false,
+        //   autoGainControl: false,
+        //   noiseSuppression: false,
+        //   latency: 0,
+        //   sampleRate: 22050
+        // } });
         setCanRecord(true);
       } catch (error) {
         setCanRecord(false);
@@ -396,7 +396,7 @@ const ProgressPlayFile = (props) => {
         audioStreamer.close_not_save() //when practice mode is on, no saving
         setIsResetButtonPressed(true);
         const playbackManager = playbackRef.current;
-        const cursor = cursorRef.current;
+        // const cursor = cursorRef.current;
         //Reset
         playbackManager.pause();
         playbackManager.setPlaybackStart(0);

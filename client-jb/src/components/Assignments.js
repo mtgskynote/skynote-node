@@ -1,9 +1,9 @@
-import React, { useEffect, useState, useRef } from "react";
-import {createRoutesFromElements, useNavigate } from 'react-router-dom';
+import React, { useEffect, useState } from "react";
+import { useNavigate } from 'react-router-dom';
 import { useAppContext } from "../context/appContext";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import AssignmentsCSS from './Assignments.module.css'
-import { getAllAssignments, putAssignment, deleteAssignment } from "../utils/assignmentsMethods.js";
+import { getAllAssignments } from "../utils/assignmentsMethods.js";
 import { getProfileData } from "../utils/usersMethods.js";
 import {
     faFileImport,
@@ -14,9 +14,7 @@ import {
     faPencilSquare,
     faBoxArchive,
     faRecordVinyl,
-    faPaperPlane,
     faBookBookmark,
-    faCheck,
 } from "@fortawesome/free-solid-svg-icons";
 import PopUpWindowGrades from "./PopUpWindowGrades";
 import PopUpWindowRecordings from "./PopUpWindowRecordings.js";
@@ -29,34 +27,26 @@ const Assignments = (props) => {
     const [teacherData, setTeacherData] = useState(null);
     const [scoresData, setScoresData] = useState(null);
     const [userAnnouncements, setUsertAnnouncements] = useState(null);
-    const [userChat, setUsertChat] = useState(null);
     const [popUpWindowGrade, setPopUpWindowGrade] = useState(false);
     const [popUpWindowRecordings, setPopUpWindowRecordings] = useState(false);
     const [taskComment, setTaskComment] = useState(null);
     const [taskGrade, setTaskGrade] = useState(null);
     const [selectedScore, setSelectedScore] = useState(null);
     const [selectedAnnouncement, setSelectedAnnouncement] = useState(null);
-    const chatInputRef = useRef();
     const options = {
         year: "numeric",
         month: "numeric",
         day: "numeric",
         hour: "2-digit",
         minute: "2-digit",
-      };
-    /* FOR NOW THIS CODE DOES NOT DISPLAY ANYTHING REAL */
-
+    };
 
     const fetchDataFromAPI = () => {
-
-        getCurrentUser() // fetchData is already an async function
-          .then((result) => {
+        getCurrentUser().then((result) => {
             setUserData(result);
-          }).catch((error) => {
+        }).catch((error) => {
             console.log(`getCurentUser() error: ${error}`)
-            // Handle errors if necessary
-          })
-    
+        })
     };
 
     const handleSeeClick = (id, scoreXML)=> {
@@ -77,8 +67,8 @@ const Assignments = (props) => {
             setTaskComment(null)
             setTaskGrade(null)
         }
-        
     }
+
     const handleSelectRecording = (option, scoreId, announcementId)=> {
         if(option==="open"){
             setPopUpWindowRecordings(true)
@@ -93,22 +83,21 @@ const Assignments = (props) => {
 
     const fetchTeacherInfo = async(teacherId)=>{
         getProfileData(teacherId).then((result)=>{
-          setTeacherData({
-                        id:result.user._id,
-                        name:result.user.name,
-                        lastName:result.user.lastName,
-                        email:result.user.email
-          })
+            setTeacherData({
+                id:result.user._id,
+                name:result.user.name,
+                lastName:result.user.lastName,
+                email:result.user.email
+            })
         })
-      }
+    }
     
     //get User Data
     useEffect(()=>{
-        
-        if(userData===null){
-        fetchDataFromAPI();
-        }else{
-            fetchTeacherInfo(userData.teacher)
+        if (userData===null) {
+            fetchDataFromAPI();
+        } else {
+            fetchTeacherInfo(userData.teacher);
         }
     },[userData])
     
@@ -118,15 +107,15 @@ const Assignments = (props) => {
         const local= JSON.parse(localStorage.getItem("scoreData"));
         // save in state
         setScoresData(local);
-      }, []); // Only once
-
+    }, []); // Only once
     
     useEffect(()=>{
         if(userData!==null && scoresData!==null && teacherData!==null){
             //Assignments
             getAllAssignments(userData.id).then((result)=>{
                 if(result.length!==0){
-                    setUsertAnnouncements(result.reverse())}
+                    setUsertAnnouncements(result.reverse())
+                }
             })
         }
       },[userData, scoresData, teacherData])
@@ -147,10 +136,10 @@ const Assignments = (props) => {
                         
                     }
                         <div> 
-                            Posted on : {new Date(announcement.postDate).toLocaleDateString("es-ES", {year: "numeric",month: "numeric",day: "numeric",hour: "2-digit",minute: "2-digit",})}
+                            Posted on : {new Date(announcement.postDate).toLocaleDateString("es-ES", options)}
                         </div>
                         <div> 
-                            Due on : {new Date(announcement.dueDate).toLocaleDateString("es-ES", {year: "numeric",month: "numeric",day: "numeric",hour: "2-digit",minute: "2-digit",})}
+                            Due on : {new Date(announcement.dueDate).toLocaleDateString("es-ES", options)}
                         </div>
                     </div>
                     <div className={AssignmentsCSS.announcementBody}> 

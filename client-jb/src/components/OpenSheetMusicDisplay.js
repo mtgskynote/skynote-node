@@ -657,7 +657,7 @@ class OpenSheetMusicDisplay extends Component {
       };
 
       const jsonString = JSON.stringify(dataToSave);
-      const jsonBlob = new Blob([jsonString], { type: "application/json" });
+      // const jsonBlob = new Blob([jsonString], { type: "application/json" });
       this.props.dataToDownload(jsonString);
     }
     
@@ -788,9 +788,7 @@ class OpenSheetMusicDisplay extends Component {
                   svgElement.children[0].children[1].children[0].style.fill =
                     colorsArray[index][0][1]; // notehead
                 }
-          }} }         
-
-
+          }} }
     }
 
     // follow cursor changes
