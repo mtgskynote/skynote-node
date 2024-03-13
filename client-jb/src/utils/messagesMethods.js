@@ -27,7 +27,7 @@ async function getMessages(user1, user2, limit = 12) {
           })
         //console.log(`response from putMessage was ${JSON.stringify(response.data)}`);
         if (response.status===201) { /* 201 is the status code for a successful PUT */
-            console.log('putMessage  returned OK')
+            // console.log('putMessage  returned OK')
             return response.data.newMessage; 
         } else {
             console.log('putMessage failed!')
@@ -43,7 +43,7 @@ async function updateMessageSeen(user1, user2) {
       const response = await axios.put("/api/v1/messages/updateMessageSeen", {user1: user1, user2:user2});
       //console.log(`response from updateMessageSeen was ${JSON.stringify(response.data)}`);
       if (response.status===200) { /* 200 is the status code everything okay */
-          console.log('updateAssignment  returned OK')
+          // console.log('updateAssignment  returned OK')
           return response.data; 
       } else {
           console.log('updateAssignment failed!')

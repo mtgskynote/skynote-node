@@ -27,7 +27,7 @@ const Messages = (props) => {
         // get chat messages to display
         getMessages(user.id, teacher.id).then((result)=>{ 
             const messages=result
-            messages.foreach((message,index)=>{
+            messages.forEach((message,index)=>{
                 if(message.sender===user.id){
                     //My message
                     mychat[index]={
