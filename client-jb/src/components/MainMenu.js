@@ -26,9 +26,9 @@ const MainMenu = () => {
   document.addEventListener('click', handleOutsideClick);
 
   return (
-    <div className={MainMenuCSS.dropdown} position="absolute"> 
+    <div className={MainMenuCSS.dropdown}> 
       <input type="checkbox" id="dropdown-toggle" className={MainMenuCSS.dropdown_toggle}></input>
-      <label className={MainMenuCSS.dropbtn} for="dropdown-toggle">Menu</label>
+      <label className={MainMenuCSS.dropbtn} htmlFor="dropdown-toggle">Menu</label>
       <div className={MainMenuCSS.dropdown_content}>
 
       <div className="nav-links" id="dropdown-content">
@@ -40,7 +40,7 @@ const MainMenu = () => {
             to={path}
             key={id}
             onClick={() => {
-              console.log("clicked");
+              // console.log("clicked");
               document.getElementById("dropdown-toggle").checked = false;
             }}
             className={({ isActive }) =>

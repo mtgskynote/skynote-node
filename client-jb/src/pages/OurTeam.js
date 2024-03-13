@@ -23,10 +23,10 @@ const OurTeam = () => {
             </div>
 
 
-          <div class="dropdown">
-            <input type="checkbox" id="dropdown-toggle" class="dropdown-toggle"></input>
-            <label class="dropbtn" for="dropdown-toggle">Menu</label>
-            <div class="dropdown-content">
+          <div className="dropdown">
+            <input type="checkbox" id="dropdown-toggle" className="dropdown-toggle"></input>
+            <label className="dropbtn" htmlFor="dropdown-toggle">Menu</label>
+            <div className="dropdown-content">
               <ul>
                 <li><Link to="/landing" className="tab-link"> Home </Link></li>
                 <li><Link to="/demos" className="tab-link"> Demos </Link></li>
@@ -49,7 +49,7 @@ const OurTeam = () => {
         </div>
         <div className="addspace1"></div>
          <div className="work-section-top">
-         <div class="top-p-container">
+         <div className="top-p-container">
         <h1> Our Team</h1>
         <div>
           <br></br>
@@ -60,72 +60,70 @@ const OurTeam = () => {
         </h2>
         </div>
         </div>
-        <div class="row">
-                <div class="column">
-                <div class="card">
-                    <div className="img-container">
-                    <img src={lonceimg} />
-                    </div>
-                    <h3>Dr. Lonce Wyse</h3>
-                    <p>
-                    Lonce Wyse (Research Fellow, Music Technology Group, UPF) holds a PhD in
-                    Cognitive and Neural Systems (Boston University, 1994). He developed
-                    audio technology for research and industry in Singapore for 28 years,
-                    most recently as an Associate Professor of Communications at the 
-                    National University of Singapore. Research topics include  deep learning neural
-                    networks as interactive  sound synthesis models, sound perception,
-                    real-time musical  communication and notation, and audio technologies
-                    for music education.
-                    </p>
-                    <div class="icons">
-                    <a href="https://www.linkedin.com/in/lonce/" target="_blank">
-                        <FaLinkedinIn />
-                    </a>
-                    </div>
-                </div>
-                </div> 
+        <div className="row">
+          <div className="column">
+            <div className="card">
+              <div className="img-container">
+                <img src={lonceimg} alt="Write description here"/>
+              </div>
+              <h3>Dr. Lonce Wyse</h3>
+              <p>
+              Lonce Wyse (Research Fellow, Music Technology Group, UPF) holds a PhD in
+              Cognitive and Neural Systems (Boston University, 1994). He developed
+              audio technology for research and industry in Singapore for 28 years,
+              most recently as an Associate Professor of Communications at the 
+              National University of Singapore. Research topics include  deep learning neural
+              networks as interactive  sound synthesis models, sound perception,
+              real-time musical  communication and notation, and audio technologies
+              for music education.
+              </p>
+              <div className="icons">
+                <a href="https://www.linkedin.com/in/lonce/" target="_blank" rel="noopener noreferrer">
+                  <FaLinkedinIn />
+                </a>
+              </div>
+            </div>
+          </div> 
 
-                <div class="column">
-                <div class="card">
-                    <div className="img-container">
-                    <img src={rafaelimg} />
-                    </div>
-                    <h3>Dr. Rafael Ramirez</h3>
-                    <p>
-                    I obtained my BSc in Mathematics from UNAM, and my MSc in Artificial
-                    Intelligence and PhD in Computer Science from the University of Bristol,
-                    UK. I am currently a Professor and the Leader of the Head of the Music
-                    and Machine Learning Lab at the Universitat Pompeu Fabra, Barcelona. I
-                    am passionate about Artificial Intelligence and Music, and how they can
-                    help improving people's lives.
-                    </p>
-                    <div class="icons">
-                    <a href="https://www.linkedin.com/in/rafaelr2/" target="_blank">
-                        <FaLinkedinIn />
-                    </a>
-                    </div>
-                </div>
-                </div>
+          <div className="column">
+            <div className="card">
+              <div className="img-container">
+                <img src={rafaelimg} alt="Write description here"/>
+              </div>
+              <h3>Dr. Rafael Ramirez</h3>
+              <p>
+              I obtained my BSc in Mathematics from UNAM, and my MSc in Artificial
+              Intelligence and PhD in Computer Science from the University of Bristol,
+              UK. I am currently a Professor and the Leader of the Head of the Music
+              and Machine Learning Lab at the Universitat Pompeu Fabra, Barcelona. I
+              am passionate about Artificial Intelligence and Music, and how they can
+              help improving people's lives.
+              </p>
+              <div className="icons">
+                <a href="https://www.linkedin.com/in/rafaelr2/" target="_blank" rel="noopener noreferrer">
+                  <FaLinkedinIn />
+                </a>
+              </div>
+            </div>
+          </div>
 
-                <div class="column">
-                <div class="card">
-                    <div className="img-container">
-                    <img src={waddellimg} />
-                    </div>
-                    <h3>Dr.George Waddell</h3>
-                    <p>
-                    Dr. George Waddell is Performance Research and Innovation Fellow and BMus Area Leader in Performance Science at the Royal College of Music. He is also a Module Leader and Honorary Research Associate in the Faculty of Medicine at Imperial College London. His research focusses on the evaluation of performance, including decision-making among judges and audiences and the development of evaluative skills, as well as how technology can be used to feed analytics data back to performers to enhance their practice.
-                    </p>
-                    <div class="icons">
-                    <a
-                        href="https://www.linkedin.com/in/drgeorgewaddell/"
-                        target="_blank">
-                        <FaLinkedinIn />
-                    </a>
-                </div> 
-                </div> 
-                </div> 
+          <div className="column">
+            <div className="card">
+              <div className="img-container">
+                <img src={waddellimg} alt="Write description here"/>
+              </div>
+              <h3>Dr.George Waddell</h3>
+              <p>
+              Dr. George Waddell is Performance Research and Innovation Fellow and BMus Area Leader in Performance Science at the Royal College of Music. He is also a Module Leader and Honorary Research Associate in the Faculty of Medicine at Imperial College London. His research focusses on the evaluation of performance, including decision-making among judges and audiences and the development of evaluative skills, as well as how technology can be used to feed analytics data back to performers to enhance their practice.
+              </p>
+              <div className="icons">
+                <a href="https://www.linkedin.com/in/drgeorgewaddell/" target="_blank" rel="noopener noreferrer">
+                  <FaLinkedinIn />
+                </a>
+              </div> 
             </div> 
+          </div> 
+        </div> 
     </Wrapper>
     );
 };

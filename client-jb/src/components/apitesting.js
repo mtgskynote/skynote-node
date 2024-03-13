@@ -3,6 +3,7 @@ import { useAppContext } from "../context/appContext.js";
 import axios from "axios";
 import { timer } from './SessionTimer.js';
 import PopUpWindowAssignments from "./PopUpWindowAssignments";
+import PopUpWindowGrading from "./PopUpWindowGrading";
 
 /*
 The useEffect hook runs once when the component mounts ([] as a dependency means it runs only once).
@@ -48,6 +49,14 @@ const Apitesting = () => {
       setPopUpWindowAssignment(true)
     }else{
       setPopUpWindowAssignment(false)
+    }
+  }
+  const [popUpWindowGrading, setPopUpWindowGrading] = useState(false);
+  const gradeTask = (option) => {
+    if(option==="see"){
+      setPopUpWindowGrading(true)
+    }else{
+      setPopUpWindowGrading(false)
     }
   }
 
@@ -115,8 +124,12 @@ const Apitesting = () => {
         </div>  
         <div>
           <button onClick={() => createTask("see")}>Create task</button>
-          {popUpWindowAssignment?<PopUpWindowAssignments handlerBack={createTask} comment={"taskComment"} grade={"taskGrade"}/>:""}
-        </div>   
+          {popUpWindowAssignment?<PopUpWindowAssignments handlerBack={createTask}/>:""}
+        </div>
+        <div>
+          <button onClick={() => gradeTask("see")}>Grade task</button>
+          {popUpWindowGrading?<PopUpWindowGrading handlerBack={gradeTask}/>:""}
+        </div>    
         <div>
           <button onClick={() => postMessage("Your message here")}>postMessage</button>
         </div>

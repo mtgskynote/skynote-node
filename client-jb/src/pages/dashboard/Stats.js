@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { Chart as ChartJS, ArcElement, Tooltip, Legend } from "chart.js";
 import { useAppContext } from "../../context/appContext";
 import { getAllRecData } from "../../utils/studentRecordingMethods.js";
-import {getMessages} from "../../utils/messagesMethods.js";
+import { getMessages } from "../../utils/messagesMethods.js";
 import { getAllAssignments} from "../../utils/assignmentsMethods.js";
 import StatsCSS from './Stats.module.css'
 import PercentagesStarsStats from "../../components/StatsPercentagesStars.js";
@@ -55,14 +55,11 @@ const Stats = () => {
         setUserData(result);
       }).catch((error) => {
         console.log(`getCurentUser() error: ${error}`)
-        // Handle errors if necessary
       })
-
     };
 
     //get User Data
     useEffect(()=>{
-      
       if(userData===null){
         fetchDataFromAPI();
       }
@@ -113,20 +110,19 @@ const Stats = () => {
           setRecordingScoresIds(result.map((recording) => recording.scoreID)); 
         }).catch((error) => {
           console.log(`Cannot get recordings from database: ${error}`)
-          // Handle errors if necessary
         })
         getMessages(userData.id, userData.teacher).then((result)=>{
           var messageCount=0
           //I have to filter the messages sent by the teacher that have seen=false
-          result.map((message, index)=>{
-            if(message.sender===userData.teacher && message.seen===false){
-                messageCount=messageCount+1;
+          result.forEach((message, index) => {
+            // Check if the message is sent by the teacher and not seen
+            if (message.sender === userData.teacher && message.seen === false) {
+                messageCount = messageCount + 1;
             }
-          })
+          });
           setUnreadMessages(messageCount)
         }).catch((error) => {
           console.log(`Cannot get number of chat messages from database: ${error}`)
-          // Handle errors if necessary
         })
 
         getAllAssignments(userData.id).then((result)=>{
@@ -144,7 +140,6 @@ const Stats = () => {
           setUnansweredTasks(taskCount)
         }).catch((error) => {
           console.log(`Cannot get number of pending tasks from database: ${error}`)
-          // Handle errors if necessary
         })
 
       }
@@ -153,8 +148,7 @@ const Stats = () => {
     //When recordings info is loaded, get neeeded info 
     useEffect(()=>{
       if(recordingList!==null){
-
-        //number of stars achieved per level/////////////////
+        // number of stars achieved per level
         // store the best score for each scoreID
         const bestScores = {};
         const copy=JSON.parse(recordingList)
@@ -199,14 +193,8 @@ const Stats = () => {
 
         setRecentRecordings(allEntries)
         ////////////////////////////////////////////////////////
-
-
-
       }  
-
-
     },[recordingList, recordingNames])
-
 
   return (
     <div className={StatsCSS.container}>

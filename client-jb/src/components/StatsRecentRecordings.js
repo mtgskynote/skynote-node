@@ -12,8 +12,6 @@ import {
 import ListRecordingsCSS from './ListRecordings.module.css';
 
 
-
-
 const StatsRecentRecordings = (props) => {
     const [recordingNames, setRecordingNames] = useState(null);
     const [recordingIds, setRecordingIds] = useState(null);
@@ -141,49 +139,49 @@ const ButtonGroup = ({ nameOfFile, index }) => {
       <h4 className={StatsRecentCSS.title}>
         Your latest recordings
       </h4>
-    <div className={StatsRecentCSS.tableBox}> 
-      {data!==null?
-      <table className={StatsRecentCSS.dynamicTable}>
-      <thead>
-        <tr>
-          <th>Recording</th>
-          <th>Score</th>
-          <th>Skill</th>
-          <th>Level</th>
-          <th>Date</th>
-          <th>Stars</th>
-          <th>Actions</th>
-        </tr>
-      </thead>
-      <tbody className>
-      {data.map((rowData, rowIndex) => (
-          <tr key={rowIndex}>
-            {rowData.map((cellData, cellIndex) => (
-              <td key={cellIndex}>
-                {cellIndex === 5 ? ( // Assuming the stars column is at index 5
-                  Array.from({ length: cellData }, (_, index) => (
-                    <FontAwesomeIcon
-                      key={index}
-                      icon={faStar}
-                      className={ListRecordingsCSS.completeStar}
-                    />
-                  ))
-                ) : (
-                  cellData
-                )}
-              </td>
-            ))}
-            
-            <td>
-              <ButtonGroup nameOfFile={rowData[0]} index={rowIndex} />
-            </td>
-          </tr>
-        ))}
-      </tbody>
-    </table>
+      <div className={StatsRecentCSS.tableBox}> 
+        {data!==null?
+          <table className={StatsRecentCSS.dynamicTable}>
+            <thead>
+              <tr>
+                <th>Recording</th>
+                <th>Score</th>
+                <th>Skill</th>
+                <th>Level</th>
+                <th>Date</th>
+                <th>Stars</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody className="tableBody">
+            {data.map((rowData, rowIndex) => (
+                <tr key={rowIndex}>
+                  {rowData.map((cellData, cellIndex) => (
+                    <td key={cellIndex}>
+                      {cellIndex === 5 ? ( // Assuming the stars column is at index 5
+                        Array.from({ length: cellData }, (_, index) => (
+                          <FontAwesomeIcon
+                            key={index}
+                            icon={faStar}
+                            className={ListRecordingsCSS.completeStar}
+                          />
+                        ))
+                      ) : (
+                        cellData
+                      )}
+                    </td>
+                  ))}
+                  
+                  <td>
+                    <ButtonGroup nameOfFile={rowData[0]} index={rowIndex} />
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
 
-                :<div>No recordings to show</div>}
-    </div>
+          : <div>No recordings to show</div>}
+      </div>
     </div>
   );
 };

@@ -1,5 +1,5 @@
 .container{
-    width:100%;
+  width:100%;
 }
 .tableBox{
   height: 300px;
@@ -8,7 +8,7 @@
   padding:10px;
 }
 .dynamicTable{
-    border-collapse: collapse;
+  border-collapse: collapse;
   width: 100%;
   font-size: 15px;
 }
@@ -16,17 +16,15 @@
     font-weight: bold;
 }
 .dynamicTable tr {
-    border: 3px hidden #b1b1b1;
-    text-align: center;
-    padding: 8px;
-  }
-
-  .dynamicTable th {
-    background-color: transparent; /* Gray background for headers */
-    color:#88a2cf;
-  }
-  
-  .iconbutton{
-    border:none;
-    background-color: transparent;
-  }
+  border: 3px none #b1b1b1;
+  text-align: center;
+  padding: 8px;
+}
+.dynamicTable th {
+  background-color: transparent; /* Gray background for headers */
+  color:#88a2cf;
+}
+.iconbutton{
+  border:none;
+  background-color: transparent;
+}

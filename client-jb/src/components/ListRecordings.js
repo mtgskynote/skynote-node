@@ -51,18 +51,16 @@ const ListRecordings = () => {
     setScoreSkill(itemFoundLocalStorage.skill)
     const fetchDataFromAPI = () => {
       if(userData===null){
-      getCurrentUser() // fetchData is already an async function
-        .then((result) => {
-          setUserData(result);
-        }).catch((error) => {
-          console.log(`getCurentUser() error: ${error}`)
-          // Handle errors if necessary
-        })
+        getCurrentUser() // fetchData is already an async function
+          .then((result) => {
+            setUserData(result);
+          }).catch((error) => {
+            console.log(`getCurentUser() error: ${error}`)
+          })
       }
-
       if(userData !== null){
         getRecData(userData.id, scoreID).then((result) => {
-          setRecordingList(JSON.stringify(result));
+          setRecordingList(result);
           setRecordingNames(result.map((recording) => recording.recordingName));
           setRecordingStars(result.map((recording) => recording.recordingStars));
           setRecordingDates(result.map((recording) => {
@@ -72,17 +70,16 @@ const ListRecordings = () => {
           }))
         }).catch((error) => {
           console.log(`Cannot get recordings from database: ${error}`)
-          // Handle errors if necessary
         })
 
       }
-  };   
+    };   
 
     fetchDataFromAPI();
 
     
     
-  }, [userData,recordingList]);
+  }, [userData]);
 
   //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
   // Event handler for going back
@@ -94,7 +91,7 @@ const ListRecordings = () => {
 
   // Event handler for click on See
   const handleSeeClick = (nameOfFile, number)=> {
-    const recording = JSON.parse(recordingList)[recordingNames.indexOf(nameOfFile)];
+    const recording = recordingList[recordingNames.indexOf(nameOfFile)];
     //Pass recording ID to ProgressPlayfileVisual
     navigate(score, {state:{'id':recording.recordingId }})
   };
@@ -102,7 +99,7 @@ const ListRecordings = () => {
   // Event handler for click on Edit
   const handleEditClick = (action, nameOfFile)=> {
     if(action==="open"){
-      const id = JSON.parse(recordingList)[recordingNames.indexOf(nameOfFile)].recordingId;
+      const id = recordingList[recordingNames.indexOf(nameOfFile)].recordingId;
       //Store id to edit so that popupwindow can access it
       setIdSelectedEdit(id)
       // Show pop up window component
@@ -120,9 +117,9 @@ const ListRecordings = () => {
   // Event handler for click on Trash
   const handleTrashClick = (nameOfFile, number) => {
     if (recordingNames.indexOf(nameOfFile) !== -1) {
-      const idToDelete = JSON.parse(recordingList)[recordingNames.indexOf(nameOfFile)].recordingId;
+      const idToDelete = recordingList[recordingNames.indexOf(nameOfFile)].recordingId;
       const auxArrayNames = recordingNames.filter((item, index) => index !== recordingNames.indexOf(nameOfFile));
-      const auxArrayList = JSON.parse(recordingList).filter((item, index) => index !== recordingNames.indexOf(nameOfFile));
+      const auxArrayList = recordingList.filter((item, index) => index !== recordingNames.indexOf(nameOfFile));
       const auxArrayDates = recordingDates.filter((item, index) => index !== recordingNames.indexOf(nameOfFile));
       deleteRecording(idToDelete).then(() => {
         setRecordingNames(auxArrayNames);
@@ -152,14 +149,14 @@ const ListRecordings = () => {
         <FontAwesomeIcon icon={faMusic} className={ListRecordingsCSS.auxIcon}/>
       </h2> 
       <div className={ListRecordingsCSS.textGroup}>
-        <div><h7 >
+        <div><h6 >
           <FontAwesomeIcon icon={faPencilSquare} className={ListRecordingsCSS.auxIcon}/>
           {scoreSkill} 
-        </h7></div>
-        <div><h7 >
+        </h6></div>
+        <div><h6 >
           <FontAwesomeIcon icon={faBoxArchive} className={ListRecordingsCSS.auxIcon}/>
           Level {scoreLevel}
-        </h7></div>
+        </h6></div>
       </div>
 
       {/* List of songs */}

@@ -32,10 +32,10 @@ const Landing = () => {
           </div>
 
 
-          <div class="dropdown">
-            <input type="checkbox" id="dropdown-toggle" class="dropdown-toggle"></input>
-            <label class="dropbtn" for="dropdown-toggle">Menu</label>
-            <div class="dropdown-content">
+          <div className="dropdown">
+            <input type="checkbox" id="dropdown-toggle" className="dropdown-toggle"></input>
+            <label className="dropbtn" htmlFor="dropdown-toggle">Menu</label>
+            <div className="dropdown-content">
               <ul>
                 <li><Link to="/landing" className="tab-link"> Home </Link></li>
                 <li><Link to="/demos" className="tab-link"> Demos </Link></li>
@@ -98,8 +98,8 @@ const Landing = () => {
 
 
 
-      <div class="grid-container">
-        <div class="grid-item">
+      <div className="grid-container">
+        <div className="grid-item">
             <div className="grid-text-container">
             <h2>
               Personalized Learning
@@ -112,18 +112,18 @@ const Landing = () => {
           </div>
         </div>
 
-        <div class="grid-item">
+        <div className="grid-item">
         <Violinist/>
 
         </div>
 
         </div>
-        <div class="grid-container">
+        <div className="grid-container">
 
-        <div class="grid-item">
+        <div className="grid-item">
           <Violinist2/>
         </div>
-        <div class="grid-item">
+        <div className="grid-item">
 
             <div className="grid-text-container">
               <h2>
@@ -140,11 +140,11 @@ const Landing = () => {
 
 
         </div>
-        <div class="grid-container">
+        <div className="grid-container">
 
 
 
-        <div class="grid-item">
+        <div className="grid-item">
 
 
             <div className="grid-text-container">
@@ -161,7 +161,7 @@ const Landing = () => {
 
 
         </div>
-        <div class="grid-item">
+        <div className="grid-item">
           <Violinist3/>
         </div>
       </div>
