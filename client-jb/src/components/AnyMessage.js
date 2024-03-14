@@ -1,4 +1,5 @@
 import {useEffect, useState } from "react";
+import AnyMessageCSS from './AnyMessage.module.css'
 
 const Message = (props) => {
 
@@ -14,13 +15,13 @@ const Message = (props) => {
     borderRadius: "3px",
     boxShadow: "0 2px 4px rgba(0, 0, 0, 0.1)",
     padding: "1", // No fixed padding
-    margin: "0px",
+    margin: "50px 80px 0px",
     width: "fit-content",
     position:"fixed",
   };
 
   const Message = (
-    <div className="simple-message" style={messageStyle}>
+    <div className={AnyMessageCSS.simpleMessage}>
         <p>{message}</p>
     </div>             
   );
