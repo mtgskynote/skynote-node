@@ -201,7 +201,7 @@ const ProgressPlayFileVisual = (props) => {
           playbackManager.pause();
           //playbackManager.setPlaybackStart(0);
           playbackManager.reset();
-          //cursor.reset();
+          //cursor.reset(); //seems right, but a runtime error follows
           setStartPitchTrack(false);
           setShowPitchTrack(false)
           setPitch([])

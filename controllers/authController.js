@@ -5,9 +5,11 @@ import attachCookie from "../utils/attachCookie.js";
 
 // Register is used to register the user
 const register = async (req, res) => {
-  const { name, email, password } = req.body;
+  const { name, email, role, password } = req.body;
 
-  if (!name || !email || !password) {
+  console.log(`name=${name}, email=${email}, role=${role}, password=${password}`)
+
+  if (!name || !email || !role || !password) {
     throw new BadRequestError("please provide all values");
   }
   const userAlreadyExists = await User.findOne({ email });
@@ -15,7 +17,7 @@ const register = async (req, res) => {
     throw new BadRequestError("Email already in use");
   }
 
-  const user = await User.create({ name, email, password });
+  const user = await User.create({ name, email, role, password });
 
   const token = user.createJWT();
   //attachCookie({ res, token });
@@ -52,6 +54,7 @@ const login = async (req, res) => {
     user: {
       id:user._id,
       email: user.email,
+      role: user.role,
       name: user.name,
       id : user._id,
       role: user.role,

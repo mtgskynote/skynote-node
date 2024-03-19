@@ -208,7 +208,7 @@ const ProgressPlayFile = (props) => {
         playbackManager.pause();
         playbackManager.setPlaybackStart(0);
         playbackManager.reset();
-        //cursor.reset();
+        //cursor.reset(); //seems right, but a runtime error follows
         setStartPitchTrack(false);
         setShowPitchTrack(false)
         setRecordInactive(true) //Set to true, just like the initial state        
@@ -298,7 +298,7 @@ const ProgressPlayFile = (props) => {
   useEffect(() => {
     if(finishedTimer){
       const playbackManager = playbackRef.current;
-      playbackManager.play()
+      //playbackManager.play()
       
       //Once countdown is finished, activate Pitch tracking
       setPitch([])
@@ -346,8 +346,7 @@ const ProgressPlayFile = (props) => {
       playbackManager.pause();
       playbackManager.setPlaybackStart(0);
       playbackManager.reset();
-      console.log("cursor ", cursor)
-      //cursor.reset();
+      //cursor.reset(); //seems right, but a runtime error follows
       setStartPitchTrack(false);
       setShowPitchTrack(false)
       setRecordInactive(true) //Set to true, just like the initial state
@@ -401,7 +400,7 @@ const ProgressPlayFile = (props) => {
         playbackManager.pause();
         playbackManager.setPlaybackStart(0);
         playbackManager.reset();
-        //cursor.reset();
+        //cursor.reset(); //seems right, but a runtime error follows
         setStartPitchTrack(false);
         setShowPitchTrack(false)
         setPitch([])
