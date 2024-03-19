@@ -342,7 +342,7 @@ const ProgressPlayFile = (props) => {
       setPitch([])
       setConfidence([])
       const playbackManager = playbackRef.current;
-      const cursor = cursorRef.current;
+      // const cursor = cursorRef.current;
       playbackManager.pause();
       playbackManager.setPlaybackStart(0);
       playbackManager.reset();
