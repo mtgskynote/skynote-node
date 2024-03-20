@@ -1,5 +1,5 @@
 .myDiv {
-    background-color: rgba(173, 216, 230, 1);;
+    background-color: rgba(173, 216, 230, 1);
     justify-content: center;
     bottom: 20px;
     position: fixed;
@@ -7,54 +7,67 @@
     transform: translateX(-50%);
     width: fit-content;
     border-radius: 15px;
-    }
+}
+.myDiv[title="recordMode"] {
+    background-color: rgba(163, 205, 143, 1);
+}
+.myDiv[title="visualMode"] {
+    background-color: rgba(221, 225, 114, 1);
+}
 
-    body .controlBtn {
+body .controlBtn {
     margin: 0.3rem 0.2rem;
     border-radius: 20px;
     font-size: 1.2rem;
-    }
+}
 
-    body .controlBtn[title="record/stopRecording"] {
+body .controlBtn[title="record/stopRecording"] {
     color: rgba(237, 31, 31, 0.87);
-    }
+}
 
-    .dropDownTgl {
-        color: black;
-        margin: 0;
-        border-radius: 20px;
-        background-color: lightblue;
-    }
+.dropDownTgl {
+    color: black;
+    margin: 0;
+    border-radius: 20px;
+    background-color: rgba(173, 216, 230, 1);
+}
 
-    .playPauseIcon {
-        color: var(--primary-500);
-    }
+.dropDownTgl[title="recordMode"] {
+    background-color: rgba(163, 205, 143, 1);
+}
+.dropDownTgl[title="visualMode"] {
+    background-color: rgba(221, 225, 114, 1);
+}
 
-    .sliderContainer {
-        display: flex;
-        align-items: center;
-        margin-bottom: 10px;
-    }
+.playPauseIcon {
+    color: var(--primary-500);
+}
 
-    .sliderLabel {
+.sliderContainer {
+    display: flex;
+    align-items: center;
+    margin-bottom: 10px;
+}
+
+.sliderLabel {
     margin-right: 30px;
     font-weight: bold;
-    }
+}
 
-    .sliderInput {
+.sliderInput {
     width: 200px;
-    }
+}
 
 
-    /* > div  {
-        display: "block";
-        margin: "0 auto";
-        background-color: "lightblue";
-        justify-content: "center";
-        bottom: 20;
-        position: "fixed";
-        left: "50%"; // Adjust the horizontal position as needed
-        transform: "translateX(-50%)"; // To horizontally center the bar
-        width: "max-content";
-        border-radius: "20px";
-      } */
+/* > div  {
+    display: "block";
+    margin: "0 auto";
+    background-color: "rgba(173, 216, 230, 1)";
+    justify-content: "center";
+    bottom: 20;
+    position: "fixed";
+    left: "50%"; // Adjust the horizontal position as needed
+    transform: "translateX(-50%)"; // To horizontally center the bar
+    width: "max-content";
+    border-radius: "20px";
+    } */

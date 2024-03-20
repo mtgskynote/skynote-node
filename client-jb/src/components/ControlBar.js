@@ -1,5 +1,4 @@
 import {useEffect, useState } from "react";
-// import Wrapper from "../assets/wrappers/ControlBar";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { Button } from "@material-ui/core";
 import { Dropdown } from "react-bootstrap";
@@ -157,6 +156,7 @@ const ControlBar = (props) => {
                     <Dropdown.Toggle
                       variant="secondary"
                       className={ControlBarCSS.dropDownTgl}
+                      title="playMode"
                     >
                       <FontAwesomeIcon icon={faGear} />
                     </Dropdown.Toggle>
