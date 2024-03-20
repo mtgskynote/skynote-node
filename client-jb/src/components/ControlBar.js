@@ -130,7 +130,7 @@ const ControlBar = (props) => {
   ]
 
   const ControlBar = (
-    <div className={ControlBarCSS.myDiv}>
+    <div className={ControlBarCSS.myDiv} title="playMode">
       {titles.map((title, i) => {
         return (
           <Button key={title} className={ControlBarCSS.controlBtn} title={title} id={title} onClick={() => handlers[i](title)}>
