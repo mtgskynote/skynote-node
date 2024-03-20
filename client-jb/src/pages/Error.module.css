@@ -1,0 +1,23 @@
+.fullPage {
+    text-align: center;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column; /* Add this line */
+}
+
+.img {
+    max-width: 600px;
+    display: block;
+    margin: 2rem 0 2rem;
+}
+
+p {
+    margin-bottom: 0.5rem;
+    color: var(--grey-500);
+}
+
+a {
+    color: var(--primary-500);
+    text-transform: capitalize;
+}
