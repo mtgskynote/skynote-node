@@ -74,34 +74,34 @@ const AllLessons = () => {
 
 
   const renderTree = (level, skills) => (
-    <div className={AllLessonsCSS.level}>
-    <TreeItem key={level} nodeId={level} label={`Level ${level}`} >
+    <div className={AllLessonsCSS.level} key={level}>
+    <TreeItem nodeId={level} label={`Level ${level}`} >
       {Object.entries(skills).map(([skill, names]) => (
-        <div className={AllLessonsCSS.skill}>
-        <TreeItem key={`${level}-${skill}`} nodeId={skill} label={skill}>
-          <div className={AllLessonsCSS.songlist}>
-          {names.map((nameObj, index) => (
-            <div className={AllLessonsCSS.song} >
-            <TreeItem
-              key={`${nameObj.name}-${index}`}
-              nodeId={`${nameObj.name}-${index}`}
-              label={
-                <div 
-                className={AllLessonsCSS.songelement} 
-                onMouseOver={(e) => handleNodeMouseOver(e, `${nameObj.name}-${index}`)}
-                onMouseOut={(e) => handleNodeMouseOut(e)}
-                >
-                    <Link to={nameObj.route_path} className={AllLessonsCSS.link}>
-                      <span>{nameObj.title || nameObj.name}</span>
-                    </Link>
-                    
-                </div>
-              }
-            /></div>
-          ))
-          }
-          </div>
-        </TreeItem></div>
+        <div className={AllLessonsCSS.skill} key={skill}>
+          <TreeItem key={`${level}-${skill}`} nodeId={skill} label={skill}>
+            <div className={AllLessonsCSS.songlist}>
+              {names.map((nameObj, index) => (
+                <div className={AllLessonsCSS.song} key={index}>
+                <TreeItem
+                  key={`${nameObj.name}-${index}`}
+                  nodeId={`${nameObj.name}-${index}`}
+                  label={
+                    <div 
+                    className={AllLessonsCSS.songelement} 
+                    onMouseOver={(e) => handleNodeMouseOver(e, `${nameObj.name}-${index}`)}
+                    onMouseOut={(e) => handleNodeMouseOut(e)}
+                    >
+                        <Link to={nameObj.route_path} className={AllLessonsCSS.link}>
+                          <span>{nameObj.title || nameObj.name}</span>
+                        </Link>
+                        
+                    </div>
+                  }
+                /></div>
+              ))}
+            </div>
+          </TreeItem>
+        </div>
       ))}
     </TreeItem>
     </div>
