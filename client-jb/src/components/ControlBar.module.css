@@ -1,0 +1,60 @@
+.myDiv {
+    background-color: lightblue;
+    justify-content: center;
+    bottom: 20px;
+    position: fixed;
+    left: 50%;
+    transform: translateX(-50%);
+    width: fit-content;
+    border-radius: 15px;
+    }
+
+    body .controlBtn {
+    margin: 0.3rem 0.2rem;
+    border-radius: 20px;
+    font-size: 1.2rem;
+    }
+
+    body .controlBtn[title="record/stopRecording"] {
+    color: rgba(237, 31, 31, 0.87);
+    }
+
+    .dropDownTgl {
+        color: black;
+        margin: 0;
+        border-radius: 20px;
+        background-color: lightblue;
+    }
+
+    .playPauseIcon {
+        color: var(--primary-500);
+    }
+
+    .sliderContainer {
+        display: flex;
+        align-items: center;
+        margin-bottom: 10px;
+    }
+
+    .sliderLabel {
+    margin-right: 30px;
+    font-weight: bold;
+    }
+
+    .sliderInput {
+    width: 200px;
+    }
+
+
+    /* > div  {
+        display: "block";
+        margin: "0 auto";
+        background-color: "lightblue";
+        justify-content: "center";
+        bottom: 20;
+        position: "fixed";
+        left: "50%"; // Adjust the horizontal position as needed
+        transform: "translateX(-50%)"; // To horizontally center the bar
+        width: "max-content";
+        border-radius: "20px";
+      } */
