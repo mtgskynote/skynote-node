@@ -5,16 +5,15 @@
         display:flex;
         padding:0;
     }
-.left {
-    height: 100%;
-    width:70%;
-  }
-  .right {
-    padding: 0px 0px 0px 0px; 
-    width:30%;
-    height:95vh;
-    
-  }
+    .left {
+        height: 100%;
+        width:70%;
+    }
+    .right {
+        padding: 0px 0px 0px 0px; 
+        width:30%;
+        height:95vh;
+    }
 }
 @media screen and (max-width: 800px) {
     .container{
@@ -29,26 +28,25 @@
         width:100%;
         overflow-y: scroll;
       }
-      .right {
+    .right {
         padding: 0px 0px 0px 0px; 
         border-radius: 20px;
         width:100%;
         height:50vh;
         border:solid #bababa 2px;
-        
-      }
-      body{
-        font-size: smaller;
-      }
     }
+    body{
+        font-size: smaller;
+    }
+}
 .tableBox{
-  height: fit-content;
-  overflow-y: scroll;
-  border:#e5e5e5 solid 1px;
-  border-radius: 20px;
-  background-color: white;
-  margin: 20px 40px;
-  box-shadow: 2px 2px 10px rgba(131, 131, 131, 0.2);
+    height: fit-content;
+    overflow-y: scroll;
+    border:#e5e5e5 solid 1px;
+    border-radius: 20px;
+    background-color: white;
+    margin: 20px 40px;
+    box-shadow: 2px 2px 10px rgba(131, 131, 131, 0.2);
 }
 
 .title{
@@ -99,7 +97,6 @@
     background-color: #f3f3f3;
     border-radius: 10px;
     padding: 12px 30px;
-    
 }
 .list{
     list-style-type: circle;
@@ -119,25 +116,25 @@
     border:none;
     background-color: transparent;
 }
-  .exclamationIcon{
+.exclamationIcon{
     color:rgb(230, 37, 37)
-  }
-  .simpleIcon{
+}
+.simpleIcon{
     color:rgb(115, 115, 115);
     margin:0px 10px;
-  }
-  .taskGroup{
+}
+.taskGroup{
     display: flex;
-  }
-  .taskItem{
+}
+.taskItem{
     border: solid 1px #dde7fa;
     height: fit-content;
     width: fit-content;
     border-radius: 7px;
     margin: 10px;
     box-shadow: 2px 2px 10px rgba(131, 131, 131, 0.2);
-  }
-  .taskHeader{
+}
+.taskHeader{
     background-color: #dde7fa;
     padding: 10px 50px;
     align-items: left;
@@ -162,8 +159,6 @@
     display: flex;
     justify-content: space-between;
 }
-
-
 .chatGroup{
     margin: 20px 40px;
     width: 25%;
@@ -190,7 +185,8 @@
         height: 400px;
         overflow-y: scroll;
 
-    }}
+    }
+}
 @media screen and (max-width: 800px) {
     .chat{
         display: flex;
@@ -207,7 +203,8 @@
         box-shadow: 4px 4px 15px rgba(131, 131, 131, 0.2);
        border-radius: 20px;
        position:fixed;
-    }}
+    }
+}
     
 .chatHeader{
     background-color: #88a2cf;
@@ -255,16 +252,14 @@
 .textInput{
     width: 100%;
     resize:none;
-  overflow-x: scroll;
-  text-align: left;
-  text-overflow: clip;
-  padding: 10px;
-  box-sizing: border-box;
-  border-radius: 20px ;
-  border: none;
+    overflow-x: scroll;
+    text-align: left;
+    text-overflow: clip;
+    padding: 10px;
+    box-sizing: border-box;
+    border-radius: 20px ;
+    border: none;
 }
-
-
 .button{
     border: none;
     background-color: transparent;
