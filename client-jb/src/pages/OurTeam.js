@@ -4,14 +4,13 @@ import {
   import waddellimg from "../assets/images/team/GeorgeWaddell.jpeg";
   import lonceimg from "../assets/images/team/lonce_cnm_bust_sm2.jpg";
   import rafaelimg from "../assets/images/team/RafaelRamirez.png";
-import Wrapper from "../assets/wrappers/LandingBackPages";
 import OurTeamCSS from './OurTeam.module.css'
 import WhiteLogo from "../components/WhiteLogo";
 import { Link } from "react-router-dom";
 import "bootstrap/dist/css/bootstrap.min.css";
 const OurTeam = () => {
     return (
-      <Wrapper>
+      <div>
         <div className={OurTeamCSS.siteHeader}>
           <div className={OurTeamCSS.tabRowContainer}>
             <div className={OurTeamCSS.tabRow}>
@@ -125,7 +124,7 @@ const OurTeam = () => {
             </div> 
           </div> 
         </div> 
-    </Wrapper>
+    </div>
     );
 };
 export default OurTeam;
