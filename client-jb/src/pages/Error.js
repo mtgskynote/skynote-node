@@ -7,8 +7,8 @@ const Error = () => {
       <div className={errorCSS.fullPage}>
         <img className={errorCSS.img} src={img} alt="not found" />
         <h3>Ohh! Page Not Found!</h3>
-        <p>We can't seem to find the page you are looking for.</p>
-        <Link to="/">back home</Link>
+        <p className={errorCSS.p}>We can't seem to find the page you are looking for.</p>
+        <Link to="/" className={errorCSS.a}>back home</Link>
       </div>
   );
 };

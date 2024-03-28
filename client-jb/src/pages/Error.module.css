@@ -12,12 +12,12 @@
     margin: 2rem 0 2rem;
 }
 
-p {
+.p {
     margin-bottom: 0.5rem;
     color: var(--grey-500);
 }
 
-a {
+.a {
     color: var(--primary-500);
     text-transform: capitalize;
 }
