@@ -128,11 +128,8 @@
 }
 
 .interestLink{
-  font-size: 14px;
-  margin-left: 10%;
-  margin-right: 50%;
-  margin-bottom: 0%; 
-  bottom: 0;
+  color: black;
+  margin: 0% 50% 0% 10%;
   font-family: var(--lato);
 }
 
@@ -186,6 +183,16 @@
   line-height: normal;
   z-index: 1;
   font-style: normal;
+}
+
+.loginButton{
+  color: black;
+  margin: 5% 50% 0% 10%;
+  font-family: var(--lato);
+}
+
+.loginLinkBottom{
+  color: black;
 }
 
 .loginButtonBottom{

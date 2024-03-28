@@ -1,7 +1,6 @@
 import skynote_demo from "../assets/videos/SNDemo-3.mp4";
 import BackgroundImage from "../components/BackgroundImage";
 import WhiteLogo from "../components/WhiteLogo";
-import Wrapper from "../assets/wrappers/LandingPage";
 import LandingCSS from './Landing.module.css';
 import { Link } from "react-router-dom";
 import "bootstrap/dist/css/bootstrap.min.css";
@@ -20,7 +19,6 @@ const Landing = () => {
 
   return (
     <div>
-    <Wrapper>
       <div className={LandingCSS.siteHeader}>
         <div className={LandingCSS.tabRowContainer}>
           <div className={LandingCSS.tabRow}>
@@ -63,16 +61,16 @@ const Landing = () => {
         <div>
          <div className={LandingCSS.backgroundImageContainer}>
           <div className={LandingCSS.backgroundImage}>
-              <BackgroundImage />
+              <BackgroundImage imgClassName={LandingCSS.backgroundImage}/>
           
             <div className={LandingCSS.backgroundImageOverlay}>
               <h2>
                 Enhance Your Musical Abilities With SkyNote
               </h2>
               <p>
-              An intelligent music learning app based on real-time sound and motion analysis, backed by artificial intelligence technology.
+                An intelligent music learning app based on real-time sound and motion analysis, backed by artificial intelligence technology.
               </p>
-              <div id= "overlay-signup-button" className="login-button">
+              <div id= "overlay-signup-button" className={LandingCSS.loginButton}>
                 <Link to="/register" className="login-link">
                   Sign Up
                 </Link>
@@ -173,7 +171,7 @@ const Landing = () => {
           <h2>Experience SkyNote today</h2>
           <div>
           <div className={LandingCSS.loginButtonBottom}>
-            <Link to="/register" className="login-link-bottom">
+            <Link to="/register" className={LandingCSS.loginLinkBottom}>
               Sign Up
             </Link>
           </div>
@@ -185,7 +183,6 @@ const Landing = () => {
         <img className={LandingCSS.creditsimgeu} src={cimg3} alt="img 3"/>
         </div>
       </div>
-    </Wrapper>
     </div>
   );
 };
