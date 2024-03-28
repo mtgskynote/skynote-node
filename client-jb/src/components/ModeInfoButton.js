@@ -93,7 +93,7 @@ const ModeInfoButton = (props) => {
     <div className="InfoModeComplete">
       <Button 
         key={"InfoMode"} 
-        className="InfoMode" 
+        className={ModeInfoButtonCSS.InfoMode} 
         title={"InfoMode"} 
         id={"InfoMode"} 
         onMouseOver={() => handleMouseOver("InfoMode")}
