@@ -8,6 +8,7 @@ import {
     faEye, //visual mode
 } from "@fortawesome/free-solid-svg-icons";
 import Wrapper from "../assets/wrappers/ModeToggle";
+import ModeToggleCSS from './ModeToggle.module.css'
 import { Button} from "@material-ui/core";
 import ModeInfoButton from "./ModeInfoButton.js";
 import PopUpWindowDelete from "./PopUpWindowDelete.js";
@@ -307,32 +308,31 @@ const ProgressPlayFileVisual = (props) => {
       {(showPopUpWindow && <PopUpWindowDelete showWindow={showPopUpWindow} handlerBack={handleWindowPopUp}/>)}
 
       <Wrapper>
-      <div className="completeModeDiv">
-        <div className="modeToggleDiv">
-          <Button 
-            key={"VisualMode"} 
-            className="toggleBtn" 
-            title={"VisualMode"} 
-            id={"VisualMode"} 
-            >
-            <div>
-              <FontAwesomeIcon
-                  icon={faEye} //Visual button
-                />
-            </div>
-          </Button>
-        </div>
-        <ModeInfoButton 
-          message={2}
-          title={metaData.name}
-          stars={metaData.stars}
-          date={metaData.date}
-          skill={metaData.skill}
-          lesson={metaData.lesson}
-          score={metaData.score}/> 
+        <div className={ModeToggleCSS.completeModeDiv}>
+          <div className={ModeToggleCSS.modeToggleDivVisual}>
+            <Button 
+              key={"VisualMode"}  
+              title={"VisualMode"} 
+              id={"VisualMode"} 
+              >
+              <div>
+                <FontAwesomeIcon
+                    icon={faEye} //Visual button
+                  />
+              </div>
+            </Button>
+          </div>
+          <ModeInfoButton
+            message={2}
+            title={metaData.name}
+            stars={metaData.stars}
+            date={metaData.date}
+            skill={metaData.skill}
+            lesson={metaData.lesson}
+            score={metaData.score}/> 
 
         </div>
-    </Wrapper>
+      </Wrapper>
 
     {/* Button to go back */}
     <button  className={ListRecordingsCSS.back2Listbutton} onClick={handleGoBack}>
