@@ -51,12 +51,12 @@ line-height: normal;
   
   
     
-p {
+/* p {
     color: var(--grey-600);
 }
 h3 {
     color: var(--grey-900);
-}
+} */
 .main-img {
     display: none;
 }
@@ -493,10 +493,10 @@ justify-content: center;
 align-items: center;
 flex-wrap: wrap;
 }
-p {
+/* p {
 margin-top: 0rem;
 margin-bottom: 0rem;
-}
+} */
 .work-section-info p {
 flex: 1;
 display: flex;
