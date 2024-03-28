@@ -22,7 +22,11 @@
     /* display: flex; */
     justify-content: center;
     align-items: center;
-}   
+} 
+
+.regForm h3 {
+    text-align: center;
+}
 
 .siteHeader{
     background-color: #23292B; 
@@ -110,11 +114,8 @@
     z-index: 1;
 }
 
-h3 {
-    text-align: center;
-}
-p {
-    color: black;
+.regForm p {
+    color: var(--primary-500);
     margin: 0;
     margin-top: 1rem;
     text-align: center;

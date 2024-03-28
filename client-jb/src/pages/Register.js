@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { Logo, FormRow, Alert } from "../components";
-import Wrapper from "../assets/wrappers/RegisterPage";
+import RegisterCSS from './Register.module.css'
 import { useAppContext } from "../context/appContext";
 // import { Link } from "react-router-dom";
 // import WhiteLogo from "../components/WhiteLogo";
@@ -71,9 +71,8 @@ function Register() {
   }, [user, navigate]);
 
   return (
-    <Wrapper className="full-page">
-
-      <form className="form" onSubmit={onSubmit}>
+    <div className={RegisterCSS.fullPage}>
+      <form className={RegisterCSS.regForm} onSubmit={onSubmit}>
         <Logo width={175} height={75}/>
         <h3>{values.isMember ? "Login" : "Register"}</h3>
         {showAlert && <Alert />}
@@ -119,7 +118,7 @@ function Register() {
         <p>
           {values.isMember ? "Not a Member yet?" : "Already a Member?"}
           {/* <button type="button" onClick={toggleMember} className="member-btn"> */}  
-          <button type="button" className="member-btn"> 
+          <button type="button" className={RegisterCSS.memberBtn}> 
             {values.isMember ? "We're sorry, new registrations are temporarily disabled " : "Login"} 
             {/* {values.isMember ?   "Register" : "Login"} */}
           </button>
@@ -128,13 +127,13 @@ function Register() {
           <button
             type="button"
             onClick={() => "login()"}
-            className="google-btn"
+            className={RegisterCSS.googleBtn}
           >
             <i className="fa-brands fa-google btn"></i> Sign up with google
           </button>
         </div>
       </form>
-    </Wrapper>
+    </div>
   );
 }
 
