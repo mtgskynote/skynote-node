@@ -29,9 +29,12 @@ body .controlBtn[title="record/stopRecording"] {
     color: black;
     margin: 0;
     border-radius: 20px;
-    background-color: rgba(173, 216, 230, 1);
+    /* background-color: rgba(173, 216, 230, 1); */
 }
 
+.dropDownTgl[title="playMode"] {
+    background-color: rgba(173, 216, 230, 1);
+}
 .dropDownTgl[title="recordMode"] {
     background-color: rgba(163, 205, 143, 1);
 }
