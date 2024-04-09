@@ -7,6 +7,7 @@ import { makeAudioStreamer } from "./audioStreamer.js";
 import CountdownTimer from "./MetronomeCountDown.js";
 import SimpleMessaje from "./AnyMessage.js"
 //import { log } from "@tensorflow/tfjs";
+import Queue from "../utils/QueueWithMaxLength"
 import ModeToggle from "./ModeToggle.js";
 import PopUpWindow from "./PopUpWindow.js";
 import XMLParser from "react-xml-parser";
@@ -273,13 +274,13 @@ const ProgressPlayFile = (props) => {
     //Ignoring permissions allows to use the page, but audio won't be picked up and an error will show when the recorging process is finished  
     const requestMicrophonePermission = async () => {
       try {
-        // const stream = await navigator.mediaDevices.getUserMedia({ audio: {
-        //   echoCancellation: false,
-        //   autoGainControl: false,
-        //   noiseSuppression: false,
-        //   latency: 0,
-        //   sampleRate: 22050
-        // } });
+        const stream = await navigator.mediaDevices.getUserMedia({ audio: {
+          // echoCancellation: false,
+          // autoGainControl: false,
+          // noiseSuppression: false,
+          // latency: 0,
+          // sampleRate: 22050
+        } });
         setCanRecord(true);
       } catch (error) {
         setCanRecord(false);
@@ -290,9 +291,36 @@ const ProgressPlayFile = (props) => {
     requestMicrophonePermission();
     requestScoreTitle();
   }, []); //This should run only once
-    
 
-  var audioStreamer = makeAudioStreamer(handlePitchCallback);
+  ////////////////////////////////////////////////////////////////////////////////////////////
+  ////////HERE I'M TAKING THE MEYDA FEATURES, BUT CURRENTLY NOTHING IS DONE WITH THEM/////////
+  ////////////////////////////////////////////////////////////////////////////////////////////
+  //---- keep track of the history of features we extract
+  const featureValues = {
+    // queue length (form computing means and SDs), normlow, normhi, sdnormlow, sdnormhi
+    pitch : new Queue(5, 24, 61, 0, .5),  //[110Hz, 440Hz] = [A2, A4] = midinote[24,69]
+    rms: new Queue(5, 0, .25, 0, .01),
+    spectralCentroid: new Queue(5, 0, 500),
+    spectralFlux : new Queue(5, 3, 1, 0, .1) 
+  }
+  
+  //---- Pass to makeAudioStreamer to get callbaks with object features (with attributes being Meyda features)
+  const aCb=function(features){
+    featureValues.rms.push(features.rms);
+    featureValues.spectralCentroid.push(features.spectralCentroid);
+    featureValues.spectralFlux.push(features.spectralFlux);
+
+    // setSegments([featureValues.pitch.computeSD(), featureValues.rms.computeSD(), featureValues.spectralCentroid.computeMean(), featureValues.spectralFlux.computeSD() ]);
+    // console.log("Spectral Centroid: ", featureValues.spectralCentroid.computeMean());
+    // console.log("Dynamic Stability: ", featureValues.rms.computeSD());
+    // console.log("Spectral Flux: ", featureValues.spectralFlux.computeSD());
+    // console.log("Pitch: ", featureValues.pitch.computeSD());
+  };
+  ////////////////////////////////////////////////////////////////////////////////////////////
+  ////////////////////////////////////////////////////////////////////////////////////////////
+  ////////////////////////////////////////////////////////////////////////////////////////////
+
+  var audioStreamer = makeAudioStreamer(handlePitchCallback, null, aCb);
   
   //When countdown timer (previous to start recording) finishes
   useEffect(() => {
@@ -307,7 +335,7 @@ const ProgressPlayFile = (props) => {
       setShowPitchTrack(true);
 
       //Start audioStreamer
-      audioStreamer.init(recordMode);
+      audioStreamer.init(recordMode, ["rms", "spectralCentroid", "spectralFlux"]);
 
       //And play file, make cursor start
       playbackManager.play();

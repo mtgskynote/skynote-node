@@ -41,12 +41,13 @@ function createAudioContext() {
               document.removeEventListener('click', resumeAudio);
           });
       };
-      if (window.confirm("Start audio processing?")) {
-        console.log("will resume audio"   );
-        resumeAudio();
-      } else {
-        console.log("Oh boy, now you've one it!");
-      }
+      resumeAudio();
+      // if (window.confirm("Start audio processing?")) {
+      //   console.log("will resume audio"   );
+      //   resumeAudio();
+      // } else {
+      //   console.log("Oh boy, now you've one it!");
+      // }
   }
 
   return audioContext;
