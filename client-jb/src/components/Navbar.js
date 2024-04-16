@@ -23,21 +23,22 @@ import { useMediaQuery } from "@material-ui/core";
 import { NavLink } from "react-router-dom";
 
 function Navbar() {
-  const [userData, setUserData] = useState(null);
-  const [unreadMessagesCount, setUnreadMessagesCount] = useState(0);
-  const [unreadMessagesContent, setUnreadMessagesContent] = useState([]);
-  const [notificationsOpen, setNotificationsOpen] = useState(false);
-  const [profileAnchorEl, setProfileAnchorEl] = useState(null);
-  const [settingsAnchorEl, setSettingsAnchorEl] = useState(null);
-  const [mobileAnchorEl, setMobileAnchorEl] = useState(null);
-  const [mobileNavOpen, setMobileNavOpen] = useState(false);
+  // State variables
+  const [userData, setUserData] = useState(null); // User data retrieved from API
+  const [unreadMessagesCount, setUnreadMessagesCount] = useState(0); // Number of unread messages
+  const [unreadMessagesContent, setUnreadMessagesContent] = useState([]); // Content of unread messages
+  const [notificationsOpen, setNotificationsOpen] = useState(false); // Whether notifications are open
+  const [profileAnchorEl, setProfileAnchorEl] = useState(null); // Anchor element for profile menu
+  const [settingsAnchorEl, setSettingsAnchorEl] = useState(null); // Anchor element for settings menu
+  const [mobileAnchorEl, setMobileAnchorEl] = useState(null); // Anchor element for mobile menu
+  const [mobileNavOpen, setMobileNavOpen] = useState(false); // Whether mobile navigation is open
 
+  // App context and media query hook
   const { logoutUser, getCurrentUser } = useAppContext();
   const isLargeScreen = useMediaQuery("(min-width: 1024px)");
 
+  // Function to fetch user data from API
   const fetchDataFromAPI = () => {
-    // get the current user from the app context so that we can fetch user data
-    // this function is already asynchronous
     getCurrentUser()
       .then((result) => {
         setUserData(result);
@@ -47,20 +48,18 @@ function Navbar() {
       });
   };
 
-  // get user data to display greeting in upper left hand corner
+  // Effect to fetch user data and unread messages on mount or when userData changes
   useEffect(() => {
     if (userData === null) {
       fetchDataFromAPI();
     }
 
-    // need to handle for asynchronicity
     if (userData !== null) {
       getMessages(userData.id, userData.teacher)
         .then((result) => {
           let messagesCount = 0;
           const messagesContent = [];
 
-          // filter by messages sent from the teacher that have not yet been seen by the user
           result.forEach((message) => {
             if (message.sender === userData.teacher && message.seen === false) {
               messagesCount++;
@@ -78,14 +77,11 @@ function Navbar() {
     }
   }, [userData]);
 
-  // handle clicks to profile icon
-  // clicking the profile icon will open a modal displaying links to profile page and logout
+  // Handlers for profile, settings, notifications, and mobile navigation
   const handleProfileClick = (event) => {
     setProfileAnchorEl(event.currentTarget);
   };
 
-  // handle clicks to settings icon
-  // clicking the settings icon will open a modal displaying a link to sound visualization
   const handleSettingsClick = (event) => {
     setSettingsAnchorEl(event.currentTarget);
   };
@@ -94,7 +90,6 @@ function Navbar() {
     setNotificationsOpen((prev) => !prev);
   };
 
-  // general function to handle when a user clicks away from an open modal
   const handleClose = () => {
     setProfileAnchorEl(null);
     setSettingsAnchorEl(null);
@@ -115,6 +110,7 @@ function Navbar() {
     setMobileAnchorEl(event.currentTarget);
   };
 
+  // Navigation items
   const navItems = [
     ["Dashboard", "/"],
     ["Lessons", "/all-lessons"],
@@ -126,9 +122,11 @@ function Navbar() {
     ["My Account", "/profile"],
   ];
 
+  // Navbar component with navigation and user options
   return (
     <AppBar position="fixed">
       <Toolbar className="justify-between">
+        {/* Greeting section */}
         <div className="flex items-center">
           <h5 className="text-slate-50 font-light">
             Hello{" "}
@@ -137,8 +135,9 @@ function Navbar() {
           </h5>
         </div>
 
-        {/* Desktop Navigation */}
+        {/* Desktop navigation - main pages section */}
         <div className="hidden lg:flex justify-center items-center w-2/5 space-x-10">
+          {/* Render navigation links */}
           {navItems.map(([title, url], index) => {
             return (
               <NavLink
@@ -157,7 +156,9 @@ function Navbar() {
           })}
         </div>
 
+        {/* Desktop navigation - notifications and settings section */}
         <div className="hidden lg:flex items-center space-x-4">
+          {/* Notifications */}
           <ClickAwayListener onClickAway={handleClickAway}>
             <div className="relative">
               <Tooltip
@@ -176,6 +177,7 @@ function Navbar() {
                   </Badge>
                 </IconButton>
               </Tooltip>
+              {/* Notifications dropdown */}
               <div
                 className={`z-50 absolute right-0 w-96 bg-white shadow-md rounded-sm p-4 overflow-y-auto max-h-screen-75 transition-opacity duration-300 ${
                   notificationsOpen
@@ -183,6 +185,7 @@ function Navbar() {
                     : "opacity-0 pointer-events-none"
                 }`}
               >
+                {/* Render unread messages */}
                 {unreadMessagesCount > 0 ? (
                   unreadMessagesContent.map((message, index) => (
                     <div key={index} className="mb-2">
@@ -192,11 +195,13 @@ function Navbar() {
                     </div>
                   ))
                 ) : (
+                  // Render message for no unread messages
                   <div className="text-gray-600 mb-2 w-full bg-green-100 p-2 rounded">
                     Looks like your inbox is in perfect harmony 🎶 No new
                     messages here!
                   </div>
                 )}
+                {/* Link to see all messages */}
                 <NavLink to="/assignments" onClick={handleClose}>
                   <button className="mt-2 w-full font-bold text-lg bg-blue-500 hover:bg-blue-600 text-slate-50 font-bold py-2 px-4 rounded border-0">
                     See all messages
@@ -206,6 +211,7 @@ function Navbar() {
             </div>
           </ClickAwayListener>
 
+          {/* Settings */}
           <Tooltip placement="bottom" title="Settings" arrow>
             <IconButton
               edge="start"
@@ -216,6 +222,7 @@ function Navbar() {
               <Settings />
             </IconButton>
           </Tooltip>
+          {/* Settings dropdown */}
           <Menu
             anchorEl={settingsAnchorEl}
             open={Boolean(settingsAnchorEl)}
@@ -230,6 +237,7 @@ function Navbar() {
             </MenuItem>
           </Menu>
 
+          {/* Profile */}
           <Tooltip placement="bottom" title="Profile" arrow>
             <IconButton
               edge="start"
@@ -240,6 +248,7 @@ function Navbar() {
               <AccountCircle />
             </IconButton>
           </Tooltip>
+          {/* Profile dropdown */}
           <Menu
             anchorEl={profileAnchorEl}
             open={Boolean(profileAnchorEl)}
@@ -252,7 +261,7 @@ function Navbar() {
           </Menu>
         </div>
 
-        {/* Mobile Navigation Menu */}
+        {/* Mobile navigation - toggle button */}
         {mobileNavOpen ? (
           <IconButton
             start="edge"
@@ -272,11 +281,13 @@ function Navbar() {
             <MenuIcon />
           </IconButton>
         )}
+        {/* Mobile navigation - menu */}
         <Menu
           anchorEl={isLargeScreen ? handleMobileClose : mobileAnchorEl}
           open={mobileNavOpen}
           onClose={handleMobileClose}
         >
+          {/* Render navigation links for mobile */}
           {navItems.concat(navItemsMobile).map(([title, url], index) => {
             return (
               <MenuItem
@@ -289,6 +300,7 @@ function Navbar() {
               </MenuItem>
             );
           })}
+          {/* Logout option */}
           <MenuItem onClick={logoutUser}>Logout</MenuItem>
         </Menu>
       </Toolbar>
