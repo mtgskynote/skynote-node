@@ -21,36 +21,47 @@ window.Buffer = Buffer;
 const folderBasePath = "/xmlScores/violin";
 
 const ProgressPlayFile = (props) => {
+  
   const { getCurrentUser } = useAppContext();
   const [userData, setUserData] = useState(null);
   const params = useParams();
 
+  //This ones have to do with OSMD
   const cursorRef = useRef(null);
   const playbackRef = useRef(null);
 
+  //Score title needed to retrieve data from the API
   const [scoreTitle, setScoreTitle] = useState(null);
 
+  //This are flags to check before doing stuff
   const [canRecord, setCanRecord] = useState(true);
   const [canDownload, setCanDownload] = useState(false);
   const [audioReady, setAudioReady] = useState(false);
+
+  //Name for the file that will be saved in the DB
   const [userFileName, setUserFileName] = useState("");
 
+  //Parameters that will be sent to OSMD
   const [metroVol, setMetroVol] = useState(0);
-  const [bpmChange, setBpm] = useState(100);
-
+  const [bpmChange, setBpm] = useState(100);//BPM always set to 100 cause the scores don't have BPMs
   const [recordVol, setRecordVol] = useState(0.5);
+  const [zoom, setZoom] = useState(1.0);
+  
+  //This changes when the record button is pressed 
   const [recordInactive, setRecordInactive] = useState(true)
   
+  //This ones are for the metronome countdown
   const [showTimer, setShowTimer] = useState(false);
   const [finishedTimer, setFinishedTimer] = useState(false);
 
-  const [zoom, setZoom] = useState(1.0);
-
+  //This is for the MEYDA features
   const [pitchValue, setPitchValue] = useState(null);
   const [confidenceValue, setConfidenceValue] = useState(null);
   const [pitch, setPitch] = useState([]);
   const [confidence, setConfidence] = useState([]);
-  var pitchCount =0;
+  var pitchCount = 0;
+  const [dynamicValue, setDynamicValue] = useState(null);
+  const [dynStability, setDynStability] = useState([]);
 
   const [startPitchTrack, setStartPitchTrack] = useState(false);
   const [showPitchTrack, setShowPitchTrack] = useState(false);
@@ -73,32 +84,45 @@ const ProgressPlayFile = (props) => {
   const onResetDone = () => {
     setIsResetButtonPressed(false);
   };
-
+  /////////////////////////////////////////////////////////////////////////////////////
+  //////////////////////////////Get data from the student//////////////////////////////
+  /////////////////////////////////////////////////////////////////////////////////////
+  //Currently the userData is stored locally, so I don't think this needs to be
+  //done here. This function should be reviewed and possibly deleted from this file :)
   const fetchDataFromAPI = () => {
     if(userData===null){
     getCurrentUser() // fetchData is already an async function
       .then((result) => {
         setUserData(result);
+        //console.log("Hola", result)
       }).catch((error) => {
         console.log(`getCurentUser() error: ${error}`)
         // Handle errors if necessary
       })
 
-    }};   
-
+    }
+  };  
   
-
-  // Define pitch callback function 
+  /////////////////////////////////////////////////////////////////////////////////////
+  ////////////////////////////Define pitch callback function///////////////////////////
+  /////////////////////////////////////////////////////////////////////////////////////
+  //This function will be used by audioStreamer.js, more info in the file itself :)
   const handlePitchCallback = (pitchData) => {
     pitchCount=pitchCount+1;
       if(pitchCount>0){
-          setPitchValue(pitchData.pitch);
-          setConfidenceValue(pitchData.confidence);
+        console.log("Dynamic Stability:\n", featureValues.rms.computeSD())
+        setPitchValue(pitchData.pitch);
+        setConfidenceValue(pitchData.confidence);
+        //setDynStability(featureValues.rms.computeSD());
         pitchCount=0;
       }
   };
 
-  // Define recording stop when cursor finishes callback function
+  /////////////////////////////////////////////////////////////////////////////////////
+  ////////////Define recording stop when cursor finishes callback function/////////////
+  /////////////////////////////////////////////////////////////////////////////////////
+  //This is passed to OSMD as "cursorActivity" and the idea is to check when the cursor
+  //reaches the end, and then tell ControlBar.js + create the pop up window if needed...
   const handleFinishedCursorOSMDCallback = (OSMDfinishedCursor) => {
     if (OSMDfinishedCursor){//cursor has finished
 
@@ -119,7 +143,23 @@ const ProgressPlayFile = (props) => {
     }
   };
 
-  //function in charge of downloading
+  /////////////////////////////////////////////////////////////////////////////////////
+  /////////////////////////////Function for ControlBar.js//////////////////////////////
+  /////////////////////////////////////////////////////////////////////////////////////
+  //This is passed to ControlBar.js for resetting purposes.
+  const handleFinishedCursorControlBarCallback = (controlBarFinishedCursor) => {
+    if (controlBarFinishedCursor===false){//ControlBar already took cursor finishing actions 
+      //Update value, ready for new cursor finishings--> false cursor finished
+      setCursorFinished(false);
+    }
+  };
+
+  /////////////////////////////////////////////////////////////////////////////////////
+  //////////////////////////Function in charge of downloading//////////////////////////
+  /////////////////////////////////////////////////////////////////////////////////////
+  //This is probably not the right name for this function, but the function prepares
+  //"raw" data into the format that will be used to store the info in the DB, and then
+  //uploads it to the DB :)
   async function handleDownload (dataBlob){
     setAudioReady(false);
     const jsonData = JSON.parse(jsonToDownload)//convert data to json
@@ -133,7 +173,11 @@ const ProgressPlayFile = (props) => {
       info:jsonData,
     }
 
-    ///////////CODE TO DOWNLOAD LOCALLY THE JSON THAT IS UPLOADED TO DATABASE
+    /////////////////////////////////////////////////////////////////////////////////////
+    ///////////CODE TO DOWNLOAD LOCALLY THE JSON THAT IS UPLOADED TO DATABASE////////////
+    /////////////////////////////////////////////////////////////////////////////////////
+    //This is currently unused cause we don't allow to download the files, but might be 
+    //useful in the future?? Otherwise it can be deleted :)
     /*
     // Convert the combined data to a JSON string
     const jsonString = JSON.stringify(jsonComplete);
@@ -154,27 +198,31 @@ const ProgressPlayFile = (props) => {
     */
     ///////////////////////////////////////////////////////////////////////////
 
-      // upload to database
-      try{
-        await putRecording(jsonComplete);
-      } catch (error) { 
-        console.log(`error in putRecording`, error  );
-      }  
+    //Upload info to database
+    try{
+      await putRecording(jsonComplete);
+    } catch (error) { 
+      console.log(`error in putRecording`, error  );
+    }  
     //}
   }
+
+  /////////////////////////////////////////////////////////////////////////////////////
+  //////////////////////////////Function for flag control//////////////////////////////
+  /////////////////////////////////////////////////////////////////////////////////////
+  //This function is called from OpenSheetMusicDisplay.js as "dataToDownload". It just
+  //gets the data and changes the needed flags :)
   const handleGetJsonCallback = (json) => {
     setJsonToDownload(json);
     setCanDownload(false);
     setAudioReady(true);
   };
   
-  const handleFinishedCursorControlBarCallback = (controlBarFinishedCursor) => {
-    if (controlBarFinishedCursor===false){//ControlBar already took cursor finishing actions 
-      //Update value, ready for new cursor finishings--> false cursor finished
-      setCursorFinished(false);
-    }
-  };
-  // Define recording stop when cursor finishes callback function
+  /////////////////////////////////////////////////////////////////////////////////////
+  //////////////////////////Function to handle Repetition view/////////////////////////
+  /////////////////////////////////////////////////////////////////////////////////////
+  //This function gets called from OpenSheetMusciDisplay.js and it deals with small box
+  //that tells the user which repetition they're currently seeing :)
   const handleReceiveRepetitionInfo = (showingRep, totalRep) => {
     if(totalRep===0){
       setRepetitionMessage("No recordings yet")
@@ -183,7 +231,13 @@ const ProgressPlayFile = (props) => {
       setRepetitionMessage(message_aux)
     }
   };
-  //save/delete recording when cursor finishes or when recording is stopped
+  
+  /////////////////////////////////////////////////////////////////////////////////////
+  //////////////////Function that creates the save/delete popUp window/////////////////
+  /////////////////////////////////////////////////////////////////////////////////////
+  //This function is called when the cursor reaches the end, or the recording is stopped
+  //by the user (in record mode only). It creates a popUp window that is managed by 
+  //PopUpWindow.js
   const handleSaveDeleteWindowPopUp=(windowShow, answer, fileName)=>{
       if(windowShow){ //recording stopped or cursor finished --> pop up window
         setShowPopUpWindow(true);
@@ -194,12 +248,14 @@ const ProgressPlayFile = (props) => {
         if(answer==="delete"){
           audioStreamer.save_or_not(answer) //No save wanted
           setPitch([]);
+          //setDynStability([]);
           setConfidence([]);
           setIsResetButtonPressed(true);
         }else if(answer==="save"){
           setUserFileName(fileName) //save file name introduced by the user
           setCanDownload(true); //raise flag order to initiate downloading process (json in OSMD)
           setPitch([]);
+          //setDynStability({});
           setConfidence([]);
           setIsResetButtonPressed(true);
         }
@@ -223,6 +279,7 @@ const ProgressPlayFile = (props) => {
       audioStreamer.save_or_not("save")
         .then(dataToDownload => {
           const buffer= new Buffer.from(dataToDownload)
+          console.log("Can u see me now??");
           handleDownload(buffer); // send data to downloading function
         })
         .catch(error => {
@@ -329,8 +386,9 @@ const ProgressPlayFile = (props) => {
       //playbackManager.play()
       
       //Once countdown is finished, activate Pitch tracking
-      setPitch([])
-      setConfidence([])
+      setPitch([]);
+      // setDynStability([]);
+      setConfidence([]);
       setStartPitchTrack(true);
       setShowPitchTrack(true);
 
@@ -367,8 +425,9 @@ const ProgressPlayFile = (props) => {
 
       //Do like a reset:
       setIsResetButtonPressed(true);
-      setPitch([])
-      setConfidence([])
+      setPitch([]);
+      // setDynStability([]);
+      setConfidence([]);
       const playbackManager = playbackRef.current;
       // const cursor = cursorRef.current;
       playbackManager.pause();
@@ -431,8 +490,9 @@ const ProgressPlayFile = (props) => {
         //cursor.reset(); //seems right, but a runtime error follows
         setStartPitchTrack(false);
         setShowPitchTrack(false)
-        setPitch([])
-        setConfidence([])
+        setPitch([]);
+        setDynamicValue([]);
+        setConfidence([]);
         setRecordInactive(true) //Set to true, just like the initial state
         
       };
@@ -496,8 +556,9 @@ const ProgressPlayFile = (props) => {
 
       //Add new pitch value to pitch array
       if(pitchValue){
-        setPitch([...pitch,pitchValue])
-        setConfidence([...confidence,confidenceValue])
+        setPitch([...pitch,pitchValue]);
+        setConfidence([...confidence,confidenceValue]);
+        // setDynStability([...dynStability, dynamicValue]);
       }
     
       return () => {
@@ -585,8 +646,9 @@ const ProgressPlayFile = (props) => {
 
       //Add new pitch value to pitch array
       if(pitchValue){
-        setPitch([...pitch,pitchValue])
-        setConfidence([...confidence,confidenceValue])
+        setPitch([...pitch,pitchValue]);
+        setConfidence([...confidence,confidenceValue]);
+        setDynStability([...dynStability, dynamicValue])
       }
     
       return () => {
@@ -594,7 +656,7 @@ const ProgressPlayFile = (props) => {
         playButton.removeEventListener("click", handlePlayButtonClick);
       }
     };
-  }, [recordVol, zoom, recordInactive, pitchValue, repeatsIterator, practiceMode, recordMode, showRepetitionMessage, userFileName, jsonToDownload]);
+  }, [recordVol, zoom, recordInactive, pitchValue, dynamicValue, repeatsIterator, practiceMode, recordMode, showRepetitionMessage, userFileName, jsonToDownload]);
 
   const handleComplete = useCallback(() => {
     setFinishedTimer(true);
@@ -614,6 +676,7 @@ const ProgressPlayFile = (props) => {
         bpm={bpmChange}
         zoom={zoom}
         followCursor={true}
+        dynamicStability={dynStability}
         pitch={pitch}
         pitchConfidence={confidence}
         startPitchTrack={startPitchTrack}
