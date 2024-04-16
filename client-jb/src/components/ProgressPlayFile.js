@@ -237,7 +237,7 @@ const ProgressPlayFile = (props) => {
   /////////////////////////////////////////////////////////////////////////////////////
   //This function is called when the cursor reaches the end, or the recording is stopped
   //by the user (in record mode only). It creates a popUp window that is managed by 
-  //PopUpWindow.js
+  //PopUpWindow.js :)
   const handleSaveDeleteWindowPopUp=(windowShow, answer, fileName)=>{
       if(windowShow){ //recording stopped or cursor finished --> pop up window
         setShowPopUpWindow(true);
@@ -288,16 +288,16 @@ const ProgressPlayFile = (props) => {
     }
   }, [audioReady]);
 
+  //Once the score is loaded, get userData
   useEffect(()=>{
-    //Now that we know that score is loaded, get userData
     if(scoreTitle!==null){
       fetchDataFromAPI();
     }
   },[scoreTitle])
 
+  //This part just gets the tittle of the score, so it can later be used for the saving part
+  //I don't know if it's the most efficient way, I based the code on the one used in AllLessons.js
   useEffect(() => {
-    //This part just gets the tittle of the score, so it can later be used for the saving part
-    //I don't know if it's the most efficient way, I based the code on the one used in AllLessons.js
     const requestScoreTitle = async () => {
       //Get score title
       try {
@@ -325,10 +325,14 @@ const ProgressPlayFile = (props) => {
         console.log(error.message);
       }
     };
-    //This part deals with microphone permissions.
-    //Accepting permissions works as expected
-    //Denying permissions shows an alert that refreshes the page when accepted, but won't go away until permissions are given
-    //Ignoring permissions allows to use the page, but audio won't be picked up and an error will show when the recorging process is finished  
+    requestScoreTitle();
+  }, []); //This should run only once
+
+  //This part deals with microphone permissions.
+  //Accepting permissions works as expected
+  //Denying permissions shows an alert that refreshes the page when accepted, but won't go away until permissions are given
+  //Ignoring permissions allows to use the page, but audio won't be picked up and an error will show when the recorging process is finished 
+  useEffect(() => { 
     const requestMicrophonePermission = async () => {
       try {
         const stream = await navigator.mediaDevices.getUserMedia({ audio: {
@@ -346,7 +350,6 @@ const ProgressPlayFile = (props) => {
       }
     };
     requestMicrophonePermission();
-    requestScoreTitle();
   }, []); //This should run only once
 
   ////////////////////////////////////////////////////////////////////////////////////////////
