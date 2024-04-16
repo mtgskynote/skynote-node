@@ -12,7 +12,14 @@ import {
   Tooltip,
 } from "@mui/material";
 import { ClickAwayListener } from "@mui/base/ClickAwayListener";
-import { AccountCircle, Notifications, Settings } from "@mui/icons-material";
+import {
+  AccountCircle,
+  Notifications,
+  Settings,
+  Menu as MenuIcon,
+  MenuOpen as MenuOpenIcon,
+} from "@mui/icons-material";
+import { useMediaQuery } from "@material-ui/core";
 import { NavLink } from "react-router-dom";
 
 function Navbar() {
@@ -22,8 +29,11 @@ function Navbar() {
   const [notificationsOpen, setNotificationsOpen] = useState(false);
   const [profileAnchorEl, setProfileAnchorEl] = useState(null);
   const [settingsAnchorEl, setSettingsAnchorEl] = useState(null);
+  const [mobileAnchorEl, setMobileAnchorEl] = useState(null);
+  const [mobileNavOpen, setMobileNavOpen] = useState(false);
 
   const { logoutUser, getCurrentUser } = useAppContext();
+  const isLargeScreen = useMediaQuery("(min-width: 1024px)");
 
   const fetchDataFromAPI = () => {
     // get the current user from the app context so that we can fetch user data
@@ -91,16 +101,34 @@ function Navbar() {
     setNotificationsOpen(false);
   };
 
+  const handleMobileClose = () => {
+    setMobileAnchorEl(null);
+    setMobileNavOpen(false);
+  };
+
   const handleClickAway = () => {
     setNotificationsOpen(false);
   };
 
+  const handleNavIcon = (event) => {
+    setMobileNavOpen(!mobileNavOpen);
+    setMobileAnchorEl(event.currentTarget);
+  };
+
+  const navItems = [
+    ["Dashboard", "/"],
+    ["Lessons", "/all-lessons"],
+    ["Assignments", "/assignments"],
+  ];
+
+  const navItemsMobile = [
+    ["Sound Visualization", "/TimbreVisualization"],
+    ["My Account", "/profile"],
+  ];
+
   return (
     <AppBar position="fixed">
       <Toolbar className="justify-between">
-        {/* This first inner block is primarily used to center the three middle page links.
-         * The logo for SkyNote should be placed in the upper left hand corner.
-         */}
         <div className="flex items-center">
           <h5 className="text-slate-50 font-light">
             Hello{" "}
@@ -109,16 +137,9 @@ function Navbar() {
           </h5>
         </div>
 
-        <div className="flex justify-center items-center w-2/5 space-x-10">
-          {/* Add NavLinks for three main application pages: Dashboard, Lessons, and Assignments.
-           * We use NavLink from react-router-dom because a link's style can be conditionally set when it is active.
-           * Text size and weight is conditionally changed when active versus inactive.
-           */}
-          {[
-            ["Dashboard", "/"],
-            ["Lessons", "/all-lessons"],
-            ["Assignments", "/assignments"],
-          ].map(([title, url], index) => {
+        {/* Desktop Navigation */}
+        <div className="hidden lg:flex justify-center items-center w-2/5 space-x-10">
+          {navItems.map(([title, url], index) => {
             return (
               <NavLink
                 key={index}
@@ -136,10 +157,7 @@ function Navbar() {
           })}
         </div>
 
-        {/* This divider contains navigation links to view messages/notifications, settings, and the user profile
-         * Each icon opens up a modal with more information.
-         */}
-        <div className="flex items-center space-x-4">
+        <div className="hidden lg:flex items-center space-x-4">
           <ClickAwayListener onClickAway={handleClickAway}>
             <div className="relative">
               <Tooltip
@@ -212,10 +230,6 @@ function Navbar() {
             </MenuItem>
           </Menu>
 
-          {/* The following block of code handles navigation to a user's profile and logging out.
-           * The tooltip displays information below the account circle icon.
-           * Clicking the account circle icon opens up a sub-menu with the aforementioned navigation links.
-           */}
           <Tooltip placement="bottom" title="Profile" arrow>
             <IconButton
               edge="start"
@@ -237,6 +251,46 @@ function Navbar() {
             <MenuItem onClick={logoutUser}>Logout</MenuItem>
           </Menu>
         </div>
+
+        {/* Mobile Navigation Menu */}
+        {mobileNavOpen ? (
+          <IconButton
+            start="edge"
+            aria-label="mobile-menu-open"
+            className="text-slate-50 lg:hidden block ease-in-out"
+            onClick={handleNavIcon}
+          >
+            <MenuOpenIcon />
+          </IconButton>
+        ) : (
+          <IconButton
+            start="edge"
+            aria-label="mobile-menu-closed"
+            className="text-slate-50 lg:hidden block"
+            onClick={handleNavIcon}
+          >
+            <MenuIcon />
+          </IconButton>
+        )}
+        <Menu
+          anchorEl={isLargeScreen ? handleMobileClose : mobileAnchorEl}
+          open={mobileNavOpen}
+          onClose={handleMobileClose}
+        >
+          {navItems.concat(navItemsMobile).map(([title, url], index) => {
+            return (
+              <MenuItem
+                onClick={handleMobileClose}
+                component={NavLink}
+                to={url}
+                key={index}
+              >
+                {title}
+              </MenuItem>
+            );
+          })}
+          <MenuItem onClick={logoutUser}>Logout</MenuItem>
+        </Menu>
       </Toolbar>
     </AppBar>
   );
