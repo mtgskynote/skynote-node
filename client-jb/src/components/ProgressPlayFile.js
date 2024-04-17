@@ -366,9 +366,9 @@ const ProgressPlayFile = (props) => {
   
   //---- Pass to makeAudioStreamer to get callbaks with object features (with attributes being Meyda features)
   const aCb=function(features){
-    featureValues.rms.push(features.rms);
-    featureValues.spectralCentroid.push(features.spectralCentroid);
-    featureValues.spectralFlux.push(features.spectralFlux);
+    featureValues.rms.push(features.rms);//DYNAMIC STABILITY
+    featureValues.spectralCentroid.push(features.spectralCentroid);//SPECTRAL CENTROID
+    featureValues.spectralFlux.push(features.spectralFlux);//SPECTRAL FLUX
 
     // setSegments([featureValues.pitch.computeSD(), featureValues.rms.computeSD(), featureValues.spectralCentroid.computeMean(), featureValues.spectralFlux.computeSD() ]);
     // console.log("Spectral Centroid: ", featureValues.spectralCentroid.computeMean());
