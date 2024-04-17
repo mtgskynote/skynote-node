@@ -273,20 +273,35 @@ const ProgressPlayFile = (props) => {
       
   }
 
-  //when audioReady activates (meaning that we can download the data)
-  useEffect(() => {
-    if(audioReady){
-      audioStreamer.save_or_not("save")
-        .then(dataToDownload => {
-          const buffer= new Buffer.from(dataToDownload)
-          console.log("Can u see me now??");
-          handleDownload(buffer); // send data to downloading function
-        })
-        .catch(error => {
-          console.error("Error:", error);
-        });
-    }
-  }, [audioReady]);
+  ////////////////////////////////////////////////////////////////////////////////////////////
+  ////////HERE I'M TAKING THE MEYDA FEATURES, BUT CURRENTLY NOTHING IS DONE WITH THEM/////////
+  ////////////////////////////////////////////////////////////////////////////////////////////
+  //---- keep track of the history of features we extract
+  const featureValues = {
+    // queue length (form computing means and SDs), normlow, normhi, sdnormlow, sdnormhi
+    pitch : new Queue(5, 24, 61, 0, .5),  //[110Hz, 440Hz] = [A2, A4] = midinote[24,69]
+    rms: new Queue(5, 0, .25, 0, .01),
+    spectralCentroid: new Queue(5, 0, 500),
+    spectralFlux : new Queue(5, 3, 1, 0, .1) 
+  }
+  
+  //---- Pass to makeAudioStreamer to get callbaks with object features (with attributes being Meyda features)
+  const aCb=function(features){
+    featureValues.rms.push(features.rms);//DYNAMIC STABILITY
+    featureValues.spectralCentroid.push(features.spectralCentroid);//SPECTRAL CENTROID
+    featureValues.spectralFlux.push(features.spectralFlux);//SPECTRAL FLUX
+
+    // setSegments([featureValues.pitch.computeSD(), featureValues.rms.computeSD(), featureValues.spectralCentroid.computeMean(), featureValues.spectralFlux.computeSD() ]);
+    // console.log("Spectral Centroid: ", featureValues.spectralCentroid.computeMean());
+    // console.log("Dynamic Stability: ", featureValues.rms.computeSD());
+    // console.log("Spectral Flux: ", featureValues.spectralFlux.computeSD());
+    // console.log("Pitch: ", featureValues.pitch.computeSD());
+  };
+  ////////////////////////////////////////////////////////////////////////////////////////////
+  ////////////////////////////////////////////////////////////////////////////////////////////
+  ////////////////////////////////////////////////////////////////////////////////////////////
+
+  var audioStreamer = makeAudioStreamer(handlePitchCallback, null, aCb);
 
   //Once the score is loaded, get userData
   useEffect(()=>{
@@ -352,35 +367,20 @@ const ProgressPlayFile = (props) => {
     requestMicrophonePermission();
   }, []); //This should run only once
 
-  ////////////////////////////////////////////////////////////////////////////////////////////
-  ////////HERE I'M TAKING THE MEYDA FEATURES, BUT CURRENTLY NOTHING IS DONE WITH THEM/////////
-  ////////////////////////////////////////////////////////////////////////////////////////////
-  //---- keep track of the history of features we extract
-  const featureValues = {
-    // queue length (form computing means and SDs), normlow, normhi, sdnormlow, sdnormhi
-    pitch : new Queue(5, 24, 61, 0, .5),  //[110Hz, 440Hz] = [A2, A4] = midinote[24,69]
-    rms: new Queue(5, 0, .25, 0, .01),
-    spectralCentroid: new Queue(5, 0, 500),
-    spectralFlux : new Queue(5, 3, 1, 0, .1) 
-  }
-  
-  //---- Pass to makeAudioStreamer to get callbaks with object features (with attributes being Meyda features)
-  const aCb=function(features){
-    featureValues.rms.push(features.rms);//DYNAMIC STABILITY
-    featureValues.spectralCentroid.push(features.spectralCentroid);//SPECTRAL CENTROID
-    featureValues.spectralFlux.push(features.spectralFlux);//SPECTRAL FLUX
-
-    // setSegments([featureValues.pitch.computeSD(), featureValues.rms.computeSD(), featureValues.spectralCentroid.computeMean(), featureValues.spectralFlux.computeSD() ]);
-    // console.log("Spectral Centroid: ", featureValues.spectralCentroid.computeMean());
-    // console.log("Dynamic Stability: ", featureValues.rms.computeSD());
-    // console.log("Spectral Flux: ", featureValues.spectralFlux.computeSD());
-    // console.log("Pitch: ", featureValues.pitch.computeSD());
-  };
-  ////////////////////////////////////////////////////////////////////////////////////////////
-  ////////////////////////////////////////////////////////////////////////////////////////////
-  ////////////////////////////////////////////////////////////////////////////////////////////
-
-  var audioStreamer = makeAudioStreamer(handlePitchCallback, null, aCb);
+  //when audioReady activates (meaning that we can download the data)
+  useEffect(() => {
+    if(audioReady){
+      audioStreamer.save_or_not("save")
+        .then(dataToDownload => {
+          const buffer= new Buffer.from(dataToDownload)
+          console.log("Can u see me now??");
+          handleDownload(buffer); // send data to downloading function
+        })
+        .catch(error => {
+          console.error("Error:", error);
+        });
+    }
+  }, [audioReady]);
   
   //When countdown timer (previous to start recording) finishes
   useEffect(() => {
