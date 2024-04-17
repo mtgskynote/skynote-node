@@ -77,6 +77,7 @@ function Navbar() {
     }
   }, [userData]);
 
+  // Effect to remove mobile nav dropdown from screen when the screen is resized to large
   useEffect(() => {
     if (isLargeScreen) {
       setMobileAnchorEl(null);
