@@ -77,6 +77,13 @@ function Navbar() {
     }
   }, [userData]);
 
+  useEffect(() => {
+    if (isLargeScreen) {
+      setMobileAnchorEl(null);
+      setMobileNavOpen(false);
+    }
+  }, [isLargeScreen, mobileAnchorEl]);
+
   // Handlers for profile, settings, notifications, and mobile navigation
   const handleProfileClick = (event) => {
     setProfileAnchorEl(event.currentTarget);
@@ -283,7 +290,7 @@ function Navbar() {
         )}
         {/* Mobile navigation - menu */}
         <Menu
-          anchorEl={isLargeScreen ? handleMobileClose : mobileAnchorEl}
+          anchorEl={isLargeScreen ? null : mobileAnchorEl}
           open={mobileNavOpen}
           onClose={handleMobileClose}
         >
