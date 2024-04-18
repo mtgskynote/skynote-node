@@ -1,17 +1,15 @@
 import { Outlet } from "react-router-dom";
-import Wrapper from "../../assets/wrappers/SharedLayout";
+import SharedLayoutCSS from "./SharedLayout.module.css"
 import Navbar from "../../components/Navbar";
 
 const SharedLayout = () => {
   return (
-    <Wrapper>
-      <main className="dashboard pt-16">
+      <main className={`${SharedLayoutCSS.dashboard} pt-16`}>
         <Navbar />
-        <div className="dashboard-page">
+        <div className={SharedLayoutCSS.dashboardPage}>
           <Outlet />
         </div>
       </main>
-    </Wrapper>
   );
 };
 

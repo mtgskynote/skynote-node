@@ -1,25 +1,34 @@
-
-
-
-///////////////////////////////////////////
-////////// THIS FILE IS OBSOLETE //////////
-///////////////////////////////////////////
-import styled from "styled-components";
-
-const Wrapper = styled.section`
-  display: grid;
-  align-items: center;
-  .logo {
+.fullPage {
+    display: grid;
+    align-items: center;
+}
+.logo {
     display: block;
     margin: 0 auto;
     margin-bottom: 1.38rem;
-  }
-  .form {
+    width: 175px;
+    height: 75px;
+}
+.regForm {
+    width: 90vw;
     max-width: 400px;
     border-top: 5px solid var(--primary-500);
-  }
+    background: var(--white);
+    border-radius: var(--borderRadius);
+    box-shadow: var(--shadow-2);
+    padding: 2rem 2.5rem;
+    margin: 3rem auto;
+    transition: var(--transition);
+    /* display: flex; */
+    justify-content: center;
+    align-items: center;
+} 
 
-  .site-header{
+.regForm h3 {
+    text-align: center;
+}
+
+.siteHeader{
     background-color: #23292B; 
     height: 70px; 
     width: 100%; 
@@ -27,16 +36,16 @@ const Wrapper = styled.section`
     top: 0; 
     left: 0; 
     z-index: 9999; 
-  }
-  .tab-row{
+}
+.tabRow{
     display: flex; 
     justify-content: center; 
     align-items: center; 
     height: 3rem; 
     background-color: transparent;
     border-radius: 25px;
-  }
-  .tab-login{
+}
+.tabLogin{
     display: flex; 
     justify-content: center; 
     align-items: center; 
@@ -45,13 +54,13 @@ const Wrapper = styled.section`
     border-radius: 20px;
     margin-right: 0;
     width: auto;
-  }
-  .tab-login:hover{
+}
+.tabLogin:hover{
     background-color:white;
     transition: 1;
-  }
-  
-  .tab-row-container{
+}
+
+.tabRowContainer{
     display: flex; 
     justify-content: flex-end; 
     width: min-width; 
@@ -62,9 +71,9 @@ const Wrapper = styled.section`
     top: 0;
     right: 0; 
     padding: 5px 5px;
-  }
-  
-  .tab-link{
+}
+
+.tabLink{
     margin: 0 0.5rem; 
     padding: 0.5rem 1rem; 
     background-color: transparent; 
@@ -75,9 +84,9 @@ const Wrapper = styled.section`
     text-decoration: none; 
     cursor: pointer; 
     font-size: 16px;
-  }
-  
-  .logo-container{
+}
+
+.logoContainer{
     position: absolute;
     width: 20%;
     height: 20%; 
@@ -85,9 +94,9 @@ const Wrapper = styled.section`
     left: 10px;
     align-items: center; 
     justify-content: flex-start;
-    //padding: 20px; 
-  }
-  .skynote-container{
+    /* padding: 20px;  */
+}
+.skynoteContainer{
     position: absolute; 
     height: 60px;
     top: 0;
@@ -103,28 +112,35 @@ const Wrapper = styled.section`
     font-weight: 400;
     line-height: normal;
     z-index: 1;
-  }
+}
 
-  h3 {
-    text-align: center;
-  }
-  p {
+.regForm p {
+    color: var(--primary-500);
     margin: 0;
     margin-top: 1rem;
     text-align: center;
-  }
-  .btn {
-    margin-top: 1rem;
-  }
-  .member-btn {
+}
+.btn {
+    margin-top: 2rem;
+}
+.memberBtn {
     background: transparent;
     border: transparent;
     color: var(--primary-500);
     cursor: pointer;
     letter-spacing: var(--letterSpacing);
-  }
-
-  .google-btn {
+}
+.memberBtn:hover {
+    background-color: white;
+}
+.logo {
+    padding: 0% 50%;
+    margin: 10%;
+}
+img {
+    align-self: center;
+}
+.googleBtn {
     padding: 5px;
     width: 100%;
     border: transparent;
@@ -133,6 +149,7 @@ const Wrapper = styled.section`
     color: var(--primary-500);
     transition: all 0.4s;
     cursor: pointer;
-  }
-`;
-export default Wrapper;
+}
+.googleBtn:hover {
+    background-color: white;
+}

@@ -1,3 +1,9 @@
+
+
+
+///////////////////////////////////////////
+//// THIS FILE DOESN'T SEEM TO BE USED ////
+///////////////////////////////////////////
 import Wrapper from "../assets/wrappers/StatItem";
 
 const StatsItem = ({ count, title, icon, color, bcg }) => {

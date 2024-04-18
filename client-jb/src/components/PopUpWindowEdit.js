@@ -1,7 +1,6 @@
 import React, { useEffect, useRef, useState} from 'react';
 import PopUpWindowCSS from './PopUpWindow.module.css';
 import { editRecording} from "../utils/studentRecordingMethods.js";
-import { useLocation } from 'react-router-dom';
 
 const PopUpWindowEdit = (props) => {
     const [idEdit, setIdEdit] = useState(null);

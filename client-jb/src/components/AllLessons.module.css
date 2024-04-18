@@ -30,12 +30,12 @@
   box-shadow: 0 0 3px #cecece;}
 .song{
   font-family: 'Cabin';
-  background-color: rgb(255, 255, 255);
+  background-color: #FFFFFF;
   
 }
 .link{
   text-decoration: none;
-  color: black;
+  color: #000000;
 }
 .songelement {  
   padding: 5px 15px 5px 15px;

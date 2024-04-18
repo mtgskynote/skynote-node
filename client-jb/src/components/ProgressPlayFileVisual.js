@@ -7,7 +7,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
     faEye, //visual mode
 } from "@fortawesome/free-solid-svg-icons";
-import Wrapper from "../assets/wrappers/ModeToggle";
+import ModeToggleCSS from './ModeToggle.module.css'
 import { Button} from "@material-ui/core";
 import ModeInfoButton from "./ModeInfoButton.js";
 import PopUpWindowDelete from "./PopUpWindowDelete.js";
@@ -306,12 +306,10 @@ const ProgressPlayFileVisual = (props) => {
 
       {(showPopUpWindow && <PopUpWindowDelete showWindow={showPopUpWindow} handlerBack={handleWindowPopUp}/>)}
 
-      <Wrapper>
-      <div className="completeModeDiv">
-        <div className="modeToggleDiv">
+      <div className={ModeToggleCSS.completeModeDiv}>
+        <div className={ModeToggleCSS.modeToggleDivVisual}>
           <Button 
-            key={"VisualMode"} 
-            className="toggleBtn" 
+            key={"VisualMode"}  
             title={"VisualMode"} 
             id={"VisualMode"} 
             >
@@ -322,7 +320,7 @@ const ProgressPlayFileVisual = (props) => {
             </div>
           </Button>
         </div>
-        <ModeInfoButton 
+        <ModeInfoButton
           message={2}
           title={metaData.name}
           stars={metaData.stars}
@@ -331,8 +329,7 @@ const ProgressPlayFileVisual = (props) => {
           lesson={metaData.lesson}
           score={metaData.score}/> 
 
-        </div>
-    </Wrapper>
+      </div>
 
     {/* Button to go back */}
     <button  className={ListRecordingsCSS.back2Listbutton} onClick={handleGoBack}>

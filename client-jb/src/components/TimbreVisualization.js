@@ -6,10 +6,10 @@ import PitchTuner from "./pitchTuner";
 
 // Labes for pieChart starting at [0,1] and going around clockwise
 const labels = [
-  "pitch",
-  "Dynamic Stability", // based on rms
-  "spectralCentroid",
-  "spectralFlux",
+  "Pitch",
+  "Dynamic Stability",  // based on rms
+  "Spectral Centroid",
+  "Spectral Flux"
 ];
 
 const freq2midipitch = (freq) => {
@@ -20,6 +20,28 @@ const TimbreVisualization = () => {
   console.log(`STARTING Timbre Visualization, about to create audio streamer.`);
   const pieChartRef = useRef(null);
   const pitchTunerRef = useRef(null);
+
+  //This part deals with microphone permissions.
+    //Accepting permissions works as expected
+    //Denying permissions shows an alert that refreshes the page when accepted, but won't go away until permissions are given
+    //Ignoring permissions allows to use the page, but audio won't be picked up and an error will show when the recorging process is finished  
+    const requestMicrophonePermission = async () => {
+      try {
+        const stream = await navigator.mediaDevices.getUserMedia({ audio: {
+          // echoCancellation: false,
+          // autoGainControl: false,
+          // noiseSuppression: false,
+          // latency: 0,
+          // sampleRate: 22050
+        } });
+        // setCanRecord(true);
+      } catch (error) {
+        // setCanRecord(false);
+        alert('Microphone access denied. If you have trouble with permissions, try clicking on the small lock at the left of your search bar and make sure the microphone is enabled, then accept this message :)');
+        window.location.reload();
+      }
+    };
+    requestMicrophonePermission();
 
   //---- Send array of values to pieChart for drawing segments
   function setSegments(sarray) {
@@ -50,6 +72,13 @@ const TimbreVisualization = () => {
     }
     if (pitchTunerRef.current) {
       pitchTunerRef.current.setPitch(pc.pitch, pc.confidence);
+     }
+      //setSegments([normalize(featureValues.pitch.last(), 100, 360), normalize(featureValues.rms.computeMean(),0,.1), normalize(featureValues.spectralCentroid.computeMean(),0,600), normalize(featureValues.spectralFlux.computeMean(),1,4)  ]);
+      //setSegments([normalize(featureValues.pitch.last(), 100, 360), normalize(featureValues.rms.computeSD(),.003, .001), normalize(featureValues.spectralCentroid.computeMean(),0,600), normalize(featureValues.spectralFlux.computeMean(),1,4)  ]);
+      //setSegments([featureValues.pitch.last(), featureValues.rms.computeMean(), featureValues.spectralCentroid.computeMean(), featureValues.spectralFlux.computeMean() ]);
+      setSegments([featureValues.pitch.computeSD(), featureValues.rms.computeSD(), featureValues.spectralCentroid.computeMean(), featureValues.spectralFlux.computeSD() ]);
+  }
+  
     }
     //setSegments([normalize(featureValues.pitch.last(), 100, 360), normalize(featureValues.rms.computeMean(),0,.1), normalize(featureValues.spectralCentroid.computeMean(),0,600), normalize(featureValues.spectralFlux.computeMean(),1,4)  ]);
     //setSegments([normalize(featureValues.pitch.last(), 100, 360), normalize(featureValues.rms.computeSD(),.003, .001), normalize(featureValues.spectralCentroid.computeMean(),0,600), normalize(featureValues.spectralFlux.computeMean(),1,4)  ]);

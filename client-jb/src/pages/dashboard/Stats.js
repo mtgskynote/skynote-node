@@ -187,17 +187,16 @@ const Stats = () => {
           );
         });
 
-      getAllAssignments(userData.id)
-        .then((result) => {
-          var taskCount = 0;
-          if (result.length !== 0) {
-            result.map((assignment, index) => {
-              assignment.tasks.map((task, index) => {
-                if (task.answer === null || task.answer === undefined) {
-                  taskCount = taskCount + 1;
+        getAllAssignments(userData.id).then((result)=>{
+          var taskCount=0;
+          if(result.length!==0){
+            result.forEach((assignment)=>{   
+              assignment.tasks.forEach((task)=>{
+                if(task.answer===null || task.answer===undefined){
+                  taskCount=taskCount+1;
                 }
-              });
-            });
+              })
+            })
           }
           setUnansweredTasks(taskCount);
         })

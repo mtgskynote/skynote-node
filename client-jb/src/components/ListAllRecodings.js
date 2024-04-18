@@ -99,8 +99,6 @@ const ListAllRecordings = () => {
 
   // Event handler for click on See
   const handleSeeClick = (index)=> {
-    console.log("recordingList:\n", typeof recordingList, recordingList);
-    console.log("recording:\n", recordingList[index]);
     const recording = recordingList[index];
     const scoreName=recordingScores[index]
     const scoreXML=localData.find(item => item.title === scoreName).fname
@@ -127,7 +125,6 @@ const ListAllRecordings = () => {
 
   // Event handler for click on Trash
   const handleTrashClick = (nameOfFile, index) => {
-    console.log("Deleting:\n", nameOfFile, "\nwith number:\n", index)
     if (recordingNames.indexOf(nameOfFile) !== -1) {
       const idToDelete = recordingList[recordingNames.indexOf(nameOfFile)].recordingId;
       // Delete recording entry of state arrays

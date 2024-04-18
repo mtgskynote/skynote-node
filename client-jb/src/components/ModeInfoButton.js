@@ -1,7 +1,6 @@
-import {useEffect, useState } from "react";
-//import Wrapper from "../assets/wrappers/ModeToggle";
+import { useState } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { Button} from "@material-ui/core";
+import { Button } from "@material-ui/core";
 //import { Dropdown } from "react-bootstrap";
 import ModeInfoButtonCSS from './ModeInfoButton.module.css';
 
@@ -91,14 +90,16 @@ const ModeInfoButton = (props) => {
 
   const ModeInfoButton = (
     
-    <div className="InfoModeComplete">
+    <div className={ModeInfoButtonCSS.InfoMode}>
       <Button 
         key={"InfoMode"} 
-        className="InfoMode" 
+        className={ModeInfoButtonCSS.InfoModeButton} 
         title={"InfoMode"} 
         id={"InfoMode"} 
         onMouseOver={() => handleMouseOver("InfoMode")}
-        onMouseLeave={handleMouseLeave}>
+        onMouseLeave={handleMouseLeave}
+        // onMouseLeave={() => handleMouseOver("InfoMode")}
+        >
         <div>
           <FontAwesomeIcon
               icon={faInfoCircle} //Practice button

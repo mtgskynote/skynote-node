@@ -138,7 +138,7 @@ const Profile = () => {
                 </div>
 
                 <div className={ProfileCSS.field}>
-                  <label htmlFor="email" className={ProfileCSS.profilelabel}>email:</label>
+                  <label htmlFor="email" className={ProfileCSS.profilelabel}>Email:</label>
                   <input
                     className={ProfileCSS.profileinput}
                     type="text"
@@ -151,7 +151,7 @@ const Profile = () => {
                 </div>
 
                 <div className={ProfileCSS.field}>
-                  <label htmlFor="role" className={ProfileCSS.profilelabel}>role:</label>
+                  <label htmlFor="role" className={ProfileCSS.profilelabel}>Role:</label>
                   <input
                     className={ProfileCSS.profileinput}
                     type="text"
@@ -164,7 +164,7 @@ const Profile = () => {
                 </div>
 
                 <div className={ProfileCSS.field}>
-                  <label htmlFor="teacher" className={ProfileCSS.profilelabel}>teacher:</label>
+                  <label htmlFor="teacher" className={ProfileCSS.profilelabel}>Teacher:</label>
                   <input
                     className={ProfileCSS.profileinput}
                     type="text"

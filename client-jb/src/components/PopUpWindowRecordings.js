@@ -29,7 +29,7 @@ const PopUpWindowRecordings = (props) => {
   const [recordingDates, setRecordingDates] = useState(null);
   const [checkOption, setCheckOption]=useState(false);
   const [recordingIndexSubmit, setRecordingIndexSubmit]=useState(false);
-  const location = useLocation();
+  // const location = useLocation();
 
 
   // Define options for formatting date
