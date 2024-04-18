@@ -1,4 +1,4 @@
-import Wrapper from "../assets/wrappers/LandingBackPages";
+import ResearchCSS from './Research.module.css'
 import pub1_img from "../assets/images/publications/pub1_img.png";
 import pub2_img from "../assets/images/publications/pub2_img.png";
 import pub3_img from "../assets/images/publications/pub3_img.jpeg";
@@ -73,94 +73,93 @@ const publications = [
 
 const Research = () => {
     return (
-      <Wrapper>
-        <div className="site-header">
-          <div className="tab-row-container">
-            <div className="tab-row">
-            <div className="tab-login"><Link to="/landing" className="tab-link"> Home </Link></div>
-              <div className="tab-login"><Link to="/demos" className="tab-link"> Demos </Link></div>
-              <div className="tab-login"><Link to="/ourteam" className="tab-link"> Our Team </Link></div>
-              <div className="tab-login"><Link to="/research" className="tab-link"> Research </Link></div>
-              <div className="tab-login"><Link to="https://docs.google.com/forms/d/e/1FAIpQLSdE6QIt2Xfno67jWjBi2SJOB1dImKhmvJYr9Mzi9Qbo1BGHuw/viewform" className="tab-link"> Interest Form </Link></div>
-              <div className="tab-login"><Link to="/register" className="tab-link"> Login Register </Link></div>
+      <div>
+        <div className={ResearchCSS.siteHeader}>
+          <div className={ResearchCSS.tabRowContainer}>
+            <div className={ResearchCSS.tabRow}>
+            <div className={ResearchCSS.tabLogin}><Link to="/landing" className={ResearchCSS.tabLink}> Home </Link></div>
+              <div className={ResearchCSS.tabLogin}><Link to="/demos" className={ResearchCSS.tabLink}> Demos </Link></div>
+              <div className={ResearchCSS.tabLogin}><Link to="/ourteam" className={ResearchCSS.tabLink}> Our Team </Link></div>
+              <div className={ResearchCSS.tabLogin}><Link to="/research" className={ResearchCSS.tabLink}> Research </Link></div>
+              <div className={ResearchCSS.tabLogin}><Link to="https://docs.google.com/forms/d/e/1FAIpQLSdE6QIt2Xfno67jWjBi2SJOB1dImKhmvJYr9Mzi9Qbo1BGHuw/viewform" className={ResearchCSS.tabLink}> Interest Form </Link></div>
+              <div className={ResearchCSS.tabLogin}><Link to="/register" className={ResearchCSS.tabLink}> Login Register </Link></div>
             </div>
 
 
-            <div className="dropdown">
-            <input type="checkbox" id="dropdown-toggle" className="dropdown-toggle"></input>
-            <label className="dropbtn" htmlFor="dropdown-toggle">Menu</label>
-            <div className="dropdown-content">
+            <div className={ResearchCSS.dropdown}>
+            <input type="checkbox" id="dropdown-toggle" className={ResearchCSS.dropdownToggle}></input>
+            <label className={ResearchCSS.dropbtn} htmlFor="dropdown-toggle">Menu</label>
+            <div className={ResearchCSS.dropdownContent}>
               <ul>
-                <li><Link to="/landing" className="tab-link"> Home </Link></li>
-                <li><Link to="/demos" className="tab-link"> Demos </Link></li>
-                <li><Link to="/ourteam" className="tab-link"> Our Team </Link></li>
-                <li><Link to="/research" className="tab-link"> Research </Link></li>
-                <li><Link to="https://docs.google.com/forms/d/e/1FAIpQLSdE6QIt2Xfno67jWjBi2SJOB1dImKhmvJYr9Mzi9Qbo1BGHuw/viewform" className="tab-link"> Interest Form </Link></li>
-                <li><Link to="/register" className="tab-link"> Login Register </Link></li>
+                <li><Link to="/landing" className={ResearchCSS.tabLink}> Home </Link></li>
+                <li><Link to="/demos" className={ResearchCSS.tabLink}> Demos </Link></li>
+                <li><Link to="/ourteam" className={ResearchCSS.tabLink}> Our Team </Link></li>
+                <li><Link to="/research" className={ResearchCSS.tabLink}> Research </Link></li>
+                <li><Link to="https://docs.google.com/forms/d/e/1FAIpQLSdE6QIt2Xfno67jWjBi2SJOB1dImKhmvJYr9Mzi9Qbo1BGHuw/viewform" className={ResearchCSS.tabLink}> Interest Form </Link></li>
+                <li><Link to="/register" className={ResearchCSS.tabLink}> Login Register </Link></li>
               </ul>
             </div>
           </div> 
 
 
           </div>
-            <div className="logo-container"> 
+            <div className={ResearchCSS.logoContainer}> 
               <WhiteLogo/>
             </div>
-            <div className="skynote-container">
+            <div className={ResearchCSS.skynoteContainer}>
               SkyNote
             </div>
         </div>
-        <div className="addspace"></div>
+        <div className={ResearchCSS.addspace}></div>
         
 
-     <div className="work-section-wrapper">
-        <div className="work-section-top">
-          <div className="addspace2"></div>
-      </div> 
-      
-       </div> 
-      <div className="work-section-top">
-        <div className="violinipad-container">
-           <div className="violinipad">
-           <MusicTech/>
-           </div>
-           </div>
-          <div className="violinipad-overlay">
-            <h1>Research</h1>
-            <h2>Discover whats current in Music Technology</h2>
-          </div>
-          </div>
-      <div className="work-section-wrapper">
-        <div className="addspace4"></div>
-        <div className="work-section-bottom">
-          {publications.map((data, index) => (  
-            <div className="posts" key={index}>
-              <div className="card">
-                <div>
-                  <div className="centercontainer">
-                    <img src={data.imagelink} alt="Write description here" className="img2" />
-                  </div>
-                  <div align="center">
-                      <p>{data.text}</p>
-                    </div>
+        <div className={ResearchCSS.workSectionWrapper}>
+            <div className={ResearchCSS.workSectionTop}>
+              <div className={ResearchCSS.addspace2}></div>
+            </div> 
+        </div> 
+        <div className={ResearchCSS.workSectionTop}>
+          <div className={ResearchCSS.violinipadContainer}>
+            <div className={ResearchCSS.violinipad}>
+            <MusicTech/>
+            </div>
+            </div>
+            <div className={ResearchCSS.violinipadOverlay}>
+              <h1>Research</h1>
+              <h2>Discover whats current in Music Technology</h2>
+            </div>
+        </div>
+        <div className={ResearchCSS.workSectionWrapper}>
+          <div className={ResearchCSS.addspace4}></div>
+          <div className={ResearchCSS.workSectionBottom}>
+            {publications.map((data, index) => (  
+              <div className={ResearchCSS.posts} key={index}>
+                <div className={ResearchCSS.card}>
                   <div>
-                  <Link
-                      // className="btn btn-outline-dark"
-                      to={data.publicationlink}
-                      target="_blank"
-                    >
-                     <div className="publicationbtn">
-                      <p>Link</p>
-                     </div> 
-                    </Link>
+                    <div className={ResearchCSS.centercontainer}>
+                      <img src={data.imagelink} alt="Write description here" className={ResearchCSS.img2} />
+                    </div>
+                    <div align="center">
+                        <p>{data.text}</p>
+                      </div>
+                    <div>
+                    <Link
+                        // className="btn btn-outline-dark"
+                        to={data.publicationlink}
+                        target="_blank"
+                      >
+                      <div className={ResearchCSS.publicationbtn}>
+                        <p>Link</p>
+                      </div> 
+                      </Link>
+                    </div>
                   </div>
                 </div>
               </div>
-            </div>
-          ))}
-        </div>
-      </div> 
-          </Wrapper>
+            ))}
+          </div>
+        </div> 
+      </div>
           );
       };
 export default Research;

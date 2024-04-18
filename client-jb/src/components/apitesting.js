@@ -62,7 +62,7 @@ const Apitesting = () => {
 
   //===========================================================================
 
-  const postMessage = async (content="default message") => { 
+  const postMessage = async (content="Message sent from the postMessage button") => { 
     try {
       console.log(`postMessage from client, userId: ${data.id} `)
       const response = await axios.put('/api/v1/messages/putMessage', {

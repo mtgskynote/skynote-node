@@ -1,3 +1,9 @@
+
+
+
+///////////////////////////////////////////
+//// THIS FILE DOESN'T SEEM TO BE USED ////
+///////////////////////////////////////////
 import styled from 'styled-components'
 
 const Wrapper = styled.article`

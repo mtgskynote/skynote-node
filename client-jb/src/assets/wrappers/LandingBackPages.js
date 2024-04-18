@@ -1,3 +1,9 @@
+
+
+
+///////////////////////////////////////////
+////////// THIS FILE IS OBSOLETE //////////
+///////////////////////////////////////////
 import styled from 'styled-components'
 
 
@@ -177,9 +183,9 @@ const Wrapper = styled.main`
     margin-middle: 2rem;
   }
 
- a{
-    color: black;
-  }
+//  a{
+//     color: black;
+//   }
 
   @media screen and (min-width: 768px){
     section: {
@@ -762,6 +768,7 @@ p {
   /* Hide the checkbox input */
   .dropdown-toggle {
     display: none;
+    padding: 100px
   }
 
   .dropdown-content {

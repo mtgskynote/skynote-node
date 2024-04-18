@@ -20,11 +20,7 @@ import {
 
 Chartjs.register(LineElement, CategoryScale, LinearScale, PointElement);
 
-//Convert frequency Hertz to MIDI function
-const freq2midipitch = (freq) => {
-  return 12 * Math.log2(freq / 440) + 69;
-};
-/////////////////////////////////////////////////////////
+//#region AUTO-SCROLL
 //THIS DEALS WITH THE AUTO-SCROLL OF THE CURSOR, IT MIGHT NOT BE THE MOST EFFICIENT WAY OF DOING IT
 //SO WE'LL CONSIDER THIS A TEMPORAL PATCH :), THE SECOND PART OF THIS IS INSIDE componentDidUpdate
 let isScrolling;
@@ -44,7 +40,15 @@ window.addEventListener(
   false
 );
 ////////////////////////////////////////////////////////////////////////////////////////////////
+//#endregion
 
+// #region FREQUENCY TO STAFF POSITION CONVERSION
+//THIS PART DEALS WITH THE CONVERSION FROM FREQUENCY TO POSITION IN THE STAFF
+//Convert frequency Hertz to MIDI function
+const freq2midipitch = (freq) => {
+  return 12 * Math.log2(freq / 440) + 69;
+};
+//Convert MIDI to pixel offset, B4 being 0 (middle line of the staff)
 const midi2StaffGaps = (playedNoteMidi) => {
   // Create a mapping of MIDI note values to staff offsets
   const midiToStaffMapping = {
@@ -105,6 +109,8 @@ const midi2StaffGaps = (playedNoteMidi) => {
   }
   return result;
 };
+////////////////////////////////////////////////////////////////////////////////////////////////
+// #endregion
 
 const generateNoteIDsAssociation = (osmd) => {
   //function that generates an association between the noteIDs of SVGElements of current render/osmd page,
@@ -234,6 +240,7 @@ class OpenSheetMusicDisplay extends Component {
     this.coords = [0, 0];
     this.color = "black";
     this.zoom = props.zoom;
+    this.drawPitch = props.drawPitch;
     this.totalReps = 0;
     this.showingRep = 0;
     this.selectionEndReached = false;
@@ -701,7 +708,7 @@ class OpenSheetMusicDisplay extends Component {
       };
 
       const jsonString = JSON.stringify(dataToSave);
-      const jsonBlob = new Blob([jsonString], { type: "application/json" });
+      // const jsonBlob = new Blob([jsonString], { type: "application/json" });
       this.props.dataToDownload(jsonString);
     }
 
@@ -872,7 +879,7 @@ class OpenSheetMusicDisplay extends Component {
     if (this.props.startPitchTrack) {
       if (this.props.pitch !== prevProps.pitch) {
         //new pitch
-
+        // console.log("Heyoooo\n", this.props.dynamicStability);
         //Add index to X coordinates to advance pitch tracker in X axis when new pitch arrives
         if (
           this.notePositionX ===
@@ -1072,6 +1079,22 @@ class OpenSheetMusicDisplay extends Component {
       <div>
         <div style={lineChartStyle}>
           <LineChart
+            width={this.coords[0]}
+            height={this.coords[1]}
+            zoom={this.zoom}
+            pitchColor={this.state.pitchColor}
+            pitchData={this.state.pitchData}
+            pitchDataPosX={this.state.pitchPositionX}
+            pitchDataPosY={this.state.pitchPositionY}
+            pitchIndex={this.state.recordedNoteIndex}
+            repetitionNumber={this.state.repetitionNumber}
+            showingRep={this.showingRep}
+          />
+        </div>
+
+        <div style={lineChartStyle}>
+          <LineChart
+            drawPitch={this.drawPitch}
             width={this.coords[0]}
             height={this.coords[1]}
             zoom={this.zoom}

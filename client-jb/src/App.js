@@ -3,7 +3,7 @@ import { Register, OurTeam, Demos, Research, Landing, Error, ProtectedRoute } fr
 
 import { Profile, Stats, SharedLayout } from "./pages/dashboard";
 
-import React, { useEffect } from 'react';
+import React from 'react';
  
 import AllLessons from "./components/AllLessons";
 import ProgressPlayFile from "./components/ProgressPlayFile";

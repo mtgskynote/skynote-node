@@ -1,4 +1,4 @@
-import React, {useState, useEffect, useRef} from "react";
+import React, { useEffect, useRef } from "react";
 
 //Pitch track line component
 const LineChart = (props) => {
