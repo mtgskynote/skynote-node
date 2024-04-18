@@ -1,14 +1,14 @@
 This document contains steps for setting up the project and navigating around some common dependency issues.
 
 **Quick setup for local development**
-1) clone from the repo
-2) npm run install-dependencies --legacy-peer-deps
-3) mv your .env file to the root dir (or edit dotenv.txt and save it to .env)
-4) replace everything inside (root)/node_modules/opensheetmusicdisplay/build with the OSMD *extended* version of opensheetmusicdisplay.min.js
-5) npm start to run the development version of the code
+
+1. clone from the repo
+2. npm run install-dependencies --legacy-peer-deps
+3. mv your .env file to the root dir (or edit dotenv.txt and save it to .env)
+4. replace everything inside (root)/node_modules/opensheetmusicdisplay/build with the OSMD _extended_ version of opensheetmusicdisplay.min.js
+5. npm start to run the development version of the code
 
 <hr>
-
 
 appskynote.com (143.110.164.154), is hosted on DigitalOcean. To access the machine, or to access the database during local code development, you must have an account there with ssh access (ask lonce).
 
@@ -67,8 +67,8 @@ NOTE THAT: You dont need to always build osmd-extended from scratch, since we on
 a) Clone the OSMD-Extended repository: https://github.com/opensheetmusicdisplay/osmd-extended in a separate directory
 
 b) To build the minified version go to your clone directory and run in your terminal:
-cd "cloned directory path"  then  
-npm install  
+cd "cloned directory path" then  
+npm install
 
 You will find a minified opensheetmusicdisplay.min.js in the build/ folder. If you want to test the official version of osmd-extended provided by the developers of OSMD, you can also run the local demo of osmd-extended by using the command: npm start
 
@@ -79,32 +79,28 @@ d) Once you have cloned the osmd-extended repo and built the minified version,
 
 i) first do: npm i opensheetmusicdisplay
 
-ii) **No need to edit the package.json files** which for the client looks like this: 
+ii) **No need to edit the package.json files** which for the client looks like this:
 
         "dependencies": {
             "opensheetmusicdisplay": "^1.8.4",
         }
-    
+
     but after the build, make sure to get the extended ver min.js file into
-          /client-jb/node_modules/opensheetmusicdisplay/build/ 
-    
+          /client-jb/node_modules/opensheetmusicdisplay/build/
+
     the server should have no mention of osmd at all.
-    
 
+e) Then copy /build folder of your extended osmd to skynote-node/node-modules/opensheetmusicdisplay/ (actually, you really only need to put the ...min.js file there.)
 
-e) Then copy /build folder of your extended osmd to  skynote-node/node-modules/opensheetmusicdisplay/ (actually, you really only need to put the ...min.js file there.)
-
+i) If you encounter any webpack related errors when you navigate to a page that is heavily dependent on Open Sheet Music Display (for example, viewing a specific recording), you may need to rebuild client dependencies. To rebuild client dependencies, you can run the command `npm run build-client`.
 
 ++++++++++++++++++
 
-
-5. ** Production deployment steps**
-   0. sudo npm run setup-production --legacy-peer-deps
-   1. Once all packages are installed in your production server folder, copy the opensheetmusicdisplay extended and minified version to the node_modules (as described above) 
+5. ** Production deployment steps** 0. sudo npm run setup-production --legacy-peer-deps
+   1. Once all packages are installed in your production server folder, copy the opensheetmusicdisplay extended and minified version to the node_modules (as described above)
    2. Create a .env file and set the necessary values inside of it (removing the values for VPS_PRIVATE_KEY and VPS_USERNAME)
    3. To start process using 'pm2'
       - run 'pm2 (re)start server.js' (https://pm2.keymetrics.io/docs/usage/process-management/)
-       
 
 ### How OSMD works:
 

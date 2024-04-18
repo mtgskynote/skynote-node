@@ -4,15 +4,13 @@ import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import Box from "@mui/material/Box";
 //import TreeView from "@mui/lab/TreeView";
-import { TreeView } from '@mui/x-tree-view/TreeView';
+import { TreeView } from "@mui/x-tree-view/TreeView";
 // import TreeItem from "@mui/lab/TreeItem";
-import { TreeItem } from '@mui/x-tree-view'
+import { TreeItem } from "@mui/x-tree-view";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import ChevronRightIcon from "@mui/icons-material/ChevronRight";
 import OpenSheetMusicDisplayPreview from "./OpenSheetMusicDisplayPreview";
-import AllLessonsCSS from './AllLessons.module.css';
-
-
+import AllLessonsCSS from "./AllLessons.module.css";
 
 const AllLessons = () => {
   const [selectedNodeActive, setSelectedNodeActive] = useState(false);
@@ -20,38 +18,37 @@ const AllLessons = () => {
   const [fetchedData, setFetchedData] = useState({});
 
   useEffect(() => {
-    const data= JSON.parse(localStorage.getItem("scoreData"));
+    const data = JSON.parse(localStorage.getItem("scoreData"));
     const treeData = data.reduce((result, item) => {
       const { level, skill, _id, fname, title } = item;
       result[level] = result[level] || {};
       result[level][skill] = result[level][skill] || [];
-      result[level][skill].push({ id: _id, 
-                                  name: fname,
-                                  title: title, 
-                                  path: `/xmlScores/violin/${fname}.xml`,
-                                  route_path: `/all-lessons/${fname}`,});
-    
+      result[level][skill].push({
+        id: _id,
+        name: fname,
+        title: title,
+        path: `/xmlScores/violin/${fname}.xml`,
+        route_path: `/all-lessons/${fname}`,
+      });
+
       return result;
     }, {});
     setFetchedData(treeData);
-
   }, []); // This useEffect is only for fetching the data
 
-
   const handleNodeMouseOver = (event, nodeId) => {
-    if(nodeId!==undefined){
+    if (nodeId !== undefined) {
       const selectedData = getNodeDataById(fetchedData, nodeId);
       setSelectedNodeInfo(selectedData);
       setSelectedNodeActive(true);
-    }else{
+    } else {
       setSelectedNodeInfo(null);
       setSelectedNodeActive(false);
     }
-    
   };
   const handleNodeMouseOut = (event) => {
-      setSelectedNodeInfo(null);
-      setSelectedNodeActive(false);
+    setSelectedNodeInfo(null);
+    setSelectedNodeActive(false);
   };
 
   const getNodeDataById = (data, nodeId) => {
@@ -70,8 +67,6 @@ const AllLessons = () => {
     }
     return null;
   };
-
-
 
   const renderTree = (level, skills) => (
     <div className={AllLessonsCSS.level} key={level}>
@@ -114,13 +109,12 @@ const AllLessons = () => {
           <h2>All Lessons</h2>
         </div>
       </div>
-      <Box >
+      <Box>
         <TreeView
           aria-label="rich object"
           defaultCollapseIcon={<ExpandMoreIcon />}
           defaultExpanded={["root"]}
           defaultExpandIcon={<ChevronRightIcon />}
-          
           className={AllLessonsCSS.completeTree}
         >
           {Object.entries(fetchedData).map(([level, skills]) =>
@@ -128,10 +122,10 @@ const AllLessons = () => {
           )}
         </TreeView>
       </Box>
-      {(selectedNodeActive &&
-        <div className={AllLessonsCSS.osmdScore}>
+      {selectedNodeActive && (
+        <div className={`${AllLessonsCSS.osmdScore} mt-48`}>
           <OpenSheetMusicDisplayPreview file={selectedNodeInfo.path} />
-        </div>           
+        </div>
       )}
     </div>
   );
