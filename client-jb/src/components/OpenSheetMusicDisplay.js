@@ -20,7 +20,7 @@ import {
 
 Chartjs.register(LineElement, CategoryScale, LinearScale, PointElement);
 
-//#region AUTO-SCROLL
+//#region AUTO-SCROLL PART 1
 //THIS DEALS WITH THE AUTO-SCROLL OF THE CURSOR, IT MIGHT NOT BE THE MOST EFFICIENT WAY OF DOING IT
 //SO WE'LL CONSIDER THIS A TEMPORAL PATCH :), THE SECOND PART OF THIS IS INSIDE componentDidUpdate
 let isScrolling;
@@ -38,7 +38,7 @@ window.addEventListener('scroll', function (event) {
 ////////////////////////////////////////////////////////////////////////////////////////////////
 //#endregion
 
-// #region FREQUENCY TO STAFF POSITION CONVERSION
+//#region FREQUENCY TO STAFF POSITION CONVERSION
 //THIS PART DEALS WITH THE CONVERSION FROM FREQUENCY TO POSITION IN THE STAFF
 //Convert frequency Hertz to MIDI function
 const freq2midipitch = (freq) => {
@@ -108,6 +108,7 @@ const midi2StaffGaps=(playedNoteMidi)=>{
 ////////////////////////////////////////////////////////////////////////////////////////////////
 // #endregion
 
+//#region NOTEIDs/SVG ASSOCIATION
 const generateNoteIDsAssociation=(osmd)=>{
   //function that generates an association between the noteIDs of SVGElements of current render/osmd page, 
   //with our-own-generated IDs(noteID_"measureindex"noteindex")
@@ -130,7 +131,9 @@ const generateNoteIDsAssociation=(osmd)=>{
   }
   
 }
+//#endregion
 
+//#region ZOOM FOR THE SCORE
 const renderPitchLineZoom=(osmd, state, prevZoom, showingRep)=>{
   //When zoom happens, coordinates X and Y of pitch tracking points have to be updated
   let staves = osmd.graphic.measureList;
@@ -186,8 +189,9 @@ const renderPitchLineZoom=(osmd, state, prevZoom, showingRep)=>{
     copy_recordedNoteIndex=copy_recordedNoteIndex.map(item => item * osmd.zoom / prevZoom);
     return [copy_pitchPositionX, copy_pitchPositionY, copy_recordedNoteIndex];
 }
+//#endregion
 
-// creating the class component
+//#region CREATING THE CLASS COMPONENT
 class OpenSheetMusicDisplay extends Component {
   constructor(props) {
     super(props);
@@ -602,7 +606,7 @@ class OpenSheetMusicDisplay extends Component {
     const container = document.getElementById('osmdSvgPage1');
     this.coords=[container.getBoundingClientRect().width,container.getBoundingClientRect().height];
 
-    /////////////////////////////////////////////////////////
+    //#region AUTO-SCROLL PART 2
     //THIS DEALS WITH THE AUTO-SCROLL OF THE CURSOR, IT MIGHT NOT BE THE MOST EFFICIENT WAY OF DOING IT
     //SO WE'LL CONSIDER THIS A TEMPORAL PATCH :), THE FIRST PART OF THIS IS AT THE TOP
     if (scrolled === true) {
@@ -614,6 +618,7 @@ class OpenSheetMusicDisplay extends Component {
       this.setState({recordedNoteIndex:updatedNoteIndex})
     }
     //////////////////////////////////////////////////////////
+    //#endregion
 
     // for title and file changes
     if (this.props.drawTitle !== prevProps.drawTitle) {
@@ -982,5 +987,6 @@ class OpenSheetMusicDisplay extends Component {
     );
   }
 }
+//#endregion
 
 export default OpenSheetMusicDisplay;
