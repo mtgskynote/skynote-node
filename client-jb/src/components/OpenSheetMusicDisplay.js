@@ -20,12 +20,7 @@ import {
 
 Chartjs.register(LineElement, CategoryScale, LinearScale, PointElement);
 
-
-//Convert frequency Hertz to MIDI function
-const freq2midipitch = (freq) => {
-  return(12 * (Math.log2(freq / 440)) + 69)
-}
-/////////////////////////////////////////////////////////
+//#region AUTO-SCROLL
 //THIS DEALS WITH THE AUTO-SCROLL OF THE CURSOR, IT MIGHT NOT BE THE MOST EFFICIENT WAY OF DOING IT
 //SO WE'LL CONSIDER THIS A TEMPORAL PATCH :), THE SECOND PART OF THIS IS INSIDE componentDidUpdate
 let isScrolling;
@@ -41,7 +36,15 @@ window.addEventListener('scroll', function (event) {
     }, 100);
 }, false);
 ////////////////////////////////////////////////////////////////////////////////////////////////
+//#endregion
 
+// #region FREQUENCY TO STAFF POSITION CONVERSION
+//THIS PART DEALS WITH THE CONVERSION FROM FREQUENCY TO POSITION IN THE STAFF
+//Convert frequency Hertz to MIDI function
+const freq2midipitch = (freq) => {
+  return(12 * (Math.log2(freq / 440)) + 69)
+}
+//Convert MIDI to pixel offset, B4 being 0 (middle line of the staff)
 const midi2StaffGaps=(playedNoteMidi)=>{
 
   // Create a mapping of MIDI note values to staff offsets
@@ -102,6 +105,8 @@ const midi2StaffGaps=(playedNoteMidi)=>{
     return (result)
   
 }
+////////////////////////////////////////////////////////////////////////////////////////////////
+// #endregion
 
 const generateNoteIDsAssociation=(osmd)=>{
   //function that generates an association between the noteIDs of SVGElements of current render/osmd page, 
@@ -216,6 +221,7 @@ class OpenSheetMusicDisplay extends Component {
     this.coords=[0,0];
     this.color = "black";
     this.zoom=props.zoom;
+    this.drawPitch=props.drawPitch;
     this.totalReps=0;
     this.showingRep=0;
     this.selectionEndReached=false;
@@ -728,7 +734,6 @@ class OpenSheetMusicDisplay extends Component {
       this.setState({ pitchPositionX: copy_pitchPositionX })
       this.setState({ pitchPositionY: copy_pitchPositionY })
     }
-    
 
     // for metronome volume and bpm changes
     if (this.props.metroVol !== prevProps.metroVol) {
@@ -799,7 +804,7 @@ class OpenSheetMusicDisplay extends Component {
     // for pitch changes
     if(this.props.startPitchTrack){
       if (this.props.pitch !== prevProps.pitch) { //new pitch
-
+        // console.log("Heyoooo\n", this.props.dynamicStability);
         //Add index to X coordinates to advance pitch tracker in X axis when new pitch arrives
         if(this.notePositionX===(this.state.pitchPositionX[this.state.pitchPositionX.length-1])){ //we are still on the same note
           this.index=this.index+this.spacing; //6 is the spacing between points
@@ -956,6 +961,7 @@ class OpenSheetMusicDisplay extends Component {
 
           <div style={lineChartStyle}>
             <LineChart
+              drawPitch={this.drawPitch}
               width={this.coords[0]}
               height={this.coords[1]}
               zoom={this.zoom}
