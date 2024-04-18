@@ -116,6 +116,7 @@ const generateNoteIDsAssociation=(osmd)=>{
           let note = stave.staffEntries[note_index]
           let noteID= note.graphicalVoiceEntries[0].notes[0].getSVGId();
           const ourID = "noteId_"+String(stave_index)+String(note_index);
+          console.log(ourID)
           IDdictionary[noteID] = ourID; //dict[auto-ID]=our-ID
           IDInverseDictionary[ourID]=noteID // the inverse dict[our_ID]=auto-ID
       }
