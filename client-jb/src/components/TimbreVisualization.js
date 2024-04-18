@@ -79,7 +79,6 @@ const TimbreVisualization = () => {
       setSegments([featureValues.pitch.computeSD(), featureValues.rms.computeSD(), featureValues.spectralCentroid.computeMean(), featureValues.spectralFlux.computeSD() ]);
   }
   
-    }
     //setSegments([normalize(featureValues.pitch.last(), 100, 360), normalize(featureValues.rms.computeMean(),0,.1), normalize(featureValues.spectralCentroid.computeMean(),0,600), normalize(featureValues.spectralFlux.computeMean(),1,4)  ]);
     //setSegments([normalize(featureValues.pitch.last(), 100, 360), normalize(featureValues.rms.computeSD(),.003, .001), normalize(featureValues.spectralCentroid.computeMean(),0,600), normalize(featureValues.spectralFlux.computeMean(),1,4)  ]);
     //setSegments([featureValues.pitch.last(), featureValues.rms.computeMean(), featureValues.spectralCentroid.computeMean(), featureValues.spectralFlux.computeMean() ]);
@@ -89,7 +88,6 @@ const TimbreVisualization = () => {
       featureValues.spectralCentroid.computeMean(),
       featureValues.spectralFlux.computeSD(),
     ]);
-  };
 
   //---- Pass to makeAudioStreamer to get callbaks with object features (with attributes being Meyda features)
   const aCb = function (features) {
