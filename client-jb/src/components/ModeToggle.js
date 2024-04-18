@@ -1,8 +1,8 @@
-import {useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { Button } from "@material-ui/core";
 import ModeInfoButton from "./ModeInfoButton.js";
-import ModeToggleCSS from './ModeToggle.module.css';
+import ModeToggleCSS from "./ModeToggle.module.css";
 //import { Dropdown } from "react-bootstrap";
 
 import {
@@ -15,66 +15,57 @@ const ModeToggle = (props) => {
   const [practiceMode, setPracticeMode] = useState(true);
   const [recordMode, setRecordMode] = useState(false);
 
-  useEffect(() => {
-    
-  }, [props]);
+  useEffect(() => {}, [props]);
 
   //record mode button
   const handleRecordMode = () => {
-    console.log("Recording mode")
+    console.log("Recording mode");
     setPracticeMode(false);
-    setRecordMode(true);  
+    setRecordMode(true);
   };
 
   //practice mode button
   const handlePracticeMode = (event) => {
-    console.log("Practice mode")
+    console.log("Practice mode");
     setPracticeMode(true);
     setRecordMode(false);
-    
   };
 
-  const icons = [
-    faGamepad,
-    faPen,
-  ];
-  const handlers = [
-    handlePracticeMode,
-    handleRecordMode, 
-  ]
+  const icons = [faGamepad, faPen];
+  const handlers = [handlePracticeMode, handleRecordMode];
 
   const ModeToggle = (
     <div className={ModeToggleCSS.completeModeDiv}>
       <div className={ModeToggleCSS.modeToggleDiv}>
-        <Button 
-          key={"PracticeMode"} 
+        <Button
+          key={"PracticeMode"}
           className={ModeToggleCSS.toggleBtn}
-          title={practiceMode?"PracticeModeON":"PracticeModeOFF"} 
-          id={"PracticeMode"} 
-          onClick={() => handlers[0]("PracticeMode") }
-          >
+          title={practiceMode ? "PracticeModeON" : "PracticeModeOFF"}
+          id={"PracticeMode"}
+          onClick={() => handlers[0]("PracticeMode")}
+        >
           <div>
             <FontAwesomeIcon
-                icon={icons[0]} //Practice button
-              />
+              icon={icons[0]} //Practice button
+            />
           </div>
         </Button>
 
-        <Button 
+        <Button
           key={"RecordMode"}
-          className={ModeToggleCSS.toggleBtn} 
-          title={recordMode?"RecordModeON":"RecordModeOFF"} 
-          id={"RecordMode"} 
+          className={ModeToggleCSS.toggleBtn}
+          title={recordMode ? "RecordModeON" : "RecordModeOFF"}
+          id={"RecordMode"}
           onClick={() => handlers[1]("RecordMode")}
-          >
+        >
           <div>
             <FontAwesomeIcon
-                icon={icons[1]} //Recording button
-              />
+              icon={icons[1]} //Recording button
+            />
           </div>
         </Button>
       </div>
-      <ModeInfoButton message={1}/>
+      <ModeInfoButton message={1} />
     </div>
   );
 

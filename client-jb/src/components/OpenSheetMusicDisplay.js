@@ -1076,7 +1076,7 @@ class OpenSheetMusicDisplay extends Component {
     };
 
     return (
-      <div>
+      <div className="pt-8">
         <div style={lineChartStyle}>
           <LineChart
             width={this.coords[0]}

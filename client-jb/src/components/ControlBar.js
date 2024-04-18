@@ -1,8 +1,8 @@
-import {useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { Button } from "@material-ui/core";
 import { Dropdown } from "react-bootstrap";
-import ControlBarCSS from './ControlBar.module.css';
+import ControlBarCSS from "./ControlBar.module.css";
 
 import {
   faUndoAlt,
@@ -25,15 +25,13 @@ const ControlBar = (props) => {
   const [metronomeVol, setMetronomeVol] = useState(0);
 
   useEffect(() => {
-
-    if(props.cursorFinished){
+    if (props.cursorFinished) {
       //cursor finished -->same actions as in reset
-      setIsPlaying(true)
-      setRecordingOff(true)
+      setIsPlaying(true);
+      setRecordingOff(true);
       //Change cursorFinished state in parent component
-      props.cursorFinishedCallback(false)
+      props.cursorFinishedCallback(false);
     }
-    
   }, [props]);
 
   /*if (props.cursorFinished !== prevProps.cursorFinished) {
@@ -50,7 +48,6 @@ const ControlBar = (props) => {
     // Add logic to handle the play/pause action here
   };
 
-  
   //record variable
   const [recordingOff, setRecordingOff] = useState(true);
   const handleRecord = () => {
@@ -95,8 +92,8 @@ const ControlBar = (props) => {
   //Reset change
   const handleResetChange = (event) => {
     // Handle reset button --> show play button, not pause
-    setIsPlaying(true)
-    setRecordingOff(true)
+    setIsPlaying(true);
+    setRecordingOff(true);
     // Update the zoom state or perform any other necessary actions
   };
 
@@ -113,38 +110,36 @@ const ControlBar = (props) => {
     "switchRepetition",
     "settings",
   ];
-  const icons = [
-    faUndoAlt,
-    faPlay,
-    faBullseye,
-    faWater,
-    faGear,
-  ];
+  const icons = [faUndoAlt, faPlay, faBullseye, faWater, faGear];
   const handlers = [
     handleResetChange,
     handlePlayPause,
     handleRecord,
     handleRepeatLayers,
-    handleToggleSettings
-  ]
+    handleToggleSettings,
+  ];
 
   const ControlBar = (
     <div className={ControlBarCSS.myDiv} title="playMode">
       {titles.map((title, i) => {
         return (
-          <Button key={title} className={ControlBarCSS.controlBtn} title={title} id={title} onClick={() => handlers[i](title)}>
+          <Button
+            key={title}
+            className={ControlBarCSS.controlBtn}
+            title={title}
+            id={title}
+            onClick={() => handlers[i](title)}
+          >
             <div>
               {icons[i] === faPlay ? (
                 <FontAwesomeIcon
                   icon={isPlayingOn ? faPlay : faPause} //Alternate Pause/Play button
                 />
-              ) : icons[i] === faUndoAlt ? ( 
-                <FontAwesomeIcon
-                  icon={icons[i]}
-                />
+              ) : icons[i] === faUndoAlt ? (
+                <FontAwesomeIcon icon={icons[i]} />
               ) : icons[i] === faBullseye ? (
                 <FontAwesomeIcon
-                  icon={recordingOff ? faBullseye:faRecordVinyl} //Alternate NotRecoding/Recording button
+                  icon={recordingOff ? faBullseye : faRecordVinyl} //Alternate NotRecoding/Recording button
                 />
               ) : icons[i] === faGear ? (
                 <div>
@@ -185,7 +180,11 @@ const ControlBar = (props) => {
                       <div>
                         {/* Metronome Volume Slider */}
                         <FontAwesomeIcon icon={faVolumeHigh} />
-                        <label htmlFor="metroVol-slider" className={ControlBarCSS.sliderLabel} title="metronome-volume">
+                        <label
+                          htmlFor="metroVol-slider"
+                          className={ControlBarCSS.sliderLabel}
+                          title="metronome-volume"
+                        >
                           Metronome
                         </label>
                         <input
@@ -202,7 +201,11 @@ const ControlBar = (props) => {
                       <div>
                         {/* Zoom Slider */}
                         <FontAwesomeIcon icon={faMagnifyingGlassMinus} />
-                        <label htmlFor="zoom-slider" className={ControlBarCSS.sliderLabel} title="zoom-slider">
+                        <label
+                          htmlFor="zoom-slider"
+                          className={ControlBarCSS.sliderLabel}
+                          title="zoom-slider"
+                        >
                           Zoom
                         </label>
                         <input
@@ -219,7 +222,11 @@ const ControlBar = (props) => {
                       <div>
                         {/* BPM Slider */}
                         <FontAwesomeIcon icon={faGauge} />
-                        <label htmlFor="bpm-slider" className={ControlBarCSS.sliderLabel} title="change-bpm">
+                        <label
+                          htmlFor="bpm-slider"
+                          className={ControlBarCSS.sliderLabel}
+                          title="change-bpm"
+                        >
                           BPM ({bpm})
                         </label>
                         <input
@@ -232,7 +239,6 @@ const ControlBar = (props) => {
                           title="change-bpm"
                         />
                       </div>
-                      
                     </Dropdown.Menu>
                   </Dropdown>
                 </div>
