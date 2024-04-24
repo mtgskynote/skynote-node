@@ -21,7 +21,7 @@ window.Buffer = Buffer;
 const folderBasePath = "/xmlScores/violin";
 
 const ProgressPlayFile = (props) => {
-  
+  //#region VARIABLES
   const { getCurrentUser } = useAppContext();
   const [userData, setUserData] = useState(null);
   const params = useParams();
@@ -84,6 +84,9 @@ const ProgressPlayFile = (props) => {
   const onResetDone = () => {
     setIsResetButtonPressed(false);
   };
+  //#endregion
+  
+  //#region FUNCTIONS
   /////////////////////////////////////////////////////////////////////////////////////
   //////////////////////////////Get data from the student//////////////////////////////
   /////////////////////////////////////////////////////////////////////////////////////
@@ -300,9 +303,10 @@ const ProgressPlayFile = (props) => {
   ////////////////////////////////////////////////////////////////////////////////////////////
   ////////////////////////////////////////////////////////////////////////////////////////////
   ////////////////////////////////////////////////////////////////////////////////////////////
-
+  //#endregion
   var audioStreamer = makeAudioStreamer(handlePitchCallback, null, aCb);
 
+  //#region USEEFFECTS()
   //Once the score is loaded, get userData
   useEffect(()=>{
     if(scoreTitle!==null){
@@ -660,11 +664,11 @@ const ProgressPlayFile = (props) => {
       }
     };
   }, [recordVol, zoom, recordInactive, pitchValue, dynamicValue, repeatsIterator, practiceMode, recordMode, showRepetitionMessage, userFileName, jsonToDownload]);
-
+  //#endregion
   const handleComplete = useCallback(() => {
     setFinishedTimer(true);
   }, []);
-
+  //#region RETURN
   return (
     
     <div>
@@ -706,6 +710,7 @@ const ProgressPlayFile = (props) => {
       <ModeToggle/>
     </div>
   );
+  //#endregion
 };
 
 export default ProgressPlayFile;
