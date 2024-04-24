@@ -10,6 +10,8 @@ import StatsRecentRecordings from "../../components/StatsRecentRecordings.js";
 import NumberOfRecStats from "../../components/StatsAreaChart.js";
 import StatsGeneral from "../../components/StatsGeneral.js";
 import StatsTasksSection from "../../components/StatsTasksSection.js";
+import LessonCard from "../../components/LessonCard.js";
+import RecordingsProgressChart from "../../components/RecordingsProgressChart.js";
 
 ChartJS.register(ArcElement, Tooltip, Legend);
 
@@ -30,8 +32,10 @@ const Stats = () => {
   const [starsPerLevel, setStarsPerLevel] = useState(null);
   const [achievedStarsPerLevel, setAchievedStarsPerLevel] = useState(null);
   const [recentRecordings, setRecentRecordings] = useState(null);
+  const [recentScores, setRecentScores] = useState({});
   const [unreadMessages, setUnreadMessages] = useState(null);
   const [unansweredTasks, setUnansweredTasks] = useState(null);
+  const [lastWeekRecordings, setLastWeekRecordings] = useState(null);
 
   const reloadRecordingsCallback = (idDelete) => {
     //delete recording from all arrays
@@ -165,6 +169,29 @@ const Stats = () => {
             })
           );
           setRecordingScoresIds(result.map((recording) => recording.scoreID));
+
+          const today = new Date();
+          const lastWeek = new Date(today);
+          lastWeek.setDate(lastWeek.getDate() - 6); // Calculate the date 7 days ago
+
+          const countsPerDay = Array(7).fill(0);
+
+          // Filter the studentData array to get entries within the last week
+          result.forEach((recording) => {
+            const recordingDate = new Date(recording.recordingDate); // Assuming the date attribute is a string representation of a date
+
+            const dayOffset = Math.floor(
+              (today - recordingDate) / (1000 * 60 * 60 * 24)
+            );
+            const lastIndex = 6; // The last index of the array
+            const reverseIndex = lastIndex - dayOffset;
+
+            if (reverseIndex >= 0 && reverseIndex <= lastIndex) {
+              countsPerDay[reverseIndex]++;
+            }
+          });
+
+          setLastWeekRecordings(countsPerDay);
         })
         .catch((error) => {
           console.log(`Cannot get recordings from database: ${error}`);
@@ -187,16 +214,17 @@ const Stats = () => {
           );
         });
 
-        getAllAssignments(userData.id).then((result)=>{
-          var taskCount=0;
-          if(result.length!==0){
-            result.forEach((assignment)=>{   
-              assignment.tasks.forEach((task)=>{
-                if(task.answer===null || task.answer===undefined){
-                  taskCount=taskCount+1;
+      getAllAssignments(userData.id)
+        .then((result) => {
+          var taskCount = 0;
+          if (result.length !== 0) {
+            result.forEach((assignment) => {
+              assignment.tasks.forEach((task) => {
+                if (task.answer === null || task.answer === undefined) {
+                  taskCount = taskCount + 1;
                 }
-              })
-            })
+              });
+            });
           }
           setUnansweredTasks(taskCount);
         })
@@ -262,11 +290,71 @@ const Stats = () => {
     }
   }, [recordingList, recordingNames]);
 
+  useEffect(() => {
+    if (recentRecordings != null) {
+      const uniqueScores = {};
+
+      recentRecordings.scoresTitles.forEach((title, index) => {
+        // const xml = recentRecordings.scoresXML[index];
+        const skill = recentRecordings.skills[index];
+        const level = recentRecordings.levels[index];
+        const stars = recentRecordings.stars[index];
+        const xml = recentRecordings.scoresXML[index];
+        const id = recentRecordings.ids[index];
+
+        if (!uniqueScores[title] || stars > uniqueScores[title].stars) {
+          // If not encountered before or if the current stars are greater than the stored stars, update the entry
+          uniqueScores[title] = { skill, level, stars, xml, id };
+        }
+      });
+
+      const top10Scores = {};
+      let count = 0;
+      for (const key in uniqueScores) {
+        if (count >= 10) break;
+        top10Scores[key] = uniqueScores[key];
+        count++;
+      }
+
+      setRecentScores(top10Scores);
+    }
+  }, [recentRecordings]);
+
+  console.log(lastWeekRecordings);
+
   return (
-    <div className={StatsCSS.container}>
-      {/* <h1 className={StatsCSS.profile}>
-        Hello {userData ? userData.name : ""}
-      </h1> */}
+    <div className={`px-12 ${StatsCSS.container}`}>
+      <div className="pt-6 pb-6">
+        <h2 className="font-extrabold my-6">Continue Recording</h2>
+        <div className="overflow-x-auto whitespace-no-wrap no-scrollbar">
+          <div className="inline-flex items-start space-x-8 py-4">
+            {Object.keys(recentScores).map((title, index) => {
+              return (
+                <LessonCard
+                  key={index}
+                  title={title}
+                  skill={recentScores[title].skill}
+                  level={recentScores[title].level}
+                  stars={recentScores[title].stars}
+                  xml={recentScores[title].xml}
+                  id={recentScores[title].id}
+                />
+              );
+            })}
+          </div>
+        </div>
+      </div>
+      <hr className="h-px my-6 bg-gray-200 border-0 dark:bg-gray-700"></hr>
+      <div className="pt-4 pb-6">
+        <h2 className="font-extrabold my-6">Latest Assignments</h2>
+        <div className="overflow-x-auto whitespace-no-wrap no-scrollbar">
+          <div className="inline-flex items-start space-x-8 py-4"></div>
+        </div>
+      </div>
+      <hr className="h-px my-6 bg-gray-200 border-0 dark:bg-gray-700"></hr>
+      <div className="pt-4 pb-6">
+        <RecordingsProgressChart recordingsData={lastWeekRecordings} />
+      </div>
 
       <div className={StatsCSS.dashboard}>
         <div className={StatsCSS.left}>
