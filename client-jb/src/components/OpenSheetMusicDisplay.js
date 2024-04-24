@@ -194,6 +194,7 @@ const renderPitchLineZoom=(osmd, state, prevZoom, showingRep)=>{
 //#region CREATING THE CLASS COMPONENT
 class OpenSheetMusicDisplay extends Component {
   constructor(props) {
+    //Properties passed down to the component from its parent component
     super(props);
     this.state = {
       pitchColor: [],
@@ -236,6 +237,7 @@ class OpenSheetMusicDisplay extends Component {
   
   // defining the playback manager for playing music and cursor controls
   // you first define and then initialize the playback manager
+  //#region PLAYBACK MANAGER
   playbackOsmd(osmd) {
     var timingSource = new LinearTimingSource();
     this.playbackManager = new PlaybackManager(
@@ -284,8 +286,10 @@ class OpenSheetMusicDisplay extends Component {
       initialize,
     };
   }
+  //#endregion
 
   // Sets up osmd features and options for rendering the xml score
+  //#region OSMD SETUP
   setupOsmd() {
     // options for osmd
     const options = {
@@ -346,7 +350,9 @@ class OpenSheetMusicDisplay extends Component {
     // clearInterval(this.cursorInterval);
     window.removeEventListener("resize", this.resize);
   }
+  //#endregion 
 
+  //#region UPDATE SCORE
   // update metronome volume
   updateMetronomeVolume(newVolume) {
     this.osmd.PlaybackManager.Metronome.Volume = newVolume;
@@ -362,8 +368,10 @@ class OpenSheetMusicDisplay extends Component {
       sourceMeasures[i].TempoInBPM = newBpm;
     }
   }
+  //#endregion
 
   //function to check cursor change
+  //#region CURSOR CHANGE
   checkCursorChange = () => {
     const cursorCurrent=this.osmd.cursor.Iterator.currentTimeStamp.RealValue;
 
@@ -422,8 +430,6 @@ class OpenSheetMusicDisplay extends Component {
     //if recording active
     if (this.props.startPitchTrack){
 
-      
-
       //Check for repetitions
       if (this.previousTimestamp > cursorCurrent) {
         // Cursor moved back, repetition detected
@@ -431,13 +437,12 @@ class OpenSheetMusicDisplay extends Component {
         this.showingRep = this.totalReps;
         this.resetNotesColor();
       }
-
       //store timestampfor next iteration
       //this.previousTimestamp=cursorCurrent; 
       ////////////////////////////////////////////////////////
       
       // EXTRACT POSITION OF NOTE UNDER CURSOR////////////////
-
+      //#region EXTRACT NOTE POSITION
       //Get note object under cursor
       const gNote = this.osmd.cursor.GNotesUnderCursor()[0];
       
@@ -459,8 +464,10 @@ class OpenSheetMusicDisplay extends Component {
         this.notePositionY=notePos.y
       }
       ////////////////////////////////////////////////////////
+      //#endregion
 
 
+      //#region NOTE COLOR
       // DETERMINE RED/GREEN COLOR OF NOTEHEAD ///////////////
       // Get the last pitch in the pitchData array
       const lastPitchData =
@@ -554,13 +561,16 @@ class OpenSheetMusicDisplay extends Component {
       }
       //Update new vales for future comparisons
       this.setState({ currentGNoteinScorePitch: gNote });
+      //#endregion
     }
     //store timestampfor next iteration
     this.previousTimestamp=cursorCurrent;
   }////////////////////////////////////////////////////////
+  //#endregion
 
   
-
+  //This function changes the color of the notes back to black whenever there's a repetition
+  //that's either done by OSMD or the user(clicking the repetition button) :)
   resetNotesColor = () => {
     const colorBlack = "#000000"; // black color
 
@@ -590,6 +600,7 @@ class OpenSheetMusicDisplay extends Component {
     }
   };
 
+  //This function checks for any update in the props :)
   componentDidUpdate(prevProps) {
 
   //mode changed
@@ -627,11 +638,13 @@ class OpenSheetMusicDisplay extends Component {
       this.osmd.load(this.props.file).then(() => this.osmd.render());
     }
 
-    // for downloading
+    //#region DATA GATHERING
+    //In here the data is collected, then an amount of stars is given, and everything is
+    //prepared to be sent to the DataBase :)
     if (this.props.canDownload === true && this.props.canDownload !== prevProps.canDownload) {
       var n_stars;
       if(this.calculatePunctuation===true){ //If recording is complete
-        //Calculate punctuation
+        //Calculate punctuation and amount of stars
         const aux = this.state.colorNotes.slice()
         const colors = aux.map(innerArray => innerArray.map(subArray => subArray[1])).flat();
         const n_green = colors.filter(color => color === "#00FF00").length;
@@ -648,7 +661,8 @@ class OpenSheetMusicDisplay extends Component {
         }
         
         this.calculatePunctuation=false
-      }else{ //If recording is only a part of the score
+      }else{ 
+        //If recording is only a part of the score
         //No punctuation
         n_stars=0;
       }
@@ -672,8 +686,10 @@ class OpenSheetMusicDisplay extends Component {
       // const jsonBlob = new Blob([jsonString], { type: "application/json" });
       this.props.dataToDownload(jsonString);
     }
+    //#endregion
     
     // newJson import - UPDATE ALL NECCESSARY VALUES
+    //#region CHANGES IN VALUES
     if (this.props.visualJSON !== prevProps.visualJSON) {
       const json=this.props.visualJSON
       //update values:
@@ -872,7 +888,7 @@ class OpenSheetMusicDisplay extends Component {
       }
     }
 
-    
+    // volume changes
     if (this.props.recordVol !== prevProps.recordVol) {
       const playbackManager = this.props.playbackRef.current;
       if (playbackManager) {
@@ -882,6 +898,7 @@ class OpenSheetMusicDisplay extends Component {
       }
     }
 
+    //reset button changes
     if (
       prevProps.isResetButtonPressed !== this.props.isResetButtonPressed &&
       this.props.isResetButtonPressed
@@ -944,7 +961,9 @@ class OpenSheetMusicDisplay extends Component {
 
     // resize the osmd when the window is resized
     //window.addEventListener("resize", this.resize);
+    //#endregion
   }
+  
 
   componentDidMount() {
     this.setupOsmd();
@@ -957,6 +976,7 @@ class OpenSheetMusicDisplay extends Component {
 
     //const { isResetButtonPressed } = this.state;
 
+    //FIXME "Styling" should probably not be done in here
     const lineChartStyle = {
       position: "absolute", 
       pointerEvents: "none", 
