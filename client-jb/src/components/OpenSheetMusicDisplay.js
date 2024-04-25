@@ -20,7 +20,7 @@ import {
 
 Chartjs.register(LineElement, CategoryScale, LinearScale, PointElement);
 
-//#region AUTO-SCROLL
+//#region AUTO-SCROLL PART 1
 //THIS DEALS WITH THE AUTO-SCROLL OF THE CURSOR, IT MIGHT NOT BE THE MOST EFFICIENT WAY OF DOING IT
 //SO WE'LL CONSIDER THIS A TEMPORAL PATCH :), THE SECOND PART OF THIS IS INSIDE componentDidUpdate
 let isScrolling;
@@ -42,7 +42,7 @@ window.addEventListener(
 ////////////////////////////////////////////////////////////////////////////////////////////////
 //#endregion
 
-// #region FREQUENCY TO STAFF POSITION CONVERSION
+//#region FREQUENCY TO STAFF POSITION CONVERSION
 //THIS PART DEALS WITH THE CONVERSION FROM FREQUENCY TO POSITION IN THE STAFF
 //Convert frequency Hertz to MIDI function
 const freq2midipitch = (freq) => {
@@ -112,8 +112,9 @@ const midi2StaffGaps = (playedNoteMidi) => {
 ////////////////////////////////////////////////////////////////////////////////////////////////
 // #endregion
 
-const generateNoteIDsAssociation = (osmd) => {
-  //function that generates an association between the noteIDs of SVGElements of current render/osmd page,
+//#region NOTEIDs/SVG ASSOCIATION
+const generateNoteIDsAssociation=(osmd)=>{
+  //function that generates an association between the noteIDs of SVGElements of current render/osmd page, 
   //with our-own-generated IDs(noteID_"measureindex"noteindex")
   let IDdictionary = {};
   let IDInverseDictionary = {};
@@ -135,9 +136,12 @@ const generateNoteIDsAssociation = (osmd) => {
     }
     return [IDdictionary, IDInverseDictionary];
   }
-};
+  
+}
+//#endregion
 
-const renderPitchLineZoom = (osmd, state, prevZoom, showingRep) => {
+//#region ZOOM FOR THE SCORE
+const renderPitchLineZoom=(osmd, state, prevZoom, showingRep)=>{
   //When zoom happens, coordinates X and Y of pitch tracking points have to be updated
   let staves = osmd.graphic.measureList;
   let copy_pitchPositionX = state.pitchPositionX.slice();
@@ -150,66 +154,54 @@ const renderPitchLineZoom = (osmd, state, prevZoom, showingRep) => {
     const lowerLineStave = staveLines.children[4].getBoundingClientRect().top; //lower line
     const oneStepPixels = Math.abs(upperLineStave - lowerLineStave) / 4 / 2; //steps corresponding to one step in staff
 
-    for (
-      let note_index = 0;
-      note_index < stave.staffEntries.length;
-      note_index++
-    ) {
-      let note = stave.staffEntries[note_index];
-      let noteID = note.graphicalVoiceEntries[0].notes[0].getSVGId();
-      let noteNEWID = osmd.IDdict[noteID];
-      let noteX = note.graphicalVoiceEntries[0].notes[0]
-        .getSVGGElement()
-        .getBoundingClientRect().x;
-      //check for notehead color
-      const colorsArray = state.colorNotes.slice();
-      const index = colorsArray.findIndex(
-        (item) => item[0][0] === noteNEWID && item[0][2] === showingRep
-      );
-      if (index !== -1) {
-        //note has a color assigned--> color notehead
-        // this is for all the notes except the quarter and whole notes
-        const svgElement =
-          note.graphicalVoiceEntries[0].notes[0].getSVGGElement();
-        svgElement.children[0].children[0].children[0].style.fill =
-          colorsArray[index][0][1]; // notehead
-        if (
-          svgElement &&
-          svgElement.children[0] &&
-          svgElement.children[0].children[0] &&
-          svgElement.children[0].children[1]
-        ) {
-          //this is for all the quarter and whole notes
-          svgElement.children[0].children[0].children[0].style.fill =
-            colorsArray[index][0][1]; // notehead
-          svgElement.children[0].children[1].children[0].style.fill =
-            colorsArray[index][0][1]; // notehead
-        }
-      }
-      //check for pitch tracking line
-      for (let index = 0; index < copy_pitchPositionX.length; index++) {
-        if (state.recordedNoteIDs[index] === noteID) {
-          //this note has been recorded
-          let midiToStaffStep = midi2StaffGaps(
-            freq2midipitch(state.pitchData[index])
-          );
-          copy_pitchPositionX[index] = noteX;
-          copy_pitchPositionY[index] =
-            middleLineStave + midiToStaffStep * oneStepPixels;
-        }
+      for (let note_index = 0; note_index < stave.staffEntries.length; note_index++) {
+          let note = stave.staffEntries[note_index]
+          let noteID= note.graphicalVoiceEntries[0].notes[0].getSVGId();
+          let noteNEWID=osmd.IDdict[noteID]
+          let noteX=note.graphicalVoiceEntries[0].notes[0].getSVGGElement().getBoundingClientRect().x 
+          //check for notehead color
+          const colorsArray=state.colorNotes.slice()
+          const index = colorsArray.findIndex(item => item[0][0] === noteNEWID && item[0][2]===showingRep);
+          if(index!==-1){ 
+            //note has a color assigned--> color notehead
+            // this is for all the notes except the quarter and whole notes
+            const svgElement = note.graphicalVoiceEntries[0].notes[0].getSVGGElement();
+            svgElement.children[0].children[0].children[0].style.fill =
+              colorsArray[index][0][1]; // notehead
+            if (
+              svgElement &&
+              svgElement.children[0] &&
+              svgElement.children[0].children[0] &&
+              svgElement.children[0].children[1]
+            ) {
+              //this is for all the quarter and whole notes
+              svgElement.children[0].children[0].children[0].style.fill =
+                colorsArray[index][0][1]; // notehead
+              svgElement.children[0].children[1].children[0].style.fill =
+                colorsArray[index][0][1]; // notehead
+            }
+          }          
+          //check for pitch tracking line
+          for(let index=0; index<copy_pitchPositionX.length; index++){
+            if (state.recordedNoteIDs[index] === noteID) { //this note has been recorded
+              let midiToStaffStep= midi2StaffGaps(freq2midipitch(state.pitchData[index]))
+              copy_pitchPositionX[index]= noteX;
+              copy_pitchPositionY[index]= middleLineStave+midiToStaffStep*oneStepPixels;
+            }
+          }
+          
       }
     }
-  }
-  let copy_recordedNoteIndex = state.recordedNoteIndex.slice();
-  copy_recordedNoteIndex = copy_recordedNoteIndex.map(
-    (item) => (item * osmd.zoom) / prevZoom
-  );
-  return [copy_pitchPositionX, copy_pitchPositionY, copy_recordedNoteIndex];
-};
+    let copy_recordedNoteIndex=state.recordedNoteIndex.slice()
+    copy_recordedNoteIndex=copy_recordedNoteIndex.map(item => item * osmd.zoom / prevZoom);
+    return [copy_pitchPositionX, copy_pitchPositionY, copy_recordedNoteIndex];
+}
+//#endregion
 
-// creating the class component
+//#region CREATING THE CLASS COMPONENT
 class OpenSheetMusicDisplay extends Component {
   constructor(props) {
+    //Properties passed down to the component from its parent component
     super(props);
     this.state = {
       pitchColor: [],
@@ -250,6 +242,7 @@ class OpenSheetMusicDisplay extends Component {
 
   // defining the playback manager for playing music and cursor controls
   // you first define and then initialize the playback manager
+  //#region PLAYBACK MANAGER
   playbackOsmd(osmd) {
     var timingSource = new LinearTimingSource();
     this.playbackManager = new PlaybackManager(
@@ -300,8 +293,10 @@ class OpenSheetMusicDisplay extends Component {
       initialize,
     };
   }
+  //#endregion
 
   // Sets up osmd features and options for rendering the xml score
+  //#region OSMD SETUP
   setupOsmd() {
     // options for osmd
     const options = {
@@ -364,7 +359,9 @@ class OpenSheetMusicDisplay extends Component {
     // clearInterval(this.cursorInterval);
     window.removeEventListener("resize", this.resize);
   }
+  //#endregion 
 
+  //#region UPDATE SCORE
   // update metronome volume
   updateMetronomeVolume(newVolume) {
     this.osmd.PlaybackManager.Metronome.Volume = newVolume;
@@ -380,8 +377,10 @@ class OpenSheetMusicDisplay extends Component {
       sourceMeasures[i].TempoInBPM = newBpm;
     }
   }
+  //#endregion
 
   //function to check cursor change
+  //#region CURSOR CHANGE
   checkCursorChange = () => {
     const cursorCurrent = this.osmd.cursor.Iterator.currentTimeStamp.RealValue;
 
@@ -449,7 +448,8 @@ class OpenSheetMusicDisplay extends Component {
     }
 
     //if recording active
-    if (this.props.startPitchTrack) {
+    if (this.props.startPitchTrack){
+
       //Check for repetitions
       if (this.previousTimestamp > cursorCurrent) {
         // Cursor moved back, repetition detected
@@ -457,13 +457,12 @@ class OpenSheetMusicDisplay extends Component {
         this.showingRep = this.totalReps;
         this.resetNotesColor();
       }
-
       //store timestampfor next iteration
       //this.previousTimestamp=cursorCurrent;
       ////////////////////////////////////////////////////////
 
       // EXTRACT POSITION OF NOTE UNDER CURSOR////////////////
-
+      //#region EXTRACT NOTE POSITION
       //Get note object under cursor
       const gNote = this.osmd.cursor.GNotesUnderCursor()[0];
 
@@ -487,7 +486,10 @@ class OpenSheetMusicDisplay extends Component {
         this.notePositionY = notePos.y;
       }
       ////////////////////////////////////////////////////////
+      //#endregion
 
+
+      //#region NOTE COLOR
       // DETERMINE RED/GREEN COLOR OF NOTEHEAD ///////////////
       // Get the last pitch in the pitchData array
       const lastPitchData =
@@ -584,11 +586,16 @@ class OpenSheetMusicDisplay extends Component {
       }
       //Update new vales for future comparisons
       this.setState({ currentGNoteinScorePitch: gNote });
+      //#endregion
     }
     //store timestampfor next iteration
-    this.previousTimestamp = cursorCurrent;
-  }; ////////////////////////////////////////////////////////
+    this.previousTimestamp=cursorCurrent;
+  }////////////////////////////////////////////////////////
+  //#endregion
 
+  
+  //This function changes the color of the notes back to black whenever there's a repetition
+  //that's either done by OSMD or the user(clicking the repetition button) :)
   resetNotesColor = () => {
     const colorBlack = "#000000"; // black color
 
@@ -618,6 +625,7 @@ class OpenSheetMusicDisplay extends Component {
     }
   };
 
+  //This function checks for any update in the props :)
   componentDidUpdate(prevProps) {
     //mode changed
     if (this.props.mode !== prevProps.mode) {
@@ -638,7 +646,7 @@ class OpenSheetMusicDisplay extends Component {
       container.getBoundingClientRect().height,
     ];
 
-    /////////////////////////////////////////////////////////
+    //#region AUTO-SCROLL PART 2
     //THIS DEALS WITH THE AUTO-SCROLL OF THE CURSOR, IT MIGHT NOT BE THE MOST EFFICIENT WAY OF DOING IT
     //SO WE'LL CONSIDER THIS A TEMPORAL PATCH :), THE FIRST PART OF THIS IS AT THE TOP
     if (scrolled === true) {
@@ -651,6 +659,7 @@ class OpenSheetMusicDisplay extends Component {
       this.setState({ recordedNoteIndex: updatedNoteIndex });
     }
     //////////////////////////////////////////////////////////
+    //#endregion
 
     // for title and file changes
     if (this.props.drawTitle !== prevProps.drawTitle) {
@@ -659,34 +668,30 @@ class OpenSheetMusicDisplay extends Component {
       this.osmd.load(this.props.file).then(() => this.osmd.render());
     }
 
-    // for downloading
-    if (
-      this.props.canDownload === true &&
-      this.props.canDownload !== prevProps.canDownload
-    ) {
+    //#region DATA GATHERING
+    //In here the data is collected, then an amount of stars is given, and everything is
+    //prepared to be sent to the DataBase :)
+    if (this.props.canDownload === true && this.props.canDownload !== prevProps.canDownload) {
       var n_stars;
-      if (this.calculatePunctuation === true) {
-        //If recording is complete
-        //Calculate punctuation
-        const aux = this.state.colorNotes.slice();
-        const colors = aux
-          .map((innerArray) => innerArray.map((subArray) => subArray[1]))
-          .flat();
-        const n_green = colors.filter((color) => color === "#00FF00").length;
-        const n_total = colors.length;
-        const proportion = n_green / n_total;
-        if (proportion >= 0.8) {
-          n_stars = 3;
-        } else if (proportion >= 0.6 && proportion < 0.8) {
-          n_stars = 2;
-        } else if (proportion >= 0.3 && proportion < 0.6) {
-          n_stars = 1;
-        } else {
-          n_stars = 0;
+      if(this.calculatePunctuation===true){ //If recording is complete
+        //Calculate punctuation and amount of stars
+        const aux = this.state.colorNotes.slice()
+        const colors = aux.map(innerArray => innerArray.map(subArray => subArray[1])).flat();
+        const n_green = colors.filter(color => color === "#00FF00").length;
+        const n_total= colors.length;
+        const proportion=n_green/n_total;
+        if (proportion>=0.8){
+          n_stars=3
+        }else if(proportion>=0.6 && proportion<0.8){
+          n_stars=2
+        }else if(proportion>=0.3 && proportion<0.6){
+          n_stars=1
+        }else{
+          n_stars=0
         }
-
-        this.calculatePunctuation = false;
-      } else {
+        
+        this.calculatePunctuation=false
+      }else{ 
         //If recording is only a part of the score
         //No punctuation
         n_stars = 0;
@@ -711,8 +716,10 @@ class OpenSheetMusicDisplay extends Component {
       // const jsonBlob = new Blob([jsonString], { type: "application/json" });
       this.props.dataToDownload(jsonString);
     }
-
+    //#endregion
+    
     // newJson import - UPDATE ALL NECCESSARY VALUES
+    //#region CHANGES IN VALUES
     if (this.props.visualJSON !== prevProps.visualJSON) {
       const json = this.props.visualJSON;
       //update values:
@@ -876,10 +883,8 @@ class OpenSheetMusicDisplay extends Component {
     }
 
     // for pitch changes
-    if (this.props.startPitchTrack) {
-      if (this.props.pitch !== prevProps.pitch) {
-        //new pitch
-        // console.log("Heyoooo\n", this.props.dynamicStability);
+    if(this.props.startPitchTrack){
+      if (this.props.pitch !== prevProps.pitch) { //new pitch
         //Add index to X coordinates to advance pitch tracker in X axis when new pitch arrives
         if (
           this.notePositionX ===
@@ -978,6 +983,7 @@ class OpenSheetMusicDisplay extends Component {
       }
     }
 
+    // volume changes
     if (this.props.recordVol !== prevProps.recordVol) {
       const playbackManager = this.props.playbackRef.current;
       if (playbackManager) {
@@ -987,6 +993,7 @@ class OpenSheetMusicDisplay extends Component {
       }
     }
 
+    //reset button changes
     if (
       prevProps.isResetButtonPressed !== this.props.isResetButtonPressed &&
       this.props.isResetButtonPressed
@@ -1057,7 +1064,9 @@ class OpenSheetMusicDisplay extends Component {
 
     // resize the osmd when the window is resized
     //window.addEventListener("resize", this.resize);
+    //#endregion
   }
+  
 
   componentDidMount() {
     this.setupOsmd();
@@ -1070,6 +1079,7 @@ class OpenSheetMusicDisplay extends Component {
 
     //const { isResetButtonPressed } = this.state;
 
+    //FIXME "Styling" should probably not be done in here
     const lineChartStyle = {
       position: "absolute",
       pointerEvents: "none",
@@ -1113,5 +1123,6 @@ class OpenSheetMusicDisplay extends Component {
     );
   }
 }
+//#endregion
 
 export default OpenSheetMusicDisplay;
