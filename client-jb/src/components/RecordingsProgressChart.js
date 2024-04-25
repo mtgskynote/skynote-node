@@ -1,11 +1,15 @@
 import React, { useEffect } from "react";
 import Chart from "chart.js/auto";
 
-const RecordingsProgressChart = ({ recordingsData }) => {
+const RecordingsProgressChart = ({ id, recordingsData }) => {
   useEffect(() => {
-    const ctx = document
-      .getElementById("recordingsProgressChart")
-      .getContext("2d");
+    const ctx = document.getElementById(id).getContext("2d");
+
+    const gradient = ctx.createLinearGradient(0, 0, 0, 400);
+    gradient.addColorStop(0, "rgba(255,227,19,0.8)");
+    gradient.addColorStop(0.4, "rgba(255,186,0,0.8)");
+    gradient.addColorStop(1, "rgba(255,85,3,0.8)");
+
     const myChart = new Chart(ctx, {
       type: "bar",
       data: {
@@ -14,25 +18,10 @@ const RecordingsProgressChart = ({ recordingsData }) => {
           {
             label: "Lessons Recorded",
             data: recordingsData,
-            backgroundColor: [
-              "rgba(255, 99, 132, 0.2)",
-              "rgba(54, 162, 235, 0.2)",
-              "rgba(255, 206, 86, 0.2)",
-              "rgba(75, 192, 192, 0.2)",
-              "rgba(153, 102, 255, 0.2)",
-              "rgba(255, 159, 64, 0.2)",
-              "rgba(231, 233, 237, 0.2)",
-            ],
-            borderColor: [
-              "rgba(255, 99, 132, 1)",
-              "rgba(54, 162, 235, 1)",
-              "rgba(255, 206, 86, 1)",
-              "rgba(75, 192, 192, 1)",
-              "rgba(153, 102, 255, 1)",
-              "rgba(255, 159, 64, 1)",
-              "rgba(231, 233, 237, 1)",
-            ],
-            borderWidth: 1,
+            backgroundColor: gradient,
+            borderColor: "rgba(255,186,0,1)",
+            borderWidth: 2,
+            barPercentage: 0.7,
           },
         ],
       },
@@ -52,15 +41,23 @@ const RecordingsProgressChart = ({ recordingsData }) => {
               display: false, // Hide x-axis grid lines
             },
             ticks: {
-              fontSize: 14, // Set font size for the x-axis labels
+              font: {
+                size: 15,
+                family: "poppins",
+                weight: 500,
+              },
             },
           },
           y: {
             beginAtZero: true,
             type: "linear", // Use linear scale for the y-axis
             ticks: {
-              // Specify the discrete values and corresponding labels
               stepSize: 1, // Set the step size to 1
+              font: {
+                size: 15,
+                family: "poppins",
+                weight: 500,
+              },
             },
           },
         },
@@ -71,21 +68,39 @@ const RecordingsProgressChart = ({ recordingsData }) => {
     };
   }, [recordingsData]);
 
+  const getGradientColors = (length) => {
+    const colors = [];
+    const colorStops = 5; // Number of color stops in the gradient
+
+    // Generate gradient colors
+    for (let i = 0; i < length; i++) {
+      const gradient = [];
+      for (let j = 0; j < colorStops; j++) {
+        const percentage = (j / (colorStops - 1)) * 100;
+        const color = `hsla(50, 100%, 50%, ${percentage}%)`; // Gradient yellow color
+        gradient.push(color);
+      }
+      colors.push(gradient);
+    }
+
+    return colors;
+  };
+
   const getPastDaysLabels = () => {
     const labels = [];
     for (let i = 6; i >= 0; i--) {
       const date = new Date();
       date.setDate(date.getDate() - i);
-      labels.push(date.toLocaleDateString("en-US", { weekday: "long" }));
+      labels.push(
+        date.toLocaleDateString("en-US", {
+          weekday: "short",
+        })
+      );
     }
     return labels;
   };
 
-  return (
-    <div className="w-full h-full p-8 bg-slate-50 shadow-md rounded-md overflow-hidden">
-      <canvas id="recordingsProgressChart"></canvas>
-    </div>
-  );
+  return <canvas id={id}></canvas>;
 };
 
 export default RecordingsProgressChart;

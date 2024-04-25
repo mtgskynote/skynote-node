@@ -12,6 +12,7 @@ import StatsGeneral from "../../components/StatsGeneral.js";
 import StatsTasksSection from "../../components/StatsTasksSection.js";
 import LessonCard from "../../components/LessonCard.js";
 import RecordingsProgressChart from "../../components/RecordingsProgressChart.js";
+import LevelsProgressChart from "../../components/LevelsProgressChart.js";
 
 ChartJS.register(ArcElement, Tooltip, Legend);
 
@@ -321,11 +322,12 @@ const Stats = () => {
   }, [recentRecordings]);
 
   console.log(lastWeekRecordings);
+  // w-full h-full p-8 bg-slate-50 shadow-md rounded-md overflow-hidden
 
   return (
     <div className={`px-12 ${StatsCSS.container}`}>
       <div className="pt-6 pb-6">
-        <h2 className="font-extrabold my-6">Continue Recording</h2>
+        <h3 className="font-normal my-6">Continue Recording</h3>
         <div className="overflow-x-auto whitespace-no-wrap no-scrollbar">
           <div className="inline-flex items-start space-x-8 py-4">
             {Object.keys(recentScores).map((title, index) => {
@@ -345,15 +347,29 @@ const Stats = () => {
         </div>
       </div>
       <hr className="h-px my-6 bg-gray-200 border-0 dark:bg-gray-700"></hr>
-      <div className="pt-4 pb-6">
-        <h2 className="font-extrabold my-6">Latest Assignments</h2>
+      <div className="pt-1 pb-6">
+        <h3 className="font-normal my-6">Latest Assignments</h3>
         <div className="overflow-x-auto whitespace-no-wrap no-scrollbar">
           <div className="inline-flex items-start space-x-8 py-4"></div>
         </div>
       </div>
       <hr className="h-px my-6 bg-gray-200 border-0 dark:bg-gray-700"></hr>
-      <div className="pt-4 pb-6">
-        <RecordingsProgressChart recordingsData={lastWeekRecordings} />
+      <div className="pt-1 pb-12">
+        <h3 className="font-normal my-6 pb-2">Your Progress</h3>
+        <div className="flex justify-between">
+          <div className="w-1/2 mr-4 p-4 bg-white border border-slate-50 shadow-md rounded-sm overflow-hidden">
+            <p className="text-lg text-[#383838] font-bold mb-4">
+              Lessons Recorded This Week
+            </p>
+            <RecordingsProgressChart
+              id="recordingsProgressChart"
+              recordingsData={lastWeekRecordings}
+            />
+          </div>
+          <div className="w-1/2 ml-4">
+            <div>{/* <LevelsProgressChart /> */}</div>
+          </div>
+        </div>
       </div>
 
       <div className={StatsCSS.dashboard}>
