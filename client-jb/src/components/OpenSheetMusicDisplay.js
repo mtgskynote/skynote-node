@@ -826,7 +826,6 @@ class OpenSheetMusicDisplay extends Component {
     // for pitch changes
     if(this.props.startPitchTrack){
       if (this.props.pitch !== prevProps.pitch) { //new pitch
-        // console.log("Heyoooo\n", this.props.dynamicStability);
         //Add index to X coordinates to advance pitch tracker in X axis when new pitch arrives
         if(this.notePositionX===(this.state.pitchPositionX[this.state.pitchPositionX.length-1])){ //we are still on the same note
           this.index=this.index+this.spacing; //6 is the spacing between points
