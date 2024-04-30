@@ -51,6 +51,7 @@ const RecordingsProgressChart = ({ id, recordingsData }) => {
           y: {
             beginAtZero: true,
             type: "linear", // Use linear scale for the y-axis
+            grace: 1,
             ticks: {
               stepSize: 1, // Set the step size to 1
               font: {
@@ -66,25 +67,7 @@ const RecordingsProgressChart = ({ id, recordingsData }) => {
     return () => {
       myChart.destroy(); // Clean up chart on component unmount
     };
-  }, [recordingsData]);
-
-  const getGradientColors = (length) => {
-    const colors = [];
-    const colorStops = 5; // Number of color stops in the gradient
-
-    // Generate gradient colors
-    for (let i = 0; i < length; i++) {
-      const gradient = [];
-      for (let j = 0; j < colorStops; j++) {
-        const percentage = (j / (colorStops - 1)) * 100;
-        const color = `hsla(50, 100%, 50%, ${percentage}%)`; // Gradient yellow color
-        gradient.push(color);
-      }
-      colors.push(gradient);
-    }
-
-    return colors;
-  };
+  }, [recordingsData, id]);
 
   const getPastDaysLabels = () => {
     const labels = [];

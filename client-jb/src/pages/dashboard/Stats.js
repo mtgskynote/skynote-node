@@ -13,11 +13,13 @@ import StatsTasksSection from "../../components/StatsTasksSection.js";
 import LessonCard from "../../components/LessonCard.js";
 import RecordingsProgressChart from "../../components/RecordingsProgressChart.js";
 import LevelsProgressChart from "../../components/LevelsProgressChart.js";
+import AssignmentCard from "../../components/AssignmentCard.js";
 
 ChartJS.register(ArcElement, Tooltip, Legend);
 
 const Stats = () => {
   const { getCurrentUser } = useAppContext();
+
   const [userData, setUserData] = useState(null);
   const [scoresData, setScoresData] = useState(null);
   const [recordingList, setRecordingList] = useState(null);
@@ -36,7 +38,13 @@ const Stats = () => {
   const [recentScores, setRecentScores] = useState({});
   const [unreadMessages, setUnreadMessages] = useState(null);
   const [unansweredTasks, setUnansweredTasks] = useState(null);
+  const [dueTasksContent, setDueTasksContent] = useState([]);
   const [lastWeekRecordings, setLastWeekRecordings] = useState(null);
+  const [starPercentages, setStarPercentages] = useState(null);
+
+  const getScoreById = (id) => {
+    return scoresData.find((score) => score._id === id);
+  };
 
   const reloadRecordingsCallback = (idDelete) => {
     //delete recording from all arrays
@@ -217,17 +225,32 @@ const Stats = () => {
 
       getAllAssignments(userData.id)
         .then((result) => {
-          var taskCount = 0;
+          let taskCount = 0;
+          const dueTasks = [];
           if (result.length !== 0) {
             result.forEach((assignment) => {
+              const currentDate = new Date();
+              const dueDate = new Date(assignment.dueDate);
+              const differenceMS = dueDate.getTime() - currentDate.getTime();
+              const daysLeft = Math.ceil(differenceMS / (1000 * 60 * 60 * 24));
+
               assignment.tasks.forEach((task) => {
                 if (task.answer === null || task.answer === undefined) {
+                  const score = getScoreById(task.score);
+                  const dueTask = {
+                    assignmentId: assignment._id,
+                    daysLeft,
+                    dueDate,
+                    score,
+                  };
+                  dueTasks.push(dueTask);
                   taskCount = taskCount + 1;
                 }
               });
             });
           }
           setUnansweredTasks(taskCount);
+          setDueTasksContent(dueTasks);
         })
         .catch((error) => {
           console.log(
@@ -272,6 +295,11 @@ const Stats = () => {
         starSums[level] = sum;
       }
       setAchievedStarsPerLevel(starSums);
+
+      const percentages = Object.keys(starSums).map((level) =>
+        Math.floor((starSums[level] / starsPerLevel[level]) * 100)
+      );
+      setStarPercentages(percentages);
       ////////////////////////////////////////////////////////
 
       const allEntries = {
@@ -321,8 +349,7 @@ const Stats = () => {
     }
   }, [recentRecordings]);
 
-  console.log(lastWeekRecordings);
-  // w-full h-full p-8 bg-slate-50 shadow-md rounded-md overflow-hidden
+  console.log(dueTasksContent);
 
   return (
     <div className={`px-12 ${StatsCSS.container}`}>
@@ -348,9 +375,21 @@ const Stats = () => {
       </div>
       <hr className="h-px my-6 bg-gray-200 border-0 dark:bg-gray-700"></hr>
       <div className="pt-1 pb-6">
-        <h3 className="font-normal my-6">Latest Assignments</h3>
+        <h3 className="font-normal my-6">Latest Tasks</h3>
         <div className="overflow-x-auto whitespace-no-wrap no-scrollbar">
-          <div className="inline-flex items-start space-x-8 py-4"></div>
+          <div className="inline-flex items-start space-x-8 py-4">
+            {dueTasksContent.map((task, index) => {
+              return (
+                <AssignmentCard
+                  key={index}
+                  assignmentId={task.assignmentId}
+                  daysLeft={task.daysLeft}
+                  dueDate={task.dueDate}
+                  score={task.score}
+                />
+              );
+            })}
+          </div>
         </div>
       </div>
       <hr className="h-px my-6 bg-gray-200 border-0 dark:bg-gray-700"></hr>
@@ -366,8 +405,16 @@ const Stats = () => {
               recordingsData={lastWeekRecordings}
             />
           </div>
-          <div className="w-1/2 ml-4">
-            <div>{/* <LevelsProgressChart /> */}</div>
+          <div className="w-1/2 ml-4 p-4 bg-white border border-slate-50 shadow-md rounded-sm overflow-hidden">
+            <div>
+              <p className="text-lg text-[#383838] font-bold mb-4">
+                Percentage of Stars Collected
+              </p>
+              <LevelsProgressChart
+                id="levelsProgressChart"
+                starPercentages={starPercentages}
+              />
+            </div>
           </div>
         </div>
       </div>
