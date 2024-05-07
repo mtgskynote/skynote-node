@@ -1,0 +1,25 @@
+New developer setup
+get project from  github/lonce/appskynote/skynote_node
+
+Get an account on appskynote.com
+
+sudo adduser username
+su username
+cd
+mkdir .ssh
+cd .ssh
+touch authorized_keys
+sh -c "echo 'ssh-rsa .........'> authorized_keys"
+chmod 644 authorized_keys
+
+
+mongosh --port 27017  --authenticationDatabase   admin -u lonce -p
+use skynote
+db.createUser({ user: "uname", pwd: passwordPrompt(), roles: [ { role: "readWrite", db: "skynote" }] })
+
+
+
+
+
+
+
