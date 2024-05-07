@@ -29,7 +29,7 @@ const getRecData = async (req, res) => {
     var recdata=[];  // list of core recording data [{recordingName, recordingId},{...}, ...] 
     const studentId=req.query.studentId;
     
-    let docs = await student_recordings.find({studentId: studentId}); //Find all recordings for a given studentID
+    let docs = await student_recordings.find({studentId: studentId}, {audio: 0}); //Find all recordings for a given studentID
 
     for (let i = 0; i < docs.length; i++) {
         recdata.push({recordingName: docs[i].recordingName, recordingId: docs[i]._id, scoreID:docs[i].scoreId, recordingStars: docs[i].info.stars, recordingDate: docs[i].date} );
