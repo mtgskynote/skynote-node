@@ -19,16 +19,16 @@ const AssignmentCard = ({ assignmentId, daysLeft, dueDate, score }) => {
   };
 
   const handleSeeMore = () => {
-    navigate(`/Assignments/#${assignmentId}`);
+    navigate(`/assignments/#${assignmentId}`);
   };
 
   return (
     <Card
-      className={`h-48 w-80 transition ease-in-out delay-100 max-w-sm relative rounded-sm overflow-hidden shadow-md hover:shadow-lg bg-blue-300 text-white hover:cursor-pointer`}
+      className={`h-48 w-80 max-w-sm relative rounded-sm overflow-hidden shadow-md hover:shadow-lg bg-blue-300 text-white`}
     >
       <CardContent className="flex flex-col justify-between h-full">
         <div>
-          <div className="flex justify-between items-center">
+          <div className="flex justify-between items-center text-sm">
             <div className="overflow-hidden">
               <div
                 className={`${
@@ -44,8 +44,8 @@ const AssignmentCard = ({ assignmentId, daysLeft, dueDate, score }) => {
               </div>
             </div>
           </div>
-          <div className="whitespace-normal flex">
-            <div className="overflow-hidden font-bold text-2xl mt-2">
+          <div className="whitespace-normal flex mt-2.5">
+            <div className="overflow-hidden font-bold text-2xl">
               {score.title}
             </div>
           </div>
@@ -53,17 +53,17 @@ const AssignmentCard = ({ assignmentId, daysLeft, dueDate, score }) => {
             {score.skill} | {score.level}
           </div>
         </div>
-        <div className="flex justify-left mt-auto">
+        <div className="flex justify-between items-center mt-auto">
           <div
             onClick={handleRecord}
-            className="text-gray-800 border-transparent focus:border-transparent focus:ring-0 focus:outline-none bg-slate-50 hover:bg-blue-100 font-extralight hover:font-bold py-1 px-4 rounded-l-none outline-none rounded hover:cursor"
+            className="hover:cursor-pointer transition ease-in-out delay-50 flex-grow text-center text-gray-800 border-transparent focus:border-transparent focus:ring-0 focus:outline-none bg-slate-50 hover:bg-blue-100 font-extralight hover:font-bold py-1 px-4 rounded-l-none outline-none rounded hover:cursor"
           >
             Record
           </div>
           <div className="w-2"></div>
           <div
             onClick={handleSeeMore}
-            className="text-gray-800 border-transparent focus:border-transparent focus:ring-0 focus:outline-none bg-slate-50 hover:bg-blue-100 font-extralight hover:font-bold py-1 px-4 rounded-r-none outline-none rounded hover:cursor"
+            className="hover:cursor-pointer transition ease-in-out delay-50 flex-grow text-center text-gray-800 border-transparent focus:border-transparent focus:ring-0 focus:outline-none bg-slate-50 hover:bg-blue-100 font-extralight hover:font-bold py-1 px-4 rounded-r-none outline-none rounded hover:cursor"
           >
             See more
           </div>

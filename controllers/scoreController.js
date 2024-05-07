@@ -45,7 +45,12 @@ const names = async (req, res) => {
   let docs = await xmlScores.find(match); //({level: level, skill: skill})
   let docnames = [];
   for (let i = 0; i < docs.length; i++) {
-    docnames.push({scoreXmlName : formatName(docs[i].fname, format), scoreId : docs[i]._id, scoreLevel : docs[i].level, scoreSkill : docs[i].skill});
+    docnames.push({
+      scoreXmlName: formatName(docs[i].fname, format),
+      scoreId: docs[i]._id,
+      scoreLevel: docs[i].level,
+      scoreSkill: docs[i].skill,
+    });
   }
   res.status(StatusCodes.OK).json(docnames);
 };
@@ -101,9 +106,9 @@ const xml = async (req, res) => {
 //       data[level] = {};
 //       //let skillnum=0
 //       for (let skill of skills) {
-//         let names = await xmlScores.find({level: level, skill: skill}); 
-//         //data[level][skillnum] = names; 
-        
+//         let names = await xmlScores.find({level: level, skill: skill});
+//         //data[level][skillnum] = names;
+
 //         data[level][skill] = names.map((name) => ({
 //           name,
 //           path: `${pathname}/${name}.xml`,
@@ -117,27 +122,26 @@ const xml = async (req, res) => {
 //     res.status(StatusCodes.OK).json(data);
 //   } catch (error) {
 //     console.log(`error in getAllScoreData`, error)
-//   } 
+//   }
 // }
 
 //Lonce's
 const getAllScoreData = async (req, res) => {
-  
   try {
     const levels_ = await xmlScores.distinct("level");
-    console.log("call 1")
+    console.log("call 1");
     const data = {};
 
     for (let level of levels_) {
-      let match={level: level} 
-      const skills_ = await xmlScores.distinct("skill", match)
+      let match = { level: level };
+      const skills_ = await xmlScores.distinct("skill", match);
       data[level] = {};
-      console.log("call 2")
+      console.log("call 2");
 
       for (let skill of skills_) {
-        let match={level: level, skill: skill}
+        let match = { level: level, skill: skill };
         let docs = await xmlScores.find(match);
-        console.log("call 3")
+        console.log("call 3");
 
         let names_ = [];
         for (let i = 0; i < docs.length; i++) {
@@ -145,7 +149,7 @@ const getAllScoreData = async (req, res) => {
         }
 
         //console.log(`names for level ${level} and skill ${skill} are ${JSON.stringify(names_)}`  )
-        
+
         data[level][skill] = names_.map((name) => ({
           name,
           path: `${pathname}/${name}.xml`,
@@ -160,17 +164,47 @@ const getAllScoreData = async (req, res) => {
   } catch (error) {
     console.error("Error fetching data:", error);
   }
-}
+};
 
 //Our
 const getAllScoreData2 = async (req, res) => {
-  
   try {
     const allScores = await xmlScores.find();
     res.status(StatusCodes.OK).json(allScores);
   } catch (error) {
     console.error("Error fetching data:", error);
   }
-}
+};
 
-export { names, levels, skills, xml, getAllScoreData, getAllScoreData2 };
+/**
+ * Retrieves a score by its ID.
+ *
+ * @param {Object} req - The request object.
+ * @param {Object} res - The response object.
+ */
+const getScoreById = async (req, res) => {
+  try {
+    // Find the score by its ID
+    const score = await xmlScores.findById(req.params.scoreId);
+    // If score is not found, return a 404 error
+    if (!score) {
+      return res.status(404).json({ error: "Score not found" });
+    }
+    // If score is found, return it with a 200 status code
+    res.status(StatusCodes.OK).json(score);
+  } catch (err) {
+    // If an error occurs, log it and return a 500 error
+    console.log(err);
+    res.status(500).json({ error: err });
+  }
+};
+
+export {
+  names,
+  levels,
+  skills,
+  xml,
+  getAllScoreData,
+  getAllScoreData2,
+  getScoreById,
+};

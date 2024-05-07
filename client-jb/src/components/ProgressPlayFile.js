@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useRef, useCallback } from "react";
-import { useParams, useNavigate } from "react-router-dom";
+import { useParams, useNavigate, useLocation } from "react-router-dom";
 import OpenSheetMusicDisplay from "./OpenSheetMusicDisplay";
 import ControlBar from "./ControlBar.js";
 import ControlBarRecord from "./ControlBarRecord.js";
@@ -23,6 +23,11 @@ const ProgressPlayFile = (props) => {
   const { getCurrentUser } = useAppContext();
   const [userData, setUserData] = useState(null);
   const params = useParams();
+
+  // get search parameters to turn on specific mode after navigation to this page
+  const location = useLocation();
+  const searchParams = new URLSearchParams(location.search);
+  const recordModeParam = searchParams.get("recordMode");
 
   //This ones have to do with OSMD
   const cursorRef = useRef(null);
@@ -77,6 +82,13 @@ const ProgressPlayFile = (props) => {
 
   const [practiceMode, setPracticeMode] = useState(true);
   const [recordMode, setRecordMode] = useState(false);
+
+  useEffect(() => {
+    // Update practiceMode and recordMode whenever the query parameters change
+    const recordModeOn = recordModeParam === "true" || false;
+    setPracticeMode(!recordModeOn);
+    setRecordMode(recordModeOn);
+  }, [location.search]);
 
   const navigate = useNavigate();
   const scoreID = JSON.parse(localStorage.getItem("scoreData")).find(
@@ -766,7 +778,7 @@ const ProgressPlayFile = (props) => {
         />
       )}
 
-      <ModeToggle />
+      <ModeToggle practiceMode={practiceMode} recordMode={recordMode} />
     </div>
   );
 };

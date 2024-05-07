@@ -349,64 +349,22 @@ const Stats = () => {
     }
   }, [recentRecordings]);
 
-  console.log(dueTasksContent);
-
   return (
-    <div className={`px-12 ${StatsCSS.container}`}>
-      <div className="pt-6 pb-6">
-        <h3 className="font-normal my-6">Continue Recording</h3>
-        <div className="overflow-x-auto whitespace-no-wrap no-scrollbar">
-          <div className="inline-flex items-start space-x-8 py-4">
-            {Object.keys(recentScores).map((title, index) => {
-              return (
-                <LessonCard
-                  key={index}
-                  title={title}
-                  skill={recentScores[title].skill}
-                  level={recentScores[title].level}
-                  stars={recentScores[title].stars}
-                  xml={recentScores[title].xml}
-                  id={recentScores[title].id}
-                />
-              );
-            })}
-          </div>
-        </div>
-      </div>
-      <hr className="h-px my-6 bg-gray-200 border-0 dark:bg-gray-700"></hr>
-      <div className="pt-1 pb-6">
-        <h3 className="font-normal my-6">Latest Tasks</h3>
-        <div className="overflow-x-auto whitespace-no-wrap no-scrollbar">
-          <div className="inline-flex items-start space-x-8 py-4">
-            {dueTasksContent.map((task, index) => {
-              return (
-                <AssignmentCard
-                  key={index}
-                  assignmentId={task.assignmentId}
-                  daysLeft={task.daysLeft}
-                  dueDate={task.dueDate}
-                  score={task.score}
-                />
-              );
-            })}
-          </div>
-        </div>
-      </div>
-      <hr className="h-px my-6 bg-gray-200 border-0 dark:bg-gray-700"></hr>
-      <div className="pt-1 pb-12">
-        <h3 className="font-normal my-6 pb-2">Your Progress</h3>
-        <div className="flex justify-between">
-          <div className="w-1/2 mr-4 p-4 bg-white border border-slate-50 shadow-md rounded-sm overflow-hidden">
-            <p className="text-lg text-[#383838] font-bold mb-4">
-              Lessons Recorded This Week
-            </p>
-            <RecordingsProgressChart
-              id="recordingsProgressChart"
-              recordingsData={lastWeekRecordings}
-            />
-          </div>
-          <div className="w-1/2 ml-4 p-4 bg-white border border-slate-50 shadow-md rounded-sm overflow-hidden">
-            <div>
+    <div className={`${StatsCSS.container}`}>
+      <div className="flex h-screen px-4">
+        <div className="w-2/6 py-4 mr-12">
+          <h4 className="font-medium my-6">Your Progress</h4>
+          <div className="flex flex-col h-full">
+            <div className="mb-4 p-4 bg-white border border-slate-50 shadow-md rounded-sm overflow-hidden">
+              <p className="text-lg text-[#383838] font-bold mb-4">
+                Lessons Recorded This Week
+              </p>
+              <RecordingsProgressChart
+                id="recordingsProgressChart"
+                recordingsData={lastWeekRecordings}
+              />
+            </div>
+            <div className="p-4 bg-white border border-slate-50 shadow-md rounded-sm overflow-hidden">
               <p className="text-lg text-[#383838] font-bold mb-4">
                 Percentage of Stars Collected
               </p>
@@ -417,7 +375,54 @@ const Stats = () => {
             </div>
           </div>
         </div>
+        <div className="w-4/6">
+          <div className="pt-6">
+            <h4 className="font-medium my-6">Continue Recording</h4>
+            <div className="relative overflow-x-auto whitespace-no-wrap no-scrollbar">
+              <div className="inline-flex items-start space-x-8">
+                {Object.keys(recentScores).map((title, index) => {
+                  return (
+                    <LessonCard
+                      key={index}
+                      title={title}
+                      skill={recentScores[title].skill}
+                      level={recentScores[title].level}
+                      stars={recentScores[title].stars}
+                      xml={recentScores[title].xml}
+                      id={recentScores[title].id}
+                    />
+                  );
+                })}
+              </div>
+            </div>
+          </div>
+          <div className="pb-6">
+            <div className="inline-flex space-x-2 my-6">
+              <h4 className="font-medium">Unsubmitted Tasks</h4>
+              <div className="h-1/2 px-2 bg-red-500 rounded text-slate-50">
+                {unansweredTasks}
+              </div>
+            </div>
+            <div className="overflow-x-auto whitespace-no-wrap no-scrollbar">
+              <div className="inline-flex items-start space-x-8">
+                {dueTasksContent.map((task, index) => {
+                  return (
+                    <AssignmentCard
+                      key={index}
+                      assignmentId={task.assignmentId}
+                      daysLeft={task.daysLeft}
+                      dueDate={task.dueDate}
+                      score={task.score}
+                    />
+                  );
+                })}
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
+
+      {/* <hr className="h-px my-6 bg-gray-200 border-0 dark:bg-gray-700"></hr> */}
 
       <div className={StatsCSS.dashboard}>
         <div className={StatsCSS.left}>

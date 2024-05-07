@@ -12,10 +12,13 @@ import {
 
 const ModeToggle = (props) => {
   //Volume, bpm and zoom variables
-  const [practiceMode, setPracticeMode] = useState(true);
-  const [recordMode, setRecordMode] = useState(false);
+  const [practiceMode, setPracticeMode] = useState(props.practiceMode);
+  const [recordMode, setRecordMode] = useState(props.recordMode);
 
-  useEffect(() => {}, [props]);
+  useEffect(() => {
+    setPracticeMode(props.practiceMode);
+    setRecordMode(props.recordMode);
+  }, [props]);
 
   //record mode button
   const handleRecordMode = () => {
@@ -25,7 +28,7 @@ const ModeToggle = (props) => {
   };
 
   //practice mode button
-  const handlePracticeMode = (event) => {
+  const handlePracticeMode = () => {
     console.log("Practice mode");
     setPracticeMode(true);
     setRecordMode(false);

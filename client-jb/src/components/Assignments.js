@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import { useAppContext } from "../context/appContext";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import AssignmentsCSS from "./Assignments.module.css";
@@ -33,6 +33,9 @@ const Assignments = (props) => {
   const [taskGrade, setTaskGrade] = useState(null);
   const [selectedScore, setSelectedScore] = useState(null);
   const [selectedAnnouncement, setSelectedAnnouncement] = useState(null);
+
+  const location = useLocation();
+
   const options = {
     year: "numeric",
     month: "numeric",
@@ -122,6 +125,24 @@ const Assignments = (props) => {
     }
   }, [userData, scoresData, teacherData]);
 
+  useEffect(() => {
+    if (userAnnouncements) {
+      const hash = window.location.hash.substring(1); // Get the hash from the URL
+      const element = document.getElementById(hash); // Find the element with that ID
+
+      if (element) {
+        const rect = element.getBoundingClientRect(); // Get the position of the element
+        const offset = window.innerWidth >= 600 ? 64 : 56; // AppBar height
+        const y = rect.top + window.scrollY - offset; // Calculate the y-coordinate to scroll to
+
+        window.scroll({
+          top: y,
+          behavior: "smooth",
+        });
+      }
+    }
+  }, [userAnnouncements]);
+
   return (
     <div className={AssignmentsCSS.container}>
       <div className={AssignmentsCSS.left}>
@@ -141,7 +162,7 @@ const Assignments = (props) => {
                       {new Date(announcement.postDate).toLocaleDateString(
                         "es-ES",
                         options
-                      )}
+                      )}{" "}
                     </div>
                     <div>
                       Due on :{" "}
@@ -188,7 +209,10 @@ const Assignments = (props) => {
                             (item) => item._id === task.score
                           );
                           return (
-                            <div className={AssignmentsCSS.taskItem}>
+                            <div
+                              className={AssignmentsCSS.taskItem}
+                              key={index}
+                            >
                               <div className={AssignmentsCSS.taskHeader}>
                                 <div>
                                   <h6>
