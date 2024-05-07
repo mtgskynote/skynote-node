@@ -10,11 +10,16 @@ import StatsRecentRecordings from "../../components/StatsRecentRecordings.js";
 import NumberOfRecStats from "../../components/StatsAreaChart.js";
 import StatsGeneral from "../../components/StatsGeneral.js";
 import StatsTasksSection from "../../components/StatsTasksSection.js";
+import LessonCard from "../../components/LessonCard.js";
+import RecordingsProgressChart from "../../components/RecordingsProgressChart.js";
+import LevelsProgressChart from "../../components/LevelsProgressChart.js";
+import AssignmentCard from "../../components/AssignmentCard.js";
 
 ChartJS.register(ArcElement, Tooltip, Legend);
 
 const Stats = () => {
   const { getCurrentUser } = useAppContext();
+
   const [userData, setUserData] = useState(null);
   const [scoresData, setScoresData] = useState(null);
   const [recordingList, setRecordingList] = useState(null);
@@ -30,8 +35,16 @@ const Stats = () => {
   const [starsPerLevel, setStarsPerLevel] = useState(null);
   const [achievedStarsPerLevel, setAchievedStarsPerLevel] = useState(null);
   const [recentRecordings, setRecentRecordings] = useState(null);
+  const [recentScores, setRecentScores] = useState({});
   const [unreadMessages, setUnreadMessages] = useState(null);
   const [unansweredTasks, setUnansweredTasks] = useState(null);
+  const [dueTasksContent, setDueTasksContent] = useState([]);
+  const [lastWeekRecordings, setLastWeekRecordings] = useState(null);
+  const [starPercentages, setStarPercentages] = useState(null);
+
+  const getScoreById = (id) => {
+    return scoresData.find((score) => score._id === id);
+  };
 
   const reloadRecordingsCallback = (idDelete) => {
     //delete recording from all arrays
@@ -165,6 +178,29 @@ const Stats = () => {
             })
           );
           setRecordingScoresIds(result.map((recording) => recording.scoreID));
+
+          const today = new Date();
+          const lastWeek = new Date(today);
+          lastWeek.setDate(lastWeek.getDate() - 6); // Calculate the date 7 days ago
+
+          const countsPerDay = Array(7).fill(0);
+
+          // Filter the studentData array to get entries within the last week
+          result.forEach((recording) => {
+            const recordingDate = new Date(recording.recordingDate); // Assuming the date attribute is a string representation of a date
+
+            const dayOffset = Math.floor(
+              (today - recordingDate) / (1000 * 60 * 60 * 24)
+            );
+            const lastIndex = 6; // The last index of the array
+            const reverseIndex = lastIndex - dayOffset;
+
+            if (reverseIndex >= 0 && reverseIndex <= lastIndex) {
+              countsPerDay[reverseIndex]++;
+            }
+          });
+
+          setLastWeekRecordings(countsPerDay);
         })
         .catch((error) => {
           console.log(`Cannot get recordings from database: ${error}`);
@@ -187,18 +223,34 @@ const Stats = () => {
           );
         });
 
-        getAllAssignments(userData.id).then((result)=>{
-          var taskCount=0;
-          if(result.length!==0){
-            result.forEach((assignment)=>{   
-              assignment.tasks.forEach((task)=>{
-                if(task.answer===null || task.answer===undefined){
-                  taskCount=taskCount+1;
+      getAllAssignments(userData.id)
+        .then((result) => {
+          let taskCount = 0;
+          const dueTasks = [];
+          if (result.length !== 0) {
+            result.forEach((assignment) => {
+              const currentDate = new Date();
+              const dueDate = new Date(assignment.dueDate);
+              const differenceMS = dueDate.getTime() - currentDate.getTime();
+              const daysLeft = Math.ceil(differenceMS / (1000 * 60 * 60 * 24));
+
+              assignment.tasks.forEach((task) => {
+                if (task.answer === null || task.answer === undefined) {
+                  const score = getScoreById(task.score);
+                  const dueTask = {
+                    assignmentId: assignment._id,
+                    daysLeft,
+                    dueDate,
+                    score,
+                  };
+                  dueTasks.push(dueTask);
+                  taskCount = taskCount + 1;
                 }
-              })
-            })
+              });
+            });
           }
           setUnansweredTasks(taskCount);
+          setDueTasksContent(dueTasks);
         })
         .catch((error) => {
           console.log(
@@ -243,6 +295,11 @@ const Stats = () => {
         starSums[level] = sum;
       }
       setAchievedStarsPerLevel(starSums);
+
+      const percentages = Object.keys(starSums).map((level) =>
+        Math.floor((starSums[level] / starsPerLevel[level]) * 100)
+      );
+      setStarPercentages(percentages);
       ////////////////////////////////////////////////////////
 
       const allEntries = {
@@ -262,11 +319,110 @@ const Stats = () => {
     }
   }, [recordingList, recordingNames]);
 
+  useEffect(() => {
+    if (recentRecordings != null) {
+      const uniqueScores = {};
+
+      recentRecordings.scoresTitles.forEach((title, index) => {
+        // const xml = recentRecordings.scoresXML[index];
+        const skill = recentRecordings.skills[index];
+        const level = recentRecordings.levels[index];
+        const stars = recentRecordings.stars[index];
+        const xml = recentRecordings.scoresXML[index];
+        const id = recentRecordings.ids[index];
+
+        if (!uniqueScores[title] || stars > uniqueScores[title].stars) {
+          // If not encountered before or if the current stars are greater than the stored stars, update the entry
+          uniqueScores[title] = { skill, level, stars, xml, id };
+        }
+      });
+
+      const top10Scores = {};
+      let count = 0;
+      for (const key in uniqueScores) {
+        if (count >= 10) break;
+        top10Scores[key] = uniqueScores[key];
+        count++;
+      }
+
+      setRecentScores(top10Scores);
+    }
+  }, [recentRecordings]);
+
   return (
-    <div className={StatsCSS.container}>
-      {/* <h1 className={StatsCSS.profile}>
-        Hello {userData ? userData.name : ""}
-      </h1> */}
+    <div className={`${StatsCSS.container}`}>
+      <div className="flex h-screen px-4">
+        <div className="w-2/6 py-4 mr-12">
+          <h4 className="font-medium my-6">Your Progress</h4>
+          <div className="flex flex-col h-full">
+            <div className="mb-4 p-4 bg-white border border-slate-50 shadow-md rounded-sm overflow-hidden">
+              <p className="text-lg text-[#383838] font-bold mb-4">
+                Lessons Recorded This Week
+              </p>
+              <RecordingsProgressChart
+                id="recordingsProgressChart"
+                recordingsData={lastWeekRecordings}
+              />
+            </div>
+            <div className="p-4 bg-white border border-slate-50 shadow-md rounded-sm overflow-hidden">
+              <p className="text-lg text-[#383838] font-bold mb-4">
+                Percentage of Stars Collected
+              </p>
+              <LevelsProgressChart
+                id="levelsProgressChart"
+                starPercentages={starPercentages}
+              />
+            </div>
+          </div>
+        </div>
+        <div className="w-4/6">
+          <div className="pt-6">
+            <h4 className="font-medium my-6">Continue Recording</h4>
+            <div className="relative overflow-x-auto whitespace-no-wrap no-scrollbar">
+              <div className="inline-flex items-start space-x-8">
+                {Object.keys(recentScores).map((title, index) => {
+                  return (
+                    <LessonCard
+                      key={index}
+                      title={title}
+                      skill={recentScores[title].skill}
+                      level={recentScores[title].level}
+                      stars={recentScores[title].stars}
+                      xml={recentScores[title].xml}
+                      id={recentScores[title].id}
+                    />
+                  );
+                })}
+              </div>
+            </div>
+          </div>
+          <div className="pb-6">
+            <div className="inline-flex space-x-2 my-6">
+              <h4 className="font-medium">Unsubmitted Tasks</h4>
+              <div className="h-1/2 px-2 bg-red-500 rounded text-slate-50">
+                {unansweredTasks}
+              </div>
+            </div>
+            <div className="overflow-x-auto whitespace-no-wrap no-scrollbar">
+              <div className="inline-flex items-start space-x-8">
+                {dueTasksContent.map((task, index) => {
+                  return (
+                    <AssignmentCard
+                      key={index}
+                      assignmentId={task.assignmentId}
+                      daysLeft={task.daysLeft}
+                      dueDate={task.dueDate}
+                      score={task.score}
+                    />
+                  );
+                })}
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* <hr className="h-px my-6 bg-gray-200 border-0 dark:bg-gray-700"></hr> */}
 
       <div className={StatsCSS.dashboard}>
         <div className={StatsCSS.left}>
