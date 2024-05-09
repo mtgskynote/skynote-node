@@ -12,7 +12,6 @@ const AssignmentCard = ({ assignmentId, daysLeft, dueDate, score }) => {
     minute: "2-digit",
   };
   const navigate = useNavigate();
-  console.log(dueDate.toLocaleString("en-UK", dateOptions));
 
   const handleRecord = () => {
     navigate(`/all-lessons/${score.fname}`);

@@ -322,18 +322,35 @@ const Stats = () => {
   useEffect(() => {
     if (recentRecordings != null) {
       const uniqueScores = {};
+      const recordingsPerScore = {};
 
       recentRecordings.scoresTitles.forEach((title, index) => {
         // const xml = recentRecordings.scoresXML[index];
+        const recordingName = recentRecordings.names[index];
+        const recordingDate = recentRecordings.dates[index];
+        const recordingId = recentRecordings.ids[index];
         const skill = recentRecordings.skills[index];
         const level = recentRecordings.levels[index];
         const stars = recentRecordings.stars[index];
         const xml = recentRecordings.scoresXML[index];
-        const id = recentRecordings.ids[index];
+        const id = recentRecordings.scoresIds[index];
 
         if (!uniqueScores[title] || stars > uniqueScores[title].stars) {
           // If not encountered before or if the current stars are greater than the stored stars, update the entry
           uniqueScores[title] = { skill, level, stars, xml, id };
+        }
+
+        if (!recordingsPerScore[title]) {
+          recordingsPerScore[title] = [
+            { recordingId, recordingName, recordingDate, stars },
+          ];
+        } else {
+          recordingsPerScore[title].push({
+            recordingId,
+            recordingName,
+            recordingDate,
+            stars,
+          });
         }
       });
 
@@ -344,6 +361,10 @@ const Stats = () => {
         top10Scores[key] = uniqueScores[key];
         count++;
       }
+
+      Object.keys(top10Scores).forEach((title) => {
+        top10Scores[title].recordings = recordingsPerScore[title];
+      });
 
       setRecentScores(top10Scores);
     }
@@ -390,6 +411,8 @@ const Stats = () => {
                       stars={recentScores[title].stars}
                       xml={recentScores[title].xml}
                       id={recentScores[title].id}
+                      recordings={recentScores[title].recordings}
+                      reloadRecordingsCallback={reloadRecordingsCallback}
                     />
                   );
                 })}

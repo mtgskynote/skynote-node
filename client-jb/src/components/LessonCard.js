@@ -1,45 +1,112 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import Card from "@mui/material/Card";
-import CardContent from "@mui/material/CardContent";
-import Typography from "@mui/material/Typography";
-import StarBorderRoundedIcon from "@mui/icons-material/StarBorderRounded";
-import StarRateRoundedIcon from "@mui/icons-material/StarRateRounded";
-import Button from "@mui/material/Button";
-import Modal from "@mui/material/Modal";
+import {
+  getManyRecordings,
+  deleteRecording,
+} from "../utils/studentRecordingMethods";
+import {
+  Card,
+  CardContent,
+  Typography,
+  CircularProgress,
+  Tooltip,
+  IconButton,
+} from "@mui/material";
+import {
+  CloseRounded as CloseRoundedIcon,
+  Delete as DeleteIcon,
+} from "@mui/icons-material";
+import AudioPlayerIcon from "./AudioPlayerIcon";
+import StarRating from "./StarRating";
 
-const LessonCard = ({ title, skill, level, stars, xml, id }) => {
+const LessonCard = ({
+  title,
+  skill,
+  level,
+  stars,
+  xml,
+  id,
+  recordings,
+  reloadRecordingsCallback,
+}) => {
   const navigate = useNavigate();
   const [openRecordingsModal, setOpenRecordingsModal] = useState(false);
+  const [recordingsAudio, setRecordingsAudio] = useState(null);
+  const [loading, setLoading] = useState(false);
 
-  const filledStars = Array.from({ length: stars }, (_, index) => (
-    <StarRateRoundedIcon key={index} className="text-yellow-300 text-4xl" />
-  ));
-
-  const emptyStars = Array.from({ length: 3 - stars }, (_, index) => (
-    <StarBorderRoundedIcon
-      key={stars + index}
-      className="text-yellow-300 text-4xl"
-    />
-  ));
-
-  const handleClick = () => {
-    navigate(`/ListRecordings/${xml}`, { state: { id } });
+  const formatDate = (dateString) => {
+    const date = new Date(dateString);
+    const options = {
+      year: "numeric",
+      month: "short",
+      day: "2-digit",
+      hour: "2-digit",
+      minute: "2-digit",
+    };
+    return date.toLocaleString("en-UK", options);
   };
 
-  const handleOpenRecordingsModal = () => {
-    setOpenRecordingsModal(true);
+  const handleViewScore = () => {
+    navigate(`/all-lessons/${xml}`, { state: { id } });
+  };
+
+  const handleOpenRecordingsModal = async () => {
+    setOpenRecordingsModal(true); // Open the modal immediately
+    setLoading(true); // Set loading state to true
+
+    try {
+      if (recordingsAudio === null) {
+        const recordingIds = recordings.map(
+          (recording) => recording.recordingId
+        );
+        const recordingAudios = await getManyRecordings(recordingIds);
+
+        recordings.forEach((recording) => {
+          const recordingAudioMatch = recordingAudios.find(
+            (recordingAudio) => recordingAudio._id === recording.recordingId
+          );
+          if (recordingAudioMatch) {
+            recording.audio = recordingAudioMatch.audio;
+          }
+        });
+
+        console.log(recordings);
+        setRecordingsAudio(recordingAudios);
+      }
+    } catch (error) {
+      console.error("Error fetching recordings audio:", error);
+    } finally {
+      setLoading(false);
+    }
   };
 
   const handleCloseRecordingsModal = () => {
     setOpenRecordingsModal(false);
+    setLoading(false);
+  };
+
+  const handleDeleteRecording = async (recordingId) => {
+    try {
+      await deleteRecording(recordingId);
+
+      setRecordingsAudio(
+        recordingsAudio.filter((recording) => recording._id !== recordingId)
+      );
+      reloadRecordingsCallback();
+    } catch (error) {
+      console.log(`Cannot delete recording from database: ${error}`);
+    }
+  };
+
+  const handleViewRecording = async (recordingId, xml) => {
+    navigate(`/ListRecordings/${xml}`, { state: { recordingId } });
   };
 
   return (
-    <div className="group">
+    <div className="">
       <Card
-        className={`h-48 w-80 transition ease-in-out delay-50 max-w-sm relative rounded-sm overflow-hidden shadow-md hover:shadow-lg bg-blue-400 group-hover:bg-blue-500 hover:cursor-pointer`}
-        onClick={handleClick}
+        className={`h-48 w-80 transition ease-in-out delay-50 max-w-sm relative rounded-sm overflow-hidden shadow-md hover:shadow-lg bg-blue-400 hover:bg-blue-500 hover:cursor-pointer`}
+        // onClick={handleViewScore}
         id={id}
       >
         <CardContent>
@@ -68,8 +135,7 @@ const LessonCard = ({ title, skill, level, stars, xml, id }) => {
             </Typography>
           </div>
           <div className="absolute inset-x-0 bottom-0 p-3 flex items-end">
-            {filledStars}
-            {emptyStars}
+            <StarRating stars={stars} />
             <button
               onClick={handleOpenRecordingsModal}
               className="ml-auto hover:cursor-pointer transition ease-in-out delay-50 text-center text-gray-800 border-transparent focus:border-transparent focus:ring-0 focus:outline-none bg-slate-50 hover:bg-blue-800 hover:text-white font-extralight hover:font-bold py-1 px-2 rounded-l-none outline-none rounded hover:cursor"
@@ -81,7 +147,7 @@ const LessonCard = ({ title, skill, level, stars, xml, id }) => {
 
         {/* Modal */}
         <div
-          className={`fixed inset-0 z-50 flex items-center justify-center bg-gray-800 bg-opacity-75 transition-opacity duration-300 ${
+          className={`cursor-default fixed inset-0 z-50 flex items-center justify-center bg-gray-800 bg-opacity-75 transition-opacity duration-300 ${
             openRecordingsModal
               ? "opacity-100"
               : "opacity-0 pointer-events-none"
@@ -94,13 +160,90 @@ const LessonCard = ({ title, skill, level, stars, xml, id }) => {
             }`}
             onClick={(e) => e.stopPropagation()}
           >
-            <Typography variant="h6" gutterBottom>
-              Modal Title
-            </Typography>
-            <Typography variant="body1">
-              This is the content of the modal.
-            </Typography>
-            <Button onClick={handleCloseRecordingsModal}>Close Modal</Button>
+            {loading ? ( // Display loading indicator if loading
+              <CircularProgress />
+            ) : (
+              <>
+                {/* Display modal content if recordingsAudio is loaded */}
+                {recordingsAudio ? (
+                  <div>
+                    <div className="flex justify-between items-center mb-2">
+                      <h5 className="font-medium">All Recordings - {title}</h5>
+                      <button
+                        onClick={handleCloseRecordingsModal}
+                        className="bg-red-500 hover:bg-red-400 text-white focus:outline-none border-none rounded"
+                      >
+                        <CloseRoundedIcon className="rounded text-2xl" />
+                      </button>
+                    </div>
+                    {/* Render table with recordings and recordingsAudio data */}
+                    <table className="w-full border-collapse border border-gray-300">
+                      <thead>
+                        <tr className="bg-gray-100">
+                          <th className="border border-gray-300 px-4 py-2">
+                            Recording Name
+                          </th>
+                          <th className="border border-gray-300 px-4 py-2">
+                            Recording Date
+                          </th>
+                          <th className="border border-gray-300 px-4 py-2">
+                            Stars Achieved
+                          </th>
+                          <th className="border border-gray-300 px-4 py-2">
+                            Actions
+                          </th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {recordings.map((recording, index) => (
+                          <tr key={index}>
+                            <td className="border border-gray-300 px-4 py-2">
+                              {recording.recordingName}
+                              <AudioPlayerIcon audio={recording.audio} />
+                            </td>
+                            <td className="border border-gray-300 px-4 py-2">
+                              {formatDate(recording.recordingDate)}
+                            </td>
+                            <td className="border border-gray-300 px-4 py-2">
+                              <StarRating stars={recording.stars} />
+                            </td>
+                            <td className="border border-gray-300 px-4 py-2">
+                              <button
+                                className="hover:cursor-pointer transition ease-in-out delay-50 text-center text-blue-500 border-solid border-2 border-blue-500 focus:ring-0 focus:outline-none bg-inherit hover:bg-slate-50 hover:border-blue-600 hover:text-blue-600 py-1 px-2 rounded-l-none outline-none rounded hover:cursor"
+                                onClick={() =>
+                                  handleViewRecording(
+                                    recording.recordingId,
+                                    xml
+                                  )
+                                }
+                              >
+                                View Recording
+                              </button>
+                              <Tooltip
+                                title="Delete Recording"
+                                placement="right"
+                              >
+                                <IconButton
+                                  onClick={() =>
+                                    handleDeleteRecording(recording.recordingId)
+                                  }
+                                  aria-label="Delete"
+                                  className="hover:text-red-500"
+                                >
+                                  <DeleteIcon />
+                                </IconButton>
+                              </Tooltip>
+                            </td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+                ) : (
+                  <div>No recordings available.</div>
+                )}
+              </>
+            )}
           </div>
         </div>
       </Card>
