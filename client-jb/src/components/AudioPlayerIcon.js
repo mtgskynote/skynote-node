@@ -29,7 +29,10 @@ const AudioPlayerIcon = ({ audio }) => {
 
   return (
     <IconButton
-      onClick={toggleAudio}
+      onClick={(e) => {
+        e.stopPropagation();
+        toggleAudio();
+      }}
       className={`hover:text-blue-500 ${isPlaying ? "text-blue-500" : ""}`}
     >
       {isPlaying ? <PauseCircleOutlineIcon /> : <PlayCircleOutlineIcon />}

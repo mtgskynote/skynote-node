@@ -285,6 +285,10 @@ const Stats = () => {
       });
       // sum up all stars for same level
       const starSums = {};
+      for (const level in starsPerLevel) {
+        starSums[level] = 0;
+      }
+
       for (const level in bestScores) {
         const scoresStars = bestScores[level];
         let sum = 0;
@@ -294,6 +298,7 @@ const Stats = () => {
         }
         starSums[level] = sum;
       }
+      console.log(starSums);
       setAchievedStarsPerLevel(starSums);
 
       const percentages = Object.keys(starSums).map((level) =>
@@ -400,7 +405,7 @@ const Stats = () => {
           <div className="pt-6">
             <h4 className="font-medium my-6">Continue Recording</h4>
             <div className="relative overflow-x-auto whitespace-no-wrap no-scrollbar">
-              <div className="inline-flex items-start space-x-8">
+              <div className="inline-flex items-start space-x-8 mr-8">
                 {Object.keys(recentScores).map((title, index) => {
                   return (
                     <LessonCard
@@ -427,7 +432,7 @@ const Stats = () => {
               </div>
             </div>
             <div className="overflow-x-auto whitespace-no-wrap no-scrollbar">
-              <div className="inline-flex items-start space-x-8">
+              <div className="inline-flex items-start space-x-8 mr-8">
                 {dueTasksContent.map((task, index) => {
                   return (
                     <AssignmentCard
@@ -445,9 +450,7 @@ const Stats = () => {
         </div>
       </div>
 
-      {/* <hr className="h-px my-6 bg-gray-200 border-0 dark:bg-gray-700"></hr> */}
-
-      <div className={StatsCSS.dashboard}>
+      {/* <div className={StatsCSS.dashboard}>
         <div className={StatsCSS.left}>
           <div className={StatsCSS.item}>
             <StatsGeneral
@@ -481,7 +484,7 @@ const Stats = () => {
             />
           </div>
         </div>
-      </div>
+      </div> */}
     </div>
   );
 };
