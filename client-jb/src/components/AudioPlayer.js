@@ -1,4 +1,4 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef } from "react";
 
 const AudioPlayer = () => {
   const [audioBuffer, setAudioBuffer] = useState(null);
@@ -12,19 +12,23 @@ const AudioPlayer = () => {
       const reader = new FileReader();
 
       reader.onload = function (importedFile) {
-        if (file.name.endsWith('.mp3')) {
+        if (file.name.endsWith(".mp3")) {
           // Handle audio file
-          const audioContext = new (window.AudioContext || window.webkitAudioContext)();
-          audioContext.decodeAudioData(importedFile.target.result, function (buffer) {
-            setAudioBuffer(buffer);
-          });
-        } else if (file.name.endsWith('.json')) {
+          const audioContext = new (window.AudioContext ||
+            window.webkitAudioContext)();
+          audioContext.decodeAudioData(
+            importedFile.target.result,
+            function (buffer) {
+              setAudioBuffer(buffer);
+            }
+          );
+        } else if (file.name.endsWith(".json")) {
           // Handle JSON file
           console.log("holaaa", file);
           const uint8Array = new Uint8Array(importedFile.target.result);
-          const jsonString = new TextDecoder().decode(uint8Array);    
+          const jsonString = new TextDecoder().decode(uint8Array);
           const jsonContent = JSON.parse(jsonString);
-          console.log('JSON Content:', jsonContent);
+          console.log("JSON Content:", jsonContent);
         }
       };
 
@@ -34,7 +38,8 @@ const AudioPlayer = () => {
 
   const playAudio = () => {
     if (audioBuffer) {
-      const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+      const audioContext = new (window.AudioContext ||
+        window.webkitAudioContext)();
       const source = audioContext.createBufferSource();
       source.buffer = audioBuffer;
       source.connect(audioContext.destination);
@@ -53,5 +58,3 @@ const AudioPlayer = () => {
 };
 
 export default AudioPlayer;
-
-

@@ -285,6 +285,10 @@ const Stats = () => {
       });
       // sum up all stars for same level
       const starSums = {};
+      for (const level in starsPerLevel) {
+        starSums[level] = 0;
+      }
+
       for (const level in bestScores) {
         const scoresStars = bestScores[level];
         let sum = 0;
@@ -294,6 +298,7 @@ const Stats = () => {
         }
         starSums[level] = sum;
       }
+      console.log(starSums);
       setAchievedStarsPerLevel(starSums);
 
       const percentages = Object.keys(starSums).map((level) =>
@@ -322,18 +327,35 @@ const Stats = () => {
   useEffect(() => {
     if (recentRecordings != null) {
       const uniqueScores = {};
+      const recordingsPerScore = {};
 
       recentRecordings.scoresTitles.forEach((title, index) => {
         // const xml = recentRecordings.scoresXML[index];
+        const recordingName = recentRecordings.names[index];
+        const recordingDate = recentRecordings.dates[index];
+        const recordingId = recentRecordings.ids[index];
         const skill = recentRecordings.skills[index];
         const level = recentRecordings.levels[index];
         const stars = recentRecordings.stars[index];
         const xml = recentRecordings.scoresXML[index];
-        const id = recentRecordings.ids[index];
+        const id = recentRecordings.scoresIds[index];
 
         if (!uniqueScores[title] || stars > uniqueScores[title].stars) {
           // If not encountered before or if the current stars are greater than the stored stars, update the entry
           uniqueScores[title] = { skill, level, stars, xml, id };
+        }
+
+        if (!recordingsPerScore[title]) {
+          recordingsPerScore[title] = [
+            { recordingId, recordingName, recordingDate, stars },
+          ];
+        } else {
+          recordingsPerScore[title].push({
+            recordingId,
+            recordingName,
+            recordingDate,
+            stars,
+          });
         }
       });
 
@@ -344,6 +366,10 @@ const Stats = () => {
         top10Scores[key] = uniqueScores[key];
         count++;
       }
+
+      Object.keys(top10Scores).forEach((title) => {
+        top10Scores[title].recordings = recordingsPerScore[title];
+      });
 
       setRecentScores(top10Scores);
     }
@@ -379,7 +405,7 @@ const Stats = () => {
           <div className="pt-6">
             <h4 className="font-medium my-6">Continue Recording</h4>
             <div className="relative overflow-x-auto whitespace-no-wrap no-scrollbar">
-              <div className="inline-flex items-start space-x-8">
+              <div className="inline-flex items-start space-x-8 mr-8">
                 {Object.keys(recentScores).map((title, index) => {
                   return (
                     <LessonCard
@@ -390,6 +416,8 @@ const Stats = () => {
                       stars={recentScores[title].stars}
                       xml={recentScores[title].xml}
                       id={recentScores[title].id}
+                      recordings={recentScores[title].recordings}
+                      reloadRecordingsCallback={reloadRecordingsCallback}
                     />
                   );
                 })}
@@ -404,7 +432,7 @@ const Stats = () => {
               </div>
             </div>
             <div className="overflow-x-auto whitespace-no-wrap no-scrollbar">
-              <div className="inline-flex items-start space-x-8">
+              <div className="inline-flex items-start space-x-8 mr-8">
                 {dueTasksContent.map((task, index) => {
                   return (
                     <AssignmentCard
@@ -422,9 +450,7 @@ const Stats = () => {
         </div>
       </div>
 
-      {/* <hr className="h-px my-6 bg-gray-200 border-0 dark:bg-gray-700"></hr> */}
-
-      <div className={StatsCSS.dashboard}>
+      {/* <div className={StatsCSS.dashboard}>
         <div className={StatsCSS.left}>
           <div className={StatsCSS.item}>
             <StatsGeneral
@@ -458,7 +484,7 @@ const Stats = () => {
             />
           </div>
         </div>
-      </div>
+      </div> */}
     </div>
   );
 };

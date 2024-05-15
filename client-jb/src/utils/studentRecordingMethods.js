@@ -109,6 +109,24 @@ async function getRecording(recordingId) {
   }
 }
 
+const getManyRecordings = async (recordingIds) => {
+  try {
+    const res = await axios.get("/api/v1/recordings/getManyRecordings", {
+      params: { recordingIds: recordingIds },
+    });
+    if (res.status === 200) {
+      return res.data; // save results locally;
+    } else {
+      console.log(
+        `getManyRecordings response.status is not 200! Status code: ${res.status}`
+      );
+      return null;
+    }
+  } catch (error) {
+    console.error("Error on axios getManyRecordings", error);
+  }
+};
+
 /* deleteRecording  */
 async function deleteRecording(recordingId) {
   try {
@@ -153,6 +171,7 @@ export {
   getRecData,
   getAllRecData,
   getRecording,
+  getManyRecordings,
   putRecording,
   deleteRecording,
   patchViewPermissions,
