@@ -163,20 +163,19 @@ const LessonCard = ({
     try {
       await deleteRecording(recordingId);
 
-      const prevRecordingsAudio = recordingsAudio;
-      const filteredRecordingsAudio = prevRecordingsAudio.filter(
-        (recording) => recording._id.toString() !== recordingId.toString()
+      setRecordingsAudio((recordingsAudio) =>
+        recordingsAudio.filter((recording) => recording._id !== recordingId)
       );
-      setRecordingsAudio(filteredRecordingsAudio);
 
-      const prevAllRecordings = allRecordings;
-      const filteredAllRecordings = prevAllRecordings.filter(
-        (recording) => recording._id.toString() !== recordingId.toString()
+      setAllRecordings((allRecordings) =>
+        allRecordings.filter(
+          (recording) => recording.recordingId !== recordingId
+        )
       );
-      setAllRecordings(filteredAllRecordings);
 
       deletedRecordingIds.push(recordingId);
       setDeletionStatus("success");
+      console.log(deletionStatus);
     } catch (error) {
       console.log(`Cannot delete recording from database: ${error}`);
       setDeletionStatus("failure");
