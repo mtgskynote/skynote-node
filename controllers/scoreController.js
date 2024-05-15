@@ -6,6 +6,7 @@ import { dirname } from "path";
 import { fileURLToPath } from "url";
 import { match } from "assert";
 const pathname = "/xmlScores/violin";
+const rootScorePath="../../public/xmlScores/violin";
 // import cors from "cors";
 
 // // Create an instance of the Express Router
@@ -19,7 +20,8 @@ const pathname = "/xmlScores/violin";
 */
 const formatName = function (fname, format) {
   if (format && format == "URL") {
-    return "https://appskynote.com" + pathname + "/" + fname + ".xml";
+//    return "https://appskynote.com" + pathname + "/" + fname + ".xml";
+  return rootScorePath + "/" + pathname + "/" + fname + ".xml";
   }
   if (format && format == "path") {
     return pathname + "/" + fname + ".xml";

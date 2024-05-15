@@ -1,37 +1,24 @@
-On github
-   Setup-branch 5 (or main branch)
-   Now merge each "sub feature" branch to the setupbranch.
-
-while on the setup branch:
-git fetch all
-   git merge origin/subbranch
-
-   Resolve conflicts
-   Test in development mode
-   Test production build: 
-   		npm run build-client   (see package.json if you forget the command)
 
 
+	++++++++++++++++++++++++
+	To prevent calls to server DB (like when ssh isn't working) 
+	clinet-jb/App.js
+	    comment out <ProtectedRout>
 
-   	++++++++++++++++++++++++
-   	To prevent calls to server DB (like when ssh isn't working) 
-   	clinet-jb/App.js
-   	    comment out <ProtectedRout>
-
-   	   note: this doesn't prevent dB calls in the production build. 
+	   note: this doesn't prevent dB calls in the production build. 
 
 
-   	++++++++++++++++++++++++
+	++++++++++++++++++++++++
 
-   	on server machine
-   	   cd to /var/www/html/synote-temp/mergedbranch/skynote-node
+	on server machine
+	   cd to /var/www/html/synote-temp/mergedbranch/skynote-node
 
-   	   git pull 
+	   git pull 
 
-   	   npm run install-dependencies
-   	   cp the whole osmd folder (from /var/www/html/opensheetmusic.zip) to build  unzip, copy folder to client-jb/node-modules  
+	   npm run install-dependencies
+	   cp the whole osmd folder (from /var/www/html/opensheetmusic.zip) to build  unzip, copy folder to client-jb/node-modules  
 
-   	   npm run build-client
+	   npm run build-client
 
    	   
 

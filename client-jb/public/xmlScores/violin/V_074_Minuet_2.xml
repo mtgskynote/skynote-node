@@ -1,9 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE score-partwise PUBLIC "-//Recordare//DTD MusicXML 3.1 Partwise//EN" "http://www.musicxml.org/dtds/partwise.dtd">
 <score-partwise version="3.1">
-  <work>
-    <work-title>Minuet 2</work-title>
-    </work>
+  <movement-title>Minuet 2</movement-title>
   <identification>
     <encoding>
       <software>MuseScore 3.6.2</software>
