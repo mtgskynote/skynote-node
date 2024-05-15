@@ -23,7 +23,7 @@ const AssignmentCard = ({ assignmentId, daysLeft, dueDate, score }) => {
 
   return (
     <Card
-      className={`h-48 w-80 max-w-sm relative rounded-sm overflow-hidden shadow-md hover:shadow-lg bg-blue-300 text-white`}
+      className={`h-48 w-80 max-w-sm relative rounded overflow-hidden shadow-md hover:shadow-lg bg-blue-300 text-white`}
     >
       <CardContent className="flex flex-col justify-between h-full">
         <div>
