@@ -20,7 +20,6 @@ window.Buffer = Buffer;
 const folderBasePath = "/xmlScores/violin";
 
 const ProgressPlayFile = (props) => {
-
   //#region VARIABLES
   const { getCurrentUser } = useAppContext();
   const [userData, setUserData] = useState(null);
@@ -101,7 +100,7 @@ const ProgressPlayFile = (props) => {
     setIsResetButtonPressed(false);
   };
   //#endregion
-  
+
   //#region FUNCTIONS
   /////////////////////////////////////////////////////////////////////////////////////
   //////////////////////////////Get data from the student//////////////////////////////
@@ -113,7 +112,6 @@ const ProgressPlayFile = (props) => {
       getCurrentUser() // fetchData is already an async function
         .then((result) => {
           setUserData(result);
-          //console.log("Hola", result)
         })
         .catch((error) => {
           console.log(`getCurentUser() error: ${error}`);
@@ -347,15 +345,8 @@ const ProgressPlayFile = (props) => {
             .parseFromString(xmlFileData)
             .getElementsByTagName("movement-title")
         );
-        const workTitle = Array.from(
-          new XMLParser()
-            .parseFromString(xmlFileData)
-            .getElementsByTagName("work-title")
-        );
         if (movementTitle.length > 0) {
           setScoreTitle(movementTitle[0].value);
-        } else if (workTitle.length > 0) {
-          setScoreTitle(workTitle[0].value);
         } else {
           setScoreTitle("untitledScore");
         }
@@ -708,9 +699,21 @@ const ProgressPlayFile = (props) => {
       return () => {
         recordButton.removeEventListener("click", handleRecordButtonClick);
         playButton.removeEventListener("click", handlePlayButtonClick);
-      }
-    };
-  }, [recordVol, zoom, recordInactive, pitchValue, dynamicValue, repeatsIterator, practiceMode, recordMode, showRepetitionMessage, userFileName, jsonToDownload]);
+      };
+    }
+  }, [
+    recordVol,
+    zoom,
+    recordInactive,
+    pitchValue,
+    dynamicValue,
+    repeatsIterator,
+    practiceMode,
+    recordMode,
+    showRepetitionMessage,
+    userFileName,
+    jsonToDownload,
+  ]);
   //#endregion
   const handleComplete = useCallback(() => {
     setFinishedTimer(true);

@@ -13,7 +13,6 @@ import reducer from "./reducer";
 import axios from "axios";
 import XMLParser from "react-xml-parser";
 
-
 // Get user, token, and userLocation from local storage
 const user = localStorage.getItem("user");
 const token = localStorage.getItem("token");
@@ -30,7 +29,6 @@ const initialState = {
   userLocation: userLocation || "",
   jobLocation: userLocation || "",
 };
-
 
 // Create context
 const AppContext = React.createContext();
@@ -83,7 +81,7 @@ const AppProvider = ({ children }) => {
       const { data } = await axios.post(
         `/api/v1/auth/${endPoint}`,
         currentUser
-      );  
+      );
 
       const { user, token, location } = data;
 
@@ -96,7 +94,7 @@ const AppProvider = ({ children }) => {
           alertText,
         },
       });
-      addUserToLocalStorage(user, token, location );  // why are we doing this?
+      addUserToLocalStorage(user, token, location); // why are we doing this?
       getAllScoreData2();
     } catch (error) {
       dispatch({
@@ -107,7 +105,6 @@ const AppProvider = ({ children }) => {
     clearAlert();
   };
 
-
   // Logout user
   const logoutUser = () => {
     dispatch({ type: LOGOUT_USER });
@@ -116,7 +113,7 @@ const AppProvider = ({ children }) => {
 
   const getCurrentUser = async () => {
     return state.user;
-  }
+  };
 
   // functions for getting the names of the scores from the database
 
@@ -155,33 +152,32 @@ const AppProvider = ({ children }) => {
   };
 
   //Lonce`s
-  const getAllScoreData = async() => {
+  const getAllScoreData = async () => {
     try {
-      const response = await axios.get("/api/v1/scores/getAllScoreData", {
-      });
-      console.log("======================   names returned :");//, response.data);
+      const response = await axios.get("/api/v1/scores/getAllScoreData", {});
+      console.log("======================   names returned :"); //, response.data);
       return response.data;
     } catch (error) {
       console.error("Error fetching file names:", error);
     }
-  };  
+  };
 
   //OUR
-  const getAllScoreData2 = async() => {
+  const getAllScoreData2 = async () => {
     try {
-      const response = await axios.get("/api/v1/scores/getAllScoreData2", {
-      });
-      var tempScoreData=response.data;
+      const response = await axios.get("/api/v1/scores/getAllScoreData2", {});
+      var tempScoreData = response.data;
+      console.log(tempScoreData);
       for (let file of tempScoreData) {
         let scoreName = await getTitle(file.fname);
-        tempScoreData.find(obj => obj.fname === file.fname).title = scoreName;
+        tempScoreData.find((obj) => obj.fname === file.fname).title = scoreName;
       }
       localStorage.setItem("scoreData", JSON.stringify(tempScoreData));
       return tempScoreData;
     } catch (error) {
       console.error("Error fetching file names:", error);
     }
-  }; 
+  };
 
   const getTitle = async (fileName) => {
     try {
@@ -192,18 +188,10 @@ const AppProvider = ({ children }) => {
           .parseFromString(xmlFileData)
           .getElementsByTagName("movement-title")
       );
-      const workTitle = Array.from(
-        new XMLParser()
-          .parseFromString(xmlFileData)
-          .getElementsByTagName("work-title")
-      );
       if (movementTitle.length > 0) {
         return movementTitle[0].value;
-      } else if (workTitle.length > 0) {
-        return workTitle[0].value;
       } else {
-        //console.log(`NO DATA FOUND FOR ${fileName}.xml`);
-        return fileName
+        return fileName;
       }
     } catch (err) {
       console.log(err.message);
@@ -211,7 +199,6 @@ const AppProvider = ({ children }) => {
     }
   };
 
- 
   // Return provider component with context value
   return (
     <AppContext.Provider
