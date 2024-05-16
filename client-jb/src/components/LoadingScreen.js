@@ -1,10 +1,10 @@
 import React from "react";
-import ViolinSVG from "./ViolinSVG";
+import CircularProgress from "@mui/material/CircularProgress";
 
-const LoadingScreen = ({ progress }) => {
+const LoadingScreen = () => {
   return (
-    <div className="flex items-center justify-center min-h-screen bg-gray-100">
-      <ViolinSVG progress={progress} />
+    <div className="flex items-center justify-center min-h-screen bg-white">
+      <CircularProgress size={80} />
     </div>
   );
 };

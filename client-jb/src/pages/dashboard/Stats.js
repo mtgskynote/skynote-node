@@ -14,12 +14,14 @@ import LessonCard from "../../components/LessonCard.js";
 import RecordingsProgressChart from "../../components/RecordingsProgressChart.js";
 import LevelsProgressChart from "../../components/LevelsProgressChart.js";
 import AssignmentCard from "../../components/AssignmentCard.js";
+import LoadingScreen from "../../components/LoadingScreen.js";
 
 ChartJS.register(ArcElement, Tooltip, Legend);
 
 const Stats = () => {
   const { getCurrentUser } = useAppContext();
 
+  const [isLoading, setIsLoading] = useState(true);
   const [userData, setUserData] = useState(null);
   const [scoresData, setScoresData] = useState(null);
   const [recordingList, setRecordingList] = useState(null);
@@ -375,76 +377,84 @@ const Stats = () => {
     }
   }, [recentRecordings]);
 
+  useEffect(() => {
+    if (userData && scoresData && recordingList !== null) {
+      setIsLoading(false);
+    }
+  }, [userData, scoresData, recordingList]);
+
+  if (isLoading) {
+    return <LoadingScreen />;
+  }
+
   return (
-    <div className={`${StatsCSS.container}`}>
-      <div className="flex h-screen px-4">
-        <div className="w-2/6 py-4 mr-12">
-          <h4 className="font-medium my-6">Your Progress</h4>
-          <div className="flex flex-col h-full">
-            <div className="mb-4 p-4 bg-white border border-slate-50 shadow-md rounded-sm overflow-hidden">
-              <p className="text-lg text-[#383838] font-bold mb-4">
-                Lessons Recorded This Week
-              </p>
-              <RecordingsProgressChart
-                id="recordingsProgressChart"
-                recordingsData={lastWeekRecordings}
-              />
-            </div>
-            <div className="p-4 bg-white border border-slate-50 shadow-md rounded-sm overflow-hidden">
-              <p className="text-lg text-[#383838] font-bold mb-4">
-                Percentage of Stars Collected
-              </p>
-              <LevelsProgressChart
-                id="levelsProgressChart"
-                starPercentages={starPercentages}
-              />
+    <div className="flex min-h-screen">
+      <div className="w-2/6 py-4 mr-12 pl-8 h-full">
+        <h4 className="font-medium my-6">Your Progress</h4>
+        <div className="flex flex-col h-full">
+          <div className="mb-4 p-4 bg-white border border-slate-50 shadow-md rounded-sm overflow-hidden">
+            <p className="text-lg text-[#383838] font-bold mb-4">
+              Lessons Recorded This Week
+            </p>
+            <RecordingsProgressChart
+              id="recordingsProgressChart"
+              recordingsData={lastWeekRecordings}
+            />
+          </div>
+          <div className="p-4 bg-white border border-slate-50 shadow-md rounded-sm overflow-hidden">
+            <p className="text-lg text-[#383838] font-bold mb-4">
+              Percentage of Stars Collected
+            </p>
+            <LevelsProgressChart
+              id="levelsProgressChart"
+              starPercentages={starPercentages}
+            />
+          </div>
+        </div>
+      </div>
+      <div className="w-4/6 h-full">
+        <div className="pt-6">
+          <h4 className="font-medium my-6">Continue Recording</h4>
+          <div className="relative overflow-x-auto whitespace-no-wrap no-scrollbar">
+            <div className="inline-flex items-start space-x-8 mr-8">
+              {Object.keys(recentScores).map((title, index) => {
+                return (
+                  <LessonCard
+                    key={index}
+                    title={title}
+                    skill={recentScores[title].skill}
+                    level={recentScores[title].level}
+                    stars={recentScores[title].stars}
+                    xml={recentScores[title].xml}
+                    id={recentScores[title].id}
+                    recordings={recentScores[title].recordings}
+                    reloadRecordingsCallback={reloadRecordingsCallback}
+                  />
+                );
+              })}
             </div>
           </div>
         </div>
-        <div className="w-4/6">
-          <div className="pt-6">
-            <h4 className="font-medium my-6">Continue Recording</h4>
-            <div className="relative overflow-x-auto whitespace-no-wrap no-scrollbar">
-              <div className="inline-flex items-start space-x-8 mr-8">
-                {Object.keys(recentScores).map((title, index) => {
-                  return (
-                    <LessonCard
-                      key={index}
-                      title={title}
-                      skill={recentScores[title].skill}
-                      level={recentScores[title].level}
-                      stars={recentScores[title].stars}
-                      xml={recentScores[title].xml}
-                      id={recentScores[title].id}
-                      recordings={recentScores[title].recordings}
-                      reloadRecordingsCallback={reloadRecordingsCallback}
-                    />
-                  );
-                })}
-              </div>
+        <div className="pb-6">
+          <div className="inline-flex space-x-2 my-6">
+            <h4 className="font-medium">Unsubmitted Tasks</h4>
+            <div className="h-1/2 px-2 bg-red-500 rounded text-slate-50">
+              {unansweredTasks}
             </div>
           </div>
-          <div className="pb-6">
-            <div className="inline-flex space-x-2 my-6">
-              <h4 className="font-medium">Unsubmitted Tasks</h4>
-              <div className="h-1/2 px-2 bg-red-500 rounded text-slate-50">
-                {unansweredTasks}
-              </div>
-            </div>
-            <div className="overflow-x-auto whitespace-no-wrap no-scrollbar">
-              <div className="inline-flex items-start space-x-8 mr-8">
-                {dueTasksContent.map((task, index) => {
-                  return (
-                    <AssignmentCard
-                      key={index}
-                      assignmentId={task.assignmentId}
-                      daysLeft={task.daysLeft}
-                      dueDate={task.dueDate}
-                      score={task.score}
-                    />
-                  );
-                })}
-              </div>
+          <div className="overflow-x-auto whitespace-no-wrap no-scrollbar">
+            <div className="inline-flex items-start space-x-8 mr-8">
+              {dueTasksContent.map((task, index) => {
+                return (
+                  <AssignmentCard
+                    key={index}
+                    assignmentId={task.assignmentId}
+                    daysLeft={task.daysLeft}
+                    dueDate={task.dueDate}
+                    score={task.score}
+                  />
+                );
+              })}
             </div>
           </div>
         </div>
