@@ -300,7 +300,6 @@ const Stats = () => {
         }
         starSums[level] = sum;
       }
-      console.log(starSums);
       setAchievedStarsPerLevel(starSums);
 
       const percentages = Object.keys(starSums).map((level) =>

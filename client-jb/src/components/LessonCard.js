@@ -33,14 +33,11 @@ const LessonCard = ({
   const [deletingRecording, setDeletingRecording] = useState(null);
   const [deletionStatus, setDeletionStatus] = useState(null);
   const [deletedRecordingIds, setDeletedRecordingIds] = useState([]);
+  const [playingAudioId, setPlayingAudioId] = useState(null);
 
   const modalRef = useRef(null);
 
-  /**
-   * This useEffect hook is responsible for managing the 'deletionStatus' state.
-   * It sets a timer to clear the 'deletionStatus' state after 10 seconds if it is not null.
-   * This is done to prevent unnecessary re-renders when the 'deletionStatus' state is updated.
-   */
+  // Resets the deletionStatus to null after 10 seconds when it changes.
   useEffect(() => {
     let timer;
     if (deletionStatus) {
@@ -53,6 +50,7 @@ const LessonCard = ({
     };
   }, [deletionStatus]);
 
+  // Adds and removes a mousedown event listener for closing the modal when clicking outside of it.
   useEffect(() => {
     document.addEventListener("mousedown", handleClickOutsideModal);
     return () => {
@@ -60,11 +58,7 @@ const LessonCard = ({
     };
   });
 
-  /**
-   * This function, `formatDate`, is responsible for converting a given date string into a formatted string that follows the "en-UK" locale format.
-   * It takes a date string as input and returns a new Date object with the specified format.
-   * @param {String} dateString - The date string to be formatted.
-   */
+  // Converts a given date string into a formatted string that follows the "en-UK" locale format.
   const formatDate = (dateString) => {
     const date = new Date(dateString);
     const options = {
@@ -77,25 +71,13 @@ const LessonCard = ({
     return date.toLocaleString("en-UK", options);
   };
 
-  /**
-   * Handles the click event for viewing the score of the lesson.
-   * It navigates to the '/all-lessons' route, passing the 'xml' and 'id' props as state in the URL.
-   * @param {Object} e - The event object.
-   */
+  // Handles the click event for viewing the score of the lesson and navigates to the '/all-lessons' route.
   const handleViewScore = (e) => {
     e.stopPropagation(); // Prevents the event from bubbling up to the parent component.
     navigate(`/all-lessons/${xml}`, { state: { id } });
   };
 
-  /**
-   * Handles the click event for opening the recordings modal.
-   * It sets the 'openRecordingsModal' state to true and sets the 'loading' state to true.
-   * It then fetches the audio for the recordings using the 'getManyRecordings' function.
-   * If successful, it updates the 'recordingsAudio' state with the fetched audio data.
-   * If an error occurs during the fetching process, it logs the error to the console.
-   * Finally, it sets the 'loading' state to false.
-   * @param {Object} e - The event object.
-   */
+  // Opens the recordings modal, fetches the audio for all recordings if not already fetched, and updates the state accordingly.
   const handleOpenRecordingsModal = async (e) => {
     e.stopPropagation(); // Prevents the event from bubbling up to the parent component.
     console.log(recordingsAudio);
@@ -129,10 +111,7 @@ const LessonCard = ({
     }
   };
 
-  /**
-   * Handles the click event for closing the recordings modal.
-   * It sets the 'openRecordingsModal' state to false and sets the 'loading' state to false.
-   */
+  // Closes the recordings modal and resets the state.
   const handleCloseRecordingsModal = () => {
     deletedRecordingIds.forEach((recordingId) => {
       reloadRecordingsCallback(recordingId);
@@ -143,21 +122,14 @@ const LessonCard = ({
     setLoading(false);
   };
 
+  // Closes the recordings modal when a click is detected outside of it.
   const handleClickOutsideModal = (e) => {
     if (modalRef.current && !modalRef.current.contains(e.target)) {
       handleCloseRecordingsModal();
     }
   };
 
-  /**
-   * Handles the click event for deleting a recording.
-   * It sets the 'deletingRecording' state to the provided 'recordingId' and sets the 'loading' state to true.
-   * It then calls the 'deleteRecording' function with the 'recordingId' as an argument.
-   * If successful, it updates the 'recordingsAudio' state by filtering out the deleted recording.
-   * If an error occurs during the deletion process, it logs the error to the console.
-   * Finally, it sets the 'loading' state to false and sets the 'deletionStatus' state to the appropriate status message.
-   * @param {Number} recordingId - The ID of the recording to be deleted.
-   */
+  // Deletes the recording with the provided recordingId and updates the state accordingly.
   const handleDeleteRecording = async (recordingId) => {
     setDeletingRecording(recordingId);
     try {
@@ -184,14 +156,18 @@ const LessonCard = ({
     }
   };
 
-  /**
-   * Handles the click event for viewing a recording.
-   * It navigates to the '/ListRecordings' route, passing the 'xml' and 'recordingId' props as state in the URL.
-   * @param {Number} recordingId - The ID of the recording to be viewed.
-   * @param {String} xml - The XML identifier for the lesson.
-   */
+  // Navigates to the ListRecordings route with the provided xml and recordingId.
   const handleViewRecording = async (recordingId, xml) => {
     navigate(`/ListRecordings/${xml}`, { state: { id: recordingId } });
+  };
+
+  // Toggles the playing audio ID based on the provided audioId.
+  const handleAudioPlay = (audioId) => {
+    if (playingAudioId === audioId) {
+      setPlayingAudioId(null); // If the currently playing audio is clicked again, set playingAudioId to null
+    } else {
+      setPlayingAudioId(audioId); // Set the new audio as playing
+    }
   };
 
   return (
@@ -291,7 +267,15 @@ const LessonCard = ({
                         <tr key={index} className="odd:bg-gray-100">
                           <td className="border-none px-4 py-2 text-left">
                             {recording.recordingName}
-                            <AudioPlayerIcon audio={recording.audio} />
+                            <AudioPlayerIcon
+                              audio={recording.audio}
+                              isPlaying={
+                                playingAudioId === recording.recordingId
+                              }
+                              onPlay={() =>
+                                handleAudioPlay(recording.recordingId)
+                              }
+                            />
                           </td>
                           <td className="border-none px-4 py-2 text-left">
                             {formatDate(recording.recordingDate)}
