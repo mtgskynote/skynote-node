@@ -128,7 +128,7 @@ function Navbar() {
 
   const navItemsMobile = [
     ["Sound Visualization", "/TimbreVisualization"],
-    ["My Account", "/profile"],
+    ["My Profile", "/profile"],
   ];
 
   // Navbar component with navigation and user options
@@ -264,7 +264,7 @@ function Navbar() {
             onClose={handleClose}
           >
             <MenuItem onClick={handleClose} component={NavLink} to="/profile">
-              My Account
+              My Profile
             </MenuItem>
             <MenuItem onClick={logoutUser}>Logout</MenuItem>
           </Menu>
