@@ -10,7 +10,8 @@ const Profile = () => {
 
   const [isEditing, setIsEditing] = useState(false);
   const [formData, setFormData] = useState(null);
-  const [isLoading, setIsLoading] = useState(true); // Initially loading
+  const [isLoading, setIsLoading] = useState(null); // Initially loading
+  const [isPageLoading, setIsPageLoading] = useState(true);
 
   useEffect(() => {
     console.log(
@@ -107,11 +108,11 @@ const Profile = () => {
 
   useEffect(() => {
     if (formData !== null) {
-      setIsLoading(false);
+      setIsPageLoading(false);
     }
   }, [formData]);
 
-  if (isLoading) {
+  if (isPageLoading) {
     return <LoadingScreen />;
   }
 
