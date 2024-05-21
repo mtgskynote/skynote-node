@@ -4,11 +4,7 @@ import { IconButton } from "@mui/material";
 import PlayCircleOutlineIcon from "@mui/icons-material/PlayCircleOutline";
 import PauseCircleOutlineIcon from "@mui/icons-material/PauseCircleOutline";
 
-/**
- * This component creates an audio player from the provided audio data,
- * controls playback based on the isPlaying prop, and notifies the parent
- * component when the audio is played or paused.
- * */
+// Component for controlling audio playback with play/pause button.
 const AudioPlayerIcon = ({ audio, isPlaying, onPlay }) => {
   const [audioPlayer, setAudioPlayer] = useState(null);
 
@@ -55,6 +51,22 @@ const AudioPlayerIcon = ({ audio, isPlaying, onPlay }) => {
       audioPlayer.currentTime = 0;
     }
   }, [isPlaying, audioPlayer]);
+
+  // Listens for 'stopAllAudio' event to stop and reset audio.
+  useEffect(() => {
+    const stopAudioHandler = () => {
+      if (audioPlayer) {
+        audioPlayer.pause();
+        audioPlayer.currentTime = 0;
+      }
+    };
+
+    window.addEventListener("stopAllAudio", stopAudioHandler);
+
+    return () => {
+      window.removeEventListener("stopAllAudio", stopAudioHandler);
+    };
+  }, [audioPlayer]);
 
   return (
     <IconButton

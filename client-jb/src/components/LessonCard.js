@@ -116,6 +116,12 @@ const LessonCard = ({
     deletedRecordingIds.forEach((recordingId) => {
       reloadRecordingsCallback(recordingId);
     });
+
+    // Dispatch the 'stopAllAudio' event
+    const event = new Event("stopAllAudio");
+    window.dispatchEvent(event);
+    setPlayingAudioId(null);
+
     setAllRecordings(recordings);
     setDeletedRecordingIds([]);
     setOpenRecordingsModal(false);
@@ -213,6 +219,7 @@ const LessonCard = ({
           </div>
         </CardContent>
       </Card>
+
       {/* Modal */}
       <div
         className={`cursor-default fixed inset-0 z-50 flex items-center justify-center bg-gray-800 bg-opacity-75 transition-opacity duration-300 ${
