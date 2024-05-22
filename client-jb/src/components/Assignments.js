@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { useNavigate, useLocation } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { useAppContext } from "../context/appContext";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import AssignmentsCSS from "./Assignments.module.css";
@@ -19,10 +19,13 @@ import {
 import PopUpWindowGrades from "./PopUpWindowGrades";
 import PopUpWindowRecordings from "./PopUpWindowRecordings.js";
 import Messages from "./messages.js";
+import LoadingScreen from "./LoadingScreen.js";
 
 const Assignments = (props) => {
   const navigate = useNavigate();
   const { getCurrentUser } = useAppContext();
+
+  const [isLoading, setIsLoading] = useState(true);
   const [userData, setUserData] = useState(null);
   const [teacherData, setTeacherData] = useState(null);
   const [scoresData, setScoresData] = useState(null);
@@ -33,8 +36,6 @@ const Assignments = (props) => {
   const [taskGrade, setTaskGrade] = useState(null);
   const [selectedScore, setSelectedScore] = useState(null);
   const [selectedAnnouncement, setSelectedAnnouncement] = useState(null);
-
-  const location = useLocation();
 
   const options = {
     year: "numeric",
@@ -142,6 +143,16 @@ const Assignments = (props) => {
       }
     }
   }, [userAnnouncements]);
+
+  useEffect(() => {
+    if (userData && userAnnouncements && teacherData !== null) {
+      setIsLoading(false);
+    }
+  }, [userData, userAnnouncements, teacherData]);
+
+  if (isLoading) {
+    return <LoadingScreen />;
+  }
 
   return (
     <div className={AssignmentsCSS.container}>
