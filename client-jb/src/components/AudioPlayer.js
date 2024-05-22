@@ -1,4 +1,5 @@
 import React, { useState, useRef } from "react";
+import { getAudioContext, suspendAudioContext, resumeAudioContext } from '../context/audioContext';
 
 const AudioPlayer = () => {
   const [audioBuffer, setAudioBuffer] = useState(null);
@@ -14,8 +15,7 @@ const AudioPlayer = () => {
       reader.onload = function (importedFile) {
         if (file.name.endsWith(".mp3")) {
           // Handle audio file
-          const audioContext = new (window.AudioContext ||
-            window.webkitAudioContext)();
+          const audioContext = getAudioContext();
           audioContext.decodeAudioData(
             importedFile.target.result,
             function (buffer) {
@@ -38,8 +38,7 @@ const AudioPlayer = () => {
 
   const playAudio = () => {
     if (audioBuffer) {
-      const audioContext = new (window.AudioContext ||
-        window.webkitAudioContext)();
+      const audioContext = getAudioContext();
       const source = audioContext.createBufferSource();
       source.buffer = audioBuffer;
       source.connect(audioContext.destination);

@@ -16,9 +16,13 @@ import {
   deleteRecording,
 } from "../utils/studentRecordingMethods.js";
 import ListRecordingsCSS from "./ListRecordings.module.css";
+import { getAudioContext, suspendAudioContext, resumeAudioContext } from '../context/audioContext';
+
 
 const folderBasePath = "/xmlScores/violin";
-let audioContext = new window.AudioContext();
+let audioContext = getAudioContext(); 
+
+let currentSource = null; // has to be global so that React redraws don't lose track of the source
 
 const ProgressPlayFileVisual = (props) => {
   const params = useParams();
@@ -175,6 +179,7 @@ const ProgressPlayFileVisual = (props) => {
     }
   };
 
+
   const playAudio = async () => {
     try {
       // Transform data type and play
@@ -185,15 +190,23 @@ const ProgressPlayFileVisual = (props) => {
       source.buffer = audioBuffer;
       source.connect(audioContext.destination);
       source.start();
+      currentSource = source; // keep track of the current source for stopping later
     } catch (error) {
       console.error("Error playing audio:", error);
     }
   };
 
   const stopAudio = async () => {
-    audioContext.close().then(() => {
-      audioContext = new window.AudioContext();
-    });
+    // # IS THIS REALLY NECESSARY? # Why would you ever need to do this?
+    // audioContext.close().then(() => {
+    //   audioContext = new window.AudioContext();
+    // });
+    // # Let's do this instead (May 21, 2024) # 
+    if (currentSource) {
+      currentSource.stop();
+      currentSource.disconnect(); // Clean up connections
+      currentSource = null;
+    }
   };
 
   //Handles basically any change
