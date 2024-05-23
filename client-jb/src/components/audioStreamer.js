@@ -16,45 +16,11 @@ USAGE:
 
 import { makeCrepeScriptNode } from "./pitch/crepeScriptNode.js";
 import Meyda from "meyda"; //https://meyda.js.org
+import { getAudioContext, suspendAudioContext, resumeAudioContext } from '../context/audioContext';
 
 const meyda_buff_fft_length = 1024; // fft length and buf size are the same for Meyda
 
-function createAudioContext() {
-  var AudioContext = window.AudioContext || window.webkitAudioContext;
-  
-  if (!AudioContext) {
-      console.error("AudioContext is not supported in this browser");
-      return null;
-  }
-
-  var audioContext = new AudioContext({
-    latencyHint: "interactive",
-    sampleRate: 22050,
-  });
-
-  // Check if the audio context is in suspended state (autoplay policy)
-  if (audioContext.state === 'suspended') {
-      // Add a click event listener to resume the AudioContext
-      var resumeAudio = function() {
-          audioContext.resume().then(() => {
-              console.log("AudioContext resumed!");
-              document.removeEventListener('click', resumeAudio);
-          });
-      };
-      resumeAudio();
-      // if (window.confirm("Start audio processing?")) {
-      //   console.log("will resume audio"   );
-      //   resumeAudio();
-      // } else {
-      //   console.log("Oh boy, now you've one it!");
-      // }
-  }
-
-  return audioContext;
-}
-
-var audioContext = createAudioContext();
-
+var audioContext = getAudioContext();
 
 
 var mediaRecorder = null;
@@ -95,7 +61,8 @@ var makeAudioStreamer = function (
             console.log("We're now recording stuff :D");
           };
 
-          audioContext.resume();
+          // audioContext.resume();
+          resumeAudioContext();
           const sourceNode = audioContext.createMediaStreamSource(stream);
 
 
@@ -159,7 +126,8 @@ var makeAudioStreamer = function (
     },    
     close_not_save: function (){
       //mediaRecorder.stop();
-      audioContext.suspend();
+      // audioContext.suspend();
+      suspendAudioContext();
     },
     close_maybe_save: function (){
       mediaRecorder.stop();
@@ -175,19 +143,22 @@ var makeAudioStreamer = function (
           const arrayBuffer = await audioBlob.arrayBuffer();
           // Clean
           audioChunks = [];
-          audioContext.suspend();
+          //audioContext.suspend();
+          suspendAudioContext();
           return arrayBuffer;
         } catch (error) {
           console.error('Error converting Blob to ArrayBuffer:', error);
           // Clean
           audioChunks = [];
-          audioContext.suspend();
+          //audioContext.suspend();
+          suspendAudioContext();
           return 0
         }
       }
       
       audioChunks = [];
       audioContext.suspend();
+      suspendAudioContext();  
     },
   };
   

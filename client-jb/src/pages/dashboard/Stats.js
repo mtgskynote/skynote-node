@@ -126,6 +126,10 @@ const Stats = () => {
   useEffect(() => {
     // import local data
     const local = JSON.parse(localStorage.getItem("scoreData"));
+    if (local === null) {
+      console.log("No scores data found in local storage");
+      return;
+    }
     // save in state
     setScoresData(local);
     // Count the total number of stars per level, and save
