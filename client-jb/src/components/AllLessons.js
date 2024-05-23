@@ -19,6 +19,10 @@ const AllLessons = () => {
 
   useEffect(() => {
     const data = JSON.parse(localStorage.getItem("scoreData"));
+    if (data === null) {
+      console.log("No scores data found in local storage");
+      return;
+    }
     const treeData = data.reduce((result, item) => {
       const { level, skill, _id, fname, title } = item;
       result[level] = result[level] || {};
