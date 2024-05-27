@@ -1,5 +1,6 @@
 // Navbar.js
 import React, { useState, useEffect } from "react";
+import { NavLink } from "react-router-dom";
 import { useAppContext } from "../context/appContext";
 import { getMessages } from "../utils/messagesMethods.js";
 import {
@@ -12,7 +13,6 @@ import {
   Tooltip,
 } from "@mui/material";
 import ClickAwayListener from "@mui/material/ClickAwayListener";
-
 import {
   AccountCircle,
   Notifications,
@@ -21,7 +21,7 @@ import {
   MenuOpen as MenuOpenIcon,
 } from "@mui/icons-material";
 import { useMediaQuery } from "@material-ui/core";
-import { NavLink } from "react-router-dom";
+import InstrumentDropdown from "./InstrumentDropdown.js";
 
 function Navbar() {
   // State variables
@@ -137,11 +137,12 @@ function Navbar() {
       <Toolbar className="justify-between">
         {/* Greeting section */}
         <div className="flex items-center">
-          <h5 className="text-slate-50 font-light">
+          {/* <h5 className="text-slate-50 font-light">
             Hello{" "}
             <span className="font-black">{userData ? userData.name : ""}</span>
             {"!"}
-          </h5>
+          </h5> */}
+          <InstrumentDropdown />
         </div>
 
         {/* Desktop navigation - main pages section */}
