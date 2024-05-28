@@ -1,7 +1,8 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { Logo, FormRow, Alert } from "../components";
-import RegisterCSS from './Register.module.css'
+import FormSelect from "../components/FormSelect";
+import RegisterCSS from "./Register.module.css";
 import { useAppContext } from "../context/appContext";
 // import { Link } from "react-router-dom";
 // import WhiteLogo from "../components/WhiteLogo";
@@ -17,10 +18,16 @@ const initialState = {
   email: "",
   password: "",
   role: "student",
+  instrument: "",
   isMember: true,
 };
 // if possible prefer local state
 // global state
+
+const instruments = [
+  { value: "violin", label: "Violin", default: true },
+  { value: "voice", label: "Voice", default: false },
+];
 
 function Register() {
   const [values, setValues] = useState(initialState);
@@ -29,23 +36,32 @@ function Register() {
   const { user, isLoading, showAlert, displayAlert, setupUser } =
     useAppContext();
 
-  // const toggleMember = () => {
-  //   setValues({ ...values, isMember: !values.isMember });
-  // };
+  const toggleMember = () => {
+    const defaultInstrument = instruments.find(
+      (instrument) => instrument.default
+    );
+    setValues({
+      ...values,
+      isMember: !values.isMember,
+      instrument: defaultInstrument.value,
+    });
+    console.log(values);
+  };
   // global context and useNavigate later
 
   const handleChange = (e) => {
     setValues({ ...values, [e.target.name]: e.target.value });
+    console.log(values);
   };
 
   const onSubmit = (e) => {
     e.preventDefault();
-    const { name, email, role, password, isMember } = values;
-    if (!email || !password || (!isMember && !name)) {
+    const { name, email, role, password, isMember, instrument } = values;
+    if (!email || !password || !instrument || (!isMember && !name)) {
       displayAlert();
       return;
     }
-    const currentUser = { name, email, role, password };
+    const currentUser = { name, email, role, password, instrument };
 
     if (isMember) {
       setupUser({
@@ -73,7 +89,7 @@ function Register() {
   return (
     <div className={RegisterCSS.fullPage}>
       <form className={RegisterCSS.regForm} onSubmit={onSubmit}>
-        <Logo width={175} height={75}/>
+        <Logo width={175} height={75} />
         <h3>{values.isMember ? "Login" : "Register"}</h3>
         {showAlert && <Alert />}
 
@@ -96,7 +112,7 @@ function Register() {
         />
 
         {/* show role only for new registration */}
-        {!values.isMember && ( 
+        {!values.isMember && (
           <FormRow
             type="role"
             name="role"
@@ -112,15 +128,25 @@ function Register() {
           handleChange={handleChange}
         />
 
+        {!values.isMember && (
+          <FormSelect
+            name="instrument"
+            options={instruments}
+            handleChange={handleChange}
+          />
+        )}
+
         <button type="submit" className="btn btn-block" disabled={isLoading}>
           submit
         </button>
         <p>
           {values.isMember ? "Not a Member yet?" : "Already a Member?"}
-          {/* <button type="button" onClick={toggleMember} className="member-btn"> */}  
-          <button type="button" className={RegisterCSS.memberBtn}> 
-            {values.isMember ? "We're sorry, new registrations are temporarily disabled " : "Login"} 
-            {/* {values.isMember ?   "Register" : "Login"} */}
+          <button type="button" onClick={toggleMember} className="member-btn">
+            {/* <button type="button" className={RegisterCSS.memberBtn}>
+            {values.isMember
+              ? "We're sorry, new registrations are temporarily disabled "
+              : "Login"} */}
+            {values.isMember ? "Register" : "Login"}
           </button>
         </p>
         <div className="g-signin2" data-onsuccess="onSignIn">
@@ -136,6 +162,5 @@ function Register() {
     </div>
   );
 }
-
 
 export default Register;

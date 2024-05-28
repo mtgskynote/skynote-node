@@ -6,12 +6,22 @@ import LoadingScreen from "../../components/LoadingScreen";
 
 const Profile = () => {
   // Manage edit state, form values, and loading state
-  const { getCurrentUser } = useAppContext();
+  const { getCurrentUser, getInstrumentLocalStorage } = useAppContext();
 
   const [isEditing, setIsEditing] = useState(false);
   const [formData, setFormData] = useState(null);
   const [isLoading, setIsLoading] = useState(null); // Initially loading
   const [isPageLoading, setIsPageLoading] = useState(true);
+  // const [selectedInstrument, setSelectedInstrument] = useState(null);
+
+  // useEffect(() => {
+  //   const savedInstrument = getInstrumentLocalStorage();
+  //   if (savedInstrument) {
+  //     setSelectedInstrument(
+  //       instruments.find((instrument) => instrument.name === savedInstrument)
+  //     );
+  //   }
+  // }, []);
 
   useEffect(() => {
     console.log(
