@@ -20,6 +20,7 @@ import PopUpWindowGrades from "./PopUpWindowGrades";
 import PopUpWindowRecordings from "./PopUpWindowRecordings.js";
 import Messages from "./messages.js";
 import LoadingScreen from "./LoadingScreen.js";
+import ErrorComponent from "./ErrorComponent";
 
 const Assignments = (props) => {
   const navigate = useNavigate();
@@ -29,14 +30,15 @@ const Assignments = (props) => {
   const [userData, setUserData] = useState(null);
   const [teacherData, setTeacherData] = useState(null);
   const [scoresData, setScoresData] = useState(null);
-  const [userAnnouncements, setUsertAnnouncements] = useState(null);
+  const [userAnnouncements, setUserAnnouncements] = useState(null);
   const [popUpWindowGrade, setPopUpWindowGrade] = useState(false);
   const [popUpWindowRecordings, setPopUpWindowRecordings] = useState(false);
   const [taskComment, setTaskComment] = useState(null);
   const [taskGrade, setTaskGrade] = useState(null);
   const [selectedScore, setSelectedScore] = useState(null);
   const [selectedAnnouncement, setSelectedAnnouncement] = useState(null);
-  const [databaseError, setDatabaseError] = useState(false);
+  const [teacherDataError, setTeacherDataError] = useState(false);
+  const [assignmentsError, setAssignmentsError] = useState(false);
 
   const options = {
     year: "numeric",
@@ -44,6 +46,11 @@ const Assignments = (props) => {
     day: "numeric",
     hour: "2-digit",
     minute: "2-digit",
+  };
+
+  const errorMessages = {
+    teacherDataError: "We can't find a teacher for your user.",
+    assignmentsError: "We can't find any assignment data for your user.",
   };
 
   const fetchDataFromAPI = () => {
@@ -99,12 +106,12 @@ const Assignments = (props) => {
           email: result.user.email,
         });
       } else {
-        console.error("Invalid user data received:", result);
-        setDatabaseError(true);
+        console.error("Invalid teacher data received:", result);s
+        setTeacherDataError(true);
       }
     } catch (error) {
-      console.error("Error getting profile data:", error);
-      setDatabaseError(true);
+      console.error("Error getting teacher profile data:", error);
+      setTeacherDataError(true);
     }
   };
 
@@ -130,7 +137,9 @@ const Assignments = (props) => {
       //Assignments
       getAllAssignments(userData.id).then((result) => {
         if (result.length !== 0) {
-          setUsertAnnouncements(result.reverse());
+          setUserAnnouncements(result.reverse());
+        } else {
+          setAssignmentsError(true);
         }
       });
     }
@@ -158,29 +167,23 @@ const Assignments = (props) => {
     if (userData && userAnnouncements && teacherData !== null) {
       setIsLoading(false);
     }
-    if (databaseError) {
+    if (teacherDataError || assignmentsError) {
       setIsLoading(false);
     }
-  }, [userData, databaseError, userAnnouncements, teacherData]);
+  }, [userData, teacherDataError, userAnnouncements, teacherData]);
 
   if (isLoading) {
     return <LoadingScreen />;
   }
 
   return (
-    <div className={AssignmentsCSS.container}>
-      {databaseError ? (
-        <div className="flex items-center justify-center h-screen w-screen whitespace-pre">
-          <h5 className="font-semibold text-black-600 text-normal">
-              Sorry! 
-
-              We can't find your user data.
-              
-              &#x1F915;
-          </h5>
-        </div>
+    <>
+      {teacherDataError ? (
+        <ErrorComponent message={errorMessages.teacherDataError} />
+      ) : assignmentsError ? (
+        <ErrorComponent message={errorMessages.assignmentsError} />
       ) : (
-        <>
+        <div className={AssignmentsCSS.container}>
           <div className={AssignmentsCSS.left}>
             {userAnnouncements !== null ? (
               userAnnouncements.map((announcement, index) => (
@@ -192,14 +195,14 @@ const Assignments = (props) => {
                   <div>
                     <div className={AssignmentsCSS.header}>
                       <div>
-                        Posted on :{" "}
+                        Posted on:{" "}
                         {new Date(announcement.postDate).toLocaleDateString(
                           "es-ES",
                           options
                         )}
                       </div>
                       <div>
-                        Due on :{" "}
+                        Due on:{" "}
                         {new Date(announcement.dueDate).toLocaleDateString(
                           "es-ES",
                           options
@@ -373,10 +376,11 @@ const Assignments = (props) => {
               announcementId={selectedAnnouncement}
             />
           )}
-        </>
+        </div>
       )}
-    </div>
-  );  
-}
+    </>
+  );
+
+}  
 
 export default Assignments;
