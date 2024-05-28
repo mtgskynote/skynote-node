@@ -1,10 +1,18 @@
 import { BrowserRouter, Routes, Route } from "react-router-dom";
-import { Register, OurTeam, Demos, Research, Landing, Error, ProtectedRoute } from "./pages";
+import {
+  Register,
+  OurTeam,
+  Demos,
+  Research,
+  Landing,
+  Error,
+  ProtectedRoute,
+} from "./pages";
 
 import { Profile, Stats, SharedLayout } from "./pages/dashboard";
 
-import React from 'react';
- 
+import React from "react";
+
 import AllLessons from "./components/AllLessons";
 import ProgressPlayFile from "./components/ProgressPlayFile";
 import ProgressPlayFileVisual from "./components/ProgressPlayFileVisual";
@@ -19,11 +27,11 @@ import ListRecordings from "./components/ListRecordings";
 import AudioPlayer from "./components/AudioPlayer";
 import ListAllRecordings from "./components/ListAllRecodings";
 import Assignments from "./components/Assignments";
+import ImportedScores from "./pages/ImportedScores";
 
 import Apitesting from "./components/apitesting";
 
 function App() {
-
   //  const { startTimer, resetTimer} = useTimer();
   // useEffect(() => {
   //   const handleVisibilityChange = () => {
@@ -63,9 +71,6 @@ function App() {
   //   };
   // }, []);
 
-
-
-
   //  const { startTimer, resetTimer} = useTimer();
   // useEffect(() => {
   //   const handleVisibilityChange = () => {
@@ -104,8 +109,6 @@ function App() {
   //     window.removeEventListener('beforeunload', handleTabClose);
   //   };
   // }, []);
-
-
 
   return (
     <div>
@@ -124,7 +127,8 @@ function App() {
                 <Route index element={<Stats />} />
                 <Route path="profile" element={<Profile />} />
                 <Route path="apitesting" element={<Apitesting />} />
-                <Route path="all-lessons" element={<AllLessons />} />
+                <Route path="lessons" element={<AllLessons />} />
+                <Route path="imported-scores" element={<ImportedScores />} />
                 <Route
                   path="all-lessons/:files"
                   element={<ProgressPlayFile />}
@@ -136,18 +140,15 @@ function App() {
                   path="/TimbreVisualization"
                   element={<TimbreVisualization />}
                 />
-                <Route
-                  path="/Assignments"
-                  element={<Assignments />}
-                />
+                <Route path="/Assignments" element={<Assignments />} />
                 <Route path="/ListRecordings" element={<ListRecordings />} />
                 <Route
-                    path="ListRecordings/:files"
-                    element={<ProgressPlayFileVisual mode="visual"/>}
-                  />
+                  path="ListRecordings/:files"
+                  element={<ProgressPlayFileVisual mode="visual" />}
+                />
                 <Route path="myrecordings" element={<ListAllRecordings />} />
               </Route>
-              
+
               <Route path="/AudioPlayer" element={<AudioPlayer />} />
               <Route path="/register" element={<Register />} />
               <Route path="/ourteam" element={<OurTeam />} />

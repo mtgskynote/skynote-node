@@ -122,8 +122,9 @@ function Navbar() {
   // Navigation items
   const navItems = [
     ["Dashboard", "/"],
-    ["Lessons", "/all-lessons"],
+    ["Lessons", "/lessons"],
     ["Assignments", "/assignments"],
+    ["Imported Scores", "/imported-scores"],
   ];
 
   const navItemsMobile = [
@@ -154,7 +155,7 @@ function Navbar() {
                 to={url}
                 className={({ isActive }) =>
                   [
-                    "text-slate-50 no-underline transition-all duration-300 hover:text-3xl",
+                    "text-slate-50 no-underline transition-all duration-300 hover:text-3xl whitespace-nowrap",
                     isActive ? "font-bold text-3xl" : "font-normal text-2xl",
                   ].join(" ")
                 }
