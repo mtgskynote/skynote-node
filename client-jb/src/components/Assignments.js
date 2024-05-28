@@ -106,7 +106,7 @@ const Assignments = (props) => {
           email: result.user.email,
         });
       } else {
-        console.error("Invalid teacher data received:", result);s
+        console.error("Invalid teacher data received:", result);
         setTeacherDataError(true);
       }
     } catch (error) {
