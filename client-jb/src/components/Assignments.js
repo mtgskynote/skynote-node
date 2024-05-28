@@ -98,6 +98,7 @@ const Assignments = (props) => {
   const fetchTeacherInfo = async (teacherId) => {
     try {
       const result = await getProfileData(teacherId);
+      console.log(teacherId)
       if (result && result.user && result.user._id) {
         setTeacherData({
           id: result.user._id,
@@ -120,7 +121,11 @@ const Assignments = (props) => {
     if (userData === null) {
       fetchDataFromAPI();
     } else {
-      fetchTeacherInfo(userData.teacher);
+      if (userData.teacher) {
+        fetchTeacherInfo(userData.teacher);
+      } else {
+        setTeacherDataError(true);
+      }
     }
   }, [userData]);
 
