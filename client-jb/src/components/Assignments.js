@@ -20,6 +20,7 @@ import PopUpWindowGrades from "./PopUpWindowGrades";
 import PopUpWindowRecordings from "./PopUpWindowRecordings.js";
 import Messages from "./messages.js";
 import LoadingScreen from "./LoadingScreen.js";
+import ErrorComponent from "./ErrorComponent";
 
 const Assignments = (props) => {
   const navigate = useNavigate();
@@ -29,13 +30,15 @@ const Assignments = (props) => {
   const [userData, setUserData] = useState(null);
   const [teacherData, setTeacherData] = useState(null);
   const [scoresData, setScoresData] = useState(null);
-  const [userAnnouncements, setUsertAnnouncements] = useState(null);
+  const [userAnnouncements, setUserAnnouncements] = useState(null);
   const [popUpWindowGrade, setPopUpWindowGrade] = useState(false);
   const [popUpWindowRecordings, setPopUpWindowRecordings] = useState(false);
   const [taskComment, setTaskComment] = useState(null);
   const [taskGrade, setTaskGrade] = useState(null);
   const [selectedScore, setSelectedScore] = useState(null);
   const [selectedAnnouncement, setSelectedAnnouncement] = useState(null);
+  const [teacherDataError, setTeacherDataError] = useState(false);
+  const [assignmentsError, setAssignmentsError] = useState(false);
 
   const options = {
     year: "numeric",
@@ -43,6 +46,11 @@ const Assignments = (props) => {
     day: "numeric",
     hour: "2-digit",
     minute: "2-digit",
+  };
+
+  const errorMessages = {
+    teacherDataError: "We can't find a teacher for your user.",
+    assignmentsError: "We can't find any assignment data for your user.",
   };
 
   const fetchDataFromAPI = () => {
@@ -88,14 +96,24 @@ const Assignments = (props) => {
   };
 
   const fetchTeacherInfo = async (teacherId) => {
-    getProfileData(teacherId).then((result) => {
-      setTeacherData({
-        id: result.user._id,
-        name: result.user.name,
-        lastName: result.user.lastName,
-        email: result.user.email,
-      });
-    });
+    try {
+      const result = await getProfileData(teacherId);
+      console.log(teacherId)
+      if (result && result.user && result.user._id) {
+        setTeacherData({
+          id: result.user._id,
+          name: result.user.name,
+          lastName: result.user.lastName,
+          email: result.user.email,
+        });
+      } else {
+        console.error("Invalid teacher data received:", result);
+        setTeacherDataError(true);
+      }
+    } catch (error) {
+      console.error("Error getting teacher profile data:", error);
+      setTeacherDataError(true);
+    }
   };
 
   //get User Data
@@ -103,7 +121,11 @@ const Assignments = (props) => {
     if (userData === null) {
       fetchDataFromAPI();
     } else {
-      fetchTeacherInfo(userData.teacher);
+      if (userData.teacher) {
+        fetchTeacherInfo(userData.teacher);
+      } else {
+        setTeacherDataError(true);
+      }
     }
   }, [userData]);
 
@@ -120,7 +142,9 @@ const Assignments = (props) => {
       //Assignments
       getAllAssignments(userData.id).then((result) => {
         if (result.length !== 0) {
-          setUsertAnnouncements(result.reverse());
+          setUserAnnouncements(result.reverse());
+        } else {
+          setAssignmentsError(true);
         }
       });
     }
@@ -148,217 +172,220 @@ const Assignments = (props) => {
     if (userData && userAnnouncements && teacherData !== null) {
       setIsLoading(false);
     }
-  }, [userData, userAnnouncements, teacherData]);
+    if (teacherDataError || assignmentsError) {
+      setIsLoading(false);
+    }
+  }, [userData, teacherDataError, userAnnouncements, teacherData]);
 
   if (isLoading) {
     return <LoadingScreen />;
   }
 
   return (
-    <div className={AssignmentsCSS.container}>
-      <div className={AssignmentsCSS.left}>
-        {userAnnouncements !== null ? (
-          userAnnouncements.map((announcement, index) => {
-            return (
-              <div
-                id={announcement._id}
-                className={AssignmentsCSS.tableBox}
-                key={index}
-              >
-                <div>
-                  <div className={AssignmentsCSS.header}>
-                    {}
-                    <div>
-                      Posted on :{" "}
-                      {new Date(announcement.postDate).toLocaleDateString(
-                        "es-ES",
-                        options
-                      )}{" "}
+    <>
+      {teacherDataError ? (
+        <ErrorComponent message={errorMessages.teacherDataError} />
+      ) : assignmentsError ? (
+        <ErrorComponent message={errorMessages.assignmentsError} />
+      ) : (
+        <div className={AssignmentsCSS.container}>
+          <div className={AssignmentsCSS.left}>
+            {userAnnouncements !== null ? (
+              userAnnouncements.map((announcement, index) => (
+                <div
+                  id={announcement._id}
+                  className={AssignmentsCSS.tableBox}
+                  key={index}
+                >
+                  <div>
+                    <div className={AssignmentsCSS.header}>
+                      <div>
+                        Posted on:{" "}
+                        {new Date(announcement.postDate).toLocaleDateString(
+                          "es-ES",
+                          options
+                        )}
+                      </div>
+                      <div>
+                        Due on:{" "}
+                        {new Date(announcement.dueDate).toLocaleDateString(
+                          "es-ES",
+                          options
+                        )}
+                      </div>
                     </div>
-                    <div>
-                      Due on :{" "}
-                      {new Date(announcement.dueDate).toLocaleDateString(
-                        "es-ES",
-                        options
-                      )}
-                    </div>
-                  </div>
-                  <div className={AssignmentsCSS.announcementBody}>
-                    <div className={AssignmentsCSS.teacher}>
-                      {teacherData.name}{" "}
-                      <FontAwesomeIcon
-                        icon={faUser}
-                        className={AssignmentsCSS.userIcon}
-                      />{" "}
-                      said...
-                    </div>
-                    <div className={AssignmentsCSS.message}>
-                      {announcement.message}
-                    </div>
-                    <div className={AssignmentsCSS.footNote}>
-                      {announcement.tasks ? (
-                        <div className={AssignmentsCSS.note}>
-                          <FontAwesomeIcon
-                            icon={faTriangleExclamation}
-                            className={AssignmentsCSS.exclamationIcon}
-                          />
-                          <div className={AssignmentsCSS.text}>
-                            {announcement.tasks.length} submission assignment(s)
-                            linked to this announcement
-                          </div>
-                          <FontAwesomeIcon
-                            icon={faTriangleExclamation}
-                            className={AssignmentsCSS.exclamationIcon}
-                          />
-                        </div>
-                      ) : (
-                        ""
-                      )}
-                      <div className={AssignmentsCSS.taskGroup}>
-                        {announcement.tasks.map((task, index) => {
-                          var current_score = scoresData.find(
-                            (item) => item._id === task.score
-                          );
-                          return (
-                            <div
-                              className={AssignmentsCSS.taskItem}
-                              key={index}
-                            >
-                              <div className={AssignmentsCSS.taskHeader}>
-                                <div>
-                                  <h6>
-                                    <FontAwesomeIcon
-                                      icon={faMusic}
-                                      className={AssignmentsCSS.simpleIcon}
-                                    />
-                                    {current_score.title}
-                                  </h6>
-                                </div>
-                                <div>
-                                  <h6>
-                                    <FontAwesomeIcon
-                                      icon={faPencilSquare}
-                                      className={AssignmentsCSS.simpleIcon}
-                                    />
-                                    {current_score.skill}
-                                  </h6>
-                                </div>
-                                <div>
-                                  <h6>
-                                    <FontAwesomeIcon
-                                      icon={faBoxArchive}
-                                      className={AssignmentsCSS.simpleIcon}
-                                    />
-                                    Level {current_score.level}
-                                  </h6>
-                                </div>
-                              </div>
-                              <div>
-                                {task.answer ? (
-                                  <div className={AssignmentsCSS.submitted}>
-                                    <div className={AssignmentsCSS.cursive}>
-                                      Status: Submitted
-                                    </div>
-                                    <div className={AssignmentsCSS.buttonGroup}>
-                                      <FontAwesomeIcon
-                                        title="Go to recording assigned to this submission"
-                                        icon={faEye}
-                                        className={AssignmentsCSS.simpleIcon}
-                                        onClick={() =>
-                                          handleSeeClick(
-                                            task.answer.recordingId,
-                                            current_score.fname
-                                          )
-                                        }
-                                      />
-                                      <FontAwesomeIcon
-                                        title="See grade and comment"
-                                        icon={faBookBookmark}
-                                        className={AssignmentsCSS.simpleIcon}
-                                        onClick={() =>
-                                          handleSeeGrades(
-                                            "see",
-                                            task.answer.comment,
-                                            task.answer.grade
-                                          )
-                                        }
-                                      />
-                                    </div>
-                                  </div>
-                                ) : (
-                                  <div className={AssignmentsCSS.notSubmitted}>
-                                    <div className={AssignmentsCSS.cursive}>
-                                      Status: Not submitted
-                                    </div>
-                                    <div className={AssignmentsCSS.buttonGroup}>
-                                      <FontAwesomeIcon
-                                        title="Record for this submission"
-                                        icon={faRecordVinyl}
-                                        className={AssignmentsCSS.simpleIcon}
-                                        onClick={() =>
-                                          handleRecord(current_score.fname)
-                                        }
-                                      />
-                                      <FontAwesomeIcon
-                                        title="Assign recording to this submission"
-                                        icon={faFileImport}
-                                        className={AssignmentsCSS.simpleIcon}
-                                        onClick={() =>
-                                          handleSelectRecording(
-                                            "open",
-                                            task.score,
-                                            announcement._id
-                                          )
-                                        }
-                                      />
-                                    </div>
-                                  </div>
-                                )}
-                              </div>
+                    <div className={AssignmentsCSS.announcementBody}>
+                      <div className={AssignmentsCSS.teacher}>
+                        {teacherData.name}{" "}
+                        <FontAwesomeIcon
+                          icon={faUser}
+                          className={AssignmentsCSS.userIcon}
+                        />{" "}
+                        said...
+                      </div>
+                      <div className={AssignmentsCSS.message}>
+                        {announcement.message}
+                      </div>
+                      <div className={AssignmentsCSS.footNote}>
+                        {announcement.tasks ? (
+                          <div className={AssignmentsCSS.note}>
+                            <FontAwesomeIcon
+                              icon={faTriangleExclamation}
+                              className={AssignmentsCSS.exclamationIcon}
+                            />
+                            <div className={AssignmentsCSS.text}>
+                              {announcement.tasks.length} submission
+                              assignment(s) linked to this announcement
                             </div>
-                          );
-                        })}
+                            <FontAwesomeIcon
+                              icon={faTriangleExclamation}
+                              className={AssignmentsCSS.exclamationIcon}
+                            />
+                          </div>
+                        ) : (
+                          ""
+                        )}
+                        <div className={AssignmentsCSS.taskGroup}>
+                          {announcement.tasks.map((task, index) => {
+                            var current_score = scoresData.find(
+                              (item) => item._id === task.score
+                            );
+                            return (
+                              <div
+                                className={AssignmentsCSS.taskItem}
+                                key={index}
+                              >
+                                <div className={AssignmentsCSS.taskHeader}>
+                                  <div>
+                                    <h6>
+                                      <FontAwesomeIcon
+                                        icon={faMusic}
+                                        className={AssignmentsCSS.simpleIcon}
+                                      />
+                                      {current_score.title}
+                                    </h6>
+                                  </div>
+                                  <div>
+                                    <h6>
+                                      <FontAwesomeIcon
+                                        icon={faPencilSquare}
+                                        className={AssignmentsCSS.simpleIcon}
+                                      />
+                                      {current_score.skill}
+                                    </h6>
+                                  </div>
+                                  <div>
+                                    <h6>
+                                      <FontAwesomeIcon
+                                        icon={faBoxArchive}
+                                        className={AssignmentsCSS.simpleIcon}
+                                      />
+                                      Level {current_score.level}
+                                    </h6>
+                                  </div>
+                                </div>
+                                <div>
+                                  {task.answer ? (
+                                    <div className={AssignmentsCSS.submitted}>
+                                      <div className={AssignmentsCSS.cursive}>
+                                        Status: Submitted
+                                      </div>
+                                      <div className={AssignmentsCSS.buttonGroup}>
+                                        <FontAwesomeIcon
+                                          title="Go to recording assigned to this submission"
+                                          icon={faEye}
+                                          className={AssignmentsCSS.simpleIcon}
+                                          onClick={() =>
+                                            handleSeeClick(
+                                              task.answer.recordingId,
+                                              current_score.fname
+                                            )
+                                          }
+                                        />
+                                        <FontAwesomeIcon
+                                          title="See grade and comment"
+                                          icon={faBookBookmark}
+                                          className={AssignmentsCSS.simpleIcon}
+                                          onClick={() =>
+                                            handleSeeGrades(
+                                              "see",
+                                              task.answer.comment,
+                                              task.answer.grade
+                                            )
+                                          }
+                                        />
+                                      </div>
+                                    </div>
+                                  ) : (
+                                    <div className={AssignmentsCSS.notSubmitted}>
+                                      <div className={AssignmentsCSS.cursive}>
+                                        Status: Not submitted
+                                      </div>
+                                      <div className={AssignmentsCSS.buttonGroup}>
+                                        <FontAwesomeIcon
+                                          title="Record for this submission"
+                                          icon={faRecordVinyl}
+                                          className={AssignmentsCSS.simpleIcon}
+                                          onClick={() =>
+                                            handleRecord(current_score.fname)
+                                          }
+                                        />
+                                        <FontAwesomeIcon
+                                          title="Assign recording to this submission"
+                                          icon={faFileImport}
+                                          className={AssignmentsCSS.simpleIcon}
+                                          onClick={() =>
+                                            handleSelectRecording(
+                                              "open",
+                                              task.score,
+                                              announcement._id
+                                            )
+                                          }
+                                        />
+                                      </div>
+                                    </div>
+                                  )}
+                                </div>
+                              </div>
+                            );
+                          })}
+                        </div>
                       </div>
                     </div>
                   </div>
                 </div>
-              </div>
-            );
-          })
-        ) : (
-          <div>No announcements yet</div>
-        )}
-      </div>
-      <div className={AssignmentsCSS.right}>
-        {
-          userData !== null ? (
-            <Messages user={userData} teacher={teacherData} />
-          ) : (
-            <Messages />
-          ) /*FIXME*/
-        }
-      </div>
-      {popUpWindowGrade ? (
-        <PopUpWindowGrades
-          handlerBack={handleSeeGrades}
-          comment={taskComment}
-          grade={taskGrade}
-        />
-      ) : (
-        ""
+              ))
+            ) : (
+              <div>No announcements yet</div>
+            )}
+          </div>
+          <div className={AssignmentsCSS.right}>
+            {userData !== null ? (
+              <Messages user={userData} teacher={teacherData} />
+            ) : (
+              <Messages />
+            )}
+          </div>
+          {popUpWindowGrade && (
+            <PopUpWindowGrades
+              handlerBack={handleSeeGrades}
+              comment={taskComment}
+              grade={taskGrade}
+            />
+          )}
+          {popUpWindowRecordings && (
+            <PopUpWindowRecordings
+              handlerBack={handleSelectRecording}
+              scoreId={selectedScore}
+              userId={userData.id}
+              announcementId={selectedAnnouncement}
+            />
+          )}
+        </div>
       )}
-      {popUpWindowRecordings ? (
-        <PopUpWindowRecordings
-          handlerBack={handleSelectRecording}
-          scoreId={selectedScore}
-          userId={userData.id}
-          announcementId={selectedAnnouncement}
-        />
-      ) : (
-        ""
-      )}
-    </div>
+    </>
   );
-};
+
+}  
 
 export default Assignments;
