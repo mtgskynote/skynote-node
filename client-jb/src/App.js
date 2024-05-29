@@ -30,6 +30,7 @@ import Assignments from "./components/Assignments";
 import ImportedScores from "./pages/ImportedScores";
 
 import Apitesting from "./components/apitesting";
+import ErrorComponent from "./components/Error";
 
 function App() {
   //  const { startTimer, resetTimer} = useTimer();
@@ -155,7 +156,7 @@ function App() {
               <Route path="/research" element={<Research />} />
               <Route path="/demos" element={<Demos />} />
               <Route path="/landing" element={<Landing />} />
-              <Route path="*" element={<Error />} />
+              <Route path="*" element={<ErrorComponent type={"404"} />} />
             </Routes>
           </BrowserRouter>
         </div>
