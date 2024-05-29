@@ -20,7 +20,7 @@ import PopUpWindowGrades from "./PopUpWindowGrades";
 import PopUpWindowRecordings from "./PopUpWindowRecordings.js";
 import Messages from "./messages.js";
 import LoadingScreen from "./LoadingScreen.js";
-import ErrorComponent from "./Error.js";
+import Error from "./Error.js";
 
 const Assignments = (props) => {
   const navigate = useNavigate();
@@ -186,9 +186,9 @@ const Assignments = (props) => {
   return (
     <>
       {teacherDataError ? (
-        <ErrorComponent message={errorMessages.teacherDataError} />
+        <Error message={errorMessages.teacherDataError} />
       ) : assignmentsError ? (
-        <ErrorComponent message={errorMessages.assignmentsError} />
+        <Error message={errorMessages.assignmentsError} />
       ) : (
         <div className={AssignmentsCSS.container}>
           <div className={AssignmentsCSS.left}>
