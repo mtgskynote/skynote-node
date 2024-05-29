@@ -3,7 +3,7 @@ import { useParams, useNavigate, useLocation } from "react-router-dom";
 import OpenSheetMusicDisplay from "./OpenSheetMusicDisplay";
 import ControlBar from "./ControlBar.js";
 import ControlBarRecord from "./ControlBarRecord.js";
-import { makeAudioStreamer } from "./audioStreamer.js";
+import { makeAudioStreamer, destroyAudioStreamer } from "./audioStreamer.js";
 import CountdownTimer from "./MetronomeCountDown.js";
 import SimpleMessaje from "./AnyMessage.js";
 //import { log } from "@tensorflow/tfjs";
@@ -13,7 +13,9 @@ import PopUpWindow from "./PopUpWindow.js";
 import XMLParser from "react-xml-parser";
 import { putRecording } from "../utils/studentRecordingMethods.js";
 import { Buffer } from "buffer";
-import { useAppContext } from "../context/appContext";
+import { useAppContext} from "../context/appContext";
+import { startMicrophone, stopMicrophone, isMicrophoneActive } from "../context/audioContext";
+
 // @ts-ignore
 window.Buffer = Buffer;
 
@@ -127,7 +129,7 @@ const ProgressPlayFile = (props) => {
   const handlePitchCallback = (pitchData) => {
     pitchCount = pitchCount + 1;
     if (pitchCount > 0) {
-      console.log("Dynamic Stability:\n", featureValues.rms.computeSD());
+//      console.log("Dynamic Stability:\n", featureValues.rms.computeSD());
       setPitchValue(pitchData.pitch);
       setConfidenceValue(pitchData.confidence);
       //setDynStability(featureValues.rms.computeSD());
@@ -362,27 +364,25 @@ const ProgressPlayFile = (props) => {
   //Denying permissions shows an alert that refreshes the page when accepted, but won't go away until permissions are given
   //Ignoring permissions allows to use the page, but audio won't be picked up and an error will show when the recorging process is finished
   useEffect(() => {
-    const requestMicrophonePermission = async () => {
-      try {
-        const stream = await navigator.mediaDevices.getUserMedia({
-          audio: {
-            // echoCancellation: false,
-            // autoGainControl: false,
-            // noiseSuppression: false,
-            // latency: 0,
-            // sampleRate: 22050
-          },
+    if (!isMicrophoneActive()) {
+      startMicrophone()
+        .then(() => {
+          console.log("Microphone started");
+        })
+        .catch((error) => {
+          console.error("Failed to get microphone access:", error);
+          alert("Please allow microphone access to use this feature");
+          window.location.reload();
         });
-        setCanRecord(true);
-      } catch (error) {
-        setCanRecord(false);
-        alert(
-          "Microphone access denied. If you have trouble with permissions, try clicking on the small lock at the left of your search bar and make sure the microphone is enabled, then accept this message :)"
-        );
-        window.location.reload();
+    }
+
+    return () => {
+      if (isMicrophoneActive()) {
+        stopMicrophone();
       }
     };
-    requestMicrophonePermission();
+    
+    
   }, []); //This should run only once
 
   //when audioReady activates (meaning that we can download the data)

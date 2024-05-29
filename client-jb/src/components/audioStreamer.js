@@ -23,14 +23,23 @@ const meyda_buff_fft_length = 1024; // fft length and buf size are the same for 
 var audioContext = getAudioContext();
 
 
-var mediaRecorder = null;
-var audioChunks = [];
+let mediaRecorder = null;
+let mediaStream=null;
+let audioChunks = [];
+
 
 var makeAudioStreamer = function (
   pitchCallback,
   pitchVectorCallback,
   analysisCb,
 ) {
+
+  let sourceNode=null;
+  let scriptNode=null;
+  let gain=null;
+
+
+
   var audioStreamer = {  
     // Create an analyser node to extract amplitude data
     analyserNode: audioContext.createAnalyser(),
@@ -38,9 +47,10 @@ var makeAudioStreamer = function (
     analyzer: null,
     analyzerCb: analysisCb,
 
-    init: function (recordMode, meydaFeatures = []) {
+    init: async function (recordMode, meydaFeatures = []) {
       console.log("meydaFeatures ", meydaFeatures)
-      navigator.mediaDevices
+
+      mediaStream = await navigator.mediaDevices
         .getUserMedia({ audio: {
           echoCancellation: false,
           autoGainControl: false,
@@ -48,78 +58,105 @@ var makeAudioStreamer = function (
           latency: {ideal: 0.01, max: 0.05},
           sampleRate: 22050
         } })
-        .then(async (stream) => {
-          mediaRecorder = new MediaRecorder(stream);
-          mediaRecorder.ondataavailable = (event) => {
-            if (event.data.size > 0) {
-              audioChunks.push(event.data);
-            }
-          };
 
-          if (recordMode === true) {
-            mediaRecorder.start();
-            console.log("We're now recording stuff :D");
-          };
+      mediaRecorder = new MediaRecorder(mediaStream);
+      mediaRecorder.ondataavailable = (event) => {
+        if (event.data.size > 0) {
+          audioChunks.push(event.data);
+        }
+      };
 
-          // audioContext.resume();
-          resumeAudioContext();
-          const sourceNode = audioContext.createMediaStreamSource(stream);
+      mediaRecorder.onstop = () => {
+        console.log('----------MediaRecorder stopped');
+        const audioBlob = new Blob(audioChunks, { type: 'audio/wav' });
+        const audioUrl = URL.createObjectURL(audioBlob);
+        const audio = document.getElementById('audioPlayback');
+        audio.src = audioUrl;
+        audioChunks = [];
+
+      };
 
 
-          if (typeof Meyda === "undefined") {
-            console.log("Meyda could not be found! Have you included it?");
-          } else {
-            const analyzer = Meyda.createMeydaAnalyzer({
-              audioContext: audioContext,
-              source: sourceNode,
-              // The docs (https://meyda.js.org/guides/online-web-audio) imply this can be anything, and also that it
-              //     determines not just the buffer size, but in fact the rate at which the analyzer gets called.
-              bufferSize: meyda_buff_fft_length,
-              featureExtractors: meydaFeatures,
-              callback: (features) => {
-                //console.log(`CALLBACK FEATURES:  +${JSON.parse(features)}`);
-                this.analyzerCb && this.analyzerCb(features);
-              },
-            });
-            analyzer.start();
-          }
-          // // analyserNode defined in object
-          this.analyserNode.fftSize = meyda_buff_fft_length;
+      if (recordMode === true) {
+        mediaRecorder.start();
+        console.log("We're now recording stuff :D");
+      };
 
-          // // Connect the source node to the analyser node
-          sourceNode.connect(this.analyserNode);
+      // audioContext.resume();
+      resumeAudioContext();
+      sourceNode = audioContext.createMediaStreamSource(mediaStream);
 
-          // The Crepe script node downsamples to 16kHz
-          // We need the buffer size that is a power of two and is longer than 1024 samples when resampled to 16000 Hz.
-          // In most platforms where the sample rate is 44.1 kHz or 48 kHz, this will be 4096, giving 10-12 updates/sec.
-          const minBufferSize = (audioContext.sampleRate / 16000) * 1024;
-          for (var bufferSize = 4; bufferSize < minBufferSize; bufferSize *= 2);
-          console.log("CREPE Buffer size = " + bufferSize);
-          // console.log(
-          //   `Setting up a crepescriptnode with pitchcallback  ${pitchCallback}`
-          // );
-          const scriptNode = await makeCrepeScriptNode(
-            audioContext,
-            bufferSize,
-            pitchCallback,
-            pitchVectorCallback
-          );
 
-          sourceNode.connect(scriptNode);
-          console.log(`audioStreamer: OK = pitch node connected!!`);
+      if (typeof Meyda === "undefined") {
+        console.log("Meyda could not be found! Have you included it?");
+      } else {
+        const analyzer = Meyda.createMeydaAnalyzer({
+          audioContext: audioContext,
+          source: sourceNode,
+          // The docs (https://meyda.js.org/guides/online-web-audio) imply this can be anything, and also that it
+          //     determines not just the buffer size, but in fact the rate at which the analyzer gets called.
+          bufferSize: meyda_buff_fft_length,
+          featureExtractors: meydaFeatures,
+          callback: (features) => {
+            //console.log(`CALLBACK FEATURES:  +${JSON.parse(features)}`);
+            this.analyzerCb && this.analyzerCb(features);
+          },
+        });
+        analyzer.start();
+      }
 
-          // necessary to pull audio throuth the scriptNode???????
-          const gain = audioContext.createGain();
-          gain.gain.setValueAtTime(0, audioContext.currentTime);
+      // // analyserNode defined in object
+      this.analyserNode.fftSize = meyda_buff_fft_length;
 
-          scriptNode.connect(gain);
+      // // Connect the source node to the analyser node
+      sourceNode.connect(this.analyserNode);
 
-          gain.connect(audioContext.destination);
-        })
+      // The Crepe script node downsamples to 16kHz
+      // We need the buffer size that is a power of two and is longer than 1024 samples when resampled to 16000 Hz.
+      // In most platforms where the sample rate is 44.1 kHz or 48 kHz, this will be 4096, giving 10-12 updates/sec.
+      const minBufferSize = (audioContext.sampleRate / 16000) * 1024;
+      for (var bufferSize = 4; bufferSize < minBufferSize; bufferSize *= 2);
+      console.log("CREPE Buffer size = " + bufferSize);
+      // console.log(
+      //   `Setting up a crepescriptnode with pitchcallback  ${pitchCallback}`
+      // );
+      scriptNode = await makeCrepeScriptNode(
+        audioContext,
+        bufferSize,
+        pitchCallback,
+        pitchVectorCallback
+      );
+
+      sourceNode.connect(scriptNode);
+      console.log(`audioStreamer: OK = pitch node connected!!`);
+
+      // necessary to pull audio throuth the scriptNode???????
+      gain = audioContext.createGain();
+      gain.gain.setValueAtTime(0, audioContext.currentTime);
+
+      scriptNode.connect(gain);
+
+      gain.connect(audioContext.destination);
     },
+
     close: function (){
       console.log("audiochunks", audioChunks)
+      console.log("mediaRecorder.state is ", mediaRecorder.state) 
       mediaRecorder.stop();
+
+      // Stop all tracks on the audio source
+      if (mediaStream) {
+        mediaStream.getTracks().forEach(track => track.stop());
+        mediaStream = null;
+        console.log('MediaStream tracks stopped');
+      }
+
+      sourceNode.disconnect();
+      scriptNode.disconnect();
+      this.analyserNode.disconnect();
+      gain.disconnect();
+
+
       console.log("audiochunks", audioChunks)
       
       //audioContext.suspend();
