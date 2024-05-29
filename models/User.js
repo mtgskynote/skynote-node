@@ -48,22 +48,31 @@ const UserSchema = new mongoose.Schema({
   role: {
     type: String,
     required: true,
-    enum: ['teacher', 'student'],
+    enum: ["teacher", "student"],
     validate: {
-      validator: (val) => ['teacher', 'student'].includes(val),
-      message: 'Role must be either "teacher" or "student"',
+      validator: (val) => ["teacher", "student"].includes(val),
+      message: 'Role must be either "teacher" or "student".',
     },
   },
   teacher: {
     type: mongoose.Schema.Types.ObjectId,
-    ref: 'User',
-    required: false,  // should actually be required for students ...
+    ref: "User",
+    required: false, // should actually be required for students ...
     validate: {
       validator: async (value) => {
-        const user = await mongoose.model('User').findById(value);
+        const user = await mongoose.model("User").findById(value);
         return !!user; // Returns true if user exists, false otherwise
       },
-      message: 'Invalid teacher ID. Must reference an existing user',
+      message: "Invalid teacher ID. Must reference an existing user.",
+    },
+  },
+  instrument: {
+    type: String,
+    required: true,
+    enum: ["violin", "voice"],
+    validate: {
+      validator: (val) => ["violin", "voice"].includes(val),
+      message: 'Instrument must be either "violin" or "voice".',
     },
   },
 });

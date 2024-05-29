@@ -5,12 +5,12 @@ import { FaMicrophone } from "react-icons/fa";
 import { GiViolin } from "react-icons/gi";
 import { useAppContext } from "../context/appContext";
 
-const instruments = [
-  { name: "violin", icon: <GiViolin />, disabled: false },
-  { name: "voice", icon: <FaMicrophone />, disabled: true },
-];
-
 const InstrumentDropdown = () => {
+  const instruments = [
+    { name: "violin", icon: <GiViolin />, disabled: false },
+    { name: "voice", icon: <FaMicrophone />, disabled: true },
+  ];
+
   const [isOpen, setIsOpen] = useState(false);
   const [selectedInstrument, setSelectedInstrument] = useState(instruments[0]);
   const dropdownRef = useRef(null);

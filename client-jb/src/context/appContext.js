@@ -73,7 +73,8 @@ const AppProvider = ({ children }) => {
     localStorage.removeItem("user");
     localStorage.removeItem("token");
     localStorage.removeItem("location");
-    localStorage.removeItem("scoreData"); //This is technically not User data, but it's simpler if I leave it here cause we have to get rid of it anyways :)
+    localStorage.removeItem("scoreData"); // This is technically not User data, but it's simpler if I leave it here cause we have to get rid of it anyways :)
+    localStorage.removeItem("instrument"); // This information is part of User data but exists separately as well for easy transitioning between selected instrument states
   };
 
   // Set up user with current user, endpoint, and alert text
@@ -85,7 +86,7 @@ const AppProvider = ({ children }) => {
         currentUser
       );
 
-      const { user, token, location, instrument } = data;
+      const { user, token, location } = data;
 
       dispatch({
         type: SETUP_USER_SUCCESS,
@@ -97,7 +98,7 @@ const AppProvider = ({ children }) => {
         },
       });
       addUserToLocalStorage(user, token, location); // why are we doing this?
-      setInstrumentLocalStorage(instrument);
+      setInstrumentLocalStorage(user.instrument);
       getAllScoreData2();
     } catch (error) {
       dispatch({
