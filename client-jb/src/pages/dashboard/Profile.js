@@ -27,7 +27,7 @@ const Profile = () => {
         const result = await getCurrentUser(); // fetchData is already an async function
 
         console.log(
-          `getCurentUser() has returnd this result: ${JSON.stringify(result)}`
+          `getCurrentUser() has returned this result: ${JSON.stringify(result)}`
         );
         console.log(` now call getProfileData with ${result.id}`);
         const response = await axios.get("/api/v1/auth/getProfileData", {
@@ -108,6 +108,7 @@ const Profile = () => {
 
   useEffect(() => {
     if (formData !== null) {
+      console.log(formData)
       setIsPageLoading(false);
     }
   }, [formData]);

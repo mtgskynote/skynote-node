@@ -20,7 +20,7 @@ import PopUpWindowGrades from "./PopUpWindowGrades";
 import PopUpWindowRecordings from "./PopUpWindowRecordings.js";
 import Messages from "./messages.js";
 import LoadingScreen from "./LoadingScreen.js";
-import ErrorComponent from "./ErrorComponent";
+import Error from "./Error.js";
 
 const Assignments = (props) => {
   const navigate = useNavigate();
@@ -50,7 +50,7 @@ const Assignments = (props) => {
 
   const errorMessages = {
     teacherDataError: "We can't find a teacher for your user.",
-    assignmentsError: "We can't find any assignment data for your user.",
+    assignmentsError: "We can't find any assignments for your user.",
   };
 
   const fetchDataFromAPI = () => {
@@ -98,7 +98,6 @@ const Assignments = (props) => {
   const fetchTeacherInfo = async (teacherId) => {
     try {
       const result = await getProfileData(teacherId);
-      console.log(teacherId)
       if (result && result.user && result.user._id) {
         setTeacherData({
           id: result.user._id,
@@ -139,13 +138,16 @@ const Assignments = (props) => {
 
   useEffect(() => {
     if (userData !== null && scoresData !== null && teacherData !== null) {
-      //Assignments
+      // Assignments
       getAllAssignments(userData.id).then((result) => {
         if (result.length !== 0) {
           setUserAnnouncements(result.reverse());
         } else {
           setAssignmentsError(true);
         }
+      }).catch((error) => {
+        setAssignmentsError(true);
+        console.error("Error fetching assignments:", error);
       });
     }
   }, [userData, scoresData, teacherData]);
@@ -175,7 +177,7 @@ const Assignments = (props) => {
     if (teacherDataError || assignmentsError) {
       setIsLoading(false);
     }
-  }, [userData, teacherDataError, userAnnouncements, teacherData]);
+  }, [userData, teacherDataError, userAnnouncements, teacherData, assignmentsError]);
 
   if (isLoading) {
     return <LoadingScreen />;
@@ -184,9 +186,9 @@ const Assignments = (props) => {
   return (
     <>
       {teacherDataError ? (
-        <ErrorComponent message={errorMessages.teacherDataError} />
+        <Error message={errorMessages.teacherDataError} />
       ) : assignmentsError ? (
-        <ErrorComponent message={errorMessages.assignmentsError} />
+        <Error message={errorMessages.assignmentsError} />
       ) : (
         <div className={AssignmentsCSS.container}>
           <div className={AssignmentsCSS.left}>
