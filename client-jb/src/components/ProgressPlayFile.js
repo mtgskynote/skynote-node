@@ -377,9 +377,11 @@ const ProgressPlayFile = (props) => {
     }
 
     return () => {
+      console.log("LEAVING PAGE ProgressPlayFile.js ")
       if (isMicrophoneActive()) {
         stopMicrophone();
       }
+      audioStreamer && audioStreamer.close()
     };
     
     

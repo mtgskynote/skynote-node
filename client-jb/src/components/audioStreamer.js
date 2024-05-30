@@ -38,7 +38,7 @@ var makeAudioStreamer = function (
   let scriptNode=null;
   let gain=null;
 
-
+  
 
   var audioStreamer = {  
     // Create an analyser node to extract amplitude data
@@ -46,6 +46,21 @@ var makeAudioStreamer = function (
     pitch: null,
     analyzer: null,
     analyzerCb: analysisCb,
+
+    dismantleAudioNodes: function() {
+      console.log("DiSMANTLING audio nodes");
+      // Stop all tracks on the audio source
+        if (mediaStream) {
+          mediaStream.getTracks().forEach(track => track.stop());
+          mediaStream = null;
+          console.log('MediaStream tracks stopped');
+        }
+  
+        sourceNode && sourceNode.disconnect();
+        scriptNode && scriptNode.disconnect();
+        this.analyserNode && this.analyserNode.disconnect();
+        gain && gain.disconnect();
+      },
 
     init: async function (recordMode, meydaFeatures = []) {
       console.log("meydaFeatures ", meydaFeatures)
@@ -75,6 +90,8 @@ var makeAudioStreamer = function (
         audioChunks = [];
 
       };
+
+
 
 
       if (recordMode === true) {
@@ -141,33 +158,24 @@ var makeAudioStreamer = function (
 
     close: function (){
       console.log("audiochunks", audioChunks)
-      console.log("mediaRecorder.state is ", mediaRecorder.state) 
-      mediaRecorder.stop();
-
-      // Stop all tracks on the audio source
-      if (mediaStream) {
-        mediaStream.getTracks().forEach(track => track.stop());
-        mediaStream = null;
-        console.log('MediaStream tracks stopped');
+      if (mediaRecorder) {
+        console.log("mediaRecorder.state is ", mediaRecorder.state) 
+        mediaRecorder.stop();
       }
 
-      sourceNode.disconnect();
-      scriptNode.disconnect();
-      this.analyserNode.disconnect();
-      gain.disconnect();
+      this.dismantleAudioNodes();
 
+    },   
 
-      console.log("audiochunks", audioChunks)
-      
-      //audioContext.suspend();
-    },    
     close_not_save: function (){
       //mediaRecorder.stop();
       // audioContext.suspend();
+      this.dismantleAudioNodes();
       suspendAudioContext();
     },
     close_maybe_save: function (){
       mediaRecorder.stop();
+      audioStreamer.dismantleAudioNodes();
       //audioContext.suspend();
     },
     save_or_not: async function(answer){
@@ -180,7 +188,7 @@ var makeAudioStreamer = function (
           const arrayBuffer = await audioBlob.arrayBuffer();
           // Clean
           audioChunks = [];
-          //audioContext.suspend();
+          this.dismantleAudioNodes();
           suspendAudioContext();
           return arrayBuffer;
         } catch (error) {
