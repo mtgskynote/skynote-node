@@ -24,8 +24,7 @@ function Register() {
   const [formData, setFormData] = useState(initialState);
   const navigate = useNavigate();
 
-  const { user, isLoading, showAlert, displayAlert, setupUser } =
-    useAppContext();
+  const { user, showAlert, displayAlert, setupUser } = useAppContext();
 
   // Function to toggle the 'isMember' state
   const toggleMember = () => {
@@ -206,12 +205,12 @@ function Register() {
               {formData.isMember ? "Login" : "Register"}
             </button>
 
-            <a
+            <p
               className="inline-block align-baseline font-bold text-sm text-blue-500 hover:text-blue-800 cursor-pointer"
               onClick={toggleMember}
             >
-              {formData.isMember ? "Not a member" : "Back to sign in"}
-            </a>
+              {formData.isMember ? "Not a member?" : "Back to login"}
+            </p>
           </div>
         </form>
       </div>

@@ -18,6 +18,7 @@ const InstrumentDropdown = () => {
   const { setInstrumentLocalStorage, getInstrumentLocalStorage } =
     useAppContext();
 
+  // Handle the selection of an instrument from the dropdown
   const handleSelect = (instrument) => {
     if (!instrument.disabled) {
       setSelectedInstrument(instrument);
@@ -26,12 +27,14 @@ const InstrumentDropdown = () => {
     }
   };
 
+  // Handle when a click is made outside the dropdown
   const handleClickOutside = (event) => {
     if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
       setIsOpen(false);
     }
   };
 
+  // Add and clean up the event listener for clicks outside the dropdown
   useEffect(() => {
     document.addEventListener("mousedown", handleClickOutside);
     return () => {
@@ -39,17 +42,21 @@ const InstrumentDropdown = () => {
     };
   }, []);
 
+  // useEffect hook to retrieve the saved instrument from local storage and set it as the selected instrument
   useEffect(() => {
-    const savedInstrument = getInstrumentLocalStorage();
-    if (savedInstrument) {
-      setSelectedInstrument(
-        instruments.find((instrument) => instrument.name === savedInstrument)
-      );
+    let savedInstrument = getInstrumentLocalStorage();
+    if (savedInstrument === "undefined") {
+      savedInstrument = instruments[0].name;
+      setInstrumentLocalStorage(savedInstrument);
     }
+    setSelectedInstrument(
+      instruments.find((instrument) => instrument.name === savedInstrument)
+    );
   }, []);
 
   return (
     <div className="relative" ref={dropdownRef}>
+      {/* Button Section */}
       <div
         className="flex items-center justify-between w-full px-3 py-2 border border-gray-300 rounded cursor-pointer focus:outline-none focus:border-blue-500"
         onClick={() => setIsOpen(!isOpen)}
@@ -58,8 +65,10 @@ const InstrumentDropdown = () => {
         <span className="mr-8 capitalize">{selectedInstrument.name}</span>
         {isOpen ? <ArrowDropUpIcon /> : <ArrowDropDownIcon />}
       </div>
+
+      {/* Dropdown Section */}
       {isOpen && (
-        <div className="absolute z-10 w-full mt-1 bg-white text-gray-900 border border-gray-300 rounded shadow-lg">
+        <div className="absolute z-10 w-full mt-1 bg-white text-gray-900 border border-gray-300 rounded shadow-lg overflow-hidden transition-all ease-in-out duration-200">
           {instruments.map((instrument, index) => (
             <div
               key={index}
