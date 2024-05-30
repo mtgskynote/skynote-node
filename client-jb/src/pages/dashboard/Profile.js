@@ -12,16 +12,6 @@ const Profile = () => {
   const [formData, setFormData] = useState(null);
   const [isLoading, setIsLoading] = useState(null); // Initially loading
   const [isPageLoading, setIsPageLoading] = useState(true);
-  // const [selectedInstrument, setSelectedInstrument] = useState(null);
-
-  // useEffect(() => {
-  //   const savedInstrument = getInstrumentLocalStorage();
-  //   if (savedInstrument) {
-  //     setSelectedInstrument(
-  //       instruments.find((instrument) => instrument.name === savedInstrument)
-  //     );
-  //   }
-  // }, []);
 
   useEffect(() => {
     console.log(
