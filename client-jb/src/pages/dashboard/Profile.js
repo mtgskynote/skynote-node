@@ -6,7 +6,7 @@ import LoadingScreen from "../../components/LoadingScreen";
 
 const Profile = () => {
   // Manage edit state, form values, and loading state
-  const { getCurrentUser, getInstrumentLocalStorage } = useAppContext();
+  const { getCurrentUser } = useAppContext();
 
   const [isEditing, setIsEditing] = useState(false);
   const [formData, setFormData] = useState(null);
