@@ -14,6 +14,7 @@ import XMLParser from "react-xml-parser";
 import { putRecording } from "../utils/studentRecordingMethods.js";
 import { Buffer } from "buffer";
 import { useAppContext } from "../context/appContext";
+import ControlBarAlt from "./ControlBarAlt.js";
 // @ts-ignore
 window.Buffer = Buffer;
 
@@ -438,7 +439,7 @@ const ProgressPlayFile = (props) => {
       setPracticeMode(true);
       setRecordMode(false);
     };
-    practiceModeButton.addEventListener("click", handlePracticeModeButtonClick);
+    // practiceModeButton.addEventListener("click", handlePracticeModeButtonClick);
     //--------------------------------------------------------------------------------
 
     // RECORD MODE BUTTON -------------------------------------------------------------
@@ -463,18 +464,18 @@ const ProgressPlayFile = (props) => {
       setRecordInactive(true); //Set to true, just like the initial state
       setBpm(100); //set bpm to original value, 100
     };
-    recordModeButton.addEventListener("click", handleRecordModeButtonClick);
+    // recordModeButton.addEventListener("click", handleRecordModeButtonClick);
     //--------------------------------------------------------------------------------
 
     return () => {
-      practiceModeButton.removeEventListener(
-        "click",
-        handlePracticeModeButtonClick
-      );
-      recordModeButton.removeEventListener(
-        "click",
-        handleRecordModeButtonClick
-      );
+      // practiceModeButton.removeEventListener(
+      //   "click",
+      //   handlePracticeModeButtonClick
+      // );
+      // recordModeButton.removeEventListener(
+      //   "click",
+      //   handleRecordModeButtonClick
+      // );
     };
   }, [practiceMode, recordMode]);
 
@@ -503,7 +504,7 @@ const ProgressPlayFile = (props) => {
         }
       };
 
-      recordButton.addEventListener("click", handleRecordButtonClick);
+      // recordButton.addEventListener("click", handleRecordButtonClick);
       //--------------------------------------------------------------------------------
 
       // RESET BUTTON ------------------------------------------------------------------
@@ -527,7 +528,7 @@ const ProgressPlayFile = (props) => {
         setRecordInactive(true); //Set to true, just like the initial state
       };
 
-      resetButton.addEventListener("click", handleResetButtonClick);
+      // resetButton.addEventListener("click", handleResetButtonClick);
       //--------------------------------------------------------------------------------
 
       // PLAY/PAUSE BUTTON -------------------------------------------------------------
@@ -543,7 +544,7 @@ const ProgressPlayFile = (props) => {
           playbackManager.play();
         }
       };
-      playButton.addEventListener("click", handlePlayButtonClick);
+      // playButton.addEventListener("click", handlePlayButtonClick);
       //--------------------------------------------------------------------------------
 
       // SETTINGS SLIDERS --------------------------------------------------------------
@@ -562,7 +563,7 @@ const ProgressPlayFile = (props) => {
           setMetroVol(event.target.value);
         }
       };
-      settingsSliders.addEventListener("click", handleSettings);
+      // settingsSliders.addEventListener("click", handleSettings);
       //--------------------------------------------------------------------------------
 
       // SWITCH BETWEEN REPETITION/RECORDING LAYERS ------------------------------------
@@ -577,18 +578,18 @@ const ProgressPlayFile = (props) => {
       const handleRepeatLayersMouseLeave = () => {
         setShowRepetitionMessage(false);
       };
-      repeatLayersButton.addEventListener(
-        "click",
-        handleRepeatLayersButtonClick
-      );
-      repeatLayersButton.addEventListener(
-        "mousemove",
-        handleRepeatLayersMouseOver
-      );
-      repeatLayersButton.addEventListener(
-        "mouseout",
-        handleRepeatLayersMouseLeave
-      );
+      // repeatLayersButton.addEventListener(
+      //   "click",
+      //   handleRepeatLayersButtonClick
+      // );
+      // repeatLayersButton.addEventListener(
+      //   "mousemove",
+      //   handleRepeatLayersMouseOver
+      // );
+      // repeatLayersButton.addEventListener(
+      //   "mouseout",
+      //   handleRepeatLayersMouseLeave
+      // );
       //--------------------------------------------------------------------------------
 
       //Add new pitch value to pitch array
@@ -599,21 +600,21 @@ const ProgressPlayFile = (props) => {
       }
 
       return () => {
-        recordButton.removeEventListener("click", handleRecordButtonClick);
-        repeatLayersButton.removeEventListener(
-          "click",
-          handleRepeatLayersButtonClick
-        );
-        repeatLayersButton.removeEventListener(
-          "mouseover",
-          handleRepeatLayersMouseOver
-        );
-        repeatLayersButton.removeEventListener(
-          "mouseleave",
-          handleRepeatLayersMouseLeave
-        );
-        resetButton.removeEventListener("click", handleResetButtonClick);
-        playButton.removeEventListener("click", handlePlayButtonClick);
+        // recordButton.removeEventListener("click", handleRecordButtonClick);
+        // repeatLayersButton.removeEventListener(
+        //   "click",
+        //   handleRepeatLayersButtonClick
+        // );
+        // repeatLayersButton.removeEventListener(
+        //   "mouseover",
+        //   handleRepeatLayersMouseOver
+        // );
+        // repeatLayersButton.removeEventListener(
+        //   "mouseleave",
+        //   handleRepeatLayersMouseLeave
+        // );
+        // resetButton.removeEventListener("click", handleResetButtonClick);
+        // playButton.removeEventListener("click", handlePlayButtonClick);
       };
     } else if (recordMode === true) {
       //Record Mode
@@ -639,7 +640,7 @@ const ProgressPlayFile = (props) => {
         }
       };
 
-      recordButton.addEventListener("click", handleRecordButtonClick);
+      // recordButton.addEventListener("click", handleRecordButtonClick);
       //--------------------------------------------------------------------------------
 
       // PLAY/PAUSE BUTTON -------------------------------------------------------------
@@ -654,7 +655,7 @@ const ProgressPlayFile = (props) => {
           playbackManager.play();
         }
       };
-      playButton.addEventListener("click", handlePlayButtonClick);
+      // playButton.addEventListener("click", handlePlayButtonClick);
       //--------------------------------------------------------------------------------
 
       // SETTINGS SLIDERS --------------------------------------------------------------
@@ -673,7 +674,7 @@ const ProgressPlayFile = (props) => {
           setMetroVol(event.target.value);
         }
       };
-      settingsSliders.addEventListener("click", handleSettings);
+      // settingsSliders.addEventListener("click", handleSettings);
       //--------------------------------------------------------------------------------
 
       // GO TO SAVINGS BUTTON  ------------------------------------
@@ -686,7 +687,7 @@ const ProgressPlayFile = (props) => {
         // Use navigate to go to the ListRecordings page with parameters in the URL
         navigate("/ListRecordings", { state: { score, song, typeList } });
       };
-      savedButton.addEventListener("click", handleSavedButtonClick);
+      // savedButton.addEventListener("click", handleSavedButtonClick);
       //--------------------------------------------------------------------------------
 
       //Add new pitch value to pitch array
@@ -697,8 +698,8 @@ const ProgressPlayFile = (props) => {
       }
 
       return () => {
-        recordButton.removeEventListener("click", handleRecordButtonClick);
-        playButton.removeEventListener("click", handlePlayButtonClick);
+        // recordButton.removeEventListener("click", handleRecordButtonClick);
+        // playButton.removeEventListener("click", handlePlayButtonClick);
       };
     }
   }, [
@@ -720,35 +721,42 @@ const ProgressPlayFile = (props) => {
   }, []);
   //#region RETURN
   return (
-    <div>
-      {showRepetitionMessage && <SimpleMessaje message={repetitionMessage} />}
+    <div className="flex flex-col min-h-screen justify-between">
+      {/* {showRepetitionMessage && <SimpleMessaje message={repetitionMessage} />} */}
 
-      <OpenSheetMusicDisplay
-        file={`${folderBasePath}/${params.files}.xml`}
-        autoResize={true}
-        cursorRef={cursorRef}
-        playbackRef={playbackRef}
-        metroVol={metroVol}
-        bpm={bpmChange}
-        zoom={zoom}
-        followCursor={true}
-        dynamicStability={dynStability}
-        pitch={pitch}
-        pitchConfidence={confidence}
-        startPitchTrack={startPitchTrack}
-        showPitchTrack={showPitchTrack}
-        recordVol={recordVol}
-        isResetButtonPressed={isResetButtonPressed}
-        repeatsIterator={repeatsIterator}
-        showRepeatsInfo={handleReceiveRepetitionInfo}
-        onResetDone={onResetDone}
-        cursorActivity={handleFinishedCursorOSMDCallback}
-        mode={practiceMode}
-        dataToDownload={handleGetJsonCallback}
-        canDownload={canDownload}
-        visual={"no"}
-      />
-      {showTimer ? (
+      <div>
+        <OpenSheetMusicDisplay
+          file={`${folderBasePath}/${params.files}.xml`}
+          autoResize={true}
+          cursorRef={cursorRef}
+          playbackRef={playbackRef}
+          metroVol={metroVol}
+          bpm={bpmChange}
+          zoom={zoom}
+          followCursor={true}
+          dynamicStability={dynStability}
+          pitch={pitch}
+          pitchConfidence={confidence}
+          startPitchTrack={startPitchTrack}
+          showPitchTrack={showPitchTrack}
+          recordVol={recordVol}
+          isResetButtonPressed={isResetButtonPressed}
+          repeatsIterator={repeatsIterator}
+          showRepeatsInfo={handleReceiveRepetitionInfo}
+          onResetDone={onResetDone}
+          cursorActivity={handleFinishedCursorOSMDCallback}
+          mode={practiceMode}
+          dataToDownload={handleGetJsonCallback}
+          canDownload={canDownload}
+          visual={"no"}
+        />
+      </div>
+
+      <div className="flex justify-center mb-32">
+        <ControlBarAlt />
+      </div>
+
+      {/* {showTimer ? (
         <CountdownTimer
           bpm={bpmChange}
           mode={practiceMode}
@@ -775,7 +783,7 @@ const ProgressPlayFile = (props) => {
         />
       )}
 
-      <ModeToggle practiceMode={practiceMode} recordMode={recordMode} />
+      <ModeToggle practiceMode={practiceMode} recordMode={recordMode} /> */}
     </div>
   );
   //#endregion
