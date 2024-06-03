@@ -45,7 +45,7 @@ const InstrumentDropdown = () => {
   // useEffect hook to retrieve the saved instrument from local storage and set it as the selected instrument
   useEffect(() => {
     let savedInstrument = getInstrumentLocalStorage();
-    if (savedInstrument === "undefined") {
+    if (savedInstrument === "undefined" || !savedInstrument) {
       savedInstrument = instruments[0].name;
       setInstrumentLocalStorage(savedInstrument);
     }
