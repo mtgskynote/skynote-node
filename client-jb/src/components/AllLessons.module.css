@@ -59,7 +59,8 @@
   border-radius: 7px;
   border: 0.2px solid #cecdcd;
   box-shadow: 0 0 3px #cecdcd;
-  background-color: #ffffff;
+  background-color: #ebebf5;
   z-index: 1;
+  pointer-events: none; 
 }
-  
+

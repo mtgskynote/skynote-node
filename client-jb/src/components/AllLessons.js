@@ -12,10 +12,14 @@ import ChevronRightIcon from "@mui/icons-material/ChevronRight";
 import OpenSheetMusicDisplayPreview from "./OpenSheetMusicDisplayPreview";
 import AllLessonsCSS from "./AllLessons.module.css";
 
+let mousepos={x:0, y:0};
+
 const AllLessons = () => {
   const [selectedNodeActive, setSelectedNodeActive] = useState(false);
   const [selectedNodeInfo, setSelectedNodeInfo] = useState(null);
   const [fetchedData, setFetchedData] = useState({});
+
+
 
   useEffect(() => {
     const data = JSON.parse(localStorage.getItem("scoreData"));
@@ -43,14 +47,22 @@ const AllLessons = () => {
   const handleNodeMouseOver = (event, nodeId) => {
     if (nodeId !== undefined) {
       const selectedData = getNodeDataById(fetchedData, nodeId);
+
       setSelectedNodeInfo(selectedData);
       setSelectedNodeActive(true);
+      console.log(`Node mouse over ${nodeId}`)
     } else {
       setSelectedNodeInfo(null);
       setSelectedNodeActive(false);
     }
   };
   const handleNodeMouseOut = (event) => {
+    if (mousepos.x === event.clientX && mousepos.y === event.clientY) {
+      return;
+    }
+    mousepos.x = event.clientX;
+    mousepos.y = event.clientY;
+    console.log("Node mouse out")
     setSelectedNodeInfo(null);
     setSelectedNodeActive(false);
   };
@@ -118,8 +130,8 @@ const AllLessons = () => {
           <h2>All Lessons</h2>
         </div>
       </div>
-      <Box>
-        <TreeView
+      <Box >
+        <TreeView 
           aria-label="rich object"
           defaultCollapseIcon={<ExpandMoreIcon />}
           defaultExpanded={["root"]}
@@ -132,10 +144,15 @@ const AllLessons = () => {
         </TreeView>
       </Box>
       {selectedNodeActive && (
-        <div className={`${AllLessonsCSS.osmdScore} mt-48`}>
-          <OpenSheetMusicDisplayPreview file={selectedNodeInfo.path} />
+
+        <div className={`${AllLessonsCSS.osmdScore} mt-48`} >
+          <OpenSheetMusicDisplayPreview  
+          file={selectedNodeInfo.path} />
+
+        
         </div>
       )}
+
     </div>
   );
 };
