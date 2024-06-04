@@ -205,12 +205,12 @@ function Register() {
               {formData.isMember ? "Login" : "Register"}
             </button>
 
-            <p
+            {/* <p
               className="inline-block align-baseline font-bold text-sm text-blue-500 hover:text-blue-800 cursor-pointer"
               onClick={toggleMember}
             >
               {formData.isMember ? "Not a member?" : "Back to login"}
-            </p>
+            </p> */}
           </div>
         </form>
       </div>
