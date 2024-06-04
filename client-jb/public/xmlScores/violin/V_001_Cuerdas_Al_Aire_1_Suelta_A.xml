@@ -74,7 +74,7 @@
       <part-abbreviation>Vln.</part-abbreviation>
       <score-instrument id="P1-I1">
         <instrument-name>SmartMusic SoftSynth</instrument-name>
-        <instrument-sound>strings.violin</instrument-sound>
+        <instrument-sound>strings.Violin</instrument-sound>
         <solo/>
         <virtual-instrument/>
       </score-instrument>
