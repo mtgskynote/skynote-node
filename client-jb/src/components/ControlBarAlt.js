@@ -11,12 +11,17 @@ import {
 } from "@mui/icons-material";
 import IconButton from "@mui/material/IconButton";
 import Tooltip from "@mui/material/Tooltip";
+import ControlBarPopover from "./ControlBarPopover";
 
 const ControlBarAlt = () => {
   const [practiceModeOn, setPracticeModeOn] = useState(true);
+
   const allModeIcons = [
     { tooltip: "Transpose", icon: <TransposeIcon className="text-4xl" /> },
-    { tooltip: "BPM", icon: <BpmIcon className="text-4xl" /> },
+    {
+      tooltip: "BPM",
+      icon: <BpmIcon className="text-4xl" />,
+    },
     { tooltip: "Volume", icon: <VolumeIcon className="text-4xl" /> },
   ];
   const practiceModeIcons = [
@@ -56,7 +61,9 @@ const ControlBarAlt = () => {
               ))}
           {allModeIcons.map((modeIcon, index) => (
             <Tooltip title={modeIcon.tooltip} key={index}>
-              <IconButton className="text-white">{modeIcon.icon}</IconButton>
+              <ControlBarPopover content="BPM">
+                <IconButton className="text-white">{modeIcon.icon}</IconButton>
+              </ControlBarPopover>
             </Tooltip>
           ))}
         </div>
