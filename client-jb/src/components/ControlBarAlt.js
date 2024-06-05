@@ -13,31 +13,80 @@ import IconButton from "@mui/material/IconButton";
 import Tooltip from "@mui/material/Tooltip";
 import ControlBarPopover from "./ControlBarPopover";
 
-const ControlBarAlt = () => {
+const initialTranspose = 0;
+const initialBpm = 100;
+const initialVolume = 50;
+
+const ControlBarAlt = ({
+  onTransposeChange,
+  onBpmChange,
+  onVolumeChange,
+  onModeChange,
+}) => {
   const [practiceModeOn, setPracticeModeOn] = useState(true);
+  const [transpose, setTranspose] = useState(initialTranspose);
+  const [bpm, setBpm] = useState(initialBpm);
+  const [volume, setVolume] = useState(initialVolume);
+  const [isPlaying, setIsPlaying] = useState(false);
 
   const allModeIcons = [
-    { tooltip: "Transpose", icon: <TransposeIcon className="text-4xl" /> },
+    {
+      tooltip: "Transpose",
+      icon: <TransposeIcon className="text-4xl" />,
+      min: -12,
+      max: 12,
+      initial: initialTranspose,
+      handleValueChange: (newValue) => {
+        setTranspose(newValue);
+        onTransposeChange(transpose);
+      },
+    },
     {
       tooltip: "BPM",
       icon: <BpmIcon className="text-4xl" />,
+      min: 30,
+      max: 200,
+      initial: initialBpm,
+      handleValueChange: (newValue) => {
+        setBpm(newValue);
+        onBpmChange(bpm);
+      },
     },
-    { tooltip: "Volume", icon: <VolumeIcon className="text-4xl" /> },
+    {
+      tooltip: "Volume",
+      icon: <VolumeIcon className="text-4xl" />,
+      min: 0,
+      max: 100,
+      initial: initialVolume,
+      handleValueChange: (newValue) => {
+        setVolume(newValue);
+        onVolumeChange(volume);
+      },
+    },
   ];
   const practiceModeIcons = [
     { tooltip: "Listen", icon: <HearingIcon className="text-4xl" /> },
-    { tooltip: "Practice", icon: <PlayIcon className="text-4xl" /> },
+    { tooltip: "Play", icon: <PlayIcon className="text-4xl" /> },
   ];
   const recordModeIcons = [
     { tooltip: "Record", icon: <RecordIcon className="text-4xl" /> },
   ];
+
+  const handleModeChange = (newMode) => {
+    setPracticeModeOn(newMode);
+    onModeChange(practiceModeOn);
+  };
+
+  const handleIsPlaying = (newIsPlaying) => {
+    setIsPlaying(newIsPlaying);
+  };
 
   return (
     <div className="px-4 py-3 bg-blue-400 rounded-3xl shadow-md w-1/2">
       <div className="flex justify-between items-center h-full">
         <div>
           <ModeToggleAlt
-            onModeChange={(newMode) => setPracticeModeOn(newMode)}
+            onModeChange={(newMode) => handleModeChange(newMode)}
           />
         </div>
 
@@ -60,18 +109,25 @@ const ControlBarAlt = () => {
                 </Tooltip>
               ))}
           {allModeIcons.map((modeIcon, index) => (
-            <Tooltip title={modeIcon.tooltip} key={index}>
-              <ControlBarPopover content="BPM">
+            <ControlBarPopover
+              key={index}
+              label={modeIcon.tooltip}
+              min={modeIcon.min}
+              max={modeIcon.max}
+              initial={modeIcon.initial}
+              onValueChange={(newValue) => modeIcon.handleValueChange(newValue)}
+            >
+              <Tooltip title={modeIcon.tooltip}>
                 <IconButton className="text-white">{modeIcon.icon}</IconButton>
-              </ControlBarPopover>
-            </Tooltip>
+              </Tooltip>
+            </ControlBarPopover>
           ))}
         </div>
 
         <div className="mr-6 h-full w-0.5 self-stretch bg-neutral-100 dark:bg-white/10"></div>
 
         <div>
-          <button className="ml-auto hover:cursor-pointer transition ease-in-out delay-50 text-center text-gray-800 border-transparent focus:border-transparent focus:ring-0 focus:outline-none bg-slate-50 hover:bg-red-600 hover:text-white font-extralight hover:font-bold py-1 px-2 rounded-l-none outline-none rounded">
+          <button className="ml-auto hover:cursor-pointer transition ease-in-out delay-50 text-center text-gray-700 border-transparent focus:border-transparent focus:ring-0 focus:outline-none bg-slate-50 hover:bg-red-600 hover:text-white font-extralight hover:font-bold py-1 px-2 rounded-l-none outline-none rounded">
             View All Recordings
           </button>
         </div>

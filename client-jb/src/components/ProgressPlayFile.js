@@ -48,9 +48,10 @@ const ProgressPlayFile = (props) => {
 
   //Parameters that will be sent to OSMD
   const [metroVol, setMetroVol] = useState(0);
-  const [bpmChange, setBpm] = useState(100); //BPM always set to 100 cause the scores don't have BPMs
-  const [recordVol, setRecordVol] = useState(0.5);
+  const [bpm, setBpm] = useState(100); //BPM always set to 100 cause the scores don't have BPMs
+  const [recordVolume, setRecordVolume] = useState(0.5);
   const [zoom, setZoom] = useState(1.0);
+  const [transpose, setTranspose] = useState(0);
 
   //This changes when the record button is pressed
   const [recordInactive, setRecordInactive] = useState(true);
@@ -554,7 +555,7 @@ const ProgressPlayFile = (props) => {
         //Check which setting slider has been clicked
         const sliderId = event.target.id;
         if (sliderId === "volume-slider") {
-          setRecordVol(event.target.value);
+          setRecordVolume(event.target.value);
         } else if (sliderId === "zoom-slider") {
           setZoom(event.target.value);
         } else if (sliderId === "bpm-slider") {
@@ -665,7 +666,7 @@ const ProgressPlayFile = (props) => {
         //Check which setting slider has been clicked
         const sliderId = event.target.id;
         if (sliderId === "volume-slider") {
-          setRecordVol(event.target.value);
+          setRecordVolume(event.target.value);
         } else if (sliderId === "zoom-slider") {
           setZoom(event.target.value);
         } else if (sliderId === "bpm-slider") {
@@ -703,7 +704,7 @@ const ProgressPlayFile = (props) => {
       };
     }
   }, [
-    recordVol,
+    recordVolume,
     zoom,
     recordInactive,
     pitchValue,
@@ -731,7 +732,7 @@ const ProgressPlayFile = (props) => {
           cursorRef={cursorRef}
           playbackRef={playbackRef}
           metroVol={metroVol}
-          bpm={bpmChange}
+          bpm={bpm}
           zoom={zoom}
           followCursor={true}
           dynamicStability={dynStability}
@@ -739,7 +740,7 @@ const ProgressPlayFile = (props) => {
           pitchConfidence={confidence}
           startPitchTrack={startPitchTrack}
           showPitchTrack={showPitchTrack}
-          recordVol={recordVol}
+          recordVol={recordVolume}
           isResetButtonPressed={isResetButtonPressed}
           repeatsIterator={repeatsIterator}
           showRepeatsInfo={handleReceiveRepetitionInfo}
@@ -753,7 +754,12 @@ const ProgressPlayFile = (props) => {
       </div>
 
       <div className="flex justify-center mb-32">
-        <ControlBarAlt />
+        <ControlBarAlt
+          onTransposeChange={(newTranspose) => setTranspose(newTranspose)}
+          onBpmChange={(newBpm) => setBpm(newBpm)}
+          onVolumeChange={(newVolume) => setRecordVolume(newVolume)}
+          onModeChange={(newMode) => setPracticeMode(newMode)}
+        />
       </div>
 
       {/* {showTimer ? (
