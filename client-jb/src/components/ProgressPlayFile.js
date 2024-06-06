@@ -53,6 +53,9 @@ const ProgressPlayFile = (props) => {
   const [zoom, setZoom] = useState(1.0);
   const [transpose, setTranspose] = useState(0);
 
+  const [isListening, setIsListening] = useState(false); // IMPORTANT NOTE: This does not mean the app is listening to the user's microphone. It means the app is playing the audio for the user to listen to (rather than play along with).
+  const [isPlaying, setIsPlaying] = useState(false);
+
   //This changes when the record button is pressed
   const [recordInactive, setRecordInactive] = useState(true);
 
@@ -158,6 +161,7 @@ const ProgressPlayFile = (props) => {
       }
       const playbackManager = playbackRef.current;
       playbackManager.pause();
+      setIsListening(false);
       setStartPitchTrack(false);
       setRecordInactive(true); //Set to true, just like the initial state
     }
@@ -720,6 +724,52 @@ const ProgressPlayFile = (props) => {
   const handleComplete = useCallback(() => {
     setFinishedTimer(true);
   }, []);
+
+  const resetAudio = (playbackManager) => {
+    playbackManager.pause();
+    playbackManager.setPlaybackStart(0);
+    playbackManager.reset();
+  };
+
+  const handleToggleListen = () => {
+    const playbackManager = playbackRef.current;
+    if (playbackManager.isPlaying) {
+      playbackManager.pause();
+      setIsListening(false); // because playbackManager.isPlaying is reversed
+    } else {
+      if (isPlaying) {
+        setIsPlaying(false);
+        const playbackManager = playbackRef.current;
+        resetAudio(playbackManager);
+      }
+
+      setIsListening(true); // because playbackManager.isPlaying is reversed
+      playbackManager.play();
+    }
+  };
+
+  const handleTogglePlay = () => {
+    if (isPlaying) {
+      setIsPlaying(false);
+    } else {
+      if (isListening) {
+        setIsListening(false);
+        const playbackManager = playbackRef.current;
+        resetAudio(playbackManager);
+      }
+      setIsPlaying(true);
+    }
+  };
+
+  useEffect(() => {
+    setIsListening(false);
+    const playbackManager = playbackRef.current;
+
+    if (playbackManager) {
+      resetAudio(playbackManager);
+    }
+  }, [practiceMode]);
+
   //#region RETURN
   return (
     <div className="flex flex-col min-h-screen justify-between">
@@ -759,6 +809,10 @@ const ProgressPlayFile = (props) => {
           onBpmChange={(newBpm) => setBpm(newBpm)}
           onVolumeChange={(newVolume) => setRecordVolume(newVolume)}
           onModeChange={(newMode) => setPracticeMode(newMode)}
+          isListening={isListening}
+          onToggleListen={handleToggleListen}
+          isPlaying={isPlaying}
+          onTogglePlay={handleTogglePlay}
         />
       </div>
 

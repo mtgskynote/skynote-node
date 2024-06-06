@@ -7,7 +7,8 @@ import {
   ImportExport as TransposeIcon,
   AccessTime as BpmIcon,
   VolumeUp as VolumeIcon,
-  Hearing as HearingIcon,
+  Hearing as ListenIcon,
+  HearingDisabled as ListenPauseIcon,
 } from "@mui/icons-material";
 import IconButton from "@mui/material/IconButton";
 import Tooltip from "@mui/material/Tooltip";
@@ -22,12 +23,15 @@ const ControlBarAlt = ({
   onBpmChange,
   onVolumeChange,
   onModeChange,
+  onToggleListen,
+  onTogglePlay,
+  isListening,
+  isPlaying,
 }) => {
   const [practiceModeOn, setPracticeModeOn] = useState(true);
   const [transpose, setTranspose] = useState(initialTranspose);
   const [bpm, setBpm] = useState(initialBpm);
   const [volume, setVolume] = useState(initialVolume);
-  const [isPlaying, setIsPlaying] = useState(false);
 
   const allModeIcons = [
     {
@@ -65,8 +69,24 @@ const ControlBarAlt = ({
     },
   ];
   const practiceModeIcons = [
-    { tooltip: "Listen", icon: <HearingIcon className="text-4xl" /> },
-    { tooltip: "Play", icon: <PlayIcon className="text-4xl" /> },
+    {
+      tooltip: isListening ? "Stop Listening" : "Listen",
+      iconPlay: <ListenIcon className="text-4xl" />,
+      iconPause: <ListenPauseIcon className="text-4xl" />,
+      toggle: () => {
+        onToggleListen();
+      },
+      flag: isListening,
+    },
+    {
+      tooltip: "Play",
+      iconPlay: <PlayIcon className="text-4xl" />,
+      iconPause: <PauseIcon className="text-4xl" />,
+      toggle: () => {
+        onTogglePlay();
+      },
+      flag: isPlaying,
+    },
   ];
   const recordModeIcons = [
     { tooltip: "Record", icon: <RecordIcon className="text-4xl" /> },
@@ -74,11 +94,7 @@ const ControlBarAlt = ({
 
   const handleModeChange = (newMode) => {
     setPracticeModeOn(newMode);
-    onModeChange(practiceModeOn);
-  };
-
-  const handleIsPlaying = (newIsPlaying) => {
-    setIsPlaying(newIsPlaying);
+    onModeChange(newMode);
   };
 
   return (
@@ -96,8 +112,8 @@ const ControlBarAlt = ({
           {practiceModeOn
             ? practiceModeIcons.map((modeIcon, index) => (
                 <Tooltip title={modeIcon.tooltip} key={index}>
-                  <IconButton className="text-white">
-                    {modeIcon.icon}
+                  <IconButton className="text-white" onClick={modeIcon.toggle}>
+                    {modeIcon.flag ? modeIcon.iconPause : modeIcon.iconPlay}
                   </IconButton>
                 </Tooltip>
               ))
