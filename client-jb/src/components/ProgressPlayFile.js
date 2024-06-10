@@ -4,7 +4,7 @@ import OpenSheetMusicDisplay from "./OpenSheetMusicDisplay";
 import ControlBar from "./ControlBar.js";
 import ControlBarRecord from "./ControlBarRecord.js";
 import { makeAudioStreamer } from "./audioStreamer.js";
-import CountdownTimer from "./MetronomeCountDown.js";
+import CountDownTimer from "./CountDownTimer.js";
 import SimpleMessaje from "./AnyMessage.js";
 //import { log } from "@tensorflow/tfjs";
 import Queue from "../utils/QueueWithMaxLength";
@@ -48,20 +48,21 @@ const ProgressPlayFile = (props) => {
 
   //Parameters that will be sent to OSMD
   const [metroVol, setMetroVol] = useState(0);
-  const [bpm, setBpm] = useState(100); //BPM always set to 100 cause the scores don't have BPMs
-  const [recordVolume, setRecordVolume] = useState(0.5);
+  const [bpm, setBpm] = useState(100); // BPM always set to 100 cause the scores don't have BPMs
+  const [recordVolume, setRecordVolume] = useState(50);
   const [zoom, setZoom] = useState(1.0);
   const [transpose, setTranspose] = useState(0);
 
   const [isListening, setIsListening] = useState(false); // IMPORTANT NOTE: This does not mean the app is listening to the user's microphone. It means the app is playing the audio for the user to listen to (rather than play along with).
   const [isPlaying, setIsPlaying] = useState(false);
+  const [isRecording, setIsRecording] = useState(false);
 
   //This changes when the record button is pressed
   const [recordInactive, setRecordInactive] = useState(true);
 
   //This ones are for the metronome countdown
-  const [showTimer, setShowTimer] = useState(false);
-  const [finishedTimer, setFinishedTimer] = useState(false);
+  const [showCountDownTimer, setShowCountDownTimer] = useState(false);
+  const [countDownFinished, setCountDownFinished] = useState(false);
 
   //This is for the MEYDA features
   const [pitchValue, setPitchValue] = useState(null);
@@ -147,13 +148,9 @@ const ProgressPlayFile = (props) => {
   //reaches the end, and then tell ControlBar.js + create the pop up window if needed...
   const handleFinishedCursorOSMDCallback = (OSMDfinishedCursor) => {
     if (OSMDfinishedCursor) {
-      //cursor has finished
-
-      //Send info to ControlBar--> true cursor finished
       setCursorFinished(true);
-      //"Reset" funcionalities
-      //No recording
-      if (recordMode && !recordInactive) {
+
+      if (!practiceMode && !recordInactive) {
         audioStreamer.close_maybe_save(); //maybe save audio in Record mode
         handleSaveDeleteWindowPopUp(true); //call popup window save/delete
       } else {
@@ -407,35 +404,6 @@ const ProgressPlayFile = (props) => {
     }
   }, [audioReady]);
 
-  //When countdown timer (previous to start recording) finishes
-  useEffect(() => {
-    if (finishedTimer) {
-      const playbackManager = playbackRef.current;
-      //playbackManager.play()
-
-      //Once countdown is finished, activate Pitch tracking
-      setPitch([]);
-      // setDynStability([]);
-      setConfidence([]);
-      setStartPitchTrack(true);
-      setShowPitchTrack(true);
-
-      //Start audioStreamer
-      audioStreamer.init(recordMode, [
-        "rms",
-        "spectralCentroid",
-        "spectralFlux",
-      ]);
-
-      //And play file, make cursor start
-      playbackManager.play();
-      //Timer work is done, false until next call
-      setShowTimer(false);
-    }
-    //Finished timer duties done, false until next call
-    setFinishedTimer(false);
-  }, [finishedTimer]);
-
   //Changing mode practice/record handler
   useEffect(() => {
     // PRACTICE MODE BUTTON -------------------------------------------------------------
@@ -497,7 +465,7 @@ const ProgressPlayFile = (props) => {
 
         if (recordInactive && canRecord) {
           //Recoding is wanted
-          setShowTimer(true); //initialize process of countdown, which will then lead to recording
+          setShowCountDownTimer(true); //initialize process of countdown, which will then lead to recording
         } else {
           //Recording is unwanted
           audioStreamer.close_not_save(); //when practice mode on, no saving
@@ -632,7 +600,7 @@ const ProgressPlayFile = (props) => {
 
         if (recordInactive) {
           //Recoding is wanted
-          setShowTimer(true); //initialize process of countdown, which will then lead to recording
+          setShowCountDownTimer(true); //initialize process of countdown, which will then lead to recording
         } else {
           //Recording is unwanted
           audioStreamer.close_maybe_save(); //when record mode is active, maybe we save
@@ -721,54 +689,130 @@ const ProgressPlayFile = (props) => {
     jsonToDownload,
   ]);
   //#endregion
-  const handleComplete = useCallback(() => {
-    setFinishedTimer(true);
+
+  const handleCountDownFinished = useCallback(() => {
+    setCountDownFinished(true);
   }, []);
 
+  // Resets the audio playback to its initial state
   const resetAudio = (playbackManager) => {
     playbackManager.pause();
     playbackManager.setPlaybackStart(0);
     playbackManager.reset();
   };
 
+  // Starts recording audio (whether in record or practice mode)
+  const recordAudio = (playbackManager) => {
+    resetAudio(playbackManager);
+
+    setRecordInactive(false);
+    setStartPitchTrack(true);
+    setShowCountDownTimer(true);
+  };
+
+  const stopRecordingAudio = (playbackManager) => {
+    audioStreamer.close_not_save();
+    setIsPlaying(false);
+    setStartPitchTrack(false);
+
+    resetAudio(playbackManager);
+  };
+
+  // Starts playing MIDI audio from the playback manager
+  const playAudio = (playbackManager) => {
+    playbackManager.play();
+  };
+
+  // Toggles the listening state of the audio playback
   const handleToggleListen = () => {
     const playbackManager = playbackRef.current;
-    if (playbackManager.isPlaying) {
+    if (isListening) {
       playbackManager.pause();
-      setIsListening(false); // because playbackManager.isPlaying is reversed
+      setIsListening(false);
     } else {
       if (isPlaying) {
+        // Sets playing to false and stop all audio if listen is toggled while playing
         setIsPlaying(false);
-        const playbackManager = playbackRef.current;
-        resetAudio(playbackManager);
+        stopRecordingAudio(playbackManager);
       }
 
-      setIsListening(true); // because playbackManager.isPlaying is reversed
-      playbackManager.play();
+      setIsListening(true);
+      playAudio(playbackManager);
     }
   };
 
+  // Toggles the playing state of the audio playback
   const handleTogglePlay = () => {
+    const playbackManager = playbackRef.current;
     if (isPlaying) {
       setIsPlaying(false);
+      resetAudio(playbackManager);
     } else {
       if (isListening) {
+        // Sets listening to false and stop all audio if play is toggled while listening
         setIsListening(false);
-        const playbackManager = playbackRef.current;
         resetAudio(playbackManager);
       }
       setIsPlaying(true);
+      recordAudio(playbackManager);
     }
   };
 
+  // Stop playing all audio whenever practice or record mode is toggled
   useEffect(() => {
     setIsListening(false);
+    setIsPlaying(false);
     const playbackManager = playbackRef.current;
 
     if (playbackManager) {
       resetAudio(playbackManager);
     }
   }, [practiceMode]);
+
+  // Set OSMD cursor back to start position when the whole piece is finished playing
+  useEffect(() => {
+    if (cursorFinished) {
+      const playbackManager = playbackRef.current;
+
+      resetAudio(playbackManager);
+      setCursorFinished(false);
+    }
+  }, [cursorFinished]);
+
+  useEffect(() => {
+    if (recordInactive) {
+      // playing in practice mode tracks sound quality without saving
+      const playbackManager = playbackRef.current;
+      if (playbackManager) stopRecordingAudio(playbackManager);
+    }
+  }, [recordInactive]);
+
+  // Start recording when the count down timer finishes
+  useEffect(() => {
+    if (countDownFinished) {
+      const playbackManager = playbackRef.current;
+
+      // Activate pitch tracking
+      setPitch([]);
+      setConfidence([]);
+      setStartPitchTrack(true);
+      setShowPitchTrack(true);
+
+      // Start recording with audio streamer
+      audioStreamer.init(!practiceMode, [
+        "rms",
+        "spectralCentroid",
+        "spectralFlux",
+      ]);
+
+      // Play MIDI audio playback
+      playAudio(playbackManager);
+      setShowCountDownTimer(false);
+    }
+
+    // Reset count down timer when recording is finished
+    setCountDownFinished(false);
+  }, [countDownFinished]);
 
   //#region RETURN
   return (
@@ -790,7 +834,7 @@ const ProgressPlayFile = (props) => {
           pitchConfidence={confidence}
           startPitchTrack={startPitchTrack}
           showPitchTrack={showPitchTrack}
-          recordVol={recordVolume}
+          recordVol={recordVolume / 100}
           isResetButtonPressed={isResetButtonPressed}
           repeatsIterator={repeatsIterator}
           showRepeatsInfo={handleReceiveRepetitionInfo}
@@ -809,22 +853,29 @@ const ProgressPlayFile = (props) => {
           onBpmChange={(newBpm) => setBpm(newBpm)}
           onVolumeChange={(newVolume) => setRecordVolume(newVolume)}
           onModeChange={(newMode) => setPracticeMode(newMode)}
-          isListening={isListening}
           onToggleListen={handleToggleListen}
-          isPlaying={isPlaying}
           onTogglePlay={handleTogglePlay}
+          onReset={() => {
+            const playbackManager = playbackRef.current;
+            resetAudio(playbackManager);
+
+            setIsListening(false);
+            setIsPlaying(false);
+          }}
+          isListening={isListening}
+          isPlaying={isPlaying}
         />
       </div>
 
-      {/* {showTimer ? (
-        <CountdownTimer
-          bpm={bpmChange}
+      {showCountDownTimer ? (
+        <CountDownTimer
+          bpm={bpm}
           mode={practiceMode}
-          onComplete={handleComplete}
+          onCountDownFinished={handleCountDownFinished}
         />
       ) : null}
 
-      {practiceMode === true && recordMode === false ? (
+      {/* {practiceMode === true && recordMode === false ? (
         <ControlBar
           cursorFinished={cursorFinished}
           cursorFinishedCallback={handleFinishedCursorControlBarCallback}

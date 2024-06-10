@@ -9,6 +9,7 @@ import {
   VolumeUp as VolumeIcon,
   Hearing as ListenIcon,
   HearingDisabled as ListenPauseIcon,
+  RestartAlt as ResetIcon,
 } from "@mui/icons-material";
 import IconButton from "@mui/material/IconButton";
 import Tooltip from "@mui/material/Tooltip";
@@ -25,13 +26,11 @@ const ControlBarAlt = ({
   onModeChange,
   onToggleListen,
   onTogglePlay,
+  onReset,
   isListening,
   isPlaying,
 }) => {
   const [practiceModeOn, setPracticeModeOn] = useState(true);
-  const [transpose, setTranspose] = useState(initialTranspose);
-  const [bpm, setBpm] = useState(initialBpm);
-  const [volume, setVolume] = useState(initialVolume);
 
   const allModeIcons = [
     {
@@ -40,9 +39,8 @@ const ControlBarAlt = ({
       min: -12,
       max: 12,
       initial: initialTranspose,
-      handleValueChange: (newValue) => {
-        setTranspose(newValue);
-        onTransposeChange(transpose);
+      handleValueChange: (newTranspose) => {
+        onTransposeChange(newTranspose);
       },
     },
     {
@@ -51,9 +49,8 @@ const ControlBarAlt = ({
       min: 30,
       max: 200,
       initial: initialBpm,
-      handleValueChange: (newValue) => {
-        setBpm(newValue);
-        onBpmChange(bpm);
+      handleValueChange: (newBpm) => {
+        onBpmChange(newBpm);
       },
     },
     {
@@ -62,13 +59,21 @@ const ControlBarAlt = ({
       min: 0,
       max: 100,
       initial: initialVolume,
-      handleValueChange: (newValue) => {
-        setVolume(newValue);
-        onVolumeChange(volume);
+      handleValueChange: (newVolume) => {
+        onVolumeChange(newVolume);
       },
     },
   ];
+
   const practiceModeIcons = [
+    {
+      tooltip: "Reset",
+      iconPlay: <ResetIcon className="text-4xl" />,
+      iconPause: <ResetIcon className="text-4xl" />,
+      toggle: () => {
+        onReset();
+      },
+    },
     {
       tooltip: isListening ? "Stop Listening" : "Listen",
       iconPlay: <ListenIcon className="text-4xl" />,
@@ -79,7 +84,7 @@ const ControlBarAlt = ({
       flag: isListening,
     },
     {
-      tooltip: "Play",
+      tooltip: isPlaying ? "Stop Practicing" : "Practice",
       iconPlay: <PlayIcon className="text-4xl" />,
       iconPause: <PauseIcon className="text-4xl" />,
       toggle: () => {
@@ -88,6 +93,7 @@ const ControlBarAlt = ({
       flag: isPlaying,
     },
   ];
+
   const recordModeIcons = [
     { tooltip: "Record", icon: <RecordIcon className="text-4xl" /> },
   ];
