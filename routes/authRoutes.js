@@ -1,6 +1,6 @@
 import express from "express";
 const router = express.Router();
-import { register, login, updateUser, updateProfileData, getProfileData } from "../controllers/authController.js";
+import { register, login, updateUser, getProfileData } from "../controllers/authController.js";
 import authenticateUser from "../middleware-jb/authenticateUser.js";
 
 import bodyParser from 'body-parser';
@@ -13,8 +13,6 @@ const formParser = bodyParser.urlencoded({ extended: false });
 router.route("/register").post(register);
 router.route("/login").post(login);
 router.route("/updateUser").patch(authenticateUser, formParser, updateUser);
-router.route("/updateProfileData").post(authenticateUser, formParser, updateProfileData);
-//router.route("/updateProfileData").post(updateProfileData);
 router.route("/getProfileData").get(getProfileData);
 
 export default router;

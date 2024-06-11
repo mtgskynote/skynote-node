@@ -15,6 +15,7 @@ import scoreRouter from "./routes/scoreRoutes.js";
 import recordingRouter from "./routes/recordingRoutes.js";
 import messageRouter from "./routes/messageRoutes.js";
 import assignmentRouter from "./routes/assignmentRoutes.js";
+import profileRouter from "./routes/profileRoutes.js";
 
 // middleware
 import notFoundMiddleWare from "./middleware-jb/not-found.js";
@@ -59,6 +60,7 @@ app.use("/api/v1/scores", scoreRouter);
 app.use("/api/v1/recordings", recordingRouter);
 app.use("/api/v1/assignments", assignmentRouter);
 app.use("/api/v1/messages", messageRouter);
+app.use("/api/v1/profile", profileRouter);
 
 // only when ready to deploy
 app.get("*", function (request, response) {
