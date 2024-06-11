@@ -81,15 +81,19 @@ var makeAudioStreamer = function (
         }
       };
 
-      mediaRecorder.onstop = () => {
-        console.log('----------MediaRecorder stopped');
-        const audioBlob = new Blob(audioChunks, { type: 'audio/wav' });
-        const audioUrl = URL.createObjectURL(audioBlob);
-        const audio = document.getElementById('audioPlayback');
-        audio.src = audioUrl;
-        audioChunks = [];
+      // mediaRecorder.onstop = () => {
+      //   console.log('----------MediaRecorder stopped');
+      //   const audioBlob = new Blob(audioChunks, { type: 'audio/wav' });
+      //   const audioUrl = URL.createObjectURL(audioBlob);
+      //   const audio = document.getElementById('audioPlayback');
+      //   if (! audio) {
+      //     console.log('No audio element to play back - Should the audio save dialog box return a file name first, or what ?????');
+      //   } else {
+      //     audio.src = audioUrl;
+      //   }
+      //   audioChunks = [];
 
-      };
+      // };
 
 
 
