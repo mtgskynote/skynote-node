@@ -1,35 +1,30 @@
 import React, { useState, useRef, useEffect } from "react";
-import RangeSlider from "./RangeSlider";
+import RangeInput from "./RangeInput";
 
 const ControlBarPopover = ({
   children,
-  label,
-  min,
-  max,
-  initial,
-  onValueChange,
+  labels,
+  mins,
+  maxs,
+  initials,
+  onValueChanges,
 }) => {
   const [isOpen, setIsOpen] = useState(false);
-  const [value, setValue] = useState(initial);
   const popoverRef = useRef(null);
 
+  // Toggles the control bar popover visibility (open or closed)
   const handleClick = () => {
     setIsOpen(!isOpen);
   };
 
-  const handleValueChange = (e) => {
-    setValue(e.target.value);
-    if (onValueChange) {
-      onValueChange(e.target.value);
-    }
-  };
-
+  // Handles closing the control bar popover when a user clicks outside the popover
   const handleClickOutside = (event) => {
     if (popoverRef.current && !popoverRef.current.contains(event.target)) {
       setIsOpen(false);
     }
   };
 
+  // Adds and removes a mousedown event listener for closing the popover when clicking outside of it
   useEffect(() => {
     document.addEventListener("mousedown", handleClickOutside);
     return () => {
@@ -59,28 +54,16 @@ const ControlBarPopover = ({
           aria-orientation="vertical"
           aria-labelledby="options-menu"
         >
-          <div className="flex items-center">
-            <label htmlFor="value" className="mr-3 font-bold text-gray-500">
-              {label}
-            </label>
-            <RangeSlider
-              min={min}
-              max={max}
-              initial={value}
-              onValueChange={handleValueChange}
-              className="w-1/2"
+          {labels.map((label, index) => (
+            <RangeInput
+              key={index}
+              label={label}
+              min={mins[index]}
+              max={maxs[index]}
+              initial={initials[index]}
+              onValueChange={onValueChanges[index]}
             />
-            <input
-              className="ml-3 shadow-sm appearance-none border rounded w-full py-2 px-2 text-gray-700 leading-tight focus:outline-none focus:shadow-outline w-1/2"
-              id="value"
-              type="number"
-              name="value"
-              min={min}
-              max={max}
-              value={value}
-              onChange={handleValueChange}
-            />
-          </div>
+          ))}
         </div>
       </div>
     </div>

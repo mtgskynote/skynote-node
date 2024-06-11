@@ -47,9 +47,9 @@ const ProgressPlayFile = (props) => {
   const [userFileName, setUserFileName] = useState("");
 
   //Parameters that will be sent to OSMD
-  const [metroVol, setMetroVol] = useState(0);
+  const [metronomeVolume, setMetronomeVolume] = useState(0);
   const [bpm, setBpm] = useState(100); // BPM always set to 100 cause the scores don't have BPMs
-  const [recordVolume, setRecordVolume] = useState(50);
+  const [midiVolume, setMidiVolume] = useState(50);
   const [zoom, setZoom] = useState(1.0);
   const [transpose, setTranspose] = useState(0);
 
@@ -504,41 +504,6 @@ const ProgressPlayFile = (props) => {
       // resetButton.addEventListener("click", handleResetButtonClick);
       //--------------------------------------------------------------------------------
 
-      // PLAY/PAUSE BUTTON -------------------------------------------------------------
-      // gets the playback manager and sets the start time to the current time
-      // plays the music where the cursor is
-      const playButton = document.getElementById("play/pause");
-      const handlePlayButtonClick = () => {
-        const playbackManager = playbackRef.current;
-
-        if (playbackManager.isPlaying) {
-          playbackManager.pause();
-        } else {
-          playbackManager.play();
-        }
-      };
-      // playButton.addEventListener("click", handlePlayButtonClick);
-      //--------------------------------------------------------------------------------
-
-      // SETTINGS SLIDERS --------------------------------------------------------------
-      const settingsSliders = document.getElementById("settings");
-
-      const handleSettings = (event) => {
-        //Check which setting slider has been clicked
-        const sliderId = event.target.id;
-        if (sliderId === "volume-slider") {
-          setRecordVolume(event.target.value);
-        } else if (sliderId === "zoom-slider") {
-          setZoom(event.target.value);
-        } else if (sliderId === "bpm-slider") {
-          setBpm(event.target.value);
-        } else if (sliderId === "metroVol-slider") {
-          setMetroVol(event.target.value);
-        }
-      };
-      // settingsSliders.addEventListener("click", handleSettings);
-      //--------------------------------------------------------------------------------
-
       // SWITCH BETWEEN REPETITION/RECORDING LAYERS ------------------------------------
       const repeatLayersButton = document.getElementById("switchRepetition");
       const handleRepeatLayersButtonClick = () => {
@@ -613,56 +578,6 @@ const ProgressPlayFile = (props) => {
         }
       };
 
-      // recordButton.addEventListener("click", handleRecordButtonClick);
-      //--------------------------------------------------------------------------------
-
-      // PLAY/PAUSE BUTTON -------------------------------------------------------------
-      // gets the playback manager and sets the start time to the current time
-      // plays the music where the cursor is
-      const playButton = document.getElementById("play/pause");
-      const handlePlayButtonClick = () => {
-        const playbackManager = playbackRef.current;
-        if (playbackManager.isPlaying) {
-          playbackManager.pause();
-        } else {
-          playbackManager.play();
-        }
-      };
-      // playButton.addEventListener("click", handlePlayButtonClick);
-      //--------------------------------------------------------------------------------
-
-      // SETTINGS SLIDERS --------------------------------------------------------------
-      const settingsSliders = document.getElementById("settings");
-
-      const handleSettings = (event) => {
-        //Check which setting slider has been clicked
-        const sliderId = event.target.id;
-        if (sliderId === "volume-slider") {
-          setRecordVolume(event.target.value);
-        } else if (sliderId === "zoom-slider") {
-          setZoom(event.target.value);
-        } else if (sliderId === "bpm-slider") {
-          setBpm(event.target.value);
-        } else if (sliderId === "metroVol-slider") {
-          setMetroVol(event.target.value);
-        }
-      };
-      // settingsSliders.addEventListener("click", handleSettings);
-      //--------------------------------------------------------------------------------
-
-      // GO TO SAVINGS BUTTON  ------------------------------------
-      const savedButton = document.getElementById("saved");
-      const handleSavedButtonClick = () => {
-        const score = `${params.files}`;
-        const song = `${scoreTitle}`;
-        const typeList = "single-song";
-
-        // Use navigate to go to the ListRecordings page with parameters in the URL
-        navigate("/ListRecordings", { state: { score, song, typeList } });
-      };
-      // savedButton.addEventListener("click", handleSavedButtonClick);
-      //--------------------------------------------------------------------------------
-
       //Add new pitch value to pitch array
       if (pitchValue) {
         setPitch([...pitch, pitchValue]);
@@ -676,7 +591,7 @@ const ProgressPlayFile = (props) => {
       };
     }
   }, [
-    recordVolume,
+    midiVolume,
     zoom,
     recordInactive,
     pitchValue,
@@ -694,14 +609,21 @@ const ProgressPlayFile = (props) => {
     setCountDownFinished(true);
   }, []);
 
-  // Resets the audio playback to its initial state
+  // Reset the audio playback to its initial state
   const resetAudio = (playbackManager) => {
     playbackManager.pause();
     playbackManager.setPlaybackStart(0);
     playbackManager.reset();
+
+    setStartPitchTrack(false);
+    setShowPitchTrack(false);
+    setPitch([]);
+    setDynamicValue([]);
+    setConfidence([]);
+    setRecordInactive(true);
   };
 
-  // Starts recording audio (whether in record or practice mode)
+  // Start recording audio (whether in record or practice mode)
   const recordAudio = (playbackManager) => {
     resetAudio(playbackManager);
 
@@ -710,20 +632,24 @@ const ProgressPlayFile = (props) => {
     setShowCountDownTimer(true);
   };
 
+  // Stop recording audio
   const stopRecordingAudio = (playbackManager) => {
-    audioStreamer.close_not_save();
+    console.log("STOPPED RECORDING AUDIO");
+    if (practiceMode) audioStreamer.close_not_save();
+    else audioStreamer.close_maybe_save();
+
     setIsPlaying(false);
     setStartPitchTrack(false);
 
     resetAudio(playbackManager);
   };
 
-  // Starts playing MIDI audio from the playback manager
+  // Start playing MIDI audio from the playback manager
   const playAudio = (playbackManager) => {
     playbackManager.play();
   };
 
-  // Toggles the listening state of the audio playback
+  // Toggle the listening state of the audio playback
   const handleToggleListen = () => {
     const playbackManager = playbackRef.current;
     if (isListening) {
@@ -731,7 +657,7 @@ const ProgressPlayFile = (props) => {
       setIsListening(false);
     } else {
       if (isPlaying) {
-        // Sets playing to false and stop all audio if listen is toggled while playing
+        // Set playing to false and stop all audio if listen is toggled while playing
         setIsPlaying(false);
         stopRecordingAudio(playbackManager);
       }
@@ -741,7 +667,7 @@ const ProgressPlayFile = (props) => {
     }
   };
 
-  // Toggles the playing state of the audio playback
+  // Toggle the playing state of the audio playback
   const handleTogglePlay = () => {
     const playbackManager = playbackRef.current;
     if (isPlaying) {
@@ -749,13 +675,22 @@ const ProgressPlayFile = (props) => {
       resetAudio(playbackManager);
     } else {
       if (isListening) {
-        // Sets listening to false and stop all audio if play is toggled while listening
+        // Set listening to false and stop all audio if play is toggled while listening
         setIsListening(false);
         resetAudio(playbackManager);
       }
       setIsPlaying(true);
       recordAudio(playbackManager);
     }
+  };
+
+  // Navigate to all recordings for this particular score
+  const handleViewAllRecordings = () => {
+    const score = `${params.files}`;
+    const song = `${scoreTitle}`;
+    const typeList = "single-song";
+
+    navigate("/ListRecordings", { state: { score, song, typeList } });
   };
 
   // Stop playing all audio whenever practice or record mode is toggled
@@ -779,9 +714,9 @@ const ProgressPlayFile = (props) => {
     }
   }, [cursorFinished]);
 
+  // Stop recording audio when recording is inactive (either paused or finished)
   useEffect(() => {
     if (recordInactive) {
-      // playing in practice mode tracks sound quality without saving
       const playbackManager = playbackRef.current;
       if (playbackManager) stopRecordingAudio(playbackManager);
     }
@@ -825,7 +760,7 @@ const ProgressPlayFile = (props) => {
           autoResize={true}
           cursorRef={cursorRef}
           playbackRef={playbackRef}
-          metroVol={metroVol}
+          metroVol={metronomeVolume / 100}
           bpm={bpm}
           zoom={zoom}
           followCursor={true}
@@ -834,7 +769,7 @@ const ProgressPlayFile = (props) => {
           pitchConfidence={confidence}
           startPitchTrack={startPitchTrack}
           showPitchTrack={showPitchTrack}
-          recordVol={recordVolume / 100}
+          recordVol={midiVolume / 100}
           isResetButtonPressed={isResetButtonPressed}
           repeatsIterator={repeatsIterator}
           showRepeatsInfo={handleReceiveRepetitionInfo}
@@ -851,7 +786,10 @@ const ProgressPlayFile = (props) => {
         <ControlBarAlt
           onTransposeChange={(newTranspose) => setTranspose(newTranspose)}
           onBpmChange={(newBpm) => setBpm(newBpm)}
-          onVolumeChange={(newVolume) => setRecordVolume(newVolume)}
+          onMidiVolumeChange={(newVolume) => setMidiVolume(newVolume)}
+          onMetronomeVolumeChange={(newMetronomeVolume) =>
+            setMetronomeVolume(newMetronomeVolume)
+          }
           onModeChange={(newMode) => setPracticeMode(newMode)}
           onToggleListen={handleToggleListen}
           onTogglePlay={handleTogglePlay}
@@ -862,6 +800,11 @@ const ProgressPlayFile = (props) => {
             setIsListening(false);
             setIsPlaying(false);
           }}
+          onRecord={() => {
+            const playbackManager = playbackRef.current;
+            recordAudio(playbackManager);
+          }}
+          handleViewAllRecordings={handleViewAllRecordings}
           isListening={isListening}
           isPlaying={isPlaying}
         />

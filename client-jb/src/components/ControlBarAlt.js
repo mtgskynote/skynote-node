@@ -17,16 +17,20 @@ import ControlBarPopover from "./ControlBarPopover";
 
 const initialTranspose = 0;
 const initialBpm = 100;
-const initialVolume = 50;
+const initialMidiVolume = 50;
+const initialMetronomeVolume = 0;
 
 const ControlBarAlt = ({
   onTransposeChange,
   onBpmChange,
-  onVolumeChange,
+  onMidiVolumeChange,
+  onMetronomeVolumeChange,
   onModeChange,
   onToggleListen,
   onTogglePlay,
   onReset,
+  onRecord,
+  handleViewAllRecordings,
   isListening,
   isPlaying,
 }) => {
@@ -36,32 +40,29 @@ const ControlBarAlt = ({
     {
       tooltip: "Transpose",
       icon: <TransposeIcon className="text-4xl" />,
-      min: -12,
-      max: 12,
-      initial: initialTranspose,
-      handleValueChange: (newTranspose) => {
-        onTransposeChange(newTranspose);
-      },
+      labels: ["Transpose"],
+      mins: [-12],
+      maxs: [12],
+      initials: [initialTranspose],
+      onChanges: [onTransposeChange],
     },
     {
       tooltip: "BPM",
       icon: <BpmIcon className="text-4xl" />,
-      min: 30,
-      max: 200,
-      initial: initialBpm,
-      handleValueChange: (newBpm) => {
-        onBpmChange(newBpm);
-      },
+      labels: ["BPM", "Metro Vol"],
+      mins: [30, 0],
+      maxs: [200, 100],
+      initials: [initialBpm, initialMetronomeVolume],
+      onChanges: [onBpmChange, onMetronomeVolumeChange],
     },
     {
       tooltip: "Volume",
       icon: <VolumeIcon className="text-4xl" />,
-      min: 0,
-      max: 100,
-      initial: initialVolume,
-      handleValueChange: (newVolume) => {
-        onVolumeChange(newVolume);
-      },
+      labels: ["Volume"],
+      mins: [0],
+      maxs: [100],
+      initials: [initialMidiVolume],
+      onChanges: [onMidiVolumeChange],
     },
   ];
 
@@ -70,34 +71,33 @@ const ControlBarAlt = ({
       tooltip: "Reset",
       iconPlay: <ResetIcon className="text-4xl" />,
       iconPause: <ResetIcon className="text-4xl" />,
-      toggle: () => {
-        onReset();
-      },
+      toggle: onReset,
     },
     {
       tooltip: isListening ? "Stop Listening" : "Listen",
       iconPlay: <ListenIcon className="text-4xl" />,
       iconPause: <ListenPauseIcon className="text-4xl" />,
-      toggle: () => {
-        onToggleListen();
-      },
+      toggle: onToggleListen,
       flag: isListening,
     },
     {
       tooltip: isPlaying ? "Stop Practicing" : "Practice",
       iconPlay: <PlayIcon className="text-4xl" />,
       iconPause: <PauseIcon className="text-4xl" />,
-      toggle: () => {
-        onTogglePlay();
-      },
+      toggle: onTogglePlay,
       flag: isPlaying,
     },
   ];
 
   const recordModeIcons = [
-    { tooltip: "Record", icon: <RecordIcon className="text-4xl" /> },
+    {
+      tooltip: "Record",
+      icon: <RecordIcon className="text-4xl" />,
+      toggle: onRecord,
+    },
   ];
 
+  // Sets the current mode state and passes this state up the parent components
   const handleModeChange = (newMode) => {
     setPracticeModeOn(newMode);
     onModeChange(newMode);
@@ -125,7 +125,7 @@ const ControlBarAlt = ({
               ))
             : recordModeIcons.map((modeIcon, index) => (
                 <Tooltip title={modeIcon.tooltip} key={index}>
-                  <IconButton className="text-white">
+                  <IconButton className="text-white" onClick={modeIcon.toggle}>
                     {modeIcon.icon}
                   </IconButton>
                 </Tooltip>
@@ -133,11 +133,11 @@ const ControlBarAlt = ({
           {allModeIcons.map((modeIcon, index) => (
             <ControlBarPopover
               key={index}
-              label={modeIcon.tooltip}
-              min={modeIcon.min}
-              max={modeIcon.max}
-              initial={modeIcon.initial}
-              onValueChange={(newValue) => modeIcon.handleValueChange(newValue)}
+              labels={modeIcon.labels}
+              mins={modeIcon.mins}
+              maxs={modeIcon.maxs}
+              initials={modeIcon.initials}
+              onValueChanges={modeIcon.onChanges}
             >
               <Tooltip title={modeIcon.tooltip}>
                 <IconButton className="text-white">{modeIcon.icon}</IconButton>
@@ -149,7 +149,10 @@ const ControlBarAlt = ({
         <div className="mr-6 h-full w-0.5 self-stretch bg-neutral-100 dark:bg-white/10"></div>
 
         <div>
-          <button className="ml-auto hover:cursor-pointer transition ease-in-out delay-50 text-center text-gray-700 border-transparent focus:border-transparent focus:ring-0 focus:outline-none bg-slate-50 hover:bg-red-600 hover:text-white font-extralight hover:font-bold py-1 px-2 rounded-l-none outline-none rounded">
+          <button
+            onClick={handleViewAllRecordings}
+            className="ml-auto hover:cursor-pointer transition ease-in-out delay-50 text-center text-gray-700 border-transparent focus:border-transparent focus:ring-0 focus:outline-none bg-slate-50 hover:bg-red-600 hover:text-white font-extralight hover:font-bold py-1 px-2 rounded-l-none outline-none rounded"
+          >
             View All Recordings
           </button>
         </div>
