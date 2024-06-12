@@ -84,7 +84,7 @@ const ProgressPlayFile = (props) => {
   );
 
   const [cursorFinished, setCursorFinished] = useState(false);
-  const [showPopUpWindow, setShowPopUpWindow] = useState(false);
+  const [showSaveRecordingPopUp, setShowSaveRecordingPopUp] = useState(false);
   const [jsonToDownload, setJsonToDownload] = useState();
 
   const [practiceMode, setPracticeMode] = useState(true);
@@ -195,31 +195,6 @@ const ProgressPlayFile = (props) => {
       info: jsonData,
     };
 
-    /////////////////////////////////////////////////////////////////////////////////////
-    ///////////CODE TO DOWNLOAD LOCALLY THE JSON THAT IS UPLOADED TO DATABASE////////////
-    /////////////////////////////////////////////////////////////////////////////////////
-    //This is currently unused cause we don't allow to download the files, but might be
-    //useful in the future?? Otherwise it can be deleted :)
-    /*
-    // Convert the combined data to a JSON string
-    const jsonString = JSON.stringify(jsonComplete);
-    // Create a Blob from the JSON string
-    const blob = new Blob([jsonString], { type: "application/json" });
-    // Create a download link
-    const url = URL.createObjectURL(blob);
-    // Create a link element
-    const link = document.createElement("a");
-    link.href = url;
-    link.download = "yourFileName.json"; // Set the desired file name
-    // Append the link to the document
-    document.body.appendChild(link);
-    // Trigger a click on the link to start the download
-    link.click();
-    // Remove the link from the document
-    document.body.removeChild(link);
-    */
-    ///////////////////////////////////////////////////////////////////////////
-
     //Upload info to database
     try {
       await putRecording(jsonComplete);
@@ -264,11 +239,11 @@ const ProgressPlayFile = (props) => {
   const handleSaveDeleteWindowPopUp = (windowShow, answer, fileName) => {
     if (windowShow) {
       //recording stopped or cursor finished --> pop up window
-      setShowPopUpWindow(true);
+      setShowSaveRecordingPopUp(true);
     } else {
       //user already choose save or delete options --> hide window
       //hide pop-up window
-      setShowPopUpWindow(false);
+      setShowSaveRecordingPopUp(false);
       //Depending on answer save or delete:
       if (answer === "delete") {
         audioStreamer.save_or_not(answer); //No save wanted
@@ -483,7 +458,7 @@ const ProgressPlayFile = (props) => {
       // RESET BUTTON ------------------------------------------------------------------
       const resetButton = document.getElementById("reset");
       const handleResetButtonClick = () => {
-        setShowPopUpWindow(false);
+        setShowSaveRecordingPopUp(false);
         audioStreamer.close_not_save(); //when practice mode is on, no saving
         setIsResetButtonPressed(true);
         const playbackManager = playbackRef.current;
@@ -634,9 +609,11 @@ const ProgressPlayFile = (props) => {
 
   // Stop recording audio
   const stopRecordingAudio = (playbackManager) => {
-    console.log("STOPPED RECORDING AUDIO");
     if (practiceMode) audioStreamer.close_not_save();
-    else audioStreamer.close_maybe_save();
+    else {
+      audioStreamer.close_maybe_save();
+      setShowSaveRecordingPopUp(true);
+    }
 
     setIsPlaying(false);
     setStartPitchTrack(false);
@@ -691,6 +668,27 @@ const ProgressPlayFile = (props) => {
     const typeList = "single-song";
 
     navigate("/ListRecordings", { state: { score, song, typeList } });
+  };
+
+  const handleSaveRecording = (fileName) => {
+    setShowSaveRecordingPopUp(false);
+
+    setUserFileName(fileName);
+    setCanDownload(true); //raise flag order to initiate downloading process (json in OSMD)
+    setPitch([]);
+    setConfidence([]);
+
+    const playbackManager = playbackRef.current;
+    resetAudio(playbackManager);
+  };
+
+  const handleDeleteRecording = () => {
+    setShowSaveRecordingPopUp(false);
+
+    audioStreamer.save_or_not("delete");
+    setPitch([]);
+    setConfidence([]);
+    setIsResetButtonPressed(true);
   };
 
   // Stop playing all audio whenever practice or record mode is toggled
@@ -818,6 +816,13 @@ const ProgressPlayFile = (props) => {
         />
       ) : null}
 
+      {showSaveRecordingPopUp && (
+        <PopUpWindow
+          onSaveRecording={handleSaveRecording}
+          onDeleteRecording={handleDeleteRecording}
+        />
+      )}
+
       {/* {practiceMode === true && recordMode === false ? (
         <ControlBar
           cursorFinished={cursorFinished}
@@ -830,9 +835,9 @@ const ProgressPlayFile = (props) => {
         />
       )}
 
-      {showPopUpWindow && (
+      {showSaveRecordingPopUp && (
         <PopUpWindow
-          showWindow={showPopUpWindow}
+          showWindow={showSaveRecordingPopUp}
           handlerBack={handleSaveDeleteWindowPopUp}
         />
       )}
