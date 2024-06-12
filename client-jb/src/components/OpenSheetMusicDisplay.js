@@ -463,7 +463,7 @@ class OpenSheetMusicDisplay extends Component {
 
     //if recording active
     if (this.props.startPitchTrack) {
-      //Check for repetitions
+      console.log("TRACKING PITCH");
       if (this.previousTimestamp > cursorCurrent) {
         // Cursor moved back, repetition detected
         this.totalReps++;
