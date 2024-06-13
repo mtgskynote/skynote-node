@@ -1,78 +1,32 @@
-import { useEffect, useState } from "react";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { Button } from "@material-ui/core";
-import ModeInfoButton from "./ModeInfoButton.js";
-import ModeToggleCSS from "./ModeToggle.module.css";
-//import { Dropdown } from "react-bootstrap";
+import React, { useState } from "react";
+import ModeIcon from "@mui/icons-material/Mode";
+import MicIcon from "@mui/icons-material/Mic";
 
-import {
-  faGamepad, //practice mode
-  faPen, //record mode
-} from "@fortawesome/free-solid-svg-icons";
+const ModeToggle = ({ onModeChange }) => {
+  const [practiceModeOn, setPracticeModeOn] = useState(true);
 
-const ModeToggle = (props) => {
-  //Volume, bpm and zoom variables
-  const [practiceMode, setPracticeMode] = useState(props.practiceMode);
-  const [recordMode, setRecordMode] = useState(props.recordMode);
-
-  useEffect(() => {
-    setPracticeMode(props.practiceMode);
-    setRecordMode(props.recordMode);
-  }, [props]);
-
-  //record mode button
-  const handleRecordMode = () => {
-    console.log("Recording mode");
-    setPracticeMode(false);
-    setRecordMode(true);
+  const toggleMode = () => {
+    const newMode = !practiceModeOn;
+    setPracticeModeOn(newMode);
+    onModeChange(newMode);
   };
 
-  //practice mode button
-  const handlePracticeMode = () => {
-    console.log("Practice mode");
-    setPracticeMode(true);
-    setRecordMode(false);
-  };
-
-  const icons = [faGamepad, faPen];
-  const handlers = [handlePracticeMode, handleRecordMode];
-
-  const ModeToggle = (
-    <div className={ModeToggleCSS.completeModeDiv}>
-      <div className={ModeToggleCSS.modeToggleDiv}>
-        <Button
-          key={"PracticeMode"}
-          className={ModeToggleCSS.toggleBtn}
-          title={practiceMode ? "PracticeModeON" : "PracticeModeOFF"}
-          id={"PracticeMode"}
-          onClick={() => handlers[0]("PracticeMode")}
-        >
-          <div>
-            <FontAwesomeIcon
-              icon={icons[0]} //Practice button
-            />
-          </div>
-        </Button>
-
-        <Button
-          key={"RecordMode"}
-          className={ModeToggleCSS.toggleBtn}
-          title={recordMode ? "RecordModeON" : "RecordModeOFF"}
-          id={"RecordMode"}
-          onClick={() => handlers[1]("RecordMode")}
-        >
-          <div>
-            <FontAwesomeIcon
-              icon={icons[1]} //Recording button
-            />
-          </div>
-        </Button>
+  return (
+    <button
+      className="w-20 h-10 rounded-full bg-white flex items-center transition duration-300 focus:outline-none shadow border-none"
+      onClick={toggleMode}
+    >
+      <div
+        className={`w-12 h-12 relative rounded-full transition duration-500 transform p-1 text-white flex items-center justify-center ${
+          practiceModeOn
+            ? "bg-green-500 -translate-x-2"
+            : "bg-red-500 translate-x-7"
+        }`}
+      >
+        {practiceModeOn ? <ModeIcon /> : <MicIcon />}
       </div>
-      <ModeInfoButton message={1} />
-    </div>
+    </button>
   );
-
-  return ModeToggle;
 };
 
 export default ModeToggle;

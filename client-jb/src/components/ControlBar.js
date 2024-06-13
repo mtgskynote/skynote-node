@@ -1,258 +1,182 @@
-import { useEffect, useState } from "react";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { Button } from "@material-ui/core";
-import { Dropdown } from "react-bootstrap";
-import ControlBarCSS from "./ControlBar.module.css";
-
+import React, { useState } from "react";
+import ModeToggle from "./ModeToggle";
 import {
-  faUndoAlt,
-  faPlay,
-  faPause,
-  faRecordVinyl,
-  faBullseye,
-  faVolumeHigh,
-  faGauge,
-  faMagnifyingGlassMinus,
-  faWater,
-  faGear,
-} from "@fortawesome/free-solid-svg-icons";
+  PlayCircle as PlayIcon,
+  PauseCircle as PauseIcon,
+  RadioButtonChecked as RecordIcon,
+  ImportExport as TransposeIcon,
+  AccessTime as BpmIcon,
+  VolumeUp as VolumeIcon,
+  Hearing as ListenIcon,
+  HearingDisabled as ListenPauseIcon,
+  RestartAlt as ResetIcon,
+} from "@mui/icons-material";
+import IconButton from "@mui/material/IconButton";
+import Tooltip from "@mui/material/Tooltip";
+import ControlBarPopover from "./ControlBarPopover";
 
-const ControlBar = (props) => {
-  //Volume, bpm and zoom variables
-  const [volume, setVolume] = useState(0.5);
-  const [bpm, setBPM] = useState(100);
-  const [zoom, setZoom] = useState(1);
-  const [metronomeVol, setMetronomeVol] = useState(0);
+const initialTranspose = 0;
+const initialBpm = 100;
+const initialMidiVolume = 50;
+const initialMetronomeVolume = 0;
 
-  useEffect(() => {
-    if (props.cursorFinished) {
-      //cursor finished -->same actions as in reset
-      setIsPlaying(true);
-      setRecordingOff(true);
-      //Change cursorFinished state in parent component
-      props.cursorFinishedCallback(false);
-    }
-  }, [props]);
+const ControlBar = ({
+  onTransposeChange,
+  onBpmChange,
+  onMidiVolumeChange,
+  onMetronomeVolumeChange,
+  onModeChange,
+  onToggleListen,
+  onTogglePlay,
+  onReset,
+  onRecord,
+  handleViewAllRecordings,
+  isListening,
+  isPlaying,
+  isRecording,
+}) => {
+  const [practiceModeOn, setPracticeModeOn] = useState(true);
 
-  /*if (props.cursorFinished !== prevProps.cursorFinished) {
-    //cursor finished the score --> reset button values
-    setIsPlaying(true)
-    setRecordingOff(true)
-  }
-  var prevProps=props; //save*/
-
-  //PLAY/PAUSE variable
-  const [isPlayingOn, setIsPlaying] = useState(true);
-  const handlePlayPause = () => {
-    setIsPlaying(!isPlayingOn);
-    // Add logic to handle the play/pause action here
-  };
-
-  //record variable
-  const [recordingOff, setRecordingOff] = useState(true);
-  const handleRecord = () => {
-    setRecordingOff(!recordingOff);
-  };
-
-  //Settings-visible variable
-  const [isSettingsVisible, setIsSettingsVisible] = useState(false);
-  const handleToggleSettings = () => {
-    // Toggle the visibility of the settings panel
-    setIsSettingsVisible(!isSettingsVisible);
-  };
-
-  //Volume change
-  const handleVolumeChange = (event) => {
-    // Handle volume slider change
-    setVolume(event.target.value);
-    // Update the volume state or perform any other necessary actions
-  };
-
-  //BPM change
-  const handleBPMChange = (event) => {
-    // Handle BPM slider change
-    setBPM(event.target.value);
-    // Update the BPM state or perform any other necessary actions
-  };
-
-  //Zoom change
-  const handleZoomChange = (event) => {
-    // Handle zoom slider change
-    setZoom(event.target.value);
-    // Update the zoom state or perform any other necessary actions
-  };
-
-  //Metronome Volume change
-  const handleMetroVolChange = (event) => {
-    // Handle MetroVol slider change
-    setMetronomeVol(event.target.value);
-    // Update the MetroVol state or perform any other necessary actions
-  };
-
-  //Reset change
-  const handleResetChange = (event) => {
-    // Handle reset button --> show play button, not pause
-    setIsPlaying(true);
-    setRecordingOff(true);
-    // Update the zoom state or perform any other necessary actions
-  };
-
-  //RepeatLayers button
-  const handleRepeatLayers = (event) => {
-    // None
-  };
-
-  //Generate data to generate buttons
-  const titles = [
-    "reset",
-    "play/pause",
-    "record/stopRecording",
-    "switchRepetition",
-    "settings",
-  ];
-  const icons = [faUndoAlt, faPlay, faBullseye, faWater, faGear];
-  const handlers = [
-    handleResetChange,
-    handlePlayPause,
-    handleRecord,
-    handleRepeatLayers,
-    handleToggleSettings,
+  const allModeIcons = [
+    {
+      tooltip: "Transpose",
+      icon: <TransposeIcon className="text-4xl" />,
+      labels: ["Transpose"],
+      mins: [-12],
+      maxs: [12],
+      initials: [initialTranspose],
+      onChanges: [onTransposeChange],
+    },
+    {
+      tooltip: "BPM",
+      icon: <BpmIcon className="text-4xl" />,
+      labels: ["BPM", "Metro Vol"],
+      mins: [30, 0],
+      maxs: [200, 100],
+      initials: [initialBpm, initialMetronomeVolume],
+      onChanges: [onBpmChange, onMetronomeVolumeChange],
+    },
+    {
+      tooltip: "Volume",
+      icon: <VolumeIcon className="text-4xl" />,
+      labels: ["Volume"],
+      mins: [0],
+      maxs: [100],
+      initials: [initialMidiVolume],
+      onChanges: [onMidiVolumeChange],
+    },
   ];
 
-  const ControlBar = (
-    <div className={ControlBarCSS.myDiv} title="playMode">
-      {titles.map((title, i) => {
-        return (
-          <Button
-            key={title}
-            className={ControlBarCSS.controlBtn}
-            title={title}
-            id={title}
-            onClick={() => handlers[i](title)}
-          >
-            <div>
-              {icons[i] === faPlay ? (
-                <FontAwesomeIcon
-                  icon={isPlayingOn ? faPlay : faPause} //Alternate Pause/Play button
-                />
-              ) : icons[i] === faUndoAlt ? (
-                <FontAwesomeIcon icon={icons[i]} />
-              ) : icons[i] === faBullseye ? (
-                <FontAwesomeIcon
-                  icon={recordingOff ? faBullseye : faRecordVinyl} //Alternate NotRecoding/Recording button
-                />
-              ) : icons[i] === faGear ? (
-                <div>
-                  <Dropdown
-                    show={isSettingsVisible}
-                    onToggle={handleToggleSettings}
-                    drop="up"
+  const practiceModeIcons = [
+    {
+      tooltip: "Reset",
+      iconPlay: <ResetIcon className="text-4xl" />,
+      iconPause: <ResetIcon className="text-4xl" />,
+      toggle: onReset,
+    },
+    {
+      tooltip: isListening ? "Stop Listening" : "Listen",
+      iconPlay: <ListenIcon className="text-4xl" />,
+      iconPause: <ListenPauseIcon className="text-4xl" />,
+      toggle: onToggleListen,
+      flag: isListening,
+    },
+    {
+      tooltip: isPlaying ? "Stop Practicing" : "Practice",
+      iconPlay: <PlayIcon className="text-4xl" />,
+      iconPause: <PauseIcon className="text-4xl" />,
+      toggle: onTogglePlay,
+      flag: isPlaying,
+    },
+  ];
+
+  const recordModeIcons = [
+    {
+      tooltip: isRecording ? "Stop Recording" : "Record",
+      icon: <RecordIcon className="text-4xl" />,
+      toggle: onRecord,
+    },
+  ];
+
+  // Sets the current mode state and passes this state up the parent components
+  const handleModeChange = (newMode) => {
+    setPracticeModeOn(newMode);
+    onModeChange(newMode);
+  };
+
+  return (
+    <div className="px-4 py-3 bg-blue-400 rounded-3xl shadow-md w-1/2 lg:w-3/5 md:mx-8 md:w-full sm:w-5/6">
+      <div className="flex justify-between items-center h-full">
+        <div>
+          <ModeToggle onModeChange={(newMode) => handleModeChange(newMode)} />
+        </div>
+
+        <div className="ml-6 h-full w-0.5 self-stretch bg-neutral-100 dark:bg-white/10"></div>
+
+        <div className="flex flex-grow justify-around">
+          {practiceModeOn
+            ? practiceModeIcons.map((modeIcon, index) => (
+                <Tooltip title={modeIcon.tooltip} key={index}>
+                  <IconButton className="text-white" onClick={modeIcon.toggle}>
+                    {modeIcon.flag ? modeIcon.iconPause : modeIcon.iconPlay}
+                  </IconButton>
+                </Tooltip>
+              ))
+            : recordModeIcons.map((modeIcon, index) => (
+                <Tooltip title={modeIcon.tooltip} key={index}>
+                  <IconButton
+                    className={`${
+                      isRecording && modeIcon.tooltip === "Stop Recording"
+                        ? "text-red-500"
+                        : "text-white"
+                    }`}
+                    onClick={modeIcon.toggle}
                   >
-                    <Dropdown.Toggle
-                      variant="secondary"
-                      className={ControlBarCSS.dropDownTgl}
-                      title="playMode"
-                    >
-                      <FontAwesomeIcon icon={faGear} />
-                    </Dropdown.Toggle>
-                    <Dropdown.Menu>
-                      <div>
-                        {/* Volume Slider */}
-                        <FontAwesomeIcon icon={faVolumeHigh} />
-                        <label
-                          htmlFor="volume-slider"
-                          className={ControlBarCSS.sliderLabel}
-                          title="audio-volume"
-                        >
-                          Volume
-                        </label>
-                        <input
-                          id="volume-slider"
-                          type="range"
-                          min="0"
-                          max="1"
-                          step="0.1"
-                          value={volume}
-                          onChange={handleVolumeChange}
-                          title="audio-volume"
-                        />
-                      </div>
-                      <div>
-                        {/* Metronome Volume Slider */}
-                        <FontAwesomeIcon icon={faVolumeHigh} />
-                        <label
-                          htmlFor="metroVol-slider"
-                          className={ControlBarCSS.sliderLabel}
-                          title="metronome-volume"
-                        >
-                          Metronome
-                        </label>
-                        <input
-                          id="metroVol-slider"
-                          title="metronome-volume"
-                          type="range"
-                          min="0"
-                          max="1"
-                          step="0.1"
-                          value={metronomeVol}
-                          onChange={handleMetroVolChange}
-                        />
-                      </div>
-                      <div>
-                        {/* Zoom Slider */}
-                        <FontAwesomeIcon icon={faMagnifyingGlassMinus} />
-                        <label
-                          htmlFor="zoom-slider"
-                          className={ControlBarCSS.sliderLabel}
-                          title="zoom-slider"
-                        >
-                          Zoom
-                        </label>
-                        <input
-                          id="zoom-slider"
-                          type="range"
-                          min="1"
-                          max="2"
-                          step="0.1"
-                          value={zoom}
-                          onChange={handleZoomChange}
-                          title="zoom-slider"
-                        />
-                      </div>
-                      <div>
-                        {/* BPM Slider */}
-                        <FontAwesomeIcon icon={faGauge} />
-                        <label
-                          htmlFor="bpm-slider"
-                          className={ControlBarCSS.sliderLabel}
-                          title="change-bpm"
-                        >
-                          BPM ({bpm})
-                        </label>
-                        <input
-                          id="bpm-slider"
-                          type="range"
-                          min="50"
-                          max="200"
-                          value={bpm}
-                          onChange={handleBPMChange}
-                          title="change-bpm"
-                        />
-                      </div>
-                    </Dropdown.Menu>
-                  </Dropdown>
-                </div>
-              ) : (
-                <FontAwesomeIcon icon={icons[i]} />
-              )}
-            </div>
-          </Button>
-        );
-      })}
+                    {modeIcon.icon}
+                  </IconButton>
+                </Tooltip>
+              ))}
+          {allModeIcons.map((modeIcon, index) =>
+            modeIcon.tooltip === "Transpose" ? (
+              <IconButton
+                key={index}
+                disabled
+                className="text-white opacity-50"
+              >
+                {modeIcon.icon}
+              </IconButton>
+            ) : (
+              <ControlBarPopover
+                key={index}
+                labels={modeIcon.labels}
+                mins={modeIcon.mins}
+                maxs={modeIcon.maxs}
+                initials={modeIcon.initials}
+                onValueChanges={modeIcon.onChanges}
+              >
+                <Tooltip title={modeIcon.tooltip}>
+                  <IconButton className="text-white">
+                    {modeIcon.icon}
+                  </IconButton>
+                </Tooltip>
+              </ControlBarPopover>
+            )
+          )}
+        </div>
+
+        <div className="mr-6 h-full w-0.5 self-stretch bg-neutral-100 dark:bg-white/10"></div>
+
+        <div>
+          <button
+            onClick={handleViewAllRecordings}
+            className="ml-auto hover:cursor-pointer transition ease-in-out delay-50 text-center text-gray-700 border-transparent focus:border-transparent focus:ring-0 focus:outline-none bg-slate-50 hover:bg-red-600 hover:text-white font-extralight py-1 px-2 rounded-l-none outline-none rounded"
+          >
+            View All Recordings
+          </button>
+        </div>
+      </div>
     </div>
   );
-
-  return ControlBar;
 };
 
 export default ControlBar;

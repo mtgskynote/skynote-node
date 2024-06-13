@@ -1,36 +1,31 @@
 import React, { useEffect, useState, useRef, useCallback } from "react";
-import { useParams, useNavigate, useLocation } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import OpenSheetMusicDisplay from "./OpenSheetMusicDisplay";
 import ControlBar from "./ControlBar.js";
-import ControlBarRecord from "./ControlBarRecord.js";
 import { makeAudioStreamer, destroyAudioStreamer } from "./audioStreamer.js";
-import CountdownTimer from "./MetronomeCountDown.js";
-import SimpleMessaje from "./AnyMessage.js";
+import CountDownTimer from "./CountDownTimer.js";
 //import { log } from "@tensorflow/tfjs";
 import Queue from "../utils/QueueWithMaxLength";
-import ModeToggle from "./ModeToggle.js";
 import PopUpWindow from "./PopUpWindow.js";
 import XMLParser from "react-xml-parser";
 import { putRecording } from "../utils/studentRecordingMethods.js";
 import { Buffer } from "buffer";
-import { useAppContext} from "../context/appContext";
-import { startMicrophone, stopMicrophone, isMicrophoneActive } from "../context/audioContext";
-
+import { useAppContext } from "../context/appContext";
+import {
+  startMicrophone,
+  stopMicrophone,
+  isMicrophoneActive,
+} from "../context/audioContext";
 // @ts-ignore
 window.Buffer = Buffer;
 
 const folderBasePath = "/xmlScores/violin";
 
-const ProgressPlayFile = (props) => {
+const ProgressPlayFile = () => {
   //#region VARIABLES
   const { getCurrentUser } = useAppContext();
   const [userData, setUserData] = useState(null);
   const params = useParams();
-
-  // get search parameters to turn on specific mode after navigation to this page
-  const location = useLocation();
-  const searchParams = new URLSearchParams(location.search);
-  const recordModeParam = searchParams.get("recordMode");
 
   //This ones have to do with OSMD
   const cursorRef = useRef(null);
@@ -48,17 +43,22 @@ const ProgressPlayFile = (props) => {
   const [userFileName, setUserFileName] = useState("");
 
   //Parameters that will be sent to OSMD
-  const [metroVol, setMetroVol] = useState(0);
-  const [bpmChange, setBpm] = useState(100); //BPM always set to 100 cause the scores don't have BPMs
-  const [recordVol, setRecordVol] = useState(0.5);
+  const [metronomeVolume, setMetronomeVolume] = useState(0);
+  const [bpm, setBpm] = useState(100); // BPM always set to 100 cause the scores don't have BPMs
+  const [midiVolume, setMidiVolume] = useState(50);
   const [zoom, setZoom] = useState(1.0);
+  const [transpose, setTranspose] = useState(0);
+
+  const [isListening, setIsListening] = useState(false); // IMPORTANT NOTE: This does not mean the app is listening to the user's microphone. It means the app is playing the audio for the user to listen to (rather than play along with).
+  const [isPlaying, setIsPlaying] = useState(false);
+  const [isRecording, setIsRecording] = useState(false);
 
   //This changes when the record button is pressed
   const [recordInactive, setRecordInactive] = useState(true);
 
   //This ones are for the metronome countdown
-  const [showTimer, setShowTimer] = useState(false);
-  const [finishedTimer, setFinishedTimer] = useState(false);
+  const [showCountDownTimer, setShowCountDownTimer] = useState(false);
+  const [countDownFinished, setCountDownFinished] = useState(false);
 
   //This is for the MEYDA features
   const [pitchValue, setPitchValue] = useState(null);
@@ -80,18 +80,10 @@ const ProgressPlayFile = (props) => {
   );
 
   const [cursorFinished, setCursorFinished] = useState(false);
-  const [showPopUpWindow, setShowPopUpWindow] = useState(false);
+  const [showSaveRecordingPopUp, setShowSaveRecordingPopUp] = useState(false);
   const [jsonToDownload, setJsonToDownload] = useState();
 
   const [practiceMode, setPracticeMode] = useState(true);
-  const [recordMode, setRecordMode] = useState(false);
-
-  useEffect(() => {
-    // Update practiceMode and recordMode whenever the query parameters change
-    const recordModeOn = recordModeParam === "true" || false;
-    setPracticeMode(!recordModeOn);
-    setRecordMode(recordModeOn);
-  }, [location.search]);
 
   const navigate = useNavigate();
   const scoreID = JSON.parse(localStorage.getItem("scoreData")).find(
@@ -101,35 +93,25 @@ const ProgressPlayFile = (props) => {
   const onResetDone = () => {
     setIsResetButtonPressed(false);
   };
-  //#endregion
 
-  //#region FUNCTIONS
-  /////////////////////////////////////////////////////////////////////////////////////
-  //////////////////////////////Get data from the student//////////////////////////////
-  /////////////////////////////////////////////////////////////////////////////////////
-  //Currently the userData is stored locally, so I don't think this needs to be
-  //done here. This function should be reviewed and possibly deleted from this file :)
+  // Fetch user data from the database
   const fetchDataFromAPI = () => {
     if (userData === null) {
-      getCurrentUser() // fetchData is already an async function
+      getCurrentUser()
         .then((result) => {
           setUserData(result);
         })
         .catch((error) => {
           console.log(`getCurentUser() error: ${error}`);
-          // Handle errors if necessary
         });
     }
   };
 
-  /////////////////////////////////////////////////////////////////////////////////////
-  ////////////////////////////Define pitch callback function///////////////////////////
-  /////////////////////////////////////////////////////////////////////////////////////
-  //This function will be used by audioStreamer.js, more info in the file itself :)
+  // Update pitch tracking information as audio is being recorded by the audio streamer
   const handlePitchCallback = (pitchData) => {
     pitchCount = pitchCount + 1;
     if (pitchCount > 0) {
-//      console.log("Dynamic Stability:\n", featureValues.rms.computeSD());
+      // console.log("Dynamic Stability:\n", featureValues.rms.computeSD());
       setPitchValue(pitchData.pitch);
       setConfidenceValue(pitchData.confidence);
       //setDynStability(featureValues.rms.computeSD());
@@ -137,50 +119,17 @@ const ProgressPlayFile = (props) => {
     }
   };
 
-  /////////////////////////////////////////////////////////////////////////////////////
-  ////////////Define recording stop when cursor finishes callback function/////////////
-  /////////////////////////////////////////////////////////////////////////////////////
-  //This is passed to OSMD as "cursorActivity" and the idea is to check when the cursor
-  //reaches the end, and then tell ControlBar.js + create the pop up window if needed...
+  // Check when the OSMD cursor reaches the end of the score (after recording) and stop recording audio
   const handleFinishedCursorOSMDCallback = (OSMDfinishedCursor) => {
     if (OSMDfinishedCursor) {
-      //cursor has finished
-
-      //Send info to ControlBar--> true cursor finished
-      setCursorFinished(true);
-      //"Reset" funcionalities
-      //No recording
-      if (recordMode && !recordInactive) {
-        audioStreamer.close_maybe_save(); //maybe save audio in Record mode
-        handleSaveDeleteWindowPopUp(true); //call popup window save/delete
-      } else {
-        audioStreamer.close_not_save(); //never save audio in Practice mode
-      }
       const playbackManager = playbackRef.current;
-      playbackManager.pause();
-      setStartPitchTrack(false);
-      setRecordInactive(true); //Set to true, just like the initial state
+      stopRecordingAudio(playbackManager);
+
+      setCursorFinished(true);
     }
   };
 
-  /////////////////////////////////////////////////////////////////////////////////////
-  /////////////////////////////Function for ControlBar.js//////////////////////////////
-  /////////////////////////////////////////////////////////////////////////////////////
-  //This is passed to ControlBar.js for resetting purposes.
-  const handleFinishedCursorControlBarCallback = (controlBarFinishedCursor) => {
-    if (controlBarFinishedCursor === false) {
-      //ControlBar already took cursor finishing actions
-      //Update value, ready for new cursor finishings--> false cursor finished
-      setCursorFinished(false);
-    }
-  };
-
-  /////////////////////////////////////////////////////////////////////////////////////
-  //////////////////////////Function in charge of downloading//////////////////////////
-  /////////////////////////////////////////////////////////////////////////////////////
-  //This is probably not the right name for this function, but the function prepares
-  //"raw" data into the format that will be used to store the info in the DB, and then
-  //uploads it to the DB :)
+  // Handle downloading saved audio recording and upload recording to the user profile
   async function handleDownload(dataBlob) {
     setAudioReady(false);
     const jsonData = JSON.parse(jsonToDownload); //convert data to json
@@ -194,56 +143,22 @@ const ProgressPlayFile = (props) => {
       info: jsonData,
     };
 
-    /////////////////////////////////////////////////////////////////////////////////////
-    ///////////CODE TO DOWNLOAD LOCALLY THE JSON THAT IS UPLOADED TO DATABASE////////////
-    /////////////////////////////////////////////////////////////////////////////////////
-    //This is currently unused cause we don't allow to download the files, but might be
-    //useful in the future?? Otherwise it can be deleted :)
-    /*
-    // Convert the combined data to a JSON string
-    const jsonString = JSON.stringify(jsonComplete);
-    // Create a Blob from the JSON string
-    const blob = new Blob([jsonString], { type: "application/json" });
-    // Create a download link
-    const url = URL.createObjectURL(blob);
-    // Create a link element
-    const link = document.createElement("a");
-    link.href = url;
-    link.download = "yourFileName.json"; // Set the desired file name
-    // Append the link to the document
-    document.body.appendChild(link);
-    // Trigger a click on the link to start the download
-    link.click();
-    // Remove the link from the document
-    document.body.removeChild(link);
-    */
-    ///////////////////////////////////////////////////////////////////////////
-
-    //Upload info to database
+    // Upload info to database
     try {
       await putRecording(jsonComplete);
     } catch (error) {
       console.log(`error in putRecording`, error);
     }
-    //}
   }
 
-  /////////////////////////////////////////////////////////////////////////////////////
-  //////////////////////////////Function for flag control//////////////////////////////
-  /////////////////////////////////////////////////////////////////////////////////////
-  //This function is called from OpenSheetMusicDisplay.js as "dataToDownload". It just
-  //gets the data and changes the needed flags :)
+  // Update flags so that the saved audio recording can be downloaded
   const handleGetJsonCallback = (json) => {
     setJsonToDownload(json);
     setCanDownload(false);
     setAudioReady(true);
   };
 
-  /////////////////////////////////////////////////////////////////////////////////////
-  //////////////////////////Function to handle Repetition view/////////////////////////
-  /////////////////////////////////////////////////////////////////////////////////////
-  //This function gets called from OpenSheetMusciDisplay.js and it deals with small box
-  //that tells the user which repetition they're currently seeing :)
+  // Keep track of repetition that user is currently seeing --> WILL BE INTEGRATED IN THE FUTURE
   const handleReceiveRepetitionInfo = (showingRep, totalRep) => {
     if (totalRep === 0) {
       setRepetitionMessage("No recordings yet");
@@ -254,52 +169,7 @@ const ProgressPlayFile = (props) => {
     }
   };
 
-  /////////////////////////////////////////////////////////////////////////////////////
-  //////////////////Function that creates the save/delete popUp window/////////////////
-  /////////////////////////////////////////////////////////////////////////////////////
-  //This function is called when the cursor reaches the end, or the recording is stopped
-  //by the user (in record mode only). It creates a popUp window that is managed by
-  //PopUpWindow.js :)
-  const handleSaveDeleteWindowPopUp = (windowShow, answer, fileName) => {
-    if (windowShow) {
-      //recording stopped or cursor finished --> pop up window
-      setShowPopUpWindow(true);
-    } else {
-      //user already choose save or delete options --> hide window
-      //hide pop-up window
-      setShowPopUpWindow(false);
-      //Depending on answer save or delete:
-      if (answer === "delete") {
-        audioStreamer.save_or_not(answer); //No save wanted
-        setPitch([]);
-        //setDynStability([]);
-        setConfidence([]);
-        setIsResetButtonPressed(true);
-      } else if (answer === "save") {
-        setUserFileName(fileName); //save file name introduced by the user
-        setCanDownload(true); //raise flag order to initiate downloading process (json in OSMD)
-        setPitch([]);
-        //setDynStability({});
-        setConfidence([]);
-        setIsResetButtonPressed(true);
-      }
-      //Do like a reset:
-      const playbackManager = playbackRef.current;
-      // const cursor = cursorRef.current;
-      playbackManager.pause();
-      playbackManager.setPlaybackStart(0);
-      playbackManager.reset();
-      //cursor.reset(); //seems right, but a runtime error follows
-      setStartPitchTrack(false);
-      setShowPitchTrack(false);
-      setRecordInactive(true); //Set to true, just like the initial state
-    }
-  };
-
-  ////////////////////////////////////////////////////////////////////////////////////////////
-  ////////HERE I'M TAKING THE MEYDA FEATURES, BUT CURRENTLY NOTHING IS DONE WITH THEM/////////
-  ////////////////////////////////////////////////////////////////////////////////////////////
-  //---- keep track of the history of features we extract
+  // Keep track of the history of the audio features we extract
   const featureValues = {
     // queue length (for computing means and SDs), normlow, normhi, sdnormlow, sdnormhi
     pitch: new Queue(8, 24, 61, 0, 0.5), //[110Hz, 440Hz] = [A2, A4] = midinote[24,69]
@@ -308,34 +178,24 @@ const ProgressPlayFile = (props) => {
     spectralFlux: new Queue(8, 3, 1, 0, 0.1),
   };
 
-  //---- Pass to makeAudioStreamer to get callbaks with object features (with attributes being Meyda features)
-  const aCb = function (features) {
-    featureValues.rms.push(features.rms); //DYNAMIC STABILITY
-    featureValues.spectralCentroid.push(features.spectralCentroid); //SPECTRAL CENTROID
-    featureValues.spectralFlux.push(features.spectralFlux); //SPECTRAL FLUX
-
-    // setSegments([featureValues.pitch.computeSD(), featureValues.rms.computeSD(), featureValues.spectralCentroid.computeMean(), featureValues.spectralFlux.computeSD() ]);
-    // console.log("Spectral Centroid: ", featureValues.spectralCentroid.computeMean());
-    // console.log("Dynamic Stability: ", featureValues.rms.computeSD());
-    // console.log("Spectral Flux: ", featureValues.spectralFlux.computeSD());
-    // console.log("Pitch: ", featureValues.pitch.computeSD());
+  // Receive callbacks from makeAudioStreamer with object properties containing attributes that are Meyda features
+  const aCb = (features) => {
+    featureValues.rms.push(features.rms); // DYNAMIC STABILITY
+    featureValues.spectralCentroid.push(features.spectralCentroid); // SPECTRAL CENTROID
+    featureValues.spectralFlux.push(features.spectralFlux); // SPECTRAL FLUX
   };
-  ////////////////////////////////////////////////////////////////////////////////////////////
-  ////////////////////////////////////////////////////////////////////////////////////////////
-  ////////////////////////////////////////////////////////////////////////////////////////////
-  //#endregion
-  var audioStreamer = makeAudioStreamer(handlePitchCallback, null, aCb);
 
-  //#region USEEFFECTS()
-  //Once the score is loaded, get userData
+  // Audio streamer that will handle recording audio
+  const audioStreamer = makeAudioStreamer(handlePitchCallback, null, aCb);
+
+  // Get user data once the score title is loaded
   useEffect(() => {
     if (scoreTitle !== null) {
       fetchDataFromAPI();
     }
   }, [scoreTitle]);
 
-  //This part just gets the tittle of the score, so it can later be used for the saving part
-  //I don't know if it's the most efficient way, I based the code on the one used in AllLessons.js
+  // Get title information from the current score
   useEffect(() => {
     const requestScoreTitle = async () => {
       //Get score title
@@ -357,12 +217,9 @@ const ProgressPlayFile = (props) => {
       }
     };
     requestScoreTitle();
-  }, []); //This should run only once
+  }, []);
 
-  //This part deals with microphone permissions.
-  //Accepting permissions works as expected
-  //Denying permissions shows an alert that refreshes the page when accepted, but won't go away until permissions are given
-  //Ignoring permissions allows to use the page, but audio won't be picked up and an error will show when the recorging process is finished
+  // Ask user for microphone permissions so that the application can record audio
   useEffect(() => {
     if (!isMicrophoneActive()) {
       startMicrophone()
@@ -377,17 +234,15 @@ const ProgressPlayFile = (props) => {
     }
 
     return () => {
-      console.log("LEAVING PAGE ProgressPlayFile.js ")
+      console.log("LEAVING PAGE ProgressPlayFile.js ");
       if (isMicrophoneActive()) {
         stopMicrophone();
       }
-      audioStreamer && audioStreamer.close()
+      audioStreamer && audioStreamer.close();
     };
-    
-    
   }, []); //This should run only once
 
-  //when audioReady activates (meaning that we can download the data)
+  // Save recording to user profile when audio is available to download
   useEffect(() => {
     if (audioReady) {
       audioStreamer
@@ -403,384 +258,281 @@ const ProgressPlayFile = (props) => {
     }
   }, [audioReady]);
 
-  //When countdown timer (previous to start recording) finishes
-  useEffect(() => {
-    if (finishedTimer) {
-      const playbackManager = playbackRef.current;
-      //playbackManager.play()
+  // Remove the count down from screen when the count down has finished
+  const handleCountDownFinished = useCallback(() => {
+    setCountDownFinished(true);
+  }, []);
 
-      //Once countdown is finished, activate Pitch tracking
+  // Reset the audio playback to its initial state
+  const resetAudio = (playbackManager) => {
+    playbackManager.pause();
+    playbackManager.reset();
+
+    setStartPitchTrack(false);
+    setShowPitchTrack(false);
+    setPitch([]);
+    setDynamicValue([]);
+    setConfidence([]);
+    setRecordInactive(true);
+  };
+
+  // Start recording audio (whether in record or practice mode)
+  const recordAudio = (playbackManager) => {
+    resetAudio(playbackManager);
+    setIsResetButtonPressed(true);
+
+    if (!practiceMode) setIsRecording(true);
+    setRecordInactive(false);
+    setStartPitchTrack(true);
+    setShowPitchTrack(true);
+    setShowCountDownTimer(true);
+  };
+
+  // Stop recording audio
+  const stopRecordingAudio = (playbackManager) => {
+    if (practiceMode) audioStreamer.close_not_save();
+    else {
+      audioStreamer.close_maybe_save();
+      setShowSaveRecordingPopUp(true);
+      setIsRecording(false);
+    }
+
+    setIsPlaying(false);
+    setStartPitchTrack(false);
+
+    resetAudio(playbackManager);
+  };
+
+  // Start playing MIDI audio from the playback manager
+  const playAudio = (playbackManager) => {
+    console.log("INSIDE PLAYBACK MANAGER");
+    playbackManager.play();
+  };
+
+  // Toggle the listening state of the audio playback
+  const handleToggleListen = () => {
+    const playbackManager = playbackRef.current;
+    if (isListening) {
+      playbackManager.pause();
+      setIsListening(false);
+    } else {
+      if (isPlaying) {
+        // Set playing to false and stop all audio if listen is toggled while playing
+        setIsPlaying(false);
+        stopRecordingAudio(playbackManager);
+        setIsResetButtonPressed(true);
+      }
+
+      setIsListening(true);
+      playAudio(playbackManager);
+    }
+  };
+
+  // Toggle the playing state of the audio playback
+  const handleTogglePlay = () => {
+    const playbackManager = playbackRef.current;
+    if (isPlaying) {
+      setIsPlaying(false);
+      resetAudio(playbackManager);
+    } else {
+      if (isListening) {
+        // Set listening to false and stop all audio if play is toggled while listening
+        setIsListening(false);
+        resetAudio(playbackManager);
+      }
+      setIsPlaying(true);
+      setIsResetButtonPressed(true);
+      recordAudio(playbackManager);
+    }
+  };
+
+  // Navigate to all recordings for this particular score
+  const handleViewAllRecordings = () => {
+    const score = `${params.files}`;
+    const song = `${scoreTitle}`;
+    const typeList = "single-song";
+
+    navigate("/ListRecordings", { state: { score, song, typeList } });
+  };
+
+  // Save a recording that was just made to the user's profile
+  const handleSaveRecording = (fileName) => {
+    setShowSaveRecordingPopUp(false);
+
+    setUserFileName(fileName);
+    setCanDownload(true); // Raise flag order to initiate downloading process (json in OSMD)
+    setPitch([]);
+    setConfidence([]);
+
+    const playbackManager = playbackRef.current;
+    resetAudio(playbackManager);
+  };
+
+  // Delete a recording that was just made
+  const handleDeleteRecording = () => {
+    setShowSaveRecordingPopUp(false);
+
+    audioStreamer.save_or_not("delete");
+    setPitch([]);
+    setConfidence([]);
+
+    const playbackManager = playbackRef.current;
+    resetAudio(playbackManager);
+  };
+
+  // Stop playing all audio whenever practice or record mode is toggled
+  useEffect(() => {
+    setIsListening(false);
+    setIsPlaying(false);
+    const playbackManager = playbackRef.current;
+
+    if (playbackManager) {
+      resetAudio(playbackManager);
+    }
+  }, [practiceMode]);
+
+  // Set OSMD cursor back to start position when the whole piece is finished playing
+  useEffect(() => {
+    if (cursorFinished) {
+      const playbackManager = playbackRef.current;
+      playbackManager.setPlaybackStart(0);
+
+      setCursorFinished(false);
+      setIsListening(false);
+    }
+  }, [cursorFinished]);
+
+  // Stop recording audio when recording is inactive (either paused or finished)
+  useEffect(() => {
+    if (recordInactive && canRecord) {
+      const playbackManager = playbackRef.current;
+      if (playbackManager) stopRecordingAudio(playbackManager);
+      if (isListening) playAudio(playbackManager);
+    }
+  }, [recordInactive]);
+
+  // Start recording when the count down timer finishes
+  useEffect(() => {
+    if (countDownFinished) {
+      const playbackManager = playbackRef.current;
+
+      // Activate pitch tracking
       setPitch([]);
-      // setDynStability([]);
       setConfidence([]);
       setStartPitchTrack(true);
       setShowPitchTrack(true);
 
-      //Start audioStreamer
-      audioStreamer.init(recordMode, [
+      // Start recording with audio streamer
+      audioStreamer.init(!practiceMode, [
         "rms",
         "spectralCentroid",
         "spectralFlux",
       ]);
 
-      //And play file, make cursor start
-      playbackManager.play();
-      //Timer work is done, false until next call
-      setShowTimer(false);
+      // Play MIDI audio playback
+      playAudio(playbackManager);
+      setShowCountDownTimer(false);
     }
-    //Finished timer duties done, false until next call
-    setFinishedTimer(false);
-  }, [finishedTimer]);
 
-  //Changing mode practice/record handler
+    // Reset count down timer when recording is finished
+    setCountDownFinished(false);
+  }, [countDownFinished]);
+
+  // Update pitch values so that they can be drawn on screen
   useEffect(() => {
-    // PRACTICE MODE BUTTON -------------------------------------------------------------
-    const practiceModeButton = document.getElementById("PracticeMode");
-    const handlePracticeModeButtonClick = () => {
-      setPracticeMode(true);
-      setRecordMode(false);
-    };
-    practiceModeButton.addEventListener("click", handlePracticeModeButtonClick);
-    //--------------------------------------------------------------------------------
-
-    // RECORD MODE BUTTON -------------------------------------------------------------
-    const recordModeButton = document.getElementById("RecordMode");
-    const handleRecordModeButtonClick = () => {
-      setPracticeMode(false);
-      setRecordMode(true);
-
-      //Do like a reset:
-      setIsResetButtonPressed(true);
-      setPitch([]);
-      // setDynStability([]);
-      setConfidence([]);
-      const playbackManager = playbackRef.current;
-      // const cursor = cursorRef.current;
-      playbackManager.pause();
-      playbackManager.setPlaybackStart(0);
-      playbackManager.reset();
-      //cursor.reset(); //seems right, but a runtime error follows
-      setStartPitchTrack(false);
-      setShowPitchTrack(false);
-      setRecordInactive(true); //Set to true, just like the initial state
-      setBpm(100); //set bpm to original value, 100
-    };
-    recordModeButton.addEventListener("click", handleRecordModeButtonClick);
-    //--------------------------------------------------------------------------------
-
-    return () => {
-      practiceModeButton.removeEventListener(
-        "click",
-        handlePracticeModeButtonClick
-      );
-      recordModeButton.removeEventListener(
-        "click",
-        handleRecordModeButtonClick
-      );
-    };
-  }, [practiceMode, recordMode]);
-
-  //Handles basically any change
-  useEffect(() => {
-    if (practiceMode === true) {
-      //Practice Mode
-
-      // RECORD BUTTON -----------------------------------------------------------------
-      const recordButton = document.getElementById("record/stopRecording");
-      const handleRecordButtonClick = () => {
-        //Toggle recording state (FIXME does not work the first time, so recordInactive is started with true value)
-        setRecordInactive(!recordInactive);
-
-        if (recordInactive && canRecord) {
-          //Recoding is wanted
-          setShowTimer(true); //initialize process of countdown, which will then lead to recording
-        } else {
-          //Recording is unwanted
-          audioStreamer.close_not_save(); //when practice mode on, no saving
-          //Deactivate Pitch tracking
-          setStartPitchTrack(false);
-          //Pause file and therefore, cursor
-          const playbackManager = playbackRef.current;
-          playbackManager.pause();
-        }
-      };
-
-      recordButton.addEventListener("click", handleRecordButtonClick);
-      //--------------------------------------------------------------------------------
-
-      // RESET BUTTON ------------------------------------------------------------------
-      const resetButton = document.getElementById("reset");
-      const handleResetButtonClick = () => {
-        setShowPopUpWindow(false);
-        audioStreamer.close_not_save(); //when practice mode is on, no saving
-        setIsResetButtonPressed(true);
-        const playbackManager = playbackRef.current;
-        // const cursor = cursorRef.current;
-        //Reset
-        playbackManager.pause();
-        playbackManager.setPlaybackStart(0);
-        playbackManager.reset();
-        //cursor.reset(); //seems right, but a runtime error follows
-        setStartPitchTrack(false);
-        setShowPitchTrack(false);
-        setPitch([]);
-        setDynamicValue([]);
-        setConfidence([]);
-        setRecordInactive(true); //Set to true, just like the initial state
-      };
-
-      resetButton.addEventListener("click", handleResetButtonClick);
-      //--------------------------------------------------------------------------------
-
-      // PLAY/PAUSE BUTTON -------------------------------------------------------------
-      // gets the playback manager and sets the start time to the current time
-      // plays the music where the cursor is
-      const playButton = document.getElementById("play/pause");
-      const handlePlayButtonClick = () => {
-        const playbackManager = playbackRef.current;
-
-        if (playbackManager.isPlaying) {
-          playbackManager.pause();
-        } else {
-          playbackManager.play();
-        }
-      };
-      playButton.addEventListener("click", handlePlayButtonClick);
-      //--------------------------------------------------------------------------------
-
-      // SETTINGS SLIDERS --------------------------------------------------------------
-      const settingsSliders = document.getElementById("settings");
-
-      const handleSettings = (event) => {
-        //Check which setting slider has been clicked
-        const sliderId = event.target.id;
-        if (sliderId === "volume-slider") {
-          setRecordVol(event.target.value);
-        } else if (sliderId === "zoom-slider") {
-          setZoom(event.target.value);
-        } else if (sliderId === "bpm-slider") {
-          setBpm(event.target.value);
-        } else if (sliderId === "metroVol-slider") {
-          setMetroVol(event.target.value);
-        }
-      };
-      settingsSliders.addEventListener("click", handleSettings);
-      //--------------------------------------------------------------------------------
-
-      // SWITCH BETWEEN REPETITION/RECORDING LAYERS ------------------------------------
-      const repeatLayersButton = document.getElementById("switchRepetition");
-      const handleRepeatLayersButtonClick = () => {
-        //window.location.href = "/TimbreVisualization";
-        setRepeatsIterator(!repeatsIterator);
-      };
-      const handleRepeatLayersMouseOver = () => {
-        setShowRepetitionMessage(true);
-      };
-      const handleRepeatLayersMouseLeave = () => {
-        setShowRepetitionMessage(false);
-      };
-      repeatLayersButton.addEventListener(
-        "click",
-        handleRepeatLayersButtonClick
-      );
-      repeatLayersButton.addEventListener(
-        "mousemove",
-        handleRepeatLayersMouseOver
-      );
-      repeatLayersButton.addEventListener(
-        "mouseout",
-        handleRepeatLayersMouseLeave
-      );
-      //--------------------------------------------------------------------------------
-
-      //Add new pitch value to pitch array
-      if (pitchValue) {
-        setPitch([...pitch, pitchValue]);
-        setConfidence([...confidence, confidenceValue]);
-        // setDynStability([...dynStability, dynamicValue]);
-      }
-
-      return () => {
-        recordButton.removeEventListener("click", handleRecordButtonClick);
-        repeatLayersButton.removeEventListener(
-          "click",
-          handleRepeatLayersButtonClick
-        );
-        repeatLayersButton.removeEventListener(
-          "mouseover",
-          handleRepeatLayersMouseOver
-        );
-        repeatLayersButton.removeEventListener(
-          "mouseleave",
-          handleRepeatLayersMouseLeave
-        );
-        resetButton.removeEventListener("click", handleResetButtonClick);
-        playButton.removeEventListener("click", handlePlayButtonClick);
-      };
-    } else if (recordMode === true) {
-      //Record Mode
-
-      // RECORD BUTTON -----------------------------------------------------------------
-      const recordButton = document.getElementById("record/stopRecording");
-      const handleRecordButtonClick = () => {
-        //Toggle recording state (FIXME does not work the first time, so recordInactive is started with true value)
-        setRecordInactive(!recordInactive);
-
-        if (recordInactive) {
-          //Recoding is wanted
-          setShowTimer(true); //initialize process of countdown, which will then lead to recording
-        } else {
-          //Recording is unwanted
-          audioStreamer.close_maybe_save(); //when record mode is active, maybe we save
-          //Deactivate Pitch tracking
-          setStartPitchTrack(false);
-          //Pause file and therefore, cursor
-          const playbackManager = playbackRef.current;
-          playbackManager.pause();
-          handleSaveDeleteWindowPopUp(true); //call save/delete popup window
-        }
-      };
-
-      recordButton.addEventListener("click", handleRecordButtonClick);
-      //--------------------------------------------------------------------------------
-
-      // PLAY/PAUSE BUTTON -------------------------------------------------------------
-      // gets the playback manager and sets the start time to the current time
-      // plays the music where the cursor is
-      const playButton = document.getElementById("play/pause");
-      const handlePlayButtonClick = () => {
-        const playbackManager = playbackRef.current;
-        if (playbackManager.isPlaying) {
-          playbackManager.pause();
-        } else {
-          playbackManager.play();
-        }
-      };
-      playButton.addEventListener("click", handlePlayButtonClick);
-      //--------------------------------------------------------------------------------
-
-      // SETTINGS SLIDERS --------------------------------------------------------------
-      const settingsSliders = document.getElementById("settings");
-
-      const handleSettings = (event) => {
-        //Check which setting slider has been clicked
-        const sliderId = event.target.id;
-        if (sliderId === "volume-slider") {
-          setRecordVol(event.target.value);
-        } else if (sliderId === "zoom-slider") {
-          setZoom(event.target.value);
-        } else if (sliderId === "bpm-slider") {
-          setBpm(event.target.value);
-        } else if (sliderId === "metroVol-slider") {
-          setMetroVol(event.target.value);
-        }
-      };
-      settingsSliders.addEventListener("click", handleSettings);
-      //--------------------------------------------------------------------------------
-
-      // GO TO SAVINGS BUTTON  ------------------------------------
-      const savedButton = document.getElementById("saved");
-      const handleSavedButtonClick = () => {
-        const score = `${params.files}`;
-        const song = `${scoreTitle}`;
-        const typeList = "single-song";
-
-        // Use navigate to go to the ListRecordings page with parameters in the URL
-        navigate("/ListRecordings", { state: { score, song, typeList } });
-      };
-      savedButton.addEventListener("click", handleSavedButtonClick);
-      //--------------------------------------------------------------------------------
-
-      //Add new pitch value to pitch array
-      if (pitchValue) {
-        setPitch([...pitch, pitchValue]);
-        setConfidence([...confidence, confidenceValue]);
-        setDynStability([...dynStability, dynamicValue]);
-      }
-
-      return () => {
-        recordButton.removeEventListener("click", handleRecordButtonClick);
-        playButton.removeEventListener("click", handlePlayButtonClick);
-      };
+    if (pitchValue) {
+      setPitch([...pitch, pitchValue]);
+      setConfidence([...confidence, confidenceValue]);
+      if (!practiceMode) setDynStability([...dynStability, dynamicValue]);
     }
-  }, [
-    recordVol,
-    zoom,
-    recordInactive,
-    pitchValue,
-    dynamicValue,
-    repeatsIterator,
-    practiceMode,
-    recordMode,
-    showRepetitionMessage,
-    userFileName,
-    jsonToDownload,
-  ]);
-  //#endregion
-  const handleComplete = useCallback(() => {
-    setFinishedTimer(true);
-  }, []);
-  //#region RETURN
+  }, [pitchValue, dynamicValue]);
+
   return (
-    <div>
-      {showRepetitionMessage && <SimpleMessaje message={repetitionMessage} />}
-
-      <OpenSheetMusicDisplay
-        file={`${folderBasePath}/${params.files}.xml`}
-        autoResize={true}
-        cursorRef={cursorRef}
-        playbackRef={playbackRef}
-        metroVol={metroVol}
-        bpm={bpmChange}
-        zoom={zoom}
-        followCursor={true}
-        dynamicStability={dynStability}
-        pitch={pitch}
-        pitchConfidence={confidence}
-        startPitchTrack={startPitchTrack}
-        showPitchTrack={showPitchTrack}
-        recordVol={recordVol}
-        isResetButtonPressed={isResetButtonPressed}
-        repeatsIterator={repeatsIterator}
-        showRepeatsInfo={handleReceiveRepetitionInfo}
-        onResetDone={onResetDone}
-        cursorActivity={handleFinishedCursorOSMDCallback}
-        mode={practiceMode}
-        dataToDownload={handleGetJsonCallback}
-        canDownload={canDownload}
-        visual={"no"}
-      />
-      {showTimer ? (
-        <CountdownTimer
-          bpm={bpmChange}
+    <div className="flex flex-col min-h-screen justify-between">
+      <div>
+        <OpenSheetMusicDisplay
+          file={`${folderBasePath}/${params.files}.xml`}
+          autoResize={true}
+          cursorRef={cursorRef}
+          playbackRef={playbackRef}
+          metroVol={metronomeVolume / 100}
+          bpm={bpm}
+          zoom={zoom}
+          followCursor={true}
+          dynamicStability={dynStability}
+          pitch={pitch}
+          pitchConfidence={confidence}
+          startPitchTrack={startPitchTrack}
+          showPitchTrack={showPitchTrack}
+          recordVol={midiVolume / 100}
+          isResetButtonPressed={isResetButtonPressed}
+          repeatsIterator={repeatsIterator}
+          showRepeatsInfo={handleReceiveRepetitionInfo}
+          onResetDone={onResetDone}
+          cursorActivity={handleFinishedCursorOSMDCallback}
           mode={practiceMode}
-          onComplete={handleComplete}
+          dataToDownload={handleGetJsonCallback}
+          canDownload={canDownload}
+          visual={"no"}
+        />
+      </div>
+
+      <div className="flex justify-center mb-32">
+        <ControlBar
+          onTransposeChange={(newTranspose) => setTranspose(newTranspose)}
+          onBpmChange={(newBpm) => setBpm(newBpm)}
+          onMidiVolumeChange={(newVolume) => setMidiVolume(newVolume)}
+          onMetronomeVolumeChange={(newMetronomeVolume) =>
+            setMetronomeVolume(newMetronomeVolume)
+          }
+          onModeChange={(newMode) => {
+            setPracticeMode(newMode);
+            setIsResetButtonPressed(true);
+
+            const playbackManager = playbackRef.current;
+            resetAudio(playbackManager);
+          }}
+          onToggleListen={handleToggleListen}
+          onTogglePlay={handleTogglePlay}
+          onReset={() => {
+            const playbackManager = playbackRef.current;
+            resetAudio(playbackManager);
+
+            setIsListening(false);
+            setIsPlaying(false);
+            setIsResetButtonPressed(true);
+          }}
+          onRecord={() => {
+            const playbackManager = playbackRef.current;
+            if (isRecording) {
+              stopRecordingAudio(playbackManager);
+            } else {
+              recordAudio(playbackManager);
+            }
+          }}
+          handleViewAllRecordings={handleViewAllRecordings}
+          isListening={isListening}
+          isPlaying={isPlaying}
+          isRecording={isRecording}
+        />
+      </div>
+
+      {showCountDownTimer ? (
+        <CountDownTimer
+          bpm={bpm}
+          mode={practiceMode}
+          onCountDownFinished={handleCountDownFinished}
         />
       ) : null}
 
-      {practiceMode === true && recordMode === false ? (
-        <ControlBar
-          cursorFinished={cursorFinished}
-          cursorFinishedCallback={handleFinishedCursorControlBarCallback}
-        />
-      ) : (
-        <ControlBarRecord
-          cursorFinished={cursorFinished}
-          cursorFinishedCallback={handleFinishedCursorControlBarCallback}
-        />
-      )}
-
-      {showPopUpWindow && (
+      {showSaveRecordingPopUp && (
         <PopUpWindow
-          showWindow={showPopUpWindow}
-          handlerBack={handleSaveDeleteWindowPopUp}
+          onSaveRecording={handleSaveRecording}
+          onDeleteRecording={handleDeleteRecording}
         />
       )}
-
-      <ModeToggle practiceMode={practiceMode} recordMode={recordMode} />
     </div>
   );
-  //#endregion
 };
 
 export default ProgressPlayFile;
