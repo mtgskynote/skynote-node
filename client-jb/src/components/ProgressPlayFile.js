@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useRef, useCallback } from "react";
-import { useParams, useNavigate, useLocation } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import OpenSheetMusicDisplay from "./OpenSheetMusicDisplay";
 import { makeAudioStreamer } from "./audioStreamer.js";
 import CountDownTimer from "./CountDownTimer.js";
@@ -9,22 +9,17 @@ import XMLParser from "react-xml-parser";
 import { putRecording } from "../utils/studentRecordingMethods.js";
 import { Buffer } from "buffer";
 import { useAppContext } from "../context/appContext";
-import ControlBarAlt from "./ControlBarAlt.js";
+import ControlBar from "./ControlBar.js";
 // @ts-ignore
 window.Buffer = Buffer;
 
 const folderBasePath = "/xmlScores/violin";
 
-const ProgressPlayFile = (props) => {
+const ProgressPlayFile = () => {
   //#region VARIABLES
   const { getCurrentUser } = useAppContext();
   const [userData, setUserData] = useState(null);
   const params = useParams();
-
-  // get search parameters to turn on specific mode after navigation to this page
-  const location = useLocation();
-  const searchParams = new URLSearchParams(location.search);
-  const recordModeParam = searchParams.get("recordMode");
 
   //This ones have to do with OSMD
   const cursorRef = useRef(null);
@@ -110,7 +105,7 @@ const ProgressPlayFile = (props) => {
   const handlePitchCallback = (pitchData) => {
     pitchCount = pitchCount + 1;
     if (pitchCount > 0) {
-      console.log("Dynamic Stability:\n", featureValues.rms.computeSD());
+      // console.log("Dynamic Stability:\n", featureValues.rms.computeSD());
       setPitchValue(pitchData.pitch);
       setConfidenceValue(pitchData.confidence);
       //setDynStability(featureValues.rms.computeSD());
@@ -148,7 +143,6 @@ const ProgressPlayFile = (props) => {
     } catch (error) {
       console.log(`error in putRecording`, error);
     }
-    //}
   }
 
   // Update flags so that the saved audio recording can be downloaded
@@ -158,11 +152,7 @@ const ProgressPlayFile = (props) => {
     setAudioReady(true);
   };
 
-  /////////////////////////////////////////////////////////////////////////////////////
-  //////////////////////////Function to handle Repetition view/////////////////////////
-  /////////////////////////////////////////////////////////////////////////////////////
-  //This function gets called from OpenSheetMusciDisplay.js and it deals with small box
-  //that tells the user which repetition they're currently seeing :)
+  // Keep track of repetition that user is currently seeing --> WILL BE INTEGRATED IN THE FUTURE
   const handleReceiveRepetitionInfo = (showingRep, totalRep) => {
     if (totalRep === 0) {
       setRepetitionMessage("No recordings yet");
@@ -265,6 +255,7 @@ const ProgressPlayFile = (props) => {
 
   // Reset the audio playback to its initial state
   const resetAudio = (playbackManager) => {
+    playbackManager.pause();
     playbackManager.reset();
 
     setStartPitchTrack(false);
@@ -279,6 +270,7 @@ const ProgressPlayFile = (props) => {
   const recordAudio = (playbackManager) => {
     resetAudio(playbackManager);
 
+    if (!practiceMode) setIsRecording(true);
     setRecordInactive(false);
     setStartPitchTrack(true);
     setShowPitchTrack(true);
@@ -291,6 +283,7 @@ const ProgressPlayFile = (props) => {
     else {
       audioStreamer.close_maybe_save();
       setShowSaveRecordingPopUp(true);
+      setIsRecording(false);
     }
 
     setIsPlaying(false);
@@ -301,6 +294,7 @@ const ProgressPlayFile = (props) => {
 
   // Start playing MIDI audio from the playback manager
   const playAudio = (playbackManager) => {
+    console.log("INSIDE PLAYBACK MANAGER");
     playbackManager.play();
   };
 
@@ -315,6 +309,7 @@ const ProgressPlayFile = (props) => {
         // Set playing to false and stop all audio if listen is toggled while playing
         setIsPlaying(false);
         stopRecordingAudio(playbackManager);
+        setIsResetButtonPressed(true);
       }
 
       setIsListening(true);
@@ -348,11 +343,12 @@ const ProgressPlayFile = (props) => {
     navigate("/ListRecordings", { state: { score, song, typeList } });
   };
 
+  // Save a recording that was just made to the user's profile
   const handleSaveRecording = (fileName) => {
     setShowSaveRecordingPopUp(false);
 
     setUserFileName(fileName);
-    setCanDownload(true); //raise flag order to initiate downloading process (json in OSMD)
+    setCanDownload(true); // Raise flag order to initiate downloading process (json in OSMD)
     setPitch([]);
     setConfidence([]);
 
@@ -360,6 +356,7 @@ const ProgressPlayFile = (props) => {
     resetAudio(playbackManager);
   };
 
+  // Delete a recording that was just made
   const handleDeleteRecording = () => {
     setShowSaveRecordingPopUp(false);
 
@@ -389,6 +386,7 @@ const ProgressPlayFile = (props) => {
       playbackManager.setPlaybackStart(0);
 
       setCursorFinished(false);
+      setIsListening(false);
     }
   }, [cursorFinished]);
 
@@ -397,6 +395,7 @@ const ProgressPlayFile = (props) => {
     if (recordInactive && canRecord) {
       const playbackManager = playbackRef.current;
       if (playbackManager) stopRecordingAudio(playbackManager);
+      if (isListening) playAudio(playbackManager);
     }
   }, [recordInactive]);
 
@@ -427,6 +426,7 @@ const ProgressPlayFile = (props) => {
     setCountDownFinished(false);
   }, [countDownFinished]);
 
+  // Update pitch values so that they can be drawn on screen
   useEffect(() => {
     if (pitchValue) {
       setPitch([...pitch, pitchValue]);
@@ -435,11 +435,8 @@ const ProgressPlayFile = (props) => {
     }
   }, [pitchValue, dynamicValue]);
 
-  //#region RETURN
   return (
     <div className="flex flex-col min-h-screen justify-between">
-      {/* {showRepetitionMessage && <SimpleMessaje message={repetitionMessage} />} */}
-
       <div>
         <OpenSheetMusicDisplay
           file={`${folderBasePath}/${params.files}.xml`}
@@ -469,14 +466,20 @@ const ProgressPlayFile = (props) => {
       </div>
 
       <div className="flex justify-center mb-32">
-        <ControlBarAlt
+        <ControlBar
           onTransposeChange={(newTranspose) => setTranspose(newTranspose)}
           onBpmChange={(newBpm) => setBpm(newBpm)}
           onMidiVolumeChange={(newVolume) => setMidiVolume(newVolume)}
           onMetronomeVolumeChange={(newMetronomeVolume) =>
             setMetronomeVolume(newMetronomeVolume)
           }
-          onModeChange={(newMode) => setPracticeMode(newMode)}
+          onModeChange={(newMode) => {
+            setPracticeMode(newMode);
+            setIsResetButtonPressed(true);
+
+            const playbackManager = playbackRef.current;
+            resetAudio(playbackManager);
+          }}
           onToggleListen={handleToggleListen}
           onTogglePlay={handleTogglePlay}
           onReset={() => {
@@ -485,14 +488,20 @@ const ProgressPlayFile = (props) => {
 
             setIsListening(false);
             setIsPlaying(false);
+            setIsResetButtonPressed(true);
           }}
           onRecord={() => {
             const playbackManager = playbackRef.current;
-            recordAudio(playbackManager);
+            if (isRecording) {
+              stopRecordingAudio(playbackManager);
+            } else {
+              recordAudio(playbackManager);
+            }
           }}
           handleViewAllRecordings={handleViewAllRecordings}
           isListening={isListening}
           isPlaying={isPlaying}
+          isRecording={isRecording}
         />
       </div>
 
@@ -512,7 +521,6 @@ const ProgressPlayFile = (props) => {
       )}
     </div>
   );
-  //#endregion
 };
 
 export default ProgressPlayFile;
