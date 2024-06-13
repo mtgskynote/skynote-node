@@ -20,11 +20,12 @@ import { getAudioContext, suspendAudioContext, resumeAudioContext } from '../con
 
 
 const folderBasePath = "/xmlScores/violin";
-let audioContext = getAudioContext(); 
+ 
 
 let currentSource = null; // has to be global so that React redraws don't lose track of the source
 
 const ProgressPlayFileVisual = (props) => {
+  let audioContext = getAudioContext();
   const params = useParams();
 
   const [songFile, setSongFile] = useState(null);

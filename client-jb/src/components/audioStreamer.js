@@ -20,7 +20,7 @@ import { getAudioContext, suspendAudioContext, resumeAudioContext } from '../con
 
 const meyda_buff_fft_length = 1024; // fft length and buf size are the same for Meyda
 
-var audioContext = getAudioContext();
+
 
 
 let mediaRecorder = null;
@@ -34,6 +34,7 @@ var makeAudioStreamer = function (
   analysisCb,
 ) {
 
+  let audioContext = getAudioContext();
   let sourceNode=null;
   let scriptNode=null;
   let gain=null;
@@ -103,7 +104,6 @@ var makeAudioStreamer = function (
         console.log("We're now recording stuff :D");
       };
 
-      // audioContext.resume();
       resumeAudioContext();
       sourceNode = audioContext.createMediaStreamSource(mediaStream);
 

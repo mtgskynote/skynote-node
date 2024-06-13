@@ -301,11 +301,11 @@ const ProgressPlayFile = (props) => {
   ////////////////////////////////////////////////////////////////////////////////////////////
   //---- keep track of the history of features we extract
   const featureValues = {
-    // queue length (form computing means and SDs), normlow, normhi, sdnormlow, sdnormhi
-    pitch: new Queue(5, 24, 61, 0, 0.5), //[110Hz, 440Hz] = [A2, A4] = midinote[24,69]
-    rms: new Queue(5, 0, 0.25, 0, 0.01),
-    spectralCentroid: new Queue(5, 0, 500),
-    spectralFlux: new Queue(5, 3, 1, 0, 0.1),
+    // queue length (for computing means and SDs), normlow, normhi, sdnormlow, sdnormhi
+    pitch: new Queue(8, 24, 61, 0, 0.5), //[110Hz, 440Hz] = [A2, A4] = midinote[24,69]
+    rms: new Queue(8, 0, 0.25, 0, 0.01),
+    spectralCentroid: new Queue(8, 0, 500),
+    spectralFlux: new Queue(8, 3, 1, 0, 0.1),
   };
 
   //---- Pass to makeAudioStreamer to get callbaks with object features (with attributes being Meyda features)
