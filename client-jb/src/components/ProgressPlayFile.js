@@ -269,6 +269,7 @@ const ProgressPlayFile = () => {
   // Start recording audio (whether in record or practice mode)
   const recordAudio = (playbackManager) => {
     resetAudio(playbackManager);
+    setIsResetButtonPressed(true);
 
     if (!practiceMode) setIsRecording(true);
     setRecordInactive(false);
@@ -330,6 +331,7 @@ const ProgressPlayFile = () => {
         resetAudio(playbackManager);
       }
       setIsPlaying(true);
+      setIsResetButtonPressed(true);
       recordAudio(playbackManager);
     }
   };

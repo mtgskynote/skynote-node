@@ -92,11 +92,6 @@ const ControlBar = ({
 
   const recordModeIcons = [
     {
-      tooltip: "Reset",
-      icon: <ResetIcon className="text-4xl" />,
-      toggle: onReset,
-    },
-    {
       tooltip: isRecording ? "Stop Recording" : "Record",
       icon: <RecordIcon className="text-4xl" />,
       toggle: onRecord,
