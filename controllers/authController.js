@@ -5,11 +5,13 @@ import attachCookie from "../utils/attachCookie.js";
 
 // Register is used to register the user
 const register = async (req, res) => {
-  const { name, email, role, password } = req.body;
+  const { name, email, role, password, instrument } = req.body;
 
-  console.log(`name=${name}, email=${email}, role=${role}, password=${password}`)
+  console.log(
+    `name=${name}, email=${email}, role=${role}, password=${password} instrument=${instrument}`
+  );
 
-  if (!name || !email || !role || !password) {
+  if (!name || !email || !role || !password || !instrument) {
     throw new BadRequestError("please provide all values");
   }
   const userAlreadyExists = await User.findOne({ email });
@@ -17,7 +19,7 @@ const register = async (req, res) => {
     throw new BadRequestError("Email already in use");
   }
 
-  const user = await User.create({ name, email, role, password });
+  const user = await User.create({ name, email, role, password, instrument });
 
   const token = user.createJWT();
   //attachCookie({ res, token });
@@ -28,6 +30,7 @@ const register = async (req, res) => {
       name: user.name,
       lastName: user.lastName,
       location: user.location,
+      instrument: user.instrument,
     },
     token,
   });
@@ -52,13 +55,14 @@ const login = async (req, res) => {
   user.password = undefined;
   res.status(StatusCodes.OK).json({
     user: {
-      id:user._id,
+      id: user._id,
       email: user.email,
       role: user.role,
       name: user.name,
-      id : user._id,
+      id: user._id,
       role: user.role,
-      teacher:user.teacher,
+      teacher: user.teacher,
+      instrument: user.instrument,
     },
     token,
   });
@@ -86,36 +90,9 @@ const updateUser = async (req, res) => {
 };
 
 
-const updateProfileData = async (req, res) => {
-  console.log("req.body", req.body);
-  const { email, name } = req.body;
-
-  console.log(`In updateProfileData, the req.body looks like this: ${JSON.stringify(req.body)}`)
-  if (!email || !name) {
-    throw new BadRequestError("Please provide at least name and email");
-  }
-  User.updateOne({ _id: req.user.userId }, req.body, function(err, result) {
-    if (err) {
-      console.error(err);
-    } else {
-      console.log('Document updated successfully:', result);
-    }
-  });
-
-  // const user = await User.findOne({ _id: req.user.userId });
-  // console.log(`req.user.userId is ${req.user.userId}`)
-  // console.log(`found one: ${JSON.stringify(user)}')`)
-
-  res.status(StatusCodes.OK).json({
-    "success": true,
-    "message": "Document updated successfully",
-  });
-};
-
-
 // getProfileData is used to get the user's email and name
 const getProfileData = async (req, res) => {
-  console.log(`getting current user from the database`)
+  console.log(`getting current user from the database`);
   const user = await User.findOne({ _id: req.query.userId });
   res.status(StatusCodes.OK).json({ user });
 };
@@ -129,4 +106,10 @@ const logout = async (req, res) => {
   res.status(StatusCodes.OK).json({ msg: "user logged out!" });
 };
 
-export { register, login, updateUser, updateProfileData, getProfileData, logout };
+export {
+  register,
+  login,
+  updateUser,
+  getProfileData,
+  logout,
+};

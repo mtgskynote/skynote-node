@@ -17,6 +17,7 @@ import XMLParser from "react-xml-parser";
 const user = localStorage.getItem("user");
 const token = localStorage.getItem("token");
 const userLocation = localStorage.getItem("location");
+const instrument = localStorage.getItem("instrument");
 
 // Set initial state
 const initialState = {
@@ -28,6 +29,7 @@ const initialState = {
   token: token,
   userLocation: userLocation || "",
   jobLocation: userLocation || "",
+  instrument: instrument ? instrument : null,
 };
 
 // Create context
@@ -67,11 +69,12 @@ const AppProvider = ({ children }) => {
   };
 
   // Remove user, token, and location from local storage
-  const removeUserFromLocalStorage = (user, token, location) => {
+  const removeUserFromLocalStorage = () => {
     localStorage.removeItem("user");
     localStorage.removeItem("token");
     localStorage.removeItem("location");
-    localStorage.removeItem("scoreData"); //This is technically not User data, but it's simpler if I leave it here cause we have to get rid of it anyways :)
+    localStorage.removeItem("scoreData"); // This is technically not User data, but it's simpler if I leave it here cause we have to get rid of it anyways :)
+    localStorage.removeItem("instrument"); // This information is part of User data but exists separately as well for easy transitioning between selected instrument states
   };
 
   // Set up user with current user, endpoint, and alert text
@@ -95,6 +98,7 @@ const AppProvider = ({ children }) => {
         },
       });
       addUserToLocalStorage(user, token, location); // why are we doing this?
+      setInstrumentLocalStorage(user.instrument);
       getAllScoreData2();
     } catch (error) {
       dispatch({
@@ -113,6 +117,16 @@ const AppProvider = ({ children }) => {
 
   const getCurrentUser = async () => {
     return state.user;
+  };
+
+  // Get current instrument for a user in local storage
+  const getInstrumentLocalStorage = () => {
+    return state.instrument;
+  };
+
+  // Set new current instrument for a user in local storage
+  const setInstrumentLocalStorage = (instrument) => {
+    localStorage.setItem("instrument", instrument);
   };
 
   // functions for getting the names of the scores from the database
@@ -213,6 +227,8 @@ const AppProvider = ({ children }) => {
         getAllNames,
         getAllScoreData,
         getAllScoreData2, //ours
+        getInstrumentLocalStorage,
+        setInstrumentLocalStorage,
       }}
     >
       {children}

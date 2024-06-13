@@ -1,15 +1,18 @@
 import React, { useEffect, useState, useRef, useCallback } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import OpenSheetMusicDisplay from "./OpenSheetMusicDisplay";
-import { makeAudioStreamer } from "./audioStreamer.js";
 import CountDownTimer from "./CountDownTimer.js";
+import ControlBar from "./ControlBar.js";
+import { makeAudioStreamer, destroyAudioStreamer } from "./audioStreamer.js";
+import CountdownTimer from "./MetronomeCountDown.js";
+//import { log } from "@tensorflow/tfjs";
 import Queue from "../utils/QueueWithMaxLength";
 import PopUpWindow from "./PopUpWindow.js";
 import XMLParser from "react-xml-parser";
 import { putRecording } from "../utils/studentRecordingMethods.js";
 import { Buffer } from "buffer";
-import { useAppContext } from "../context/appContext";
-import ControlBar from "./ControlBar.js";
+import { useAppContext} from "../context/appContext";
+import { startMicrophone, stopMicrophone, isMicrophoneActive } from "../context/audioContext";
 // @ts-ignore
 window.Buffer = Buffer;
 
@@ -165,11 +168,11 @@ const ProgressPlayFile = () => {
 
   // Keep track of the history of the audio features we extract
   const featureValues = {
-    // queue length (form computing means and SDs), normlow, normhi, sdnormlow, sdnormhi
-    pitch: new Queue(5, 24, 61, 0, 0.5), //[110Hz, 440Hz] = [A2, A4] = midinote[24,69]
-    rms: new Queue(5, 0, 0.25, 0, 0.01),
-    spectralCentroid: new Queue(5, 0, 500),
-    spectralFlux: new Queue(5, 3, 1, 0, 0.1),
+    // queue length (for computing means and SDs), normlow, normhi, sdnormlow, sdnormhi
+    pitch: new Queue(8, 24, 61, 0, 0.5), //[110Hz, 440Hz] = [A2, A4] = midinote[24,69]
+    rms: new Queue(8, 0, 0.25, 0, 0.01),
+    spectralCentroid: new Queue(8, 0, 500),
+    spectralFlux: new Queue(8, 3, 1, 0, 0.1),
   };
 
   // Receive callbacks from makeAudioStreamer with object properties containing attributes that are Meyda features
@@ -215,22 +218,26 @@ const ProgressPlayFile = () => {
 
   // Ask user for microphone permissions so that the application can record audio
   useEffect(() => {
-    const requestMicrophonePermission = async () => {
-      try {
-        const stream = await navigator.mediaDevices.getUserMedia({
-          audio: {},
+    if (!isMicrophoneActive()) {
+      startMicrophone()
+        .then(() => {
+          console.log("Microphone started");
+        })
+        .catch((error) => {
+          console.error("Failed to get microphone access:", error);
+          alert("Please allow microphone access to use this feature");
+          window.location.reload();
         });
-        setCanRecord(true);
-      } catch (error) {
-        setCanRecord(false);
-        alert(
-          "Microphone access denied. If you have trouble with permissions, try clicking on the small lock at the left of your search bar and make sure the microphone is enabled, then accept this message :)"
-        );
-        window.location.reload();
+    }
+
+    return () => {
+      console.log("LEAVING PAGE ProgressPlayFile.js ")
+      if (isMicrophoneActive()) {
+        stopMicrophone();
       }
+      audioStreamer && audioStreamer.close()
     };
-    requestMicrophonePermission();
-  }, []);
+  }, []); //This should run only once
 
   // Save recording to user profile when audio is available to download
   useEffect(() => {

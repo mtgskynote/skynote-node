@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <!DOCTYPE score-partwise PUBLIC "-//Recordare//DTD MusicXML 3.1 Partwise//EN" "http://www.musicxml.org/dtds/partwise.dtd">
 <score-partwise version="3.1">
-  <movement-title>Autumn walk</movement-title>
+  <movement-title>111Autumn walk</movement-title>
   <identification>
     <rights>©</rights>
     <encoding>
@@ -58,7 +58,7 @@
   </defaults>
   <credit page="1">
     <credit-type>title</credit-type>
-    <credit-words default-x="632" default-y="1475" font-size="24" justify="center" valign="top">Autumn walk</credit-words>
+    <credit-words default-x="632" default-y="1475" font-size="24" justify="center" valign="top">!!!Autumn walk</credit-words>
   </credit>
   <credit page="1">
     <credit-type>rights</credit-type>
@@ -74,7 +74,7 @@
       <part-abbreviation>Vln.</part-abbreviation>
       <score-instrument id="P1-I1">
         <instrument-name>SmartMusic SoftSynth</instrument-name>
-        <instrument-sound>strings.violin</instrument-sound>
+        <instrument-sound>strings.Violin</instrument-sound>
         <solo/>
         <virtual-instrument/>
       </score-instrument>
