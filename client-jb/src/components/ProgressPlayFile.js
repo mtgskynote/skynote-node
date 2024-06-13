@@ -1,18 +1,21 @@
 import React, { useEffect, useState, useRef, useCallback } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import OpenSheetMusicDisplay from "./OpenSheetMusicDisplay";
-import CountDownTimer from "./CountDownTimer.js";
 import ControlBar from "./ControlBar.js";
 import { makeAudioStreamer, destroyAudioStreamer } from "./audioStreamer.js";
-import CountdownTimer from "./MetronomeCountDown.js";
+import CountDownTimer from "./CountDownTimer.js";
 //import { log } from "@tensorflow/tfjs";
 import Queue from "../utils/QueueWithMaxLength";
 import PopUpWindow from "./PopUpWindow.js";
 import XMLParser from "react-xml-parser";
 import { putRecording } from "../utils/studentRecordingMethods.js";
 import { Buffer } from "buffer";
-import { useAppContext} from "../context/appContext";
-import { startMicrophone, stopMicrophone, isMicrophoneActive } from "../context/audioContext";
+import { useAppContext } from "../context/appContext";
+import {
+  startMicrophone,
+  stopMicrophone,
+  isMicrophoneActive,
+} from "../context/audioContext";
 // @ts-ignore
 window.Buffer = Buffer;
 
@@ -231,11 +234,11 @@ const ProgressPlayFile = () => {
     }
 
     return () => {
-      console.log("LEAVING PAGE ProgressPlayFile.js ")
+      console.log("LEAVING PAGE ProgressPlayFile.js ");
       if (isMicrophoneActive()) {
         stopMicrophone();
       }
-      audioStreamer && audioStreamer.close()
+      audioStreamer && audioStreamer.close();
     };
   }, []); //This should run only once
 
