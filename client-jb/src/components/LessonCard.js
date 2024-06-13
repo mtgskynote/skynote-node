@@ -179,7 +179,7 @@ const LessonCard = ({
   return (
     <div>
       <Card
-        className={`h-48 w-80 transition ease-in-out delay-50 max-w-sm relative rounded overflow-hidden shadow-md hover:shadow-lg bg-blue-400 hover:bg-blue-500 hover:cursor-pointer`}
+        className={`h-48 w-full sm:w-64 md:w-80 transition ease-in-out delay-50 max-w-sm relative rounded overflow-hidden shadow-md hover:shadow-lg bg-blue-400 hover:bg-blue-500 hover:cursor-pointer mb-3`}
         onClick={handleViewScore}
         id={id}
       >
