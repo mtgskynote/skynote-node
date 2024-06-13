@@ -3,7 +3,6 @@ import PieChart from "./pieChart";
 import { makeAudioStreamer } from "./audioStreamer.js";
 import Queue from "../utils/QueueWithMaxLength";
 import PitchTuner from "./pitchTuner";
-import { startMicrophone, stopMicrophone, isMicrophoneActive } from "../context/audioContext";
 
 // Labes for pieChart starting at [0,1] and going around clockwise
 const labels = [
@@ -19,36 +18,10 @@ const freq2midipitch = (freq) => {
 
 let audioStreamer = null;
 
-
 const TimbreVisualization = () => {
   console.log(`STARTING Timbre Visualization, about to create audio streamer.`);
   const pieChartRef = useRef(null);
   const pitchTunerRef = useRef(null);
-
-
-
-
-  // useEffect(() => {
-  //   if (!isMicrophoneActive()) {
-  //     startMicrophone()
-  //       .then(() => {
-  //         console.log("TimbreVisualization: Microphone started");
-  //       })
-  //       .catch((error) => {
-  //         console.error("Failed to get microphone access:", error);
-  //         alert("Please allow microphone access to use this feature");
-  //         window.location.reload();
-  //       });
-  //   }
-
-  //   return () => {
-  //     if (isMicrophoneActive()) {
-  //       stopMicrophone();
-  //     }
-  //   };
-    
-    
-  // }, []); //This should run only once
 
 
   //---- Send array of values to pieChart for drawing segments
