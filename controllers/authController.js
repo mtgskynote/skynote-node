@@ -89,35 +89,6 @@ const updateUser = async (req, res) => {
   });
 };
 
-const updateProfileData = async (req, res) => {
-  console.log("req.body", req.body);
-  const { email, name } = req.body;
-
-  console.log(
-    `In updateProfileData, the req.body looks like this: ${JSON.stringify(
-      req.body
-    )}`
-  );
-  if (!email || !name) {
-    throw new BadRequestError("Please provide at least name and email");
-  }
-  User.updateOne({ _id: req.user.userId }, req.body, function (err, result) {
-    if (err) {
-      console.error(err);
-    } else {
-      console.log("Document updated successfully:", result);
-    }
-  });
-
-  // const user = await User.findOne({ _id: req.user.userId });
-  // console.log(`req.user.userId is ${req.user.userId}`)
-  // console.log(`found one: ${JSON.stringify(user)}')`)
-
-  res.status(StatusCodes.OK).json({
-    success: true,
-    message: "Document updated successfully",
-  });
-};
 
 // getProfileData is used to get the user's email and name
 const getProfileData = async (req, res) => {
@@ -139,7 +110,6 @@ export {
   register,
   login,
   updateUser,
-  updateProfileData,
   getProfileData,
   logout,
 };
