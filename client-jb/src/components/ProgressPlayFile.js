@@ -229,6 +229,7 @@ const ProgressPlayFile = () => {
         .catch((error) => {
           console.error("Failed to get microphone access:", error);
           alert("Please allow microphone access to use this feature");
+          setCanRecord(false);
           window.location.reload();
         });
     }
@@ -514,6 +515,7 @@ const ProgressPlayFile = () => {
           isListening={isListening}
           isPlaying={isPlaying}
           isRecording={isRecording}
+          playbackMode={false}
         />
       </div>
 

@@ -16,11 +16,14 @@ import {
   deleteRecording,
 } from "../utils/studentRecordingMethods.js";
 import ListRecordingsCSS from "./ListRecordings.module.css";
-import { getAudioContext, suspendAudioContext, resumeAudioContext } from '../context/audioContext';
-
+import ControlBar from "./ControlBar.js";
+import {
+  getAudioContext,
+  suspendAudioContext,
+  resumeAudioContext,
+} from "../context/audioContext";
 
 const folderBasePath = "/xmlScores/violin";
- 
 
 let currentSource = null; // has to be global so that React redraws don't lose track of the source
 
@@ -33,13 +36,13 @@ const ProgressPlayFileVisual = (props) => {
   const cursorRef = useRef(null);
   const playbackRef = useRef(null);
 
-  const [metroVol, setMetroVol] = useState(0);
-  const [bpmChange, setBpm] = useState(100);
-
-  const [recordVol, setRecordVol] = useState(0);
-  const [recordInactive, setRecordInactive] = useState(true);
-
+  const [metronomeVolume, setMetronomeVolume] = useState(0);
+  const [midiVolume, setMidiVolume] = useState(0);
+  const [bpm, setBpm] = useState(100);
   const [zoom, setZoom] = useState(1.0);
+  const [transpose, setTranspose] = useState(0);
+
+  const [recordInactive, setRecordInactive] = useState(true);
   const [showPopUpWindow, setShowPopUpWindow] = useState(false);
 
   const [pitch, setPitch] = useState([]);
@@ -47,6 +50,7 @@ const ProgressPlayFileVisual = (props) => {
 
   const [startPitchTrack, setStartPitchTrack] = useState(false);
   const [showPitchTrack, setShowPitchTrack] = useState(false);
+  const [isPlaying, setIsPlaying] = useState(false);
 
   const [isResetButtonPressed, setIsResetButtonPressed] = useState(false);
   const [repeatsIterator, setRepeatsIterator] = useState(false);
@@ -106,10 +110,6 @@ const ProgressPlayFileVisual = (props) => {
     });
   }, [recordingID]);
 
-  const handleGoBack = () => {
-    navigate(-1);
-  };
-
   const onResetDone = () => {
     setIsResetButtonPressed(false);
   };
@@ -162,13 +162,6 @@ const ProgressPlayFileVisual = (props) => {
     setCursorJumped(!cursorJumped);
   };
 
-  const handleFinishedCursorControlBarCallback = (controlBarFinishedCursor) => {
-    if (controlBarFinishedCursor === false) {
-      //ControlBar already took cursor finishing actions
-      //Update value, ready for new cursor finishings--> false cursor finished
-      setCursorFinished(false);
-    }
-  };
   // Define recording stop when cursor finishes callback function
   const handleReceiveRepetitionInfo = (showingRep, totalRep) => {
     if (totalRep === 0) {
@@ -179,7 +172,6 @@ const ProgressPlayFileVisual = (props) => {
       setRepetitionMessage(message_aux);
     }
   };
-
 
   const playAudio = async () => {
     try {
@@ -198,11 +190,6 @@ const ProgressPlayFileVisual = (props) => {
   };
 
   const stopAudio = async () => {
-    // # IS THIS REALLY NECESSARY? # Why would you ever need to do this?
-    // audioContext.close().then(() => {
-    //   audioContext = new window.AudioContext();
-    // });
-    // # Let's do this instead (May 21, 2024) # 
     if (currentSource) {
       currentSource.stop();
       currentSource.disconnect(); // Clean up connections
@@ -243,7 +230,7 @@ const ProgressPlayFileVisual = (props) => {
           playbackManager.play();
         }
       };
-      playButton.addEventListener("click", handlePlayButtonClick);
+      // playButton.addEventListener("click", handlePlayButtonClick);
       //--------------------------------------------------------------------------------
 
       // SETTINGS SLIDERS --------------------------------------------------------------
@@ -253,14 +240,14 @@ const ProgressPlayFileVisual = (props) => {
         //Check which setting slider has been clicked
         const sliderId = event.target.id;
         if (sliderId === "volume-slider") {
-          setRecordVol(event.target.value);
+          setMidiVolume(event.target.value);
         } else if (sliderId === "zoom-slider") {
           setZoom(event.target.value);
         } else if (sliderId === "metroVol-slider") {
-          setMetroVol(event.target.value);
+          setMetronomeVolume(event.target.value);
         }
       };
-      settingsSliders.addEventListener("click", handleSettings);
+      // settingsSliders.addEventListener("click", handleSettings);
       //--------------------------------------------------------------------------------
 
       // SWITCH BETWEEN REPETITION/RECORDING LAYERS ------------------------------------
@@ -275,38 +262,38 @@ const ProgressPlayFileVisual = (props) => {
       const handleRepeatLayersMouseLeave = () => {
         setShowRepetitionMessage(false);
       };
-      repeatLayersButton.addEventListener(
-        "click",
-        handleRepeatLayersButtonClick
-      );
-      repeatLayersButton.addEventListener(
-        "mousemove",
-        handleRepeatLayersMouseOver
-      );
-      repeatLayersButton.addEventListener(
-        "mouseout",
-        handleRepeatLayersMouseLeave
-      );
+      // repeatLayersButton.addEventListener(
+      //   "click",
+      //   handleRepeatLayersButtonClick
+      // );
+      // repeatLayersButton.addEventListener(
+      //   "mousemove",
+      //   handleRepeatLayersMouseOver
+      // );
+      // repeatLayersButton.addEventListener(
+      //   "mouseout",
+      //   handleRepeatLayersMouseLeave
+      // );
 
       return () => {
-        repeatLayersButton.removeEventListener(
-          "click",
-          handleRepeatLayersButtonClick
-        );
-        repeatLayersButton.removeEventListener(
-          "mouseover",
-          handleRepeatLayersMouseOver
-        );
-        repeatLayersButton.removeEventListener(
-          "mouseleave",
-          handleRepeatLayersMouseLeave
-        );
-        playButton.removeEventListener("click", handlePlayButtonClick);
+        // repeatLayersButton.removeEventListener(
+        //   "click",
+        //   handleRepeatLayersButtonClick
+        // );
+        // repeatLayersButton.removeEventListener(
+        //   "mouseover",
+        //   handleRepeatLayersMouseOver
+        // );
+        // repeatLayersButton.removeEventListener(
+        //   "mouseleave",
+        //   handleRepeatLayersMouseLeave
+        // );
+        // playButton.removeEventListener("click", handlePlayButtonClick);
         //deleteButton.removeEventListener("click", handleDeleteButtonClick);
       };
     }
   }, [
-    recordVol,
+    midiVolume,
     zoom,
     recordInactive,
     repeatsIterator,
@@ -324,50 +311,109 @@ const ProgressPlayFileVisual = (props) => {
     };
   }, [newUrl]);
 
+  const handleViewAllRecordings = () => {
+    navigate(-1);
+  };
+
+  const resetAudio = (playbackManager) => {
+    playbackManager.pause();
+    playbackManager.reset();
+    stopAudio();
+
+    setStartPitchTrack(false);
+    setShowPitchTrack(false);
+    setPitch([]);
+    setConfidence([]);
+    setRecordInactive(true);
+  };
+
+  const handleTogglePlay = () => {
+    const playbackManager = playbackRef.current;
+    if (playbackManager.isPlaying) {
+      setIsPlaying(false);
+      stopAudio(); // Stop recording audio
+      playbackManager.pause(); // Stop OSMD
+    } else {
+      setIsPlaying(true);
+      playAudio(); // Play recording audio
+      playbackManager.play(); // Play OSMD
+    }
+  };
+
+  useEffect(() => {
+    if (cursorFinished) {
+      setCursorFinished(false);
+      setIsPlaying(false);
+    }
+  });
+
   return (
-    <div>
-      {showRepetitionMessage && <SimpleMessaje message={repetitionMessage} />}
+    <div className="flex flex-col min-h-screen justify-between">
+      {/* {showRepetitionMessage && <SimpleMessaje message={repetitionMessage} />} */}
+      <div>
+        <OpenSheetMusicDisplay
+          file={`${folderBasePath}/${params.files}.xml`}
+          autoResize={true}
+          cursorRef={cursorRef}
+          playbackRef={playbackRef}
+          metroVol={metronomeVolume / 100}
+          bpm={bpm}
+          zoom={zoom}
+          followCursor={true}
+          pitch={pitch}
+          pitchConfidence={confidence}
+          startPitchTrack={startPitchTrack}
+          showPitchTrack={showPitchTrack}
+          recordVol={midiVolume}
+          isResetButtonPressed={isResetButtonPressed}
+          repeatsIterator={repeatsIterator}
+          showRepeatsInfo={handleReceiveRepetitionInfo}
+          onResetDone={onResetDone}
+          cursorActivity={handleFinishedCursorOSMDCallback}
+          cursorJumpsBack={handleJumpedCursorOSMDCallback}
+          mode={visualMode}
+          visual={"yes"}
+          visualJSON={json}
+        />
+      </div>
 
-      <OpenSheetMusicDisplay
-        file={`${folderBasePath}/${params.files}.xml`}
-        autoResize={true}
-        cursorRef={cursorRef}
-        playbackRef={playbackRef}
-        metroVol={metroVol}
-        bpm={bpmChange}
-        zoom={zoom}
-        followCursor={true}
-        pitch={pitch}
-        pitchConfidence={confidence}
-        startPitchTrack={startPitchTrack}
-        showPitchTrack={showPitchTrack}
-        recordVol={recordVol}
-        isResetButtonPressed={isResetButtonPressed}
-        repeatsIterator={repeatsIterator}
-        showRepeatsInfo={handleReceiveRepetitionInfo}
-        onResetDone={onResetDone}
-        cursorActivity={handleFinishedCursorOSMDCallback}
-        cursorJumpsBack={handleJumpedCursorOSMDCallback}
-        mode={visualMode}
-        visual={"yes"}
-        visualJSON={json}
-      />
+      <div className="flex justify-center mb-32">
+        <ControlBar
+          onTransposeChange={(newTranspose) => setTranspose(newTranspose)}
+          onBpmChange={(newBpm) => setBpm(newBpm)}
+          onMidiVolumeChange={(newVolume) => setMidiVolume(newVolume)}
+          onMetronomeVolumeChange={(newMetronomeVolume) =>
+            setMetronomeVolume(newMetronomeVolume)
+          }
+          onTogglePlay={handleTogglePlay}
+          onReset={() => {
+            const playbackManager = playbackRef.current;
+            resetAudio(playbackManager);
 
-      <ControlBarVisual
+            setIsPlaying(false);
+            setIsResetButtonPressed(true);
+          }}
+          handleViewAllRecordings={handleViewAllRecordings}
+          isPlaying={isPlaying}
+          playbackMode={true}
+        />
+      </div>
+
+      {/* <ControlBarVisual
         cursorFinished={cursorFinished}
         cursorFinishedCallback={handleFinishedCursorControlBarCallback}
-        bpmValue={bpmChange}
+        bpmValue={bpm}
         handleDelete={handleDeleteTasks}
-      />
+      /> */}
 
-      {showPopUpWindow && (
+      {/* {showPopUpWindow && (
         <PopUpWindowDelete
           showWindow={showPopUpWindow}
           handlerBack={handleWindowPopUp}
         />
-      )}
+      )} */}
 
-      <div className={ModeToggleCSS.completeModeDiv}>
+      {/* <div className={ModeToggleCSS.completeModeDiv}>
         <div className={ModeToggleCSS.modeToggleDivVisual}>
           <Button key={"VisualMode"} title={"VisualMode"} id={"VisualMode"}>
             <div>
@@ -386,15 +432,15 @@ const ProgressPlayFileVisual = (props) => {
           lesson={metaData.lesson}
           score={metaData.score}
         />
-      </div>
+      </div> */}
 
       {/* Button to go back */}
-      <button
+      {/* <button
         className={ListRecordingsCSS.back2Listbutton}
         onClick={handleGoBack}
       >
         BACK
-      </button>
+      </button> */}
     </div>
   );
 };
