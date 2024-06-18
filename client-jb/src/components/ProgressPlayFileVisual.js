@@ -1,21 +1,11 @@
 import React, { useEffect, useState, useRef } from "react";
 import { useParams, useNavigate, useLocation } from "react-router-dom";
 import OpenSheetMusicDisplay from "./OpenSheetMusicDisplay";
-import ControlBarVisual from "./ControlBarVisual.js";
-import SimpleMessaje from "./AnyMessage.js";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import {
-  faEye, //visual mode
-} from "@fortawesome/free-solid-svg-icons";
-import ModeToggleCSS from "./ModeToggle.module.css";
-import { Button } from "@material-ui/core";
-import ModeInfoButton from "./ModeInfoButton.js";
-import PopUpWindowDelete from "./PopUpWindowDelete.js";
+import PopUpWindow from "./PopUpWindow.js";
 import {
   getRecording,
   deleteRecording,
 } from "../utils/studentRecordingMethods.js";
-import ListRecordingsCSS from "./ListRecordings.module.css";
 import ControlBar from "./ControlBar.js";
 import {
   getAudioContext,
@@ -27,7 +17,7 @@ const folderBasePath = "/xmlScores/violin";
 
 let currentSource = null; // has to be global so that React redraws don't lose track of the source
 
-const ProgressPlayFileVisual = (props) => {
+const ProgressPlayFileVisual = () => {
   let audioContext = getAudioContext();
   const params = useParams();
 
@@ -43,7 +33,9 @@ const ProgressPlayFileVisual = (props) => {
   const [transpose, setTranspose] = useState(0);
 
   const [recordInactive, setRecordInactive] = useState(true);
-  const [showPopUpWindow, setShowPopUpWindow] = useState(false);
+  const [showDeleteRecordingPopUp, setShowDeleteRecordingPopUp] =
+    useState(false);
+  const [showStats, setShowStats] = useState(false);
 
   const [pitch, setPitch] = useState([]);
   const [confidence, setConfidence] = useState([]);
@@ -112,33 +104,6 @@ const ProgressPlayFileVisual = (props) => {
 
   const onResetDone = () => {
     setIsResetButtonPressed(false);
-  };
-
-  // Define pitch callback function
-  const handleDeleteTasks = () => {
-    //take care of things
-    console.log("taking care of delete form progressplayfilevisual");
-    setShowPopUpWindow(true);
-  };
-
-  const handleWindowPopUp = (answer) => {
-    if (answer === "1") {
-      //"yes"
-      setShowPopUpWindow(false);
-      deleteRecording(recordingID)
-        .then(() => {
-          navigate(-1);
-        })
-        .catch((error) => {
-          console.log(`Cannot delete recording from database: ${error}`);
-        });
-
-      //Delete recording actions required FIXME
-    } else {
-      //"no"
-      setShowPopUpWindow(false);
-      //No other actions required
-    }
   };
 
   // Define recording stop when cursor finishes callback function
@@ -340,12 +305,33 @@ const ProgressPlayFileVisual = (props) => {
     }
   };
 
+  const handleShowPopUpWindow = () => {
+    setShowDeleteRecordingPopUp(true);
+  };
+
+  const handleHidePopUpWindow = () => {
+    setShowDeleteRecordingPopUp(false);
+  };
+
+  const handleDeleteRecording = () => {
+    setShowDeleteRecordingPopUp(false);
+    deleteRecording(recordingID)
+      .then(() => {
+        navigate(-1);
+      })
+      .catch((error) => {
+        console.log(`Cannot delete recording from database: ${error}`);
+      });
+  };
+
   useEffect(() => {
     if (cursorFinished) {
       setCursorFinished(false);
       setIsPlaying(false);
     }
   });
+
+  console.log(showStats);
 
   return (
     <div className="flex flex-col min-h-screen justify-between">
@@ -386,6 +372,7 @@ const ProgressPlayFileVisual = (props) => {
             setMetronomeVolume(newMetronomeVolume)
           }
           onTogglePlay={handleTogglePlay}
+          onToggleStats={() => setShowStats(!showStats)}
           onReset={() => {
             const playbackManager = playbackRef.current;
             resetAudio(playbackManager);
@@ -396,51 +383,45 @@ const ProgressPlayFileVisual = (props) => {
           handleViewAllRecordings={handleViewAllRecordings}
           isPlaying={isPlaying}
           playbackMode={true}
+          handleShowPopUpWindow={handleShowPopUpWindow}
         />
+        {showStats && (
+          <div
+            className="absolute bottom-0 left-0 w-full transform transition-transform duration-500 ease-in-out"
+            style={{
+              transform: showStats ? "translateY(0)" : "translateY(100%)",
+            }}
+          >
+            <div className="bg-black p-4">RANDOM STATS</div>
+          </div>
+        )}
       </div>
 
-      {/* <ControlBarVisual
-        cursorFinished={cursorFinished}
-        cursorFinishedCallback={handleFinishedCursorControlBarCallback}
-        bpmValue={bpm}
-        handleDelete={handleDeleteTasks}
-      /> */}
-
-      {/* {showPopUpWindow && (
-        <PopUpWindowDelete
-          showWindow={showPopUpWindow}
-          handlerBack={handleWindowPopUp}
-        />
-      )} */}
-
-      {/* <div className={ModeToggleCSS.completeModeDiv}>
-        <div className={ModeToggleCSS.modeToggleDivVisual}>
-          <Button key={"VisualMode"} title={"VisualMode"} id={"VisualMode"}>
-            <div>
-              <FontAwesomeIcon
-                icon={faEye} //Visual button
-              />
-            </div>
-          </Button>
+      <PopUpWindow isOpen={showDeleteRecordingPopUp}>
+        <div>
+          <p className="text-xl font-extrabold text-gray-800 mb-1">
+            Are you sure you want to delete{" "}
+            <span className="capitalize">{metaData.name}</span>?
+          </p>
+          <p className="text-gray-600 mb-4">
+            This action is permanent and cannot be undone
+          </p>
+          <div className="flex justify-between space-x-2">
+            <button
+              onClick={handleHidePopUpWindow}
+              className="bg-slate-50 border-solid border-slate-500 outline-none text-slate-500 px-4 py-2 rounded-lg hover:bg-slate-100 transition duration-300 ease-in-out w-full"
+            >
+              Cancel
+            </button>
+            <button
+              onClick={handleDeleteRecording}
+              className="bg-red-500 border-none outline-none text-white px-4 py-2 rounded-lg hover:bg-red-700 transition duration-300 ease-in-out w-full"
+            >
+              Delete
+            </button>
+          </div>
         </div>
-        <ModeInfoButton
-          message={2}
-          title={metaData.name}
-          stars={metaData.stars}
-          date={metaData.date}
-          skill={metaData.skill}
-          lesson={metaData.lesson}
-          score={metaData.score}
-        />
-      </div> */}
-
-      {/* Button to go back */}
-      {/* <button
-        className={ListRecordingsCSS.back2Listbutton}
-        onClick={handleGoBack}
-      >
-        BACK
-      </button> */}
+      </PopUpWindow>
     </div>
   );
 };

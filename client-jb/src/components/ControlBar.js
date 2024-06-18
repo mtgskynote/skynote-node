@@ -30,6 +30,7 @@ const ControlBar = ({
   onModeChange,
   onToggleListen,
   onTogglePlay,
+  onToggleStats,
   onReset,
   onRecord,
   handleViewAllRecordings,
@@ -37,6 +38,7 @@ const ControlBar = ({
   isPlaying,
   isRecording,
   playbackMode,
+  handleShowPopUpWindow,
 }) => {
   const [practiceModeOn, setPracticeModeOn] = useState(true);
 
@@ -199,6 +201,14 @@ const ControlBar = ({
                 >
                   {modeIcon.icon}
                 </IconButton>
+              ) : modeIcon.tooltip === "Stats" ? (
+                <IconButton
+                  key={index}
+                  className="text-white"
+                  onClick={onToggleStats}
+                >
+                  {modeIcon.icon}
+                </IconButton>
               ) : (
                 <ControlBarPopover key={index}>
                   {/* Popover trigger */}
@@ -210,20 +220,16 @@ const ControlBar = ({
 
                   {/* Popover content */}
                   <div>
-                    {modeIcon.tooltip === "Stats" ? (
-                      <div>Hello!</div>
-                    ) : (
-                      modeIcon.labels.map((label, index) => (
-                        <RangeInput
-                          key={index}
-                          label={label}
-                          min={modeIcon.mins[index]}
-                          max={modeIcon.maxs[index]}
-                          initial={modeIcon.initials[index]}
-                          onValueChange={modeIcon.onChanges[index]}
-                        />
-                      ))
-                    )}
+                    {modeIcon.labels.map((label, index) => (
+                      <RangeInput
+                        key={index}
+                        label={label}
+                        min={modeIcon.mins[index]}
+                        max={modeIcon.maxs[index]}
+                        initial={modeIcon.initials[index]}
+                        onValueChange={modeIcon.onChanges[index]}
+                      />
+                    ))}
                   </div>
                 </ControlBarPopover>
               )
@@ -240,7 +246,10 @@ const ControlBar = ({
             {playbackMode ? "Go back" : "View All Recordings"}
           </button>
           {playbackMode && (
-            <button className="ml-auto hover:cursor-pointer transition ease-in-out delay-50 text-center text-white border-transparent focus:border-transparent focus:ring-0 focus:outline-none bg-red-500 hover:bg-red-600 hover:text-white font-extralight py-1 px-2 rounded-l-none outline-none rounded">
+            <button
+              onClick={handleShowPopUpWindow}
+              className="ml-auto hover:cursor-pointer transition ease-in-out delay-50 text-center text-white border-transparent focus:border-transparent focus:ring-0 focus:outline-none bg-red-500 hover:bg-red-600 hover:text-white font-extralight py-1 px-2 rounded-l-none outline-none rounded"
+            >
               Delete recording
             </button>
           )}
