@@ -44,6 +44,7 @@ const ProgressPlayFile = () => {
   //Parameters that will be sent to OSMD
   const [metronomeVolume, setMetronomeVolume] = useState(0);
   const [bpm, setBpm] = useState(100); // BPM always set to 100 cause the scores don't have BPMs
+  const [isBpmDeactivated, setIsBpmDeactivated] = useState(false);
   const [midiVolume, setMidiVolume] = useState(50);
   const [zoom, setZoom] = useState(1.0);
   const [transpose, setTranspose] = useState(0);
@@ -282,7 +283,10 @@ const ProgressPlayFile = () => {
     resetAudio(playbackManager);
     setIsResetButtonPressed(true);
 
-    if (!practiceMode) setIsRecording(true);
+    if (!practiceMode) {
+      setIsRecording(true);
+      setIsBpmDeactivated(true);
+    }
     setRecordInactive(false);
     setStartPitchTrack(true);
     setShowPitchTrack(true);
@@ -296,6 +300,7 @@ const ProgressPlayFile = () => {
       audioStreamer.close_maybe_save();
       setShowSaveRecordingPopUp(true);
       setIsRecording(false);
+      setIsBpmDeactivated(false);
     }
 
     setIsPlaying(false);
@@ -519,7 +524,8 @@ const ProgressPlayFile = () => {
           isListening={isListening}
           isPlaying={isPlaying}
           isRecording={isRecording}
-          playbackMode={false}
+          isBpmDisabled={isBpmDeactivated}
+          playbackMode={false} // playback mode is the mode for listening back to a recording
         />
       </div>
 

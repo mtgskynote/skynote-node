@@ -19,7 +19,7 @@ const PopUpWindow = ({ children, isOpen }) => {
   return (
     shouldRender && (
       <div
-        className={`fixed inset-0 flex items-center justify-center bg-gray-800 bg-opacity-50 transition-opacity duration-100 ease-out ${
+        className={`z-30 fixed inset-0 flex items-center justify-center bg-gray-800 bg-opacity-50 transition-opacity duration-100 ease-out ${
           isVisible ? "opacity-100" : "opacity-0"
         }`}
       >

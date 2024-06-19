@@ -7,15 +7,11 @@ import {
   deleteRecording,
 } from "../utils/studentRecordingMethods.js";
 import ControlBar from "./ControlBar.js";
-import {
-  getAudioContext,
-  suspendAudioContext,
-  resumeAudioContext,
-} from "../context/audioContext";
+import { getAudioContext } from "../context/audioContext";
 
 const folderBasePath = "/xmlScores/violin";
 
-let currentSource = null; // has to be global so that React redraws don't lose track of the source
+let currentSource = null; // Must be global so that React redraws don't lose track of the source
 
 const ProgressPlayFileVisual = () => {
   let audioContext = getAudioContext();
@@ -32,10 +28,8 @@ const ProgressPlayFileVisual = () => {
   const [zoom, setZoom] = useState(1.0);
   const [transpose, setTranspose] = useState(0);
 
-  const [recordInactive, setRecordInactive] = useState(true);
   const [showDeleteRecordingPopUp, setShowDeleteRecordingPopUp] =
     useState(false);
-  const [showStats, setShowStats] = useState(false);
 
   const [pitch, setPitch] = useState([]);
   const [confidence, setConfidence] = useState([]);
@@ -54,7 +48,6 @@ const ProgressPlayFileVisual = () => {
   const [cursorFinished, setCursorFinished] = useState(false);
   const [cursorJumped, setCursorJumped] = useState(false);
 
-  const [visualMode, setVisualMode] = useState(true);
   const [json, setJson] = useState([]);
   const [metaData, setMetaData] = useState({
     name: null,
@@ -62,12 +55,12 @@ const ProgressPlayFileVisual = () => {
     date: null,
   });
 
-  //const { getCurrentUser } = useAppContext();
   const location = useLocation();
   const navigate = useNavigate();
   const options = {
+    weekday: "long",
     year: "numeric",
-    month: "numeric",
+    month: "long",
     day: "numeric",
     hour: "2-digit",
     minute: "2-digit",
@@ -78,24 +71,23 @@ const ProgressPlayFileVisual = () => {
 
   useEffect(() => {
     getRecording(recordingID).then((recordingJSON) => {
-      console.log(recordingJSON);
-      // get score info
+      // Get score info
       const scoreInfo = JSON.parse(localStorage.getItem("scoreData")).find(
         (item) => item.fname === params.files
       );
-      //Set metaData
+      // Set MetaData
       const recordingDate = new Date(recordingJSON.date);
       setMetaData({
         name: recordingJSON.recordingName,
         stars: recordingJSON.info.stars,
-        date: recordingDate.toLocaleDateString("es-ES", options),
+        date: recordingDate.toLocaleDateString("en-UK", options),
         skill: scoreInfo.skill,
-        lesson: scoreInfo.lesson,
+        level: scoreInfo.level,
         score: scoreInfo.title,
       });
-      //Save json.info (recording data, pitch, colors...) to send it to osmd
+      // Save json.info (recording data, pitch, colors...) to send to OSMD
       setJson(recordingJSON.info);
-      //Set bpm
+      // Set BPM
       setBpm(recordingJSON.info.bpm);
       // Save audio
       setSongFile(recordingJSON.audio);
@@ -109,16 +101,13 @@ const ProgressPlayFileVisual = () => {
   // Define recording stop when cursor finishes callback function
   const handleFinishedCursorOSMDCallback = (OSMDfinishedCursor) => {
     if (OSMDfinishedCursor) {
-      //cursor has finished
-
-      //Send info to ControlBar--> true cursor finished
+      // Send info to back to parent component and reset all playing
       setCursorFinished(true);
       const playbackManager = playbackRef.current;
       playbackManager.pause();
       playbackManager.setPlaybackStart(0);
       setStartPitchTrack(false);
       setIsResetButtonPressed(true);
-      setRecordInactive(true); //Set to true, just like the initial state
     }
   };
 
@@ -138,6 +127,7 @@ const ProgressPlayFileVisual = () => {
     }
   };
 
+  // Play audio recording
   const playAudio = async () => {
     try {
       // Transform data type and play
@@ -154,6 +144,7 @@ const ProgressPlayFileVisual = () => {
     }
   };
 
+  // Pause audio playback
   const stopAudio = async () => {
     if (currentSource) {
       currentSource.stop();
@@ -162,124 +153,25 @@ const ProgressPlayFileVisual = () => {
     }
   };
 
-  //Handles basically any change
-  useEffect(() => {
-    if (visualMode === true) {
-      //Visual Mode
-      // PLAY/STOP BUTTON -------------------------------------------------------------
-      // gets the playback manager and sets the start time to the current time
-      // plays the music where the cursor is
-      const playButton = document.getElementById("play/stop");
-      const handlePlayButtonClick = () => {
-        const playbackManager = playbackRef.current;
-        //const cursor = cursorRef.current;
-        if (playbackManager.isPlaying) {
-          //Pause/stop audio of recording
-          stopAudio();
-          //Pause/stop osmd
-          playbackManager.pause();
-          //playbackManager.setPlaybackStart(0);
-          playbackManager.reset();
-          //cursor.reset(); //seems right, but a runtime error follows
-          setStartPitchTrack(false);
-          setShowPitchTrack(false);
-          setPitch([]);
-          setConfidence([]);
-          setRecordInactive(true); //Set to true, just like the initial state
-          setIsResetButtonPressed(true);
-        } else {
-          //Play audio of recording
-          playAudio();
-          //Play osmd
-          setIsResetButtonPressed(true);
-          playbackManager.play();
-        }
-      };
-      // playButton.addEventListener("click", handlePlayButtonClick);
-      //--------------------------------------------------------------------------------
+  // TODO: Add support for repetition sections
+  const handleRepeatLayersButtonClick = () => {
+    //window.location.href = "/TimbreVisualization";
+    setRepeatsIterator(!repeatsIterator);
+  };
 
-      // SETTINGS SLIDERS --------------------------------------------------------------
-      const settingsSliders = document.getElementById("settings");
-
-      const handleSettings = (event) => {
-        //Check which setting slider has been clicked
-        const sliderId = event.target.id;
-        if (sliderId === "volume-slider") {
-          setMidiVolume(event.target.value);
-        } else if (sliderId === "zoom-slider") {
-          setZoom(event.target.value);
-        } else if (sliderId === "metroVol-slider") {
-          setMetronomeVolume(event.target.value);
-        }
-      };
-      // settingsSliders.addEventListener("click", handleSettings);
-      //--------------------------------------------------------------------------------
-
-      // SWITCH BETWEEN REPETITION/RECORDING LAYERS ------------------------------------
-      const repeatLayersButton = document.getElementById("switchRepetition");
-      const handleRepeatLayersButtonClick = () => {
-        //window.location.href = "/TimbreVisualization";
-        setRepeatsIterator(!repeatsIterator);
-      };
-      const handleRepeatLayersMouseOver = () => {
-        setShowRepetitionMessage(true);
-      };
-      const handleRepeatLayersMouseLeave = () => {
-        setShowRepetitionMessage(false);
-      };
-      // repeatLayersButton.addEventListener(
-      //   "click",
-      //   handleRepeatLayersButtonClick
-      // );
-      // repeatLayersButton.addEventListener(
-      //   "mousemove",
-      //   handleRepeatLayersMouseOver
-      // );
-      // repeatLayersButton.addEventListener(
-      //   "mouseout",
-      //   handleRepeatLayersMouseLeave
-      // );
-
-      return () => {
-        // repeatLayersButton.removeEventListener(
-        //   "click",
-        //   handleRepeatLayersButtonClick
-        // );
-        // repeatLayersButton.removeEventListener(
-        //   "mouseover",
-        //   handleRepeatLayersMouseOver
-        // );
-        // repeatLayersButton.removeEventListener(
-        //   "mouseleave",
-        //   handleRepeatLayersMouseLeave
-        // );
-        // playButton.removeEventListener("click", handlePlayButtonClick);
-        //deleteButton.removeEventListener("click", handleDeleteButtonClick);
-      };
-    }
-  }, [
-    midiVolume,
-    zoom,
-    recordInactive,
-    repeatsIterator,
-    visualMode,
-    showRepetitionMessage,
-    json,
-    songFile,
-    cursorFinished,
-    cursorJumped,
-  ]);
-
+  // Stop playing audio if the window is reloaded
   useEffect(() => {
     return () => {
       stopAudio();
     };
   }, [newUrl]);
 
+  // Go back to previous page (usually the All Recordings page)
   const handleViewAllRecordings = () => {
     navigate(-1);
   };
 
+  // Reset audio playback
   const resetAudio = (playbackManager) => {
     playbackManager.pause();
     playbackManager.reset();
@@ -289,9 +181,9 @@ const ProgressPlayFileVisual = () => {
     setShowPitchTrack(false);
     setPitch([]);
     setConfidence([]);
-    setRecordInactive(true);
   };
 
+  // Handle play button toggle to update UI in ControlBar
   const handleTogglePlay = () => {
     const playbackManager = playbackRef.current;
     if (playbackManager.isPlaying) {
@@ -305,14 +197,17 @@ const ProgressPlayFileVisual = () => {
     }
   };
 
+  // Handle opening the delete recording popup window
   const handleShowPopUpWindow = () => {
     setShowDeleteRecordingPopUp(true);
   };
 
+  // Handle closing the delete recording popup window
   const handleHidePopUpWindow = () => {
     setShowDeleteRecordingPopUp(false);
   };
 
+  // Handle deleting a recording from the database
   const handleDeleteRecording = () => {
     setShowDeleteRecordingPopUp(false);
     deleteRecording(recordingID)
@@ -324,6 +219,7 @@ const ProgressPlayFileVisual = () => {
       });
   };
 
+  // Reset cursor to the beginning of the OSMD score when the cursor reaches the end
   useEffect(() => {
     if (cursorFinished) {
       setCursorFinished(false);
@@ -331,11 +227,8 @@ const ProgressPlayFileVisual = () => {
     }
   });
 
-  console.log(showStats);
-
   return (
     <div className="flex flex-col min-h-screen justify-between">
-      {/* {showRepetitionMessage && <SimpleMessaje message={repetitionMessage} />} */}
       <div>
         <OpenSheetMusicDisplay
           file={`${folderBasePath}/${params.files}.xml`}
@@ -357,7 +250,7 @@ const ProgressPlayFileVisual = () => {
           onResetDone={onResetDone}
           cursorActivity={handleFinishedCursorOSMDCallback}
           cursorJumpsBack={handleJumpedCursorOSMDCallback}
-          mode={visualMode}
+          mode={true} // Passed as true to indicate that we are not in a type of record mode
           visual={"yes"}
           visualJSON={json}
         />
@@ -372,7 +265,6 @@ const ProgressPlayFileVisual = () => {
             setMetronomeVolume(newMetronomeVolume)
           }
           onTogglePlay={handleTogglePlay}
-          onToggleStats={() => setShowStats(!showStats)}
           onReset={() => {
             const playbackManager = playbackRef.current;
             resetAudio(playbackManager);
@@ -384,17 +276,8 @@ const ProgressPlayFileVisual = () => {
           isPlaying={isPlaying}
           playbackMode={true}
           handleShowPopUpWindow={handleShowPopUpWindow}
+          stats={metaData}
         />
-        {showStats && (
-          <div
-            className="absolute bottom-0 left-0 w-full transform transition-transform duration-500 ease-in-out"
-            style={{
-              transform: showStats ? "translateY(0)" : "translateY(100%)",
-            }}
-          >
-            <div className="bg-black p-4">RANDOM STATS</div>
-          </div>
-        )}
       </div>
 
       <PopUpWindow isOpen={showDeleteRecordingPopUp}>

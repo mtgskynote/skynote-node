@@ -16,6 +16,7 @@ import IconButton from "@mui/material/IconButton";
 import Tooltip from "@mui/material/Tooltip";
 import ControlBarPopover from "./ControlBarPopover";
 import RangeInput from "./RangeInput";
+import ControlBarStats from "./ControlBarStats";
 
 const initialTranspose = 0;
 const initialBpm = 100;
@@ -30,17 +31,21 @@ const ControlBar = ({
   onModeChange,
   onToggleListen,
   onTogglePlay,
-  onToggleStats,
   onReset,
   onRecord,
   handleViewAllRecordings,
   isListening,
   isPlaying,
   isRecording,
+  isBpmDisabled,
   playbackMode,
   handleShowPopUpWindow,
+  stats,
 }) => {
   const [practiceModeOn, setPracticeModeOn] = useState(true);
+  const [showStats, setShowStats] = useState(false);
+
+  console.log(isBpmDisabled);
 
   const allModeIcons = [
     {
@@ -51,6 +56,7 @@ const ControlBar = ({
       maxs: [12],
       initials: [initialTranspose],
       onChanges: [onTransposeChange],
+      slidersDisabled: [true],
       showInPlaybackMode: false,
       showInInteractiveMode: true,
     },
@@ -66,6 +72,7 @@ const ControlBar = ({
       onChanges: playbackMode
         ? [onMetronomeVolumeChange]
         : [onBpmChange, onMetronomeVolumeChange],
+      slidersDisabled: playbackMode ? [false] : [isBpmDisabled, false],
       showInPlaybackMode: true,
       showInInteractiveMode: true,
     },
@@ -77,19 +84,13 @@ const ControlBar = ({
       maxs: [100],
       initials: [initialMidiVolume],
       onChanges: [onMidiVolumeChange],
+      slidersDisabled: [false],
       showInPlaybackMode: false,
       showInInteractiveMode: true,
     },
     {
       tooltip: "Stats",
       icon: <StatsIcon className="text-4xl" />,
-      labels: ["Stats"],
-      mins: [0],
-      maxs: [100],
-      initials: [initialMetronomeVolume],
-      onChanges: [onMetronomeVolumeChange],
-      showInPlaybackMode: true,
-      showInInteractiveMode: false,
     },
   ];
 
@@ -139,120 +140,134 @@ const ControlBar = ({
     onModeChange(newMode);
   };
 
+  const handleToggleStats = () => {
+    setShowStats(!showStats);
+  };
+
   return (
     <div
-      className={`px-4 py-3 bg-blue-400 rounded-3xl shadow-md w-1/2 ${
+      className={`relative  w-1/2 ${
         playbackMode ? "lg:w-1/2" : "lg:w-3/5"
       } md:mx-8 md:w-full sm:w-5/6`}
     >
-      <div className="flex justify-between items-center h-full">
-        {!playbackMode && (
-          <div>
-            <ModeToggle onModeChange={(newMode) => handleModeChange(newMode)} />
-          </div>
-        )}
+      <ControlBarStats show={showStats} stats={stats} />
+      <div
+        className={`px-4 py-3 bg-blue-400 ${
+          showStats ? "rounded-t-none rounded-b-3xl" : "rounded-3xl"
+        } shadow-md relative z-20 transition-all duration-300 ease-in-out`}
+      >
+        <div className="flex justify-between items-center h-full">
+          {!playbackMode && (
+            <div>
+              <ModeToggle
+                onModeChange={(newMode) => handleModeChange(newMode)}
+              />
+            </div>
+          )}
 
-        {!playbackMode && (
-          <div className="ml-6 h-full w-0.5 self-stretch bg-neutral-100 dark:bg-white/10"></div>
-        )}
+          {!playbackMode && (
+            <div className="ml-6 h-auto w-0.5 self-stretch bg-white/20"></div>
+          )}
 
-        <div className="flex flex-grow justify-around">
-          {practiceModeOn
-            ? practiceModeIcons
-                .filter((modeIcon) =>
-                  playbackMode ? modeIcon.showInPlaybackMode : true
-                )
-                .map((modeIcon, index) => (
+          <div className="flex flex-grow justify-around">
+            {practiceModeOn
+              ? practiceModeIcons
+                  .filter((modeIcon) =>
+                    playbackMode ? modeIcon.showInPlaybackMode : true
+                  )
+                  .map((modeIcon, index) => (
+                    <Tooltip title={modeIcon.tooltip} key={index}>
+                      <IconButton
+                        className="text-white"
+                        onClick={modeIcon.toggle}
+                      >
+                        {modeIcon.flag ? modeIcon.iconPause : modeIcon.iconPlay}
+                      </IconButton>
+                    </Tooltip>
+                  ))
+              : recordModeIcons.map((modeIcon, index) => (
                   <Tooltip title={modeIcon.tooltip} key={index}>
                     <IconButton
-                      className="text-white"
+                      className={`${
+                        isRecording && modeIcon.tooltip === "Stop Recording"
+                          ? "text-red-500"
+                          : "text-white"
+                      }`}
                       onClick={modeIcon.toggle}
                     >
-                      {modeIcon.flag ? modeIcon.iconPause : modeIcon.iconPlay}
-                    </IconButton>
-                  </Tooltip>
-                ))
-            : recordModeIcons.map((modeIcon, index) => (
-                <Tooltip title={modeIcon.tooltip} key={index}>
-                  <IconButton
-                    className={`${
-                      isRecording && modeIcon.tooltip === "Stop Recording"
-                        ? "text-red-500"
-                        : "text-white"
-                    }`}
-                    onClick={modeIcon.toggle}
-                  >
-                    {modeIcon.icon}
-                  </IconButton>
-                </Tooltip>
-              ))}
-          {allModeIcons
-            .filter((modeIcon) =>
-              playbackMode
-                ? modeIcon.showInPlaybackMode
-                : modeIcon.showInInteractiveMode
-            )
-            .map((modeIcon, index) =>
-              modeIcon.tooltip === "Transpose" ? (
-                <IconButton
-                  key={index}
-                  disabled
-                  className="text-white opacity-50"
-                >
-                  {modeIcon.icon}
-                </IconButton>
-              ) : modeIcon.tooltip === "Stats" ? (
-                <IconButton
-                  key={index}
-                  className="text-white"
-                  onClick={onToggleStats}
-                >
-                  {modeIcon.icon}
-                </IconButton>
-              ) : (
-                <ControlBarPopover key={index}>
-                  {/* Popover trigger */}
-                  <Tooltip title={modeIcon.tooltip}>
-                    <IconButton className="text-white">
                       {modeIcon.icon}
                     </IconButton>
                   </Tooltip>
-
-                  {/* Popover content */}
-                  <div>
-                    {modeIcon.labels.map((label, index) => (
-                      <RangeInput
-                        key={index}
-                        label={label}
-                        min={modeIcon.mins[index]}
-                        max={modeIcon.maxs[index]}
-                        initial={modeIcon.initials[index]}
-                        onValueChange={modeIcon.onChanges[index]}
-                      />
-                    ))}
-                  </div>
-                </ControlBarPopover>
+                ))}
+            {allModeIcons
+              .filter((modeIcon) =>
+                playbackMode
+                  ? modeIcon.showInPlaybackMode
+                  : modeIcon.showInInteractiveMode
               )
-            )}
-        </div>
+              .map((modeIcon, index) =>
+                modeIcon.tooltip === "Transpose" ? (
+                  <IconButton
+                    key={index}
+                    disabled
+                    className="text-white opacity-50"
+                  >
+                    {modeIcon.icon}
+                  </IconButton>
+                ) : modeIcon.tooltip === "Stats" ? (
+                  <IconButton
+                    key={index}
+                    className="text-white"
+                    onClick={handleToggleStats}
+                  >
+                    {modeIcon.icon}
+                  </IconButton>
+                ) : (
+                  <ControlBarPopover key={index}>
+                    {/* Popover trigger */}
+                    <Tooltip title={modeIcon.tooltip}>
+                      <IconButton className="text-white">
+                        {modeIcon.icon}
+                      </IconButton>
+                    </Tooltip>
 
-        <div className="mr-6 h-full w-0.5 self-stretch bg-neutral-100 dark:bg-white/10"></div>
+                    {/* Popover content */}
+                    <div>
+                      {modeIcon.labels.map((label, index) => (
+                        <RangeInput
+                          key={index}
+                          label={label}
+                          min={modeIcon.mins[index]}
+                          max={modeIcon.maxs[index]}
+                          initial={modeIcon.initials[index]}
+                          onValueChange={modeIcon.onChanges[index]}
+                          disabled={modeIcon.slidersDisabled[index]}
+                        />
+                      ))}
+                    </div>
+                  </ControlBarPopover>
+                )
+              )}
+          </div>
 
-        <div className="justify-between items-center space-x-2">
-          <button
-            onClick={handleViewAllRecordings}
-            className="ml-auto hover:cursor-pointer transition ease-in-out delay-50 text-center text-gray-700 hover:text-gray-900 border-transparent focus:border-transparent focus:ring-0 focus:outline-none bg-slate-50 hover:bg-slate-100 font-extralight py-1 px-2 rounded-l-none outline-none rounded"
-          >
-            {playbackMode ? "Go back" : "View All Recordings"}
-          </button>
-          {playbackMode && (
+          <div className="mr-6 h-auto w-0.5 self-stretch bg-white/20"></div>
+
+          <div className="justify-between items-center space-x-2">
             <button
-              onClick={handleShowPopUpWindow}
-              className="ml-auto hover:cursor-pointer transition ease-in-out delay-50 text-center text-white border-transparent focus:border-transparent focus:ring-0 focus:outline-none bg-red-500 hover:bg-red-600 hover:text-white font-extralight py-1 px-2 rounded-l-none outline-none rounded"
+              onClick={handleViewAllRecordings}
+              className="ml-auto hover:cursor-pointer transition ease-in-out delay-50 text-center text-gray-700 hover:text-gray-900 border-transparent focus:border-transparent focus:ring-0 focus:outline-none bg-slate-50 hover:bg-slate-100 font-extralight py-1 px-2 rounded-l-none outline-none rounded"
             >
-              Delete recording
+              {playbackMode ? "Go back" : "View All Recordings"}
             </button>
-          )}
+            {playbackMode && (
+              <button
+                onClick={handleShowPopUpWindow}
+                className="ml-auto hover:cursor-pointer transition ease-in-out delay-50 text-center text-white border-transparent focus:border-transparent focus:ring-0 focus:outline-none bg-red-500 hover:bg-red-600 hover:text-white font-extralight py-1 px-2 rounded-l-none outline-none rounded"
+              >
+                Delete recording
+              </button>
+            )}
+          </div>
         </div>
       </div>
     </div>
