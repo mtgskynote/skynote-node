@@ -91,6 +91,8 @@ const ControlBar = ({
     {
       tooltip: "Stats",
       icon: <StatsIcon className="text-4xl" />,
+      showInPlaybackMode: true,
+      showInInteractiveMode: false,
     },
   ];
 
