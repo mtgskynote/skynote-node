@@ -7,11 +7,7 @@ import {
   deleteRecording,
 } from "../utils/studentRecordingMethods.js";
 import ControlBar from "./ControlBar.js";
-import {
-  getAudioContext,
-  suspendAudioContext,
-  resumeAudioContext,
-} from "../context/audioContext";
+import { getAudioContext } from "../context/audioContext";
 
 const folderBasePath = "/xmlScores/violin";
 
