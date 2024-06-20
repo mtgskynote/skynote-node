@@ -4,7 +4,6 @@ import { useAppContext } from "../../context/appContext";
 import { getAllRecData } from "../../utils/studentRecordingMethods.js";
 import { getMessages } from "../../utils/messagesMethods.js";
 import { getAllAssignments } from "../../utils/assignmentsMethods.js";
-import StatsCSS from "./Stats.module.css";
 import PercentagesStarsStats from "../../components/StatsPercentagesStars.js";
 import StatsRecentRecordings from "../../components/StatsRecentRecordings.js";
 import NumberOfRecStats from "../../components/StatsAreaChart.js";

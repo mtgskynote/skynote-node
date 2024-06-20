@@ -24,6 +24,11 @@ const LessonCard = ({
   id,
   recordings,
   reloadRecordingsCallback,
+  renderViewRecordings,
+  sizeX,
+  backgroundColour,
+  hoverBackgroundColour, 
+  textColour
 }) => {
   const navigate = useNavigate();
   const [allRecordings, setAllRecordings] = useState(recordings);
@@ -34,8 +39,22 @@ const LessonCard = ({
   const [deletionStatus, setDeletionStatus] = useState(null);
   const [deletedRecordingIds, setDeletedRecordingIds] = useState([]);
   const [playingAudioId, setPlayingAudioId] = useState(null);
+  const [smallerTextSize, setSmallerTextSize] = useState(false);
 
   const modalRef = useRef(null);
+
+  // set defaults
+  const viewRecordings = renderViewRecordings !== false ? renderViewRecordings : false;
+  const xSize = sizeX ?  sizeX : "290px";
+  const bColour = backgroundColour ? backgroundColour : "bg-blue-400";
+  const hoverColour = hoverBackgroundColour ? hoverBackgroundColour : "hover:bg-blue-500";
+  const tColour = textColour ? textColour : "text-white";
+
+  // Set text sizes based on the size of the card
+  useEffect(() => {
+    const numericSizeX = parseInt(sizeX, 10);
+    setSmallerTextSize(numericSizeX < 200);
+  }, [sizeX]);
 
   // Resets the deletionStatus to null after 10 seconds when it changes.
   useEffect(() => {
@@ -74,7 +93,14 @@ const LessonCard = ({
   // Handles the click event for viewing the score of the lesson and navigates to the '/all-lessons' route.
   const handleViewScore = (e) => {
     e.stopPropagation(); // Prevents the event from bubbling up to the parent component.
-    navigate(`/all-lessons/${xml}`, { state: { id } });
+  
+    let path = xml;
+    const basePath = '/all-lessons/';
+    if (!xml.startsWith(basePath)) {
+      path = `${basePath}${xml}`;
+    }
+  
+    navigate(path, { state: { id } });
   };
 
   // Opens the recordings modal, fetches the audio for all recordings if not already fetched, and updates the state accordingly.
@@ -178,47 +204,54 @@ const LessonCard = ({
 
   return (
     <div>
-      <Card
-        className={`h-48 w-full sm:w-64 md:w-80 transition ease-in-out delay-50 max-w-sm relative rounded overflow-hidden shadow-md hover:shadow-lg bg-blue-400 hover:bg-blue-500 hover:cursor-pointer mb-3`}
-        onClick={handleViewScore}
-        id={id}
-      >
-        <CardContent>
-          <div className="flex justify-between items-center text-white">
-            <div className="w-3/4 overflow-hidden">
+      <div className ="flex">
+        <div 
+          className={`relative transition ease-in-out delay-50 rounded overflow-hidden shadow-md hover:shadow-lg ${bColour} ${hoverColour} hover:cursor-pointer mb-3`}
+          style={{ width: xSize, aspectRatio: '3 / 2' }}
+          onClick={handleViewScore}
+          id={id}
+        >
+          <CardContent>
+            {/* Top Section */}
+            <div className={`flex justify-between items-start ${tColour} align-text-top`}>
+              <div className="overflow-hidden">
+                <Typography
+                  variant="h5"
+                  component="div"
+                  className= {`font-bold text-clip ${smallerTextSize ? "text-lg" : "text-xl"} whitespace-normal mr-8 max-w-36`}
+                >
+                  {title}
+                </Typography>
+              </div>
+              <div></div>
+              <div className={`${smallerTextSize ? "text-xs" : "text-sm"} font-extralight p-1 rounded`}>
+                Level {level}
+              </div>
+            </div>
+
+            <div className="whitespace-normal w-fit">
               <Typography
-                variant="h5"
-                component="div"
-                className="font-bold text-clip w-full whitespace-normal"
+                variant="body2"
+                color="textSecondary"
+                gutterBottom
+                className={`${tColour} ${smallerTextSize ? "text-xs" : "text-sm"}`}
               >
-                {title}
+                {skill}
               </Typography>
             </div>
-            <div className="text-xl font-extralight p-1 rounded">
-              Level {level}
+            <div className="absolute inset-x-0 bottom-0 p-3 flex items-end w-full">
+              <StarRating stars={stars}/>
+              
+              {viewRecordings ? ( <button
+                onClick={handleOpenRecordingsModal}
+                className={`flex ml-auto hover:cursor-pointer object-right transition ease-in-out delay-50 text-center ${smallerTextSize ? "text-xs" : "text-sm"} text-gray-800 border-transparent focus:border-transparent focus:ring-0 focus:outline-none bg-slate-50 hover:bg-blue-700 hover:text-white font-extralight hover:font-bold py-1 px-2 rounded-l-none outline-none rounded`}
+              >
+                View All Recordings
+              </button> ) : null}
             </div>
-          </div>
-          <div className="whitespace-normal">
-            <Typography
-              variant="body2"
-              color="textSecondary"
-              gutterBottom
-              className="text-slate-100 text-md"
-            >
-              {skill}
-            </Typography>
-          </div>
-          <div className="absolute inset-x-0 bottom-0 p-3 flex items-end">
-            <StarRating stars={stars} />
-            <button
-              onClick={handleOpenRecordingsModal}
-              className="ml-auto hover:cursor-pointer transition ease-in-out delay-50 text-center text-gray-800 border-transparent focus:border-transparent focus:ring-0 focus:outline-none bg-slate-50 hover:bg-blue-700 hover:text-white font-extralight hover:font-bold py-1 px-2 rounded-l-none outline-none rounded"
-            >
-              View All Recordings
-            </button>
-          </div>
-        </CardContent>
-      </Card>
+          </CardContent>
+        </div>
+      </div>
 
       {/* Modal */}
       <div
@@ -248,7 +281,7 @@ const LessonCard = ({
                         e.stopPropagation();
                         handleCloseRecordingsModal();
                       }}
-                      className="bg-red-500 hover:bg-red-400 text-white focus:outline-none border-none rounded"
+                      className="bg-red-500 hover:bg-red-400 ${tColour} focus:outline-none border-none rounded"
                     >
                       <CloseRoundedIcon className="rounded text-2xl" />
                     </button>
