@@ -7,7 +7,11 @@ import {
   deleteRecording,
 } from "../utils/studentRecordingMethods.js";
 import ControlBar from "./ControlBar.js";
-import { getAudioContext } from "../context/audioContext";
+import {
+  getAudioContext,
+  suspendAudioContext,
+  resumeAudioContext,
+} from "../context/audioContext";
 
 const folderBasePath = "/xmlScores/violin";
 
@@ -18,6 +22,8 @@ const ProgressPlayFileVisual = () => {
   const params = useParams();
 
   const [songFile, setSongFile] = useState(null);
+  const pauseTimeRef = useRef(0);
+  const startTimeRef = useRef(0);
 
   const cursorRef = useRef(null);
   const playbackRef = useRef(null);
@@ -132,25 +138,28 @@ const ProgressPlayFileVisual = () => {
   const playAudio = async () => {
     try {
       // Transform data type and play
-      var uint8Array = new Uint8Array(songFile.data);
-      var arrayBuffer = uint8Array.buffer;
+      const uint8Array = new Uint8Array(songFile.data);
+      const arrayBuffer = uint8Array.buffer;
       const audioBuffer = await audioContext.decodeAudioData(arrayBuffer);
-      const source = audioContext.createBufferSource();
-      source.buffer = audioBuffer;
-      source.connect(audioContext.destination);
-      source.start();
-      currentSource = source; // keep track of the current source for stopping later
+      currentSource = audioContext.createBufferSource();
+      currentSource.buffer = audioBuffer;
+      currentSource.connect(audioContext.destination);
+      currentSource.start(0, pauseTimeRef.current);
+      startTimeRef.current = audioContext.currentTime - pauseTimeRef.current;
+      setIsPlaying(true);
     } catch (error) {
       console.error("Error playing audio:", error);
     }
   };
 
-  // Pause audio playback
-  const stopAudio = async () => {
+  // Stop audio playback
+  const stopAudio = () => {
     if (currentSource) {
       currentSource.stop();
       currentSource.disconnect(); // Clean up connections
       currentSource = null;
+
+      pauseTimeRef.current = audioContext.currentTime - startTimeRef.current;
     }
   };
 
@@ -159,13 +168,6 @@ const ProgressPlayFileVisual = () => {
     //window.location.href = "/TimbreVisualization";
     setRepeatsIterator(!repeatsIterator);
   };
-
-  // Stop playing audio if the window is reloaded
-  useEffect(() => {
-    return () => {
-      stopAudio();
-    };
-  }, [newUrl]);
 
   // Go back to previous page (usually the All Recordings page)
   const handleViewAllRecordings = () => {
@@ -225,8 +227,19 @@ const ProgressPlayFileVisual = () => {
     if (cursorFinished) {
       setCursorFinished(false);
       setIsPlaying(false);
+
+      // Reset start and pause times when playback is finished
+      startTimeRef.current = 0;
+      pauseTimeRef.current = 0;
     }
   });
+
+  // Stop playing audio if the window is reloaded
+  useEffect(() => {
+    return () => {
+      stopAudio();
+    };
+  }, [newUrl]);
 
   return (
     <div className="flex flex-col min-h-screen justify-between">

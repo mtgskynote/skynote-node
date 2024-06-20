@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import ModeToggle from "./ModeToggle";
 import {
   PlayCircle as PlayIcon,
@@ -17,11 +17,6 @@ import Tooltip from "@mui/material/Tooltip";
 import ControlBarPopover from "./ControlBarPopover";
 import RangeInput from "./RangeInput";
 import ControlBarStats from "./ControlBarStats";
-
-const initialTranspose = 0;
-const initialBpm = 100;
-const initialMidiVolume = 50;
-const initialMetronomeVolume = 0;
 
 const ControlBar = ({
   onTransposeChange,
@@ -44,6 +39,13 @@ const ControlBar = ({
 }) => {
   const [practiceModeOn, setPracticeModeOn] = useState(true);
   const [showStats, setShowStats] = useState(false);
+  const [initialMidiVolume, setInitialMidiVolume] = useState(
+    practiceModeOn ? 50 : 0
+  );
+
+  const initialTranspose = 0;
+  const initialBpm = 100;
+  const initialMetronomeVolume = 0;
 
   const allModeIcons = [
     {
@@ -59,9 +61,9 @@ const ControlBar = ({
       showInInteractiveMode: true,
     },
     {
-      tooltip: playbackMode ? "Metronome" : "BPM",
+      tooltip: "Metronome",
       icon: <BpmIcon className="text-4xl" />,
-      labels: playbackMode ? ["Metro Vol"] : ["BPM", "Metro Vol"],
+      labels: playbackMode ? ["Volume"] : ["BPM", "Volume"],
       mins: playbackMode ? [0] : [30, 0],
       maxs: playbackMode ? [100] : [200, 100],
       initials: playbackMode
@@ -75,14 +77,14 @@ const ControlBar = ({
       showInInteractiveMode: true,
     },
     {
-      tooltip: "Volume",
+      tooltip: "MIDI Volume",
       icon: <VolumeIcon className="text-4xl" />,
       labels: ["Volume"],
       mins: [0],
       maxs: [100],
       initials: [initialMidiVolume],
       onChanges: [onMidiVolumeChange],
-      slidersDisabled: [false],
+      slidersDisabled: practiceModeOn ? [false] : [true],
       showInPlaybackMode: false,
       showInInteractiveMode: true,
     },
@@ -143,6 +145,10 @@ const ControlBar = ({
   const handleToggleStats = () => {
     setShowStats(!showStats);
   };
+
+  useEffect(() => {
+    setInitialMidiVolume(practiceModeOn ? 50 : 0);
+  }, [practiceModeOn]);
 
   return (
     <div
