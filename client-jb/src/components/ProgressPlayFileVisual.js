@@ -75,6 +75,7 @@ const ProgressPlayFileVisual = () => {
       const scoreInfo = JSON.parse(localStorage.getItem("scoreData")).find(
         (item) => item.fname === params.files
       );
+
       // Set MetaData
       const recordingDate = new Date(recordingJSON.date);
       setMetaData({
@@ -84,16 +85,16 @@ const ProgressPlayFileVisual = () => {
         skill: scoreInfo.skill,
         level: scoreInfo.level,
         score: scoreInfo.title,
+        bpm: recordingJSON.info.bpm,
       });
       // Save json.info (recording data, pitch, colors...) to send to OSMD
       setJson(recordingJSON.info);
-      // Set BPM
-      setBpm(recordingJSON.info.bpm);
       // Save audio
       setSongFile(recordingJSON.audio);
     });
   }, [recordingID]);
 
+  // Set reset flag as false when resetting is complete
   const onResetDone = () => {
     setIsResetButtonPressed(false);
   };

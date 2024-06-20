@@ -45,8 +45,6 @@ const ControlBar = ({
   const [practiceModeOn, setPracticeModeOn] = useState(true);
   const [showStats, setShowStats] = useState(false);
 
-  console.log(isBpmDisabled);
-
   const allModeIcons = [
     {
       tooltip: "Transpose",
@@ -61,7 +59,7 @@ const ControlBar = ({
       showInInteractiveMode: true,
     },
     {
-      tooltip: "BPM",
+      tooltip: playbackMode ? "Metronome" : "BPM",
       icon: <BpmIcon className="text-4xl" />,
       labels: playbackMode ? ["Metro Vol"] : ["BPM", "Metro Vol"],
       mins: playbackMode ? [0] : [30, 0],

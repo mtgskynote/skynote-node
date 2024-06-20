@@ -18,7 +18,9 @@ const ControlBarStats = ({ show, stats }) => {
           <div className="flex justify-between">
             <div>
               <p className="text-white font-bold text-2xl mb-0">{stats.name}</p>
-              <p className="text-white opacity-75 mb-3">{stats.date}</p>
+              <p className="text-white opacity-75 mb-3">
+                {stats.date} | {stats.bpm} BPM
+              </p>
               <StarRating size="text-3xl" stars={stats.stars} />
             </div>
             <div>
