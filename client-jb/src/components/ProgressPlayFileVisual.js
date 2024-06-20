@@ -179,6 +179,8 @@ const ProgressPlayFileVisual = () => {
     playbackManager.pause();
     playbackManager.reset();
     stopAudio();
+    startTimeRef.current = 0;
+    pauseTimeRef.current = 0;
 
     setStartPitchTrack(false);
     setShowPitchTrack(false);
