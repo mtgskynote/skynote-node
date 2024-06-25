@@ -328,7 +328,7 @@ class OpenSheetMusicDisplay extends Component {
     this.osmd.load(this.props.file).then(() => {
       if (this.osmd.Sheet) {
         this.osmd.render();
-        this.osmd.cursor.CursorOptions.color = "#add8e6";
+        this.osmd.cursor.CursorOptions.color = "#4ade80";
         this.osmd.render();
         const cursor = this.osmd.cursor;
         this.props.cursorRef.current = cursor;
@@ -463,7 +463,6 @@ class OpenSheetMusicDisplay extends Component {
 
     //if recording active
     if (this.props.startPitchTrack) {
-      console.log("TRACKING PITCH");
       if (this.previousTimestamp > cursorCurrent) {
         // Cursor moved back, repetition detected
         this.totalReps++;
@@ -642,11 +641,11 @@ class OpenSheetMusicDisplay extends Component {
     if (this.props.mode !== prevProps.mode) {
       if (this.props.mode) {
         //practice mode
-        this.osmd.cursor.CursorOptions.color = "#add8e6";
+        this.osmd.cursor.CursorOptions.color = "#4ade80";
         this.osmd.render();
       } else {
         //record mode
-        this.osmd.cursor.CursorOptions.color = "#a3cd8f";
+        this.osmd.cursor.CursorOptions.color = "#f87171";
         this.osmd.render();
       }
     }

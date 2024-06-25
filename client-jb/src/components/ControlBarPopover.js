@@ -1,19 +1,11 @@
 import React, { useState, useRef, useEffect } from "react";
-import RangeInput from "./RangeInput";
 
-const ControlBarPopover = ({
-  children,
-  labels,
-  mins,
-  maxs,
-  initials,
-  onValueChanges,
-}) => {
+const ControlBarPopover = ({ children }) => {
   const [isOpen, setIsOpen] = useState(false);
   const popoverRef = useRef(null);
 
   // Toggles the control bar popover visibility (open or closed)
-  const handleClick = () => {
+  const handleTogglePopover = () => {
     setIsOpen(!isOpen);
   };
 
@@ -32,17 +24,23 @@ const ControlBarPopover = ({
     };
   }, []);
 
+  const childrenArray = React.Children.toArray(children);
+  const trigger = childrenArray[0];
+  const content = childrenArray.slice(1);
+
   return (
     <div className="relative inline-block text-left" ref={popoverRef}>
+      {/* Popover trigger - Set in parent component */}
       <div>
         <div
-          onClick={handleClick}
+          onClick={handleTogglePopover}
           className="appearance-none bg-transparent border-none"
         >
-          {children}
+          {trigger}
         </div>
       </div>
 
+      {/* Popover content - Set in parent component */}
       <div
         className={`origin-top absolute bottom-full left-1/2 transform translate-x-[-50%] ${
           isOpen ? "scale-100 opacity-100" : "scale-0 opacity-0"
@@ -54,16 +52,7 @@ const ControlBarPopover = ({
           aria-orientation="vertical"
           aria-labelledby="options-menu"
         >
-          {labels.map((label, index) => (
-            <RangeInput
-              key={index}
-              label={label}
-              min={mins[index]}
-              max={maxs[index]}
-              initial={initials[index]}
-              onValueChange={onValueChanges[index]}
-            />
-          ))}
+          {content}
         </div>
       </div>
     </div>

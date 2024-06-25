@@ -31,3 +31,23 @@
     background: #16a34a;
     cursor: pointer;
   }
+
+.sliderDisabled {
+  background: #cccccc !important;
+  cursor: not-allowed !important;
+}
+  
+  .sliderDisabled:hover {
+    opacity: 0.7 !important;
+    cursor: not-allowed !important;
+  }
+  
+  .sliderDisabled::-webkit-slider-thumb {
+    background: #cccccc !important;
+    cursor: not-allowed !important;
+  }
+  
+  .sliderDisabled::-moz-range-thumb {
+    background: #cccccc !important;
+    cursor: not-allowed !important;
+  }

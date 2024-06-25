@@ -22,50 +22,51 @@ window.Buffer = Buffer;
 const folderBasePath = "/xmlScores/violin";
 
 const ProgressPlayFile = () => {
-  //#region VARIABLES
   const { getCurrentUser } = useAppContext();
   const [userData, setUserData] = useState(null);
   const params = useParams();
 
-  //This ones have to do with OSMD
+  // OSMD playback and cursor references
   const cursorRef = useRef(null);
   const playbackRef = useRef(null);
 
-  //Score title needed to retrieve data from the API
+  // Score title needed to retrieve data from the API
   const [scoreTitle, setScoreTitle] = useState(null);
 
-  //This are flags to check before doing stuff
+  // Flags to determine if recording and downloading are available actions
   const [canRecord, setCanRecord] = useState(true);
   const [canDownload, setCanDownload] = useState(false);
   const [audioReady, setAudioReady] = useState(false);
 
-  //Name for the file that will be saved in the DB
-  const [userFileName, setUserFileName] = useState("");
+  // File name of recording that will be saved in the DB
+  const [fileName, setFileName] = useState("");
 
   //Parameters that will be sent to OSMD
   const [metronomeVolume, setMetronomeVolume] = useState(0);
   const [bpm, setBpm] = useState(100); // BPM always set to 100 cause the scores don't have BPMs
+  const [isBpmDeactivated, setIsBpmDeactivated] = useState(false);
   const [midiVolume, setMidiVolume] = useState(50);
   const [zoom, setZoom] = useState(1.0);
   const [transpose, setTranspose] = useState(0);
 
+  // Flags to control icon displays in the control bar
   const [isListening, setIsListening] = useState(false); // IMPORTANT NOTE: This does not mean the app is listening to the user's microphone. It means the app is playing the audio for the user to listen to (rather than play along with).
   const [isPlaying, setIsPlaying] = useState(false);
   const [isRecording, setIsRecording] = useState(false);
 
-  //This changes when the record button is pressed
+  // Toggles recording on and off when OSMD recording starts and stops
   const [recordInactive, setRecordInactive] = useState(true);
 
-  //This ones are for the metronome countdown
+  // Metronome timer countdown before recording starts
   const [showCountDownTimer, setShowCountDownTimer] = useState(false);
   const [countDownFinished, setCountDownFinished] = useState(false);
 
-  //This is for the MEYDA features
+  // MEYDA features
   const [pitchValue, setPitchValue] = useState(null);
   const [confidenceValue, setConfidenceValue] = useState(null);
   const [pitch, setPitch] = useState([]);
   const [confidence, setConfidence] = useState([]);
-  var pitchCount = 0;
+  let pitchCount = 0;
   const [dynamicValue, setDynamicValue] = useState(null);
   const [dynStability, setDynStability] = useState([]);
 
@@ -136,7 +137,7 @@ const ProgressPlayFile = () => {
     const jsonComplete = {
       studentId: userData.id,
       scoreId: scoreID,
-      recordingName: `${userFileName}`,
+      recordingName: `${fileName}`,
       date: new Date(),
       audio: dataBlob,
       sharing: false,
@@ -229,6 +230,7 @@ const ProgressPlayFile = () => {
         .catch((error) => {
           console.error("Failed to get microphone access:", error);
           alert("Please allow microphone access to use this feature");
+          setCanRecord(false);
           window.location.reload();
         });
     }
@@ -281,7 +283,10 @@ const ProgressPlayFile = () => {
     resetAudio(playbackManager);
     setIsResetButtonPressed(true);
 
-    if (!practiceMode) setIsRecording(true);
+    if (!practiceMode) {
+      setIsRecording(true);
+      setIsBpmDeactivated(true);
+    }
     setRecordInactive(false);
     setStartPitchTrack(true);
     setShowPitchTrack(true);
@@ -295,6 +300,7 @@ const ProgressPlayFile = () => {
       audioStreamer.close_maybe_save();
       setShowSaveRecordingPopUp(true);
       setIsRecording(false);
+      setIsBpmDeactivated(false);
     }
 
     setIsPlaying(false);
@@ -356,10 +362,9 @@ const ProgressPlayFile = () => {
   };
 
   // Save a recording that was just made to the user's profile
-  const handleSaveRecording = (fileName) => {
+  const handleSaveRecording = () => {
     setShowSaveRecordingPopUp(false);
 
-    setUserFileName(fileName);
     setCanDownload(true); // Raise flag order to initiate downloading process (json in OSMD)
     setPitch([]);
     setConfidence([]);
@@ -378,6 +383,11 @@ const ProgressPlayFile = () => {
 
     const playbackManager = playbackRef.current;
     resetAudio(playbackManager);
+  };
+
+  // Update recording file name as it is being changed in the popup window
+  const handleRenameFile = (e) => {
+    setFileName(e.target.value);
   };
 
   // Stop playing all audio whenever practice or record mode is toggled
@@ -514,6 +524,8 @@ const ProgressPlayFile = () => {
           isListening={isListening}
           isPlaying={isPlaying}
           isRecording={isRecording}
+          isBpmDisabled={isBpmDeactivated}
+          playbackMode={false} // playback mode is the mode for listening back to a recording
         />
       </div>
 
@@ -525,12 +537,34 @@ const ProgressPlayFile = () => {
         />
       ) : null}
 
-      {showSaveRecordingPopUp && (
-        <PopUpWindow
-          onSaveRecording={handleSaveRecording}
-          onDeleteRecording={handleDeleteRecording}
-        />
-      )}
+      <PopUpWindow isOpen={showSaveRecordingPopUp}>
+        <div className="mb-4">
+          <label className="block text-gray-700 mb-2" htmlFor="fileName">
+            Name Recording:
+          </label>
+          <input
+            type="text"
+            id="fileName"
+            value={fileName}
+            onChange={handleRenameFile}
+            className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+          />
+        </div>
+        <div className="flex justify-between space-x-2">
+          <button
+            onClick={handleSaveRecording}
+            className="bg-green-500 border-none outline-none text-white px-4 py-2 rounded-lg hover:bg-green-700 transition duration-300 ease-in-out w-full"
+          >
+            Save
+          </button>
+          <button
+            onClick={handleDeleteRecording}
+            className="bg-red-500 border-none outline-none text-white px-4 py-2 rounded-lg hover:bg-red-700 transition duration-300 ease-in-out w-full"
+          >
+            Delete
+          </button>
+        </div>
+      </PopUpWindow>
     </div>
   );
 };

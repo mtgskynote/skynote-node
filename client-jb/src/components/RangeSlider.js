@@ -1,7 +1,7 @@
 import React, { useState, useRef, useEffect } from "react";
 import RangeSliderCSS from "./RangeSlider.module.css";
 
-const RangeSlider = ({ min, max, initial, onValueChange }) => {
+const RangeSlider = ({ min, max, initial, onValueChange, disabled }) => {
   const [value, setValue] = useState(initial);
   const sliderRef = useRef();
 
@@ -15,6 +15,10 @@ const RangeSlider = ({ min, max, initial, onValueChange }) => {
     setValue(initial);
   }, [initial]);
 
+  const sliderClass = disabled
+    ? `${RangeSliderCSS.slider} ${RangeSliderCSS.sliderDisabled}`
+    : RangeSliderCSS.slider;
+
   return (
     <div className="w-full relative">
       <input
@@ -24,7 +28,8 @@ const RangeSlider = ({ min, max, initial, onValueChange }) => {
         max={max}
         value={value}
         onChange={handleChange}
-        className={RangeSliderCSS.slider}
+        className={sliderClass}
+        disabled={disabled}
       />
     </div>
   );

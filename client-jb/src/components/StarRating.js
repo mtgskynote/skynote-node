@@ -2,20 +2,26 @@ import React from "react";
 import StarRateRoundedIcon from "@mui/icons-material/StarRateRounded";
 import StarBorderRoundedIcon from "@mui/icons-material/StarBorderRounded";
 
-const StarRating = ({ stars }) => {
+const StarRating = ({ stars, size }) => {
   const renderStars = () => {
     const filledStars = [];
     const emptyStars = [];
 
     for (let i = 0; i < stars; i++) {
       filledStars.push(
-        <StarRateRoundedIcon key={i} className="text-yellow-300 text-4xl" />
+        <StarRateRoundedIcon
+          key={i}
+          className={`text-yellow-300 ${size ? size : "text-4xl"}`}
+        />
       );
     }
 
     for (let i = stars; i < 3; i++) {
       emptyStars.push(
-        <StarBorderRoundedIcon key={i} className="text-yellow-300 text-4xl" />
+        <StarBorderRoundedIcon
+          key={i}
+          className={`text-yellow-300 ${size ? size : "text-4xl"}`}
+        />
       );
     }
 
