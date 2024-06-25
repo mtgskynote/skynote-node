@@ -141,7 +141,6 @@ const ProgressPlayFileVisual = () => {
 
       // Transform data type and play
       const uint8Array = new Uint8Array(songFile.data);
-      console.log(songFile.data);
       const arrayBuffer = uint8Array.buffer;
       const audioBuffer = await audioContext.decodeAudioData(arrayBuffer);
       currentSource = audioContext.createBufferSource();
