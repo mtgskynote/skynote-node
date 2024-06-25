@@ -1,4 +1,5 @@
 import React, { useEffect, useState, useRef, useCallback } from "react";
+import { HotKeys } from "react-hotkeys";
 import { useParams, useNavigate } from "react-router-dom";
 import OpenSheetMusicDisplay from "./OpenSheetMusicDisplay";
 import ControlBar from "./ControlBar.js";
@@ -85,6 +86,28 @@ const ProgressPlayFile = () => {
   const [jsonToDownload, setJsonToDownload] = useState();
 
   const [practiceMode, setPracticeMode] = useState(true);
+
+  // Hot keys map and handlers
+  const keyMap = {
+    TOGGLE_PLAY: "p",
+    TOGGLE_RECORD: "r",
+    TOGGLE_LISTEN: "l",
+  };
+
+  const handlers = {
+    TOGGLE_PLAY: (event) => {
+      event.preventDefault();
+      handleTogglePlay();
+    },
+    TOGGLE_RECORD: (event) => {
+      event.preventDefault();
+      handleToggleRecord();
+    },
+    TOGGLE_LISTEN: (event) => {
+      event.preventDefault();
+      handleToggleListen();
+    },
+  };
 
   const navigate = useNavigate();
   const scoreID = JSON.parse(localStorage.getItem("scoreData")).find(
@@ -352,6 +375,16 @@ const ProgressPlayFile = () => {
     }
   };
 
+  // Handle when record is toggled on/off
+  const handleToggleRecord = () => {
+    const playbackManager = playbackRef.current;
+    if (isRecording) {
+      stopRecordingAudio(playbackManager);
+    } else {
+      recordAudio(playbackManager);
+    }
+  };
+
   // Navigate to all recordings for this particular score
   const handleViewAllRecordings = () => {
     const score = `${params.files}`;
@@ -458,114 +491,109 @@ const ProgressPlayFile = () => {
   }, [pitchValue, dynamicValue]);
 
   return (
-    <div className="flex flex-col min-h-screen justify-between">
-      <div>
-        <OpenSheetMusicDisplay
-          file={`${folderBasePath}/${params.files}.xml`}
-          autoResize={true}
-          cursorRef={cursorRef}
-          playbackRef={playbackRef}
-          metroVol={metronomeVolume / 100}
-          bpm={bpm}
-          zoom={zoom}
-          followCursor={true}
-          dynamicStability={dynStability}
-          pitch={pitch}
-          pitchConfidence={confidence}
-          startPitchTrack={startPitchTrack}
-          showPitchTrack={showPitchTrack}
-          recordVol={midiVolume / 100}
-          isResetButtonPressed={isResetButtonPressed}
-          repeatsIterator={repeatsIterator}
-          showRepeatsInfo={handleReceiveRepetitionInfo}
-          onResetDone={onResetDone}
-          cursorActivity={handleFinishedCursorOSMDCallback}
-          mode={practiceMode}
-          dataToDownload={handleGetJsonCallback}
-          canDownload={canDownload}
-          visual={"no"}
-        />
-      </div>
-
-      <div className="flex justify-center mb-32">
-        <ControlBar
-          onTransposeChange={(newTranspose) => setTranspose(newTranspose)}
-          onBpmChange={(newBpm) => setBpm(newBpm)}
-          onMidiVolumeChange={(newVolume) => setMidiVolume(newVolume)}
-          onMetronomeVolumeChange={(newMetronomeVolume) =>
-            setMetronomeVolume(newMetronomeVolume)
-          }
-          onModeChange={(newMode) => {
-            setPracticeMode(newMode);
-            setIsResetButtonPressed(true);
-
-            const playbackManager = playbackRef.current;
-            resetAudio(playbackManager);
-          }}
-          onToggleListen={handleToggleListen}
-          onTogglePlay={handleTogglePlay}
-          onReset={() => {
-            const playbackManager = playbackRef.current;
-            resetAudio(playbackManager);
-
-            setIsListening(false);
-            setIsPlaying(false);
-            setIsResetButtonPressed(true);
-          }}
-          onRecord={() => {
-            const playbackManager = playbackRef.current;
-            if (isRecording) {
-              stopRecordingAudio(playbackManager);
-            } else {
-              recordAudio(playbackManager);
-            }
-          }}
-          handleViewAllRecordings={handleViewAllRecordings}
-          isListening={isListening}
-          isPlaying={isPlaying}
-          isRecording={isRecording}
-          isBpmDisabled={isBpmDeactivated}
-          playbackMode={false} // playback mode is the mode for listening back to a recording
-        />
-      </div>
-
-      {showCountDownTimer ? (
-        <CountDownTimer
-          bpm={bpm}
-          mode={practiceMode}
-          onCountDownFinished={handleCountDownFinished}
-        />
-      ) : null}
-
-      <PopUpWindow isOpen={showSaveRecordingPopUp}>
-        <div className="mb-4">
-          <label className="block text-gray-700 mb-2" htmlFor="fileName">
-            Name Recording:
-          </label>
-          <input
-            type="text"
-            id="fileName"
-            value={fileName}
-            onChange={handleRenameFile}
-            className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+    <HotKeys keyMap={keyMap} handlers={handlers}>
+      <div className="flex flex-col min-h-screen justify-between">
+        <div>
+          <OpenSheetMusicDisplay
+            file={`${folderBasePath}/${params.files}.xml`}
+            autoResize={true}
+            cursorRef={cursorRef}
+            playbackRef={playbackRef}
+            metroVol={metronomeVolume / 100}
+            bpm={bpm}
+            zoom={zoom}
+            followCursor={true}
+            dynamicStability={dynStability}
+            pitch={pitch}
+            pitchConfidence={confidence}
+            startPitchTrack={startPitchTrack}
+            showPitchTrack={showPitchTrack}
+            recordVol={midiVolume / 100}
+            isResetButtonPressed={isResetButtonPressed}
+            repeatsIterator={repeatsIterator}
+            showRepeatsInfo={handleReceiveRepetitionInfo}
+            onResetDone={onResetDone}
+            cursorActivity={handleFinishedCursorOSMDCallback}
+            mode={practiceMode}
+            dataToDownload={handleGetJsonCallback}
+            canDownload={canDownload}
+            visual={"no"}
           />
         </div>
-        <div className="flex justify-between space-x-2">
-          <button
-            onClick={handleSaveRecording}
-            className="bg-green-500 border-none outline-none text-white px-4 py-2 rounded-lg hover:bg-green-700 transition duration-300 ease-in-out w-full"
-          >
-            Save
-          </button>
-          <button
-            onClick={handleDeleteRecording}
-            className="bg-red-500 border-none outline-none text-white px-4 py-2 rounded-lg hover:bg-red-700 transition duration-300 ease-in-out w-full"
-          >
-            Delete
-          </button>
+
+        <div className="flex justify-center mb-32">
+          <ControlBar
+            onTransposeChange={(newTranspose) => setTranspose(newTranspose)}
+            onBpmChange={(newBpm) => setBpm(newBpm)}
+            onMidiVolumeChange={(newVolume) => setMidiVolume(newVolume)}
+            onMetronomeVolumeChange={(newMetronomeVolume) =>
+              setMetronomeVolume(newMetronomeVolume)
+            }
+            onModeChange={(newMode) => {
+              setPracticeMode(newMode);
+              setIsResetButtonPressed(true);
+
+              const playbackManager = playbackRef.current;
+              resetAudio(playbackManager);
+            }}
+            onToggleListen={handleToggleListen}
+            onTogglePlay={handleTogglePlay}
+            onReset={() => {
+              const playbackManager = playbackRef.current;
+              resetAudio(playbackManager);
+
+              setIsListening(false);
+              setIsPlaying(false);
+              setIsResetButtonPressed(true);
+            }}
+            onRecord={handleToggleRecord}
+            handleViewAllRecordings={handleViewAllRecordings}
+            isListening={isListening}
+            isPlaying={isPlaying}
+            isRecording={isRecording}
+            isBpmDisabled={isBpmDeactivated}
+            playbackMode={false} // playback mode is the mode for listening back to a recording
+          />
         </div>
-      </PopUpWindow>
-    </div>
+
+        {showCountDownTimer ? (
+          <CountDownTimer
+            bpm={bpm}
+            mode={practiceMode}
+            onCountDownFinished={handleCountDownFinished}
+          />
+        ) : null}
+
+        <PopUpWindow isOpen={showSaveRecordingPopUp}>
+          <div className="mb-4">
+            <label className="block text-gray-700 mb-2" htmlFor="fileName">
+              Name Recording:
+            </label>
+            <input
+              type="text"
+              id="fileName"
+              value={fileName}
+              onChange={handleRenameFile}
+              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+            />
+          </div>
+          <div className="flex justify-between space-x-2">
+            <button
+              onClick={handleSaveRecording}
+              className="bg-green-500 border-none outline-none text-white px-4 py-2 rounded-lg hover:bg-green-700 transition duration-300 ease-in-out w-full"
+            >
+              Save
+            </button>
+            <button
+              onClick={handleDeleteRecording}
+              className="bg-red-500 border-none outline-none text-white px-4 py-2 rounded-lg hover:bg-red-700 transition duration-300 ease-in-out w-full"
+            >
+              Delete
+            </button>
+          </div>
+        </PopUpWindow>
+      </div>
+    </HotKeys>
   );
 };
 
