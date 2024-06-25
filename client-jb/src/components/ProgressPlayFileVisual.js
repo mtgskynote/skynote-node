@@ -92,6 +92,7 @@ const ProgressPlayFileVisual = () => {
       // Save json.info (recording data, pitch, colors...) to send to OSMD
       setJson(recordingJSON.info);
       // Save audio
+      setBpm(recordingJSON.info.bpm);
       setSongFile(recordingJSON.audio);
     });
   }, [recordingID]);
@@ -133,8 +134,14 @@ const ProgressPlayFileVisual = () => {
   // Play audio recording
   const playAudio = async () => {
     try {
+      // Check if audioContext is suspended. If so, resume it.
+      if (audioContext.state === "suspended") {
+        await audioContext.resume();
+      }
+
       // Transform data type and play
       const uint8Array = new Uint8Array(songFile.data);
+      console.log(songFile.data);
       const arrayBuffer = uint8Array.buffer;
       const audioBuffer = await audioContext.decodeAudioData(arrayBuffer);
       currentSource = audioContext.createBufferSource();
