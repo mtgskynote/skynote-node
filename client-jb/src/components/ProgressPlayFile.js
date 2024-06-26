@@ -86,26 +86,37 @@ const ProgressPlayFile = () => {
   const [jsonToDownload, setJsonToDownload] = useState();
 
   const [practiceMode, setPracticeMode] = useState(true);
+  const [isSwitchingMode, setIsSwitchingMode] = useState(false);
 
   // Hot keys map and handlers
   const keyMap = {
-    TOGGLE_PLAY: "p",
-    TOGGLE_RECORD: "r",
-    TOGGLE_LISTEN: "l",
+    TOGGLE_LISTEN: "command+l",
+    TOGGLE_PLAY: "command+p",
+    TOGGLE_RECORD: "command+r",
+    TOGGLE_RESET: "ctrl+shift+r",
+    TOGGLE_MODE: "command+m",
   };
 
   const handlers = {
+    TOGGLE_LISTEN: (event) => {
+      event.preventDefault();
+      handleToggleListen();
+    },
     TOGGLE_PLAY: (event) => {
       event.preventDefault();
       handleTogglePlay();
     },
     TOGGLE_RECORD: (event) => {
       event.preventDefault();
-      handleToggleRecord();
+      if (!practiceMode) handleToggleRecord();
     },
-    TOGGLE_LISTEN: (event) => {
+    TOGGLE_RESET: (event) => {
       event.preventDefault();
-      handleToggleListen();
+      handleToggleReset();
+    },
+    TOGGLE_MODE: (event) => {
+      event.preventDefault();
+      handleToggleMode();
     },
   };
 
@@ -290,7 +301,7 @@ const ProgressPlayFile = () => {
 
   // Reset the audio playback to its initial state
   const resetAudio = (playbackManager) => {
-    playbackManager.pause();
+    pauseAudio(playbackManager);
     playbackManager.reset();
 
     setStartPitchTrack(false);
@@ -321,7 +332,9 @@ const ProgressPlayFile = () => {
     if (practiceMode) audioStreamer.close_not_save();
     else {
       audioStreamer.close_maybe_save();
-      setShowSaveRecordingPopUp(true);
+      if (!isSwitchingMode) {
+        setShowSaveRecordingPopUp(true);
+      }
       setIsRecording(false);
       setIsBpmDeactivated(false);
     }
@@ -330,59 +343,54 @@ const ProgressPlayFile = () => {
     setStartPitchTrack(false);
 
     resetAudio(playbackManager);
+    setIsSwitchingMode(false);
   };
 
   // Start playing MIDI audio from the playback manager
   const playAudio = (playbackManager) => {
-    console.log("INSIDE PLAYBACK MANAGER");
     playbackManager.play();
   };
 
-  // Toggle the listening state of the audio playback
+  // Stop playing MIDI audio from the playback manager
+  const pauseAudio = (playbackManager) => {
+    playbackManager.pause();
+  };
+
+  // Toggle the listening state
   const handleToggleListen = () => {
-    const playbackManager = playbackRef.current;
-    if (isListening) {
-      playbackManager.pause();
-      setIsListening(false);
-    } else {
-      if (isPlaying) {
-        // Set playing to false and stop all audio if listen is toggled while playing
-        setIsPlaying(false);
-        stopRecordingAudio(playbackManager);
-        setIsResetButtonPressed(true);
-      }
-
-      setIsListening(true);
-      playAudio(playbackManager);
-    }
+    setIsListening((prevIsListening) => !prevIsListening);
   };
 
-  // Toggle the playing state of the audio playback
+  // Toggle the playing state
   const handleTogglePlay = () => {
-    const playbackManager = playbackRef.current;
-    if (isPlaying) {
-      setIsPlaying(false);
-      resetAudio(playbackManager);
-    } else {
-      if (isListening) {
-        // Set listening to false and stop all audio if play is toggled while listening
-        setIsListening(false);
-        resetAudio(playbackManager);
-      }
-      setIsPlaying(true);
-      setIsResetButtonPressed(true);
-      recordAudio(playbackManager);
-    }
+    setIsPlaying((prevIsPlaying) => !prevIsPlaying);
   };
 
-  // Handle when record is toggled on/off
+  // Toggle the recording state
   const handleToggleRecord = () => {
+    setIsPlaying((prevIsRecording) => !prevIsRecording);
+  };
+
+  const handleToggleReset = () => {
     const playbackManager = playbackRef.current;
-    if (isRecording) {
-      stopRecordingAudio(playbackManager);
-    } else {
-      recordAudio(playbackManager);
+    resetAudio(playbackManager);
+
+    setIsListening(false);
+    setIsPlaying(false);
+    setIsResetButtonPressed(true);
+  };
+
+  const handleToggleMode = (newMode) => {
+    setPracticeMode(newMode);
+    setIsResetButtonPressed(true);
+
+    if (isRecording || isPlaying) {
+      setIsSwitchingMode(true);
     }
+
+    const playbackManager = playbackRef.current;
+    playbackManager.reset();
+    if (isRecording) setIsRecording(false);
   };
 
   // Navigate to all recordings for this particular score
@@ -423,6 +431,52 @@ const ProgressPlayFile = () => {
     setFileName(e.target.value);
   };
 
+  // Handle audio operations based on isListening and isPlaying changes
+  useEffect(() => {
+    const playbackManager = playbackRef.current;
+    if (playbackManager) {
+      if (!isListening) {
+        pauseAudio(playbackManager);
+      } else if (isListening && isPlaying) {
+        setIsResetButtonPressed(true);
+        setIsPlaying(false); // This will trigger the useEffect for isPlaying
+        resetAudio(playbackManager);
+        playAudio(playbackManager);
+      } else if (isListening) {
+        playAudio(playbackManager);
+      }
+    }
+  }, [isListening]);
+
+  // Handle audio operations based on isPlaying changes
+  useEffect(() => {
+    const playbackManager = playbackRef.current;
+    if (playbackManager) {
+      if (!isPlaying) {
+        resetAudio(playbackManager);
+      } else if (isPlaying && isListening) {
+        setIsResetButtonPressed(true);
+        setIsListening(false); // This will trigger the useEffect for isListening
+        resetAudio(playbackManager);
+        recordAudio(playbackManager);
+      } else if (isPlaying) {
+        recordAudio(playbackManager);
+      }
+    }
+  }, [isPlaying]);
+
+  // Handle audio operations based on isRecording changes
+  useEffect(() => {
+    const playbackManager = playbackRef.current;
+    if (playbackManager) {
+      if (isRecording) {
+        recordAudio(playbackManager);
+      } else {
+        stopRecordingAudio(playbackManager);
+      }
+    }
+  }, [isRecording]);
+
   // Stop playing all audio whenever practice or record mode is toggled
   useEffect(() => {
     setIsListening(false);
@@ -449,6 +503,7 @@ const ProgressPlayFile = () => {
   useEffect(() => {
     if (recordInactive && canRecord) {
       const playbackManager = playbackRef.current;
+      console.log("NEED TO STOP RECORDING");
       if (playbackManager) stopRecordingAudio(playbackManager);
       if (isListening) playAudio(playbackManager);
     }
@@ -529,23 +584,10 @@ const ProgressPlayFile = () => {
             onMetronomeVolumeChange={(newMetronomeVolume) =>
               setMetronomeVolume(newMetronomeVolume)
             }
-            onModeChange={(newMode) => {
-              setPracticeMode(newMode);
-              setIsResetButtonPressed(true);
-
-              const playbackManager = playbackRef.current;
-              resetAudio(playbackManager);
-            }}
+            onModeChange={handleToggleMode}
             onToggleListen={handleToggleListen}
             onTogglePlay={handleTogglePlay}
-            onReset={() => {
-              const playbackManager = playbackRef.current;
-              resetAudio(playbackManager);
-
-              setIsListening(false);
-              setIsPlaying(false);
-              setIsResetButtonPressed(true);
-            }}
+            onReset={handleToggleReset}
             onRecord={handleToggleRecord}
             handleViewAllRecordings={handleViewAllRecordings}
             isListening={isListening}
