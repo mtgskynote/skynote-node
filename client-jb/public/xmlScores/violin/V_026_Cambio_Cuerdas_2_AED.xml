@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <!DOCTYPE score-partwise PUBLIC "-//Recordare//DTD MusicXML 3.1 Partwise//EN" "http://www.musicxml.org/dtds/partwise.dtd">
 <score-partwise version="3.1">
-  <movement-title>Mini March</movement-title>
+  <movement-title>Mini March 1</movement-title>
   <identification>
     <rights>©</rights>
     <encoding>
@@ -58,7 +58,7 @@
   </defaults>
   <credit page="1">
     <credit-type>title</credit-type>
-    <credit-words default-x="631" default-y="1475" font-size="24" justify="center" valign="top">Mini March</credit-words>
+    <credit-words default-x="631" default-y="1475" font-size="24" justify="center" valign="top">Mini March 1</credit-words>
   </credit>
   <credit page="1">
     <credit-type>rights</credit-type>
