@@ -11,7 +11,7 @@ import {
 
 import { Profile, Stats, SharedLayout } from "./pages/dashboard";
 import Lessons from "./pages/Lessons";
-import ImportedScores from "./pages/ImportedScores";
+//import ImportedScores from "./pages/ImportedScores";
 
 import ProgressPlayFile from "./components/ProgressPlayFile";
 import ProgressPlayFileVisual from "./components/ProgressPlayFileVisual";
@@ -128,7 +128,7 @@ function App() {
                 <Route path="profile" element={<Profile />} />
                 <Route path="apitesting" element={<Apitesting />} />
                 <Route path="lessons" element={<Lessons />} />
-                <Route path="imported-scores" element={<ImportedScores />} />
+                {/* <Route path="imported-scores" element={<ImportedScores />} /> */}
                 <Route
                   path="all-lessons/:files"
                   element={<ProgressPlayFile />}

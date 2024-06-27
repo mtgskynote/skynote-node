@@ -16,26 +16,19 @@ const SubLevelCard = ({
     levelNumber,
     category,
     timeRecorded,
+    totalStars,
     subLevelLessons,
     isOpen,
-    onCardClick
+    onCardClick,
+    filter
 }) => {
     const containerRef = useRef(null);
-    const [containerWidth, setContainerWidth] = useState(0);
-    const [totalStars, setTotalStars] = useState(0);
-    const [smallerTextSize, setSmallerTextSize] = useState(false);
     const [violinIcon, setViolinIcon] = useState(violinPic);
 
     const maxStars = subLevelLessons.length * 3;
-    const levelCardWidth = containerWidth / 4 - 4 * 5; // margin between levelcards is mb-3
-    const expandedHeight = levelCardWidth * (2 / 3) + 90 + 20;
-    const centeredCards = subLevelLessons.length >= 4 && (subLevelLessons.length % 2 === 0);
-
-    // Set text sizes based on the length of the card
-    useEffect(() => {
-        console.log(containerWidth)
-        setSmallerTextSize(containerWidth < 650);
-    }, [containerWidth]);
+    const levelCardWidth = 265;    
+    const expandedHeight = 285;
+    const completed = totalStars === maxStars;
 
     // Set icon based on sublevel name
     useEffect(() => {
@@ -53,37 +46,6 @@ const SubLevelCard = ({
         }
     }, [subLevelName]);
 
-    useEffect(() => {
-        const updateDimensions = () => {
-            if (containerRef.current) {
-                setContainerWidth(containerRef.current.offsetWidth);
-            }
-        };
-
-        const resizeObserver = new ResizeObserver(updateDimensions);
-
-        if (containerRef.current) {
-            resizeObserver.observe(containerRef.current);
-        }
-
-        updateDimensions();
-
-        return () => {
-            if (containerRef.current) {
-                resizeObserver.unobserve(containerRef.current);
-            }
-        };
-    }, []);
-
-    useEffect(() => {
-        let starCount = 0;
-        subLevelLessons.forEach((lesson) => {
-            starCount += lesson.stars;
-        });
-
-        setTotalStars(starCount);
-    }, [subLevelLessons]);
-
     return (
         <div
             className="w-full"
@@ -95,7 +57,7 @@ const SubLevelCard = ({
             <div
                 className={`w-full ${
                     isOpen ? "bg-blue-400" : "bg-gray-100 hover:bg-slate-200"
-                } shadow-sm rounded-lg mb-3`}
+                } shadow-sm rounded-lg mb-3 h-fixed`}
                 style={isOpen ? { height: expandedHeight } : { height: 90 }}
             >
                 <div className={`w-full flex items-center justify-between`}>
@@ -109,14 +71,14 @@ const SubLevelCard = ({
                         </div>
                         <div>
                             <div
-                                className={`${smallerTextSize ? "text-base": "text-lg "}font-bold ${
+                                className={`sm:text-sm md:text-sm lg:text-base xl:text-lg font-bold ${
                                     isOpen ? "text-white" : "text-black"
                                 }`}
                             >
                                 {subLevelName}
                             </div>
                             <div
-                                className={`${smallerTextSize ? "text-xs": "text-sm"} font-normal ${
+                                className={`sm:text-xs md:text-xs lg:text-sm xl:text-sm font-normal ${
                                     isOpen ? "text-white" : "text-black"
                                 }`}
                             >
@@ -125,34 +87,44 @@ const SubLevelCard = ({
                         </div>
                     </div>
                     <div className="flex-grow"></div>
-                    <div className="flex items-center space-x-8 p-4 ml-5">
-                        <div
-                            className={`${smallerTextSize ? "text-xs": "text-sm"} font-normal ${
-                                isOpen ? "text-white" : "text-black"
-                            } flex items-center mr-auto`}
-                        >
-                            <AccessTimeIcon className="mr-2" />
-                            <span>{timeRecorded}</span>
+                    <div className="grid grid-cols-3 gap-8 p-4 ml-5 items-center">
+                        <div className="flex items-center">
+                            <div
+                                className={`sm:text-xs md:text-xs lg:text-sm xl:text-sm font-normal ${
+                                    isOpen ? "text-white" : "text-black"
+                                } flex items-center`}
+                            >
+                                <AccessTimeIcon className="mr-2" />
+                                <span>{timeRecorded}</span>
+                            </div>
                         </div>
-                        <div
-                            className={`flex items-center ${smallerTextSize ? "text-xs": "text-sm"} font-normal ${
-                                isOpen ? "text-white" : "text-black"
-                            } mr-3`}
-                        >
-                            <StarBorderRoundedIcon className="text-yellow-300 text-3xl mr-2" />
-                            <span className="mr-4">{`${totalStars}/${maxStars}`}</span>
+                        <div className="flex items-center">
+                            <div
+                                className={`flex items-center sm:text-xs md:text-xs lg:text-sm xl:text-sm font-normal ${
+                                    isOpen ? "text-white" : "text-black"
+                                }`}
+                            >
+                                { completed ? (
+                                    <StarRateRoundedIcon className="text-yellow-300 text-3xl mr-2" />
+                                ) : (
+                                    <StarBorderRoundedIcon className="text-yellow-300 text-3xl mr-2" />
+                                )}
+                                <span>{`${totalStars}/${maxStars}`}</span>
+                            </div>
                         </div>
-                        <Button
-                            variant="contained"
-                            type="button"
-                            className={`bg-black text-white ${smallerTextSize ? "text-xs": "text-sm"} text-center p-2`}
-                        >
-                            {isOpen ? "Hide Songs" : "View Songs"}
-                        </Button>
+                        <div className="flex items-center">
+                            <Button
+                                variant="contained"
+                                type="button"
+                                className={`bg-black text-white sm:text-xs md:text-xs lg:text-sm xl:text-sm text-center p-2`}
+                            >
+                                {isOpen ? "Hide Songs" : "View Songs"}
+                            </Button>
+                        </div>
                     </div>
                 </div>
                 {isOpen && (
-                    <div className={`w-full flex ${centeredCards ? "justify-center px-4": "justify-start px-3"} overflow-x-auto`}>
+                    <div className={`w-full flex justify-start px-3 overflow-x-auto`}>
                         <div className="flex space-x-4 items-start">
                             {subLevelLessons.map((lesson, index) => (
                                 <LessonCard
@@ -164,7 +136,7 @@ const SubLevelCard = ({
                                     xml={lesson.route_path}
                                     id={lesson.id}
                                     renderViewRecordings={false}
-                                    sizeX={`${levelCardWidth}px`}
+                                    width={`${levelCardWidth}px`}
                                     backgroundColour={"bg-slate-50"}
                                     hoverBackgroundColour={"hover:bg-slate-200"}
                                     textColour={"text-black"}

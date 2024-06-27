@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import SubLevelCard from "./SubLevelCard";
 
-const LevelCard = ({ levelName, levelNumber, levelLessons }) => {
+const LevelCard = ({ levelName, levelNumber, levelLessons, filter}) => {
     const [openCardIndex, setOpenCardIndex] = useState(null);
 
     const handleCardClick = (index) => {
@@ -10,6 +10,15 @@ const LevelCard = ({ levelName, levelNumber, levelLessons }) => {
         } else {
             setOpenCardIndex(index); // Clicking on a different sublevel card opens it
         }
+    };
+
+    const countStars = (subLevelLessons) => {
+        let starCount = 0;
+        subLevelLessons.forEach((lesson) => {
+            starCount += lesson.stars;
+            console.log("Lesson stars: ", starCount);
+        });
+        return starCount;
     };
 
     return (
@@ -28,17 +37,19 @@ const LevelCard = ({ levelName, levelNumber, levelLessons }) => {
             {/* SubLevelCards */}
             <div className="w-4/5 flex flex-wrap justify-center mt-4">
                 {Object.keys(levelLessons).map((skill, index) => (
-                    <SubLevelCard
+                    levelLessons[skill] && ( <SubLevelCard
                         index={index}
                         key={index}
                         subLevelName={skill}
                         levelNumber={levelNumber}
                         category={levelName}
                         timeRecorded="4h 15min"
+                        totalStars={countStars(levelLessons[skill])}
                         subLevelLessons={levelLessons[skill]}
                         isOpen={openCardIndex === index}
                         onCardClick={handleCardClick}
-                    />
+                        filter={filter}
+                    /> )
                 ))}
             </div>
         </div>

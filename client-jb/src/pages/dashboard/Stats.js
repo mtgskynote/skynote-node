@@ -431,6 +431,7 @@ const Stats = () => {
                     id={recentScores[title].id}
                     recordings={recentScores[title].recordings}
                     reloadRecordingsCallback={reloadRecordingsCallback}
+                    renderViewRecordings= {true}
                   />
                 );
               })}

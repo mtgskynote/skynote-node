@@ -1,8 +1,8 @@
-import React from "react";
-import InDevelopment from "../components/InDevelopment";
+// import React from "react";
+// import InDevelopment from "../components/InDevelopment";
 
-const ImportedScores = () => {
-  return <div><InDevelopment/>;</div>;
-};
+// const ImportedScores = () => {
+//   return <div><InDevelopment/>;</div>;
+// };
 
-export default ImportedScores;
+// export default ImportedScores;
