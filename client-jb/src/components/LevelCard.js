@@ -16,7 +16,6 @@ const LevelCard = ({ levelName, levelNumber, levelLessons, filter}) => {
         let starCount = 0;
         subLevelLessons.forEach((lesson) => {
             starCount += lesson.stars;
-            console.log("Lesson stars: ", starCount);
         });
         return starCount;
     };

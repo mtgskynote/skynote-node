@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import LevelCard from "../components/LevelCard";
 import { useAppContext } from "../context/appContext";
 import { getAllRecData } from "../utils/studentRecordingMethods.js";
+import LoadingScreen from "../components/LoadingScreen.js";
 
 const Lessons = () => {
     const [lessonList, setLessonList] = useState({});
@@ -11,6 +12,7 @@ const Lessons = () => {
     const { getCurrentUser } = useAppContext();
     const [recordingList, setRecordingList] = useState(null);
     const [selectedFilter, setSelectedFilter] = useState("All Lessons");
+    const [isLoading, setIsLoading] = useState(true);
 
     const filters = [
         "All Lessons",
@@ -39,7 +41,7 @@ const Lessons = () => {
                         setUserData(result);
                     })
                     .catch((error) => {
-                        console.log(`getCurentUser() error: ${error}`);
+                        console.log(`getCurrentUser() error: ${error}`);
                     });
             }
 
@@ -96,6 +98,12 @@ const Lessons = () => {
         }
     }, [localScoreData, recordingList]);
 
+    useEffect(() => {
+        if (userData && lessonList && recordingList !== null) {
+          setIsLoading(false);
+        }
+      }, [userData, lessonList, recordingList]);
+
     const calculateStars = (lessonId) => {
         if (!recordingList) return 0;
 
@@ -115,6 +123,10 @@ const Lessons = () => {
     const handleFilterClick = (filter) => {
       setSelectedFilter(filter);
     };
+
+    if (isLoading) {
+        return <LoadingScreen />;
+    }
 
     return (
         <div>
