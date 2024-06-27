@@ -104,7 +104,7 @@ const ProgressPlayFile = () => {
     },
     TOGGLE_PLAY: (event) => {
       event.preventDefault();
-      handleTogglePlay();
+      if (practiceMode) handleTogglePlay();
     },
     TOGGLE_RECORD: (event) => {
       event.preventDefault();
@@ -116,7 +116,12 @@ const ProgressPlayFile = () => {
     },
     TOGGLE_MODE: (event) => {
       event.preventDefault();
-      handleToggleMode();
+      setPracticeMode((prevMode) => {
+        const updatedMode = !prevMode;
+        handleToggleMode();
+
+        return updatedMode;
+      });
     },
   };
 
@@ -125,6 +130,7 @@ const ProgressPlayFile = () => {
     (item) => item.fname === params.files
   )._id;
 
+  // Reset the reset button
   const onResetDone = () => {
     setIsResetButtonPressed(false);
   };
@@ -137,7 +143,7 @@ const ProgressPlayFile = () => {
           setUserData(result);
         })
         .catch((error) => {
-          console.log(`getCurentUser() error: ${error}`);
+          console.log(`Error getting user: ${error}`);
         });
     }
   };
@@ -270,7 +276,6 @@ const ProgressPlayFile = () => {
     }
 
     return () => {
-      console.log("LEAVING PAGE ProgressPlayFile.js ");
       if (isMicrophoneActive()) {
         stopMicrophone();
       }
@@ -285,7 +290,6 @@ const ProgressPlayFile = () => {
         .save_or_not("save")
         .then((dataToDownload) => {
           const buffer = new Buffer.from(dataToDownload);
-          console.log("Can u see me now??");
           handleDownload(buffer); // send data to downloading function
         })
         .catch((error) => {
@@ -380,8 +384,7 @@ const ProgressPlayFile = () => {
     setIsResetButtonPressed(true);
   };
 
-  const handleToggleMode = (newMode) => {
-    setPracticeMode(newMode);
+  const handleToggleMode = () => {
     setIsResetButtonPressed(true);
 
     if (isRecording || isPlaying) {
@@ -389,7 +392,7 @@ const ProgressPlayFile = () => {
     }
 
     const playbackManager = playbackRef.current;
-    playbackManager.reset();
+    if (playbackManager) playbackManager.reset();
     if (isRecording) setIsRecording(false);
   };
 
@@ -503,7 +506,6 @@ const ProgressPlayFile = () => {
   useEffect(() => {
     if (recordInactive && canRecord) {
       const playbackManager = playbackRef.current;
-      console.log("NEED TO STOP RECORDING");
       if (playbackManager) stopRecordingAudio(playbackManager);
       if (isListening) playAudio(playbackManager);
     }
@@ -584,7 +586,10 @@ const ProgressPlayFile = () => {
             onMetronomeVolumeChange={(newMetronomeVolume) =>
               setMetronomeVolume(newMetronomeVolume)
             }
-            onModeChange={handleToggleMode}
+            onModeChange={(newMode) => {
+              setPracticeMode(newMode);
+              handleToggleMode();
+            }}
             onToggleListen={handleToggleListen}
             onTogglePlay={handleTogglePlay}
             onReset={handleToggleReset}
@@ -595,6 +600,7 @@ const ProgressPlayFile = () => {
             isRecording={isRecording}
             isBpmDisabled={isBpmDeactivated}
             playbackMode={false} // playback mode is the mode for listening back to a recording
+            practiceMode={practiceMode}
           />
         </div>
 

@@ -11,9 +11,11 @@ import {
   HearingDisabled as ListenPauseIcon,
   RestartAlt as ResetIcon,
   Equalizer as StatsIcon,
+  Info as InfoIcon,
 } from "@mui/icons-material";
 import IconButton from "@mui/material/IconButton";
 import Tooltip from "@mui/material/Tooltip";
+import HoverPopover from "./HoverPopover";
 import ControlBarPopover from "./ControlBarPopover";
 import RangeInput from "./RangeInput";
 import ControlBarStats from "./ControlBarStats";
@@ -36,12 +38,14 @@ const ControlBar = ({
   playbackMode,
   handleShowPopUpWindow,
   stats,
+  practiceMode,
 }) => {
   const [practiceModeOn, setPracticeModeOn] = useState(true);
   const [showStats, setShowStats] = useState(false);
   const [initialMidiVolume, setInitialMidiVolume] = useState(
     practiceModeOn ? 50 : 0
   );
+  const [infoAnchorEl, setInfoAnchorEl] = useState(null);
 
   const initialTranspose = 0;
   const initialBpm = 100;
@@ -142,13 +146,28 @@ const ControlBar = ({
     onModeChange(newMode);
   };
 
+  // Toggle the stats bar open and closed in playback mode
   const handleToggleStats = () => {
     setShowStats(!showStats);
+  };
+
+  const handleInfoPopoverOpen = (event) => {
+    setInfoAnchorEl(event.currentTarget);
+  };
+
+  const handleInfoPopoverClose = () => {
+    setInfoAnchorEl(null);
   };
 
   useEffect(() => {
     setInitialMidiVolume(practiceModeOn ? 50 : 0);
   }, [practiceModeOn]);
+
+  useEffect(() => {
+    setPracticeModeOn(practiceMode);
+  }, [practiceMode]);
+
+  console.log(Boolean(infoAnchorEl));
 
   return (
     <div
@@ -166,7 +185,8 @@ const ControlBar = ({
           {!playbackMode && (
             <div>
               <ModeToggle
-                onModeChange={(newMode) => handleModeChange(newMode)}
+                onModeChange={handleModeChange}
+                practiceMode={practiceMode}
               />
             </div>
           )}
@@ -258,21 +278,40 @@ const ControlBar = ({
 
           <div className="mr-6 h-auto w-0.5 self-stretch bg-white/20"></div>
 
-          <div className="justify-between items-center space-x-2">
-            <button
-              onClick={handleViewAllRecordings}
-              className="ml-auto hover:cursor-pointer transition ease-in-out delay-50 text-center text-gray-700 hover:text-gray-900 border-transparent focus:border-transparent focus:ring-0 focus:outline-none bg-slate-50 hover:bg-slate-100 font-extralight py-1 px-2 rounded-l-none outline-none rounded"
-            >
-              {playbackMode ? "Go back" : "View All Recordings"}
-            </button>
-            {playbackMode && (
+          <div className="flex justify-between items-center space-x-2">
+            <div className="flex">
               <button
-                onClick={handleShowPopUpWindow}
-                className="ml-auto hover:cursor-pointer transition ease-in-out delay-50 text-center text-white border-transparent focus:border-transparent focus:ring-0 focus:outline-none bg-red-500 hover:bg-red-600 hover:text-white font-extralight py-1 px-2 rounded-l-none outline-none rounded"
+                onClick={handleViewAllRecordings}
+                className="ml-auto hover:cursor-pointer transition ease-in-out delay-50 text-center text-gray-700 hover:text-gray-900 border-transparent focus:border-transparent focus:ring-0 focus:outline-none bg-slate-50 hover:bg-slate-100 font-extralight py-1 px-2 rounded-l-none outline-none rounded"
               >
-                Delete recording
+                {playbackMode ? "Go back" : "View All Recordings"}
               </button>
-            )}
+              {playbackMode && (
+                <button
+                  onClick={handleShowPopUpWindow}
+                  className="ml-auto hover:cursor-pointer transition ease-in-out delay-50 text-center text-white border-transparent focus:border-transparent focus:ring-0 focus:outline-none bg-red-500 hover:bg-red-600 hover:text-white font-extralight py-1 px-2 rounded-l-none outline-none rounded"
+                >
+                  Delete recording
+                </button>
+              )}
+            </div>
+            <div className="relative">
+              <IconButton
+                aria-label="more"
+                aria-haspopup="true"
+                onMouseEnter={handleInfoPopoverOpen}
+                onMouseLeave={handleInfoPopoverClose}
+                className="text-red-100 opacity-50 cursor-default"
+              >
+                <InfoIcon className="text-3xl" />
+              </IconButton>
+              {Boolean(infoAnchorEl) && (
+                <HoverPopover
+                  anchorEl={infoAnchorEl}
+                  onClose={handleInfoPopoverClose}
+                />
+              )}
+            </div>
           </div>
         </div>
       </div>
