@@ -1,3 +1,7 @@
+import jwt from "jsonwebtoken";
+import { UnAuthenticatedError } from "../errors/index.js";
+import { logout } from "../controllers/authController.js";
+
 /**
  * Middleware function to authenticate user using JWT token.
  * @param {Object} req - Express request object.
@@ -5,13 +9,8 @@
  * @param {Function} next - Express next middleware function.
  * @throws {UnAuthenticatedError} If authentication fails.
  */
-import jwt from "jsonwebtoken";
-import { UnAuthenticatedError } from "../errors/index.js";
-
 const authenticateUser = async (req, res, next) => {
-  //console.log(`In authenticateUser, req.headers is ${JSON.stringify(req.headers)}`)
   const authHeader = req.headers.authorization;
-  //console.log("authHeader", authHeader);
   console.log("Authenticating...");
   if (!authHeader || !authHeader.startsWith("Bearer")) {
     throw new UnAuthenticatedError("Authentication invalid");
@@ -23,8 +22,9 @@ const authenticateUser = async (req, res, next) => {
     req.user = { userId: payload.userId };
     next();
   } catch (err) {
+    logout(req, res);
     throw new UnAuthenticatedError("Authentication invalid");
   }
 };
 
-export default authenticateUser;
+export { authenticateUser };
