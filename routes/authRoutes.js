@@ -1,9 +1,14 @@
 import express from "express";
 const router = express.Router();
-import { register, login, updateUser, getProfileData } from "../controllers/authController.js";
-import authenticateUser from "../middleware-jb/authenticateUser.js";
+import {
+  register,
+  login,
+  updateUser,
+  getProfileData,
+} from "../controllers/authController.js";
+import { authenticateUser } from "../middleware-jb/authenticateUser.js";
 
-import bodyParser from 'body-parser';
+import bodyParser from "body-parser";
 // Middleware setup for parsing form data
 const formParser = bodyParser.urlencoded({ extended: false });
 
