@@ -47,20 +47,15 @@ const SubLevelCard = ({
     }, [subLevelName]);
 
     return (
-        <div
-            className="w-full"
-            ref={containerRef}
-            onClick={() => {
-                onCardClick(index);
-            }}
-        >
+        <div className="w-full" ref={containerRef}>
             <div
-                className={`w-full ${
-                    isOpen ? "bg-blue-400" : "bg-gray-100 hover:bg-slate-200"
-                } shadow-sm rounded-lg mb-3 h-fixed`}
-                style={isOpen ? { height: expandedHeight } : { height: 90 }}
+                className={`w-full shadow-sm rounded-lg mb-3 h-fixed transition-all duration-300 ease-in-out ${isOpen ? "bg-blue-400" : "bg-gray-100 hover:bg-slate-200"}`}
+                style={{ height: isOpen ? `${expandedHeight}px` : "90px" }}
+                onClick={() => {
+                    onCardClick(index);
+                }}
             >
-                <div className={`w-full flex items-center justify-between`}>
+                <div className="w-full flex items-center justify-between">
                     <div className="flex items-center p-2">
                         <div className="w-[80px] h-[80px] flex items-center justify-center mr-4">
                             <img
@@ -71,14 +66,14 @@ const SubLevelCard = ({
                         </div>
                         <div>
                             <div
-                                className={`sm:text-sm md:text-sm lg:text-base xl:text-lg font-bold ${
+                                className={`text-lg font-bold ${
                                     isOpen ? "text-white" : "text-black"
                                 }`}
                             >
                                 {subLevelName}
                             </div>
                             <div
-                                className={`sm:text-xs md:text-xs lg:text-sm xl:text-sm font-normal ${
+                                className={`text-sm font-normal ${
                                     isOpen ? "text-white" : "text-black"
                                 }`}
                             >
@@ -90,7 +85,7 @@ const SubLevelCard = ({
                     <div className="grid grid-cols-3 gap-8 p-4 ml-5 items-center">
                         <div className="flex items-center">
                             <div
-                                className={`sm:text-xs md:text-xs lg:text-sm xl:text-sm font-normal ${
+                                className={`text-sm font-normal ${
                                     isOpen ? "text-white" : "text-black"
                                 } flex items-center`}
                             >
@@ -100,7 +95,7 @@ const SubLevelCard = ({
                         </div>
                         <div className="flex items-center">
                             <div
-                                className={`flex items-center sm:text-xs md:text-xs lg:text-sm xl:text-sm font-normal ${
+                                className={`flex items-center text-sm font-normal ${
                                     isOpen ? "text-white" : "text-black"
                                 }`}
                             >
@@ -116,7 +111,7 @@ const SubLevelCard = ({
                             <Button
                                 variant="contained"
                                 type="button"
-                                className={`bg-black text-white sm:text-xs md:text-xs lg:text-sm xl:text-sm text-center p-2`}
+                                className={`bg-black text-white text-sm text-center p-2`}
                             >
                                 {isOpen ? "Hide Songs" : "View Songs"}
                             </Button>
@@ -124,7 +119,7 @@ const SubLevelCard = ({
                     </div>
                 </div>
                 {isOpen && (
-                    <div className={`w-full flex justify-start px-3 overflow-x-auto`}>
+                    <div className="w-full flex justify-start px-3 overflow-x-auto">
                         <div className="flex space-x-4 items-start">
                             {subLevelLessons.map((lesson, index) => (
                                 <LessonCard
