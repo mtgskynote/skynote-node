@@ -75,6 +75,7 @@ const UserSchema = new mongoose.Schema({
       message: 'Instrument must be either "violin" or "voice".',
     },
   },
+  // User's favourite songs to play will be added here
 });
 
 // Hash the password before saving the user

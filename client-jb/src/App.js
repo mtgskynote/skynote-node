@@ -1,3 +1,4 @@
+import React, { useEffect } from "react";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import {
   Register,
@@ -9,11 +10,9 @@ import {
 } from "./pages";
 
 import { Profile, Stats, SharedLayout } from "./pages/dashboard";
-
-import React, { useEffect } from "react";
+import Lessons from "./pages/Lessons";
+//import ImportedScores from "./pages/ImportedScores";
 import { useAppContext } from "./context/appContext";
-
-import AllLessons from "./components/AllLessons";
 import ProgressPlayFile from "./components/ProgressPlayFile";
 import ProgressPlayFileVisual from "./components/ProgressPlayFileVisual";
 
@@ -27,7 +26,6 @@ import ListRecordings from "./components/ListRecordings";
 import AudioPlayer from "./components/AudioPlayer";
 import ListAllRecordings from "./components/ListAllRecodings";
 import Assignments from "./components/Assignments";
-import ImportedScores from "./pages/ImportedScores";
 
 import Apitesting from "./components/apitesting";
 import Error from "./components/Error";
@@ -80,8 +78,8 @@ function App() {
                 <Route index element={<Stats />} />
                 <Route path="profile" element={<Profile />} />
                 <Route path="apitesting" element={<Apitesting />} />
-                <Route path="lessons" element={<AllLessons />} />
-                <Route path="imported-scores" element={<ImportedScores />} />
+                <Route path="lessons" element={<Lessons />} />
+                {/* <Route path="imported-scores" element={<ImportedScores />} /> */}
                 <Route
                   path="all-lessons/:files"
                   element={<ProgressPlayFile />}
