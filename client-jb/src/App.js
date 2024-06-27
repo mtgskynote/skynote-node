@@ -10,7 +10,8 @@ import {
 
 import { Profile, Stats, SharedLayout } from "./pages/dashboard";
 
-import React from "react";
+import React, { useEffect } from "react";
+import { useAppContext } from "./context/appContext";
 
 import AllLessons from "./components/AllLessons";
 import ProgressPlayFile from "./components/ProgressPlayFile";
@@ -32,83 +33,35 @@ import Apitesting from "./components/apitesting";
 import Error from "./components/Error";
 
 function App() {
-  //  const { startTimer, resetTimer} = useTimer();
-  // useEffect(() => {
-  //   const handleVisibilityChange = () => {
-  //     if (document.hidden) {
-  //       // User has navigated away from the tab, or the tab is now in the background
-  //       console.log('User has left the app - resetting session timer.');
-  //       resetTimer();
-  //     } else {
-  //       // User has returned to the app
-  //       console.log('User has returned to the app - starting session timer.');
-  //       startTimer();
-  //     }
-  //   };
-  //   document.addEventListener('visibilitychange', handleVisibilityChange);
-  //   return () => {
-  //     document.removeEventListener('visibilitychange', handleVisibilityChange);
-  //   };
-  // }, []);
+  const { logoutUser } = useAppContext();
 
-  // useEffect(() => {
-  //   console.log('App loaded or user returned to the app - starting session timer.');
-  //   startTimer();
-  // }, []);
+  // Logout user whenever JWT token is missing
+  useEffect(() => {
+    const checkTokenAndLogout = () => {
+      const token = localStorage.getItem("token");
+      if (!token) {
+        logoutUser();
+      }
+    };
 
-  // useEffect(() => {
-  //   const handleTabClose = (event) => {
-  //     // Perform actions like saving the session state
-  //     console.log('User is trying to leave the app resetting session timer.');
-  //     resetTimer();
-  //     // For some browsers, you must return a string that will be shown to the user in a confirmation dialog
-  //     event.preventDefault();
-  //     event.returnValue = '';
-  //   };
-  //   window.addEventListener('beforeunload', handleTabClose);
-  //   return () => {
-  //     window.removeEventListener('beforeunload', handleTabClose);
-  //   };
-  // }, []);
+    // Call checkTokenAndLogout on component mount
+    checkTokenAndLogout();
 
-  //  const { startTimer, resetTimer} = useTimer();
-  // useEffect(() => {
-  //   const handleVisibilityChange = () => {
-  //     if (document.hidden) {
-  //       // User has navigated away from the tab, or the tab is now in the background
-  //       console.log('User has left the app - resetting session timer.');
-  //       resetTimer();
-  //     } else {
-  //       // User has returned to the app
-  //       console.log('User has returned to the app - starting session timer.');
-  //       startTimer();
-  //     }
-  //   };
-  //   document.addEventListener('visibilitychange', handleVisibilityChange);
-  //   return () => {
-  //     document.removeEventListener('visibilitychange', handleVisibilityChange);
-  //   };
-  // }, []);
+    // Event listener for storage changes
+    const handleStorageChange = (event) => {
+      if (event.key === "token" && !event.newValue) {
+        logoutUser();
+      }
+    };
 
-  // useEffect(() => {
-  //   console.log('App loaded or user returned to the app - starting session timer.');
-  //   startTimer();
-  // }, []);
+    // Add event listener to window object
+    window.addEventListener("storage", handleStorageChange);
 
-  // useEffect(() => {
-  //   const handleTabClose = (event) => {
-  //     // Perform actions like saving the session state
-  //     console.log('User is trying to leave the app resetting session timer.');
-  //     resetTimer();
-  //     // For some browsers, you must return a string that will be shown to the user in a confirmation dialog
-  //     event.preventDefault();
-  //     event.returnValue = '';
-  //   };
-  //   window.addEventListener('beforeunload', handleTabClose);
-  //   return () => {
-  //     window.removeEventListener('beforeunload', handleTabClose);
-  //   };
-  // }, []);
+    // Cleanup function to remove the event listener
+    return () => {
+      window.removeEventListener("storage", handleStorageChange);
+    };
+  }, [logoutUser]);
 
   return (
     <div>
