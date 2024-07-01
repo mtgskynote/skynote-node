@@ -87,6 +87,7 @@ const ProgressPlayFile = () => {
 
   const [practiceMode, setPracticeMode] = useState(true);
   const [isSwitchingMode, setIsSwitchingMode] = useState(false);
+  const [showInfo, setShowInfo] = useState(false);
 
   // Hot keys map and handlers
   const keyMap = {
@@ -95,6 +96,7 @@ const ProgressPlayFile = () => {
     TOGGLE_RECORD: "command+r",
     TOGGLE_RESET: "ctrl+shift+r",
     TOGGLE_MODE: "command+m",
+    TOGGLE_INFO: "ctrl+shift+i",
   };
 
   const handlers = {
@@ -122,6 +124,10 @@ const ProgressPlayFile = () => {
 
         return updatedMode;
       });
+    },
+    TOGGLE_INFO: (event) => {
+      event.preventDefault();
+      handleToggleInfo();
     },
   };
 
@@ -375,6 +381,7 @@ const ProgressPlayFile = () => {
     setIsPlaying((prevIsRecording) => !prevIsRecording);
   };
 
+  // Reset and stop all recording and MIDI playback
   const handleToggleReset = () => {
     const playbackManager = playbackRef.current;
     resetAudio(playbackManager);
@@ -384,6 +391,7 @@ const ProgressPlayFile = () => {
     setIsResetButtonPressed(true);
   };
 
+  // Toggle between the practice and record mode states
   const handleToggleMode = () => {
     setIsResetButtonPressed(true);
 
@@ -432,6 +440,11 @@ const ProgressPlayFile = () => {
   // Update recording file name as it is being changed in the popup window
   const handleRenameFile = (e) => {
     setFileName(e.target.value);
+  };
+
+  // Show shortcuts panel when triggered
+  const handleToggleInfo = () => {
+    setShowInfo((prevShowInfo) => !prevShowInfo);
   };
 
   // Handle audio operations based on isListening and isPlaying changes
@@ -601,6 +614,8 @@ const ProgressPlayFile = () => {
             isBpmDisabled={isBpmDeactivated}
             playbackMode={false} // playback mode is the mode for listening back to a recording
             practiceMode={practiceMode}
+            handleToggleInfo={handleToggleInfo}
+            showInfo={showInfo}
           />
         </div>
 
