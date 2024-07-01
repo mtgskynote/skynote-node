@@ -192,14 +192,18 @@ const ControlBar = ({
         </ControlBarPanel>
       )}
       <ControlBarPanel show={showInfo} stats={stats}>
-        <div className="pb-2">
+        <div className={`${practiceModeOn ? "pb-2" : "pb-8"}`}>
           <p className="font-bold text-white text-2xl mb-3">Shortcuts</p>
           <div className="flex justify-between">
             <div>
-              <div>
-                <span className="text-white font-bold">Ctrl + Shift + R: </span>
-                <span className="text-white opacity-75">Reset</span>
-              </div>
+              {!playbackMode && practiceMode && (
+                <div>
+                  <span className="text-white font-bold">
+                    Ctrl + Shift + R:{" "}
+                  </span>
+                  <span className="text-white opacity-75">Reset</span>
+                </div>
+              )}
               <div>
                 <span className="text-white font-bold">
                   {playbackMode ? "Ctrl + Shift + S: " : "Command + M: "}

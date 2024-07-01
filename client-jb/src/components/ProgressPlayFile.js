@@ -102,7 +102,7 @@ const ProgressPlayFile = () => {
   const handlers = {
     TOGGLE_LISTEN: (event) => {
       event.preventDefault();
-      handleToggleListen();
+      if (practiceMode) handleToggleListen();
     },
     TOGGLE_PLAY: (event) => {
       event.preventDefault();
@@ -114,7 +114,7 @@ const ProgressPlayFile = () => {
     },
     TOGGLE_RESET: (event) => {
       event.preventDefault();
-      handleToggleReset();
+      if (practiceMode) handleToggleReset();
     },
     TOGGLE_MODE: (event) => {
       event.preventDefault();
