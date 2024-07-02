@@ -4,11 +4,6 @@ import { useAppContext } from "../../context/appContext";
 import { getAllRecData } from "../../utils/studentRecordingMethods.js";
 import { getMessages } from "../../utils/messagesMethods.js";
 import { getAllAssignments } from "../../utils/assignmentsMethods.js";
-import PercentagesStarsStats from "../../components/StatsPercentagesStars.js";
-import StatsRecentRecordings from "../../components/StatsRecentRecordings.js";
-import NumberOfRecStats from "../../components/StatsAreaChart.js";
-import StatsGeneral from "../../components/StatsGeneral.js";
-import StatsTasksSection from "../../components/StatsTasksSection.js";
 import LessonCard from "../../components/LessonCard.js";
 import RecordingsProgressChart from "../../components/RecordingsProgressChart.js";
 import LevelsProgressChart from "../../components/LevelsProgressChart.js";
@@ -431,7 +426,7 @@ const Stats = () => {
                     id={recentScores[title].id}
                     recordings={recentScores[title].recordings}
                     reloadRecordingsCallback={reloadRecordingsCallback}
-                    renderViewRecordings= {true}
+                    renderViewRecordings={true}
                   />
                 );
               })}
@@ -462,42 +457,6 @@ const Stats = () => {
           </div>
         </div>
       </div>
-
-      {/* <div className={StatsCSS.dashboard}>
-        <div className={StatsCSS.left}>
-          <div className={StatsCSS.item}>
-            <StatsGeneral
-              numberRecordings={recordingNames}
-              unreadMessages={unreadMessages}
-              unansweredTasks={unansweredTasks}
-            />
-          </div>
-
-          <div className={StatsCSS.item}>
-            <PercentagesStarsStats
-              starsPerLevel={starsPerLevel}
-              achievedStarsPerLevel={achievedStarsPerLevel}
-            />
-          </div>
-          <div className={StatsCSS.item}>
-            <NumberOfRecStats dates={recordingDates} levels={recordingLevels} />
-          </div>
-        </div>
-        <div className={StatsCSS.right}>
-          <div className={StatsCSS.item}>
-            <StatsRecentRecordings
-              recentRecordings={recentRecordings}
-              reloadRecordingsCallBack={reloadRecordingsCallback}
-            />
-          </div>
-          <div className={StatsCSS.item}>
-            <StatsTasksSection
-              recentRecordings={recentRecordings}
-              reloadRecordingsCallBack={reloadRecordingsCallback}
-            />
-          </div>
-        </div>
-      </div> */}
     </div>
   );
 };
