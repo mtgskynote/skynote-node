@@ -12,7 +12,7 @@ const AudioPlayerIcon = ({ audio, isPlaying, onPlay }) => {
   // Initialize audio player
   useEffect(() => {
     const uint8Array = new Uint8Array(audio.data);
-    const blob = new Blob([uint8Array], { type: "audio/*" });
+    const blob = new Blob([uint8Array], { type: "audio/mpeg" });
     const audioUrl = URL.createObjectURL(blob);
     const newAudioPlayer = new Audio(audioUrl);
 
