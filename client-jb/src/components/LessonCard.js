@@ -1,50 +1,51 @@
-import React, { useState, useEffect, useRef } from "react";
-import { useNavigate } from "react-router-dom";
-import {
-  getManyRecordings,
-  deleteRecording,
-} from "../utils/studentRecordingMethods";
-import {
-  CardContent,
-  Typography,
-  CircularProgress,
-  LinearProgress,
-  Button,
-  Tooltip,
-  IconButton,
-} from "@mui/material";
-import { CloseRounded as CloseRoundedIcon } from "@mui/icons-material";
-import AudioPlayerIcon from "./AudioPlayerIcon";
-import StarRating from "./StarRating";
-import QueueMusicIcon from "@mui/icons-material/QueueMusic";
-import FavoriteBorderIcon from "@mui/icons-material/FavoriteBorder";
-import FavoriteIcon from "@mui/icons-material/Favorite";
+  import React, { useState, useEffect, useRef } from "react";
+  import { useNavigate } from "react-router-dom";
+  import {
+    getManyRecordings,
+    deleteRecording,
+  } from "../utils/studentRecordingMethods";
+  import {
+    CardContent,
+    Typography,
+    CircularProgress,
+    LinearProgress,
+    //Button, 
+    Tooltip, 
+    IconButton 
+  } from "@mui/material";
+  import { CloseRounded as CloseRoundedIcon } from "@mui/icons-material";
+  import AudioPlayerIcon from "./AudioPlayerIcon";
+  import StarRating from "./StarRating";
+  import QueueMusicIcon from '@mui/icons-material/QueueMusic';
+  // import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder';
+  // import FavoriteIcon from '@mui/icons-material/Favorite';
+  import FavouriteButton from './FavouriteButton';
 
-const LessonCard = ({
-  title,
-  skill,
-  level,
-  stars,
-  xml,
-  id,
-  recordings,
-  reloadRecordingsCallback,
-  renderViewRecordings,
-  width,
-  backgroundColour,
-  hoverBackgroundColour,
-  textColour,
-}) => {
-  const navigate = useNavigate();
-  const [allRecordings, setAllRecordings] = useState(recordings);
-  const [openRecordingsModal, setOpenRecordingsModal] = useState(false);
-  const [recordingsAudio, setRecordingsAudio] = useState(null);
-  const [loading, setLoading] = useState(false);
-  const [deletingRecording, setDeletingRecording] = useState(null);
-  const [deletionStatus, setDeletionStatus] = useState(null);
-  const [deletedRecordingIds, setDeletedRecordingIds] = useState([]);
-  const [playingAudioId, setPlayingAudioId] = useState(null);
-  const [isFavourite, setIsFavourite] = useState(false);
+  const LessonCard = ({
+    title,
+    skill,
+    level,
+    stars,
+    xml,
+    id,
+    recordings,
+    reloadRecordingsCallback,
+    renderViewRecordings,
+    width,
+    backgroundColour,
+    hoverBackgroundColour, 
+    textColour
+  }) => {
+    const navigate = useNavigate();
+    const [allRecordings, setAllRecordings] = useState(recordings);
+    const [openRecordingsModal, setOpenRecordingsModal] = useState(false);
+    const [recordingsAudio, setRecordingsAudio] = useState(null);
+    const [loading, setLoading] = useState(false);
+    const [deletingRecording, setDeletingRecording] = useState(null);
+    const [deletionStatus, setDeletionStatus] = useState(null);
+    const [deletedRecordingIds, setDeletedRecordingIds] = useState([]);
+    const [playingAudioId, setPlayingAudioId] = useState(null);
+    //const [isFavourite, setIsFavourite] = useState(false);
 
   const modalRef = useRef(null);
 
@@ -193,22 +194,14 @@ const LessonCard = ({
     navigate(`/ListRecordings/${xml}`, { state: { id: recordingId } });
   };
 
-  // Toggles the playing audio ID based on the provided audioId.
-  const handleAudioPlay = (audioId) => {
-    if (playingAudioId === audioId) {
-      setPlayingAudioId(null); // If the currently playing audio is clicked again, set playingAudioId to null
-    } else {
-      setPlayingAudioId(audioId); // Set the new audio as playing
-    }
-  };
-
-  const handleAddToFavourites = () => {
-    setIsFavourite(true);
-  };
-
-  const handleRemoveFromFavourites = () => {
-    setIsFavourite(false);
-  };
+    // Toggles the playing audio ID based on the provided audioId.
+    const handleAudioPlay = (audioId) => {
+      if (playingAudioId === audioId) {
+        setPlayingAudioId(null); // If the currently playing audio is clicked again, set playingAudioId to null
+      } else {
+        setPlayingAudioId(audioId); // Set the new audio as playing
+      }
+    };
 
   return (
     <div>
@@ -273,42 +266,39 @@ const LessonCard = ({
                   </Tooltip>
                 ) : null}
 
-                {isFavourite ? (
-                  <Tooltip
-                    placement="bottom"
-                    title="Remove From Favourites"
-                    arrow
-                  >
-                    <IconButton
-                      aria-label="Remove From Favourites"
-                      className={`text-rose-300 cursor-pointer`}
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        handleRemoveFromFavourites();
-                      }}
-                    >
-                      <FavoriteIcon className="sm:text-2xl md:text-2xl lg:text-3xl xl:text-3xl" />
-                    </IconButton>
-                  </Tooltip>
-                ) : (
-                  <Tooltip placement="bottom" title="Add To Favourites" arrow>
-                    <IconButton
-                      aria-label="Add To Favourites"
-                      className={`${tColour} cursor-pointer`}
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        handleAddToFavourites();
-                      }}
-                    >
-                      <FavoriteBorderIcon className="hover:text-rose-300 sm:text-2xl md:text-2xl lg:text-3xl xl:text-3xl" />
-                    </IconButton>
-                  </Tooltip>
-                )}
+                  {/* {isFavourite ? (
+                    <Tooltip placement="bottom" title="Remove From Favourites" arrow>
+                      <IconButton
+                        aria-label="Remove From Favourites"
+                        className={`text-rose-300 cursor-pointer`}
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          handleRemoveFromFavourites();
+                        }}
+                      >
+                        <FavoriteIcon className="sm:text-2xl md:text-2xl lg:text-3xl xl:text-3xl" />
+                      </IconButton>
+                    </Tooltip> 
+                  ) : (
+                    <Tooltip placement="bottom" title="Add To Favourites" arrow>
+                      <IconButton
+                        aria-label="Add To Favourites"
+                        className={`${tColour} cursor-pointer`}
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          handleAddToFavourites();
+                        }}
+                      >
+                        <FavoriteBorderIcon className="hover:text-rose-300 sm:text-2xl md:text-2xl lg:text-3xl xl:text-3xl" />
+                      </IconButton>
+                    </Tooltip> 
+                  )} */}
+                  <FavouriteButton songId={id} />
+                </div>
               </div>
-            </div>
-          </CardContent>
+            </CardContent>
+          </div>
         </div>
-      </div>
 
       {/* Modal */}
       <div

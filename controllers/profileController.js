@@ -1,10 +1,11 @@
 import User from "../models/User.js";
 import { StatusCodes } from "http-status-codes";
 import { BadRequestError, NotFoundError } from "../errors/index.js";
+import mongoose from "mongoose";
 
 // Update user email and name when editing the profile
 const updateProfileData = async (req, res) => {
-    console.log("req.body", req.body);
+    console.log("updateProfileData req.body", req.body);
     const { email, name, lastName, instrument } = req.body;
 
     if (!email || !name) {
@@ -71,4 +72,55 @@ const changePassword = async (req, res) => {
     }
 };
 
-export { changePassword, updateProfileData };
+const addFavourite = async (req, res) => {
+    try {
+        const { userId, songId } = req.params;
+        const user = await User.findById(userId);
+
+        console.log(`Adding favourite: userId=${userId}, songId=${songId}`);
+
+        if (!user) {
+            return res.status(404).json({ message: "User not found" });
+        }
+
+        const isFavourite = user.favourites.some((fav) =>
+            fav.songId.equals(songId)
+        );
+        if (isFavourite) {
+            return res.status(400).json({ message: "Song already in favourites" });
+        }
+
+        user.favourites.push({ songId: mongoose.Types.ObjectId(songId) });
+        await user.save();
+
+        res.status(StatusCodes.OK).json(user);
+    } catch (error) {
+        console.error('Error adding favourite:', error);
+        res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ message: error.message });
+    }
+};
+
+const removeFavourite = async (req, res) => {
+    try {
+        const { userId, songId } = req.params;
+        const user = await User.findById(userId);
+
+        console.log(`Removing favourite: userId=${userId}, songId=${songId}`);
+
+        if (!user) {
+            return res.status(404).json({ message: "User not found" });
+        }
+
+        user.favourites = user.favourites.filter(
+            (fav) => !fav.songId.equals(songId)
+        );
+        await user.save();
+
+        res.status(StatusCodes.OK).json(user);
+    } catch (error) {
+        console.error('Error removing favourite:', error);
+        res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ message: error.message });
+    }
+};
+
+export { changePassword, updateProfileData, addFavourite, removeFavourite };
