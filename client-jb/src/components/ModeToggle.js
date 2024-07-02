@@ -1,8 +1,8 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import ModeIcon from "@mui/icons-material/Mode";
 import MicIcon from "@mui/icons-material/Mic";
 
-const ModeToggle = ({ onModeChange }) => {
+const ModeToggle = ({ onModeChange, practiceMode }) => {
   const [practiceModeOn, setPracticeModeOn] = useState(true);
 
   const toggleMode = () => {
@@ -10,6 +10,10 @@ const ModeToggle = ({ onModeChange }) => {
     setPracticeModeOn(newMode);
     onModeChange(newMode);
   };
+
+  useEffect(() => {
+    setPracticeModeOn(practiceMode);
+  }, [practiceMode]);
 
   return (
     <button

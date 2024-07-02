@@ -1,4 +1,5 @@
 import React, { useEffect, useState, useRef, useCallback } from "react";
+import { HotKeys } from "react-hotkeys";
 import { useParams, useNavigate } from "react-router-dom";
 import OpenSheetMusicDisplay from "./OpenSheetMusicDisplay";
 import ControlBar from "./ControlBar.js";
@@ -85,12 +86,59 @@ const ProgressPlayFile = () => {
   const [jsonToDownload, setJsonToDownload] = useState();
 
   const [practiceMode, setPracticeMode] = useState(true);
+  const [isSwitchingMode, setIsSwitchingMode] = useState(false);
+  const [showInfo, setShowInfo] = useState(false);
+
+  const [isMac, setIsMac] = useState(false);
+
+  // Hot keys map and handlers
+  const keyMap = {
+    TOGGLE_LISTEN: `${isMac ? "command" : "ctrl"}+l`,
+    TOGGLE_PLAY: `${isMac ? "command" : "ctrl"}+p`,
+    TOGGLE_RECORD: `${isMac ? "command" : "ctrl"}+r`,
+    TOGGLE_RESET: `${isMac ? "command" : "ctrl"}+shift+r`,
+    TOGGLE_MODE: `${isMac ? "command" : "ctrl"}+m`,
+    TOGGLE_INFO: `${isMac ? "command" : "ctrl"}+shift+i`,
+  };
+
+  const handlers = {
+    TOGGLE_LISTEN: (event) => {
+      event.preventDefault();
+      if (practiceMode) handleToggleListen();
+    },
+    TOGGLE_PLAY: (event) => {
+      event.preventDefault();
+      if (practiceMode) handleTogglePlay();
+    },
+    TOGGLE_RECORD: (event) => {
+      event.preventDefault();
+      if (!practiceMode) handleToggleRecord();
+    },
+    TOGGLE_RESET: (event) => {
+      event.preventDefault();
+      if (practiceMode) handleToggleReset();
+    },
+    TOGGLE_MODE: (event) => {
+      event.preventDefault();
+      setPracticeMode((prevMode) => {
+        const updatedMode = !prevMode;
+        handleToggleMode();
+
+        return updatedMode;
+      });
+    },
+    TOGGLE_INFO: (event) => {
+      event.preventDefault();
+      handleToggleInfo();
+    },
+  };
 
   const navigate = useNavigate();
   const scoreID = JSON.parse(localStorage.getItem("scoreData")).find(
     (item) => item.fname === params.files
   )._id;
 
+  // Reset the reset button
   const onResetDone = () => {
     setIsResetButtonPressed(false);
   };
@@ -103,7 +151,7 @@ const ProgressPlayFile = () => {
           setUserData(result);
         })
         .catch((error) => {
-          console.log(`getCurentUser() error: ${error}`);
+          console.log(`Error getting user: ${error}`);
         });
     }
   };
@@ -236,7 +284,6 @@ const ProgressPlayFile = () => {
     }
 
     return () => {
-      console.log("LEAVING PAGE ProgressPlayFile.js ");
       if (isMicrophoneActive()) {
         stopMicrophone();
       }
@@ -251,7 +298,6 @@ const ProgressPlayFile = () => {
         .save_or_not("save")
         .then((dataToDownload) => {
           const buffer = new Buffer.from(dataToDownload);
-          console.log("Can u see me now??");
           handleDownload(buffer); // send data to downloading function
         })
         .catch((error) => {
@@ -267,7 +313,7 @@ const ProgressPlayFile = () => {
 
   // Reset the audio playback to its initial state
   const resetAudio = (playbackManager) => {
-    playbackManager.pause();
+    pauseAudio(playbackManager);
     playbackManager.reset();
 
     setStartPitchTrack(false);
@@ -298,7 +344,9 @@ const ProgressPlayFile = () => {
     if (practiceMode) audioStreamer.close_not_save();
     else {
       audioStreamer.close_maybe_save();
-      setShowSaveRecordingPopUp(true);
+      if (!isSwitchingMode) {
+        setShowSaveRecordingPopUp(true);
+      }
       setIsRecording(false);
       setIsBpmDeactivated(false);
     }
@@ -307,49 +355,55 @@ const ProgressPlayFile = () => {
     setStartPitchTrack(false);
 
     resetAudio(playbackManager);
+    setIsSwitchingMode(false);
   };
 
   // Start playing MIDI audio from the playback manager
   const playAudio = (playbackManager) => {
-    console.log("INSIDE PLAYBACK MANAGER");
     playbackManager.play();
   };
 
-  // Toggle the listening state of the audio playback
-  const handleToggleListen = () => {
-    const playbackManager = playbackRef.current;
-    if (isListening) {
-      playbackManager.pause();
-      setIsListening(false);
-    } else {
-      if (isPlaying) {
-        // Set playing to false and stop all audio if listen is toggled while playing
-        setIsPlaying(false);
-        stopRecordingAudio(playbackManager);
-        setIsResetButtonPressed(true);
-      }
-
-      setIsListening(true);
-      playAudio(playbackManager);
-    }
+  // Stop playing MIDI audio from the playback manager
+  const pauseAudio = (playbackManager) => {
+    playbackManager.pause();
   };
 
-  // Toggle the playing state of the audio playback
+  // Toggle the listening state
+  const handleToggleListen = () => {
+    setIsListening((prevIsListening) => !prevIsListening);
+  };
+
+  // Toggle the playing state
   const handleTogglePlay = () => {
+    setIsPlaying((prevIsPlaying) => !prevIsPlaying);
+  };
+
+  // Toggle the recording state
+  const handleToggleRecord = () => {
+    setIsPlaying((prevIsRecording) => !prevIsRecording);
+  };
+
+  // Reset and stop all recording and MIDI playback
+  const handleToggleReset = () => {
     const playbackManager = playbackRef.current;
-    if (isPlaying) {
-      setIsPlaying(false);
-      resetAudio(playbackManager);
-    } else {
-      if (isListening) {
-        // Set listening to false and stop all audio if play is toggled while listening
-        setIsListening(false);
-        resetAudio(playbackManager);
-      }
-      setIsPlaying(true);
-      setIsResetButtonPressed(true);
-      recordAudio(playbackManager);
+    resetAudio(playbackManager);
+
+    setIsListening(false);
+    setIsPlaying(false);
+    setIsResetButtonPressed(true);
+  };
+
+  // Toggle between the practice and record mode states
+  const handleToggleMode = () => {
+    setIsResetButtonPressed(true);
+
+    if (isRecording || isPlaying) {
+      setIsSwitchingMode(true);
     }
+
+    const playbackManager = playbackRef.current;
+    if (playbackManager) playbackManager.reset();
+    if (isRecording) setIsRecording(false);
   };
 
   // Navigate to all recordings for this particular score
@@ -389,6 +443,69 @@ const ProgressPlayFile = () => {
   const handleRenameFile = (e) => {
     setFileName(e.target.value);
   };
+
+  // Show shortcuts panel when triggered
+  const handleToggleInfo = () => {
+    setShowInfo((prevShowInfo) => !prevShowInfo);
+  };
+
+  // Detect if the OS is macOS
+  const isMacOs = async () => {
+    if (navigator.userAgentData) {
+      const uaData = await navigator.userAgentData.getHighEntropyValues([
+        "platform",
+      ]);
+      return uaData.platform === "macOS";
+    } else {
+      return /mac/i.test(navigator.userAgent);
+    }
+  };
+
+  // Handle audio operations based on isListening and isPlaying changes
+  useEffect(() => {
+    const playbackManager = playbackRef.current;
+    if (playbackManager) {
+      if (!isListening) {
+        pauseAudio(playbackManager);
+      } else if (isListening && isPlaying) {
+        setIsResetButtonPressed(true);
+        setIsPlaying(false); // This will trigger the useEffect for isPlaying
+        resetAudio(playbackManager);
+        playAudio(playbackManager);
+      } else if (isListening) {
+        playAudio(playbackManager);
+      }
+    }
+  }, [isListening]);
+
+  // Handle audio operations based on isPlaying changes
+  useEffect(() => {
+    const playbackManager = playbackRef.current;
+    if (playbackManager) {
+      if (!isPlaying) {
+        resetAudio(playbackManager);
+      } else if (isPlaying && isListening) {
+        setIsResetButtonPressed(true);
+        setIsListening(false); // This will trigger the useEffect for isListening
+        resetAudio(playbackManager);
+        recordAudio(playbackManager);
+      } else if (isPlaying) {
+        recordAudio(playbackManager);
+      }
+    }
+  }, [isPlaying]);
+
+  // Handle audio operations based on isRecording changes
+  useEffect(() => {
+    const playbackManager = playbackRef.current;
+    if (playbackManager) {
+      if (isRecording) {
+        recordAudio(playbackManager);
+      } else {
+        stopRecordingAudio(playbackManager);
+      }
+    }
+  }, [isRecording]);
 
   // Stop playing all audio whenever practice or record mode is toggled
   useEffect(() => {
@@ -457,115 +574,114 @@ const ProgressPlayFile = () => {
     }
   }, [pitchValue, dynamicValue]);
 
+  // Effect to set isMac based on the detected OS
+  useEffect(() => {
+    const checkIsMacOs = async () => {
+      const result = await isMacOs();
+      setIsMac(result);
+    };
+
+    checkIsMacOs();
+  }, []);
+
   return (
-    <div className="flex flex-col min-h-screen justify-between">
-      <div>
-        <OpenSheetMusicDisplay
-          file={`${folderBasePath}/${params.files}.xml`}
-          autoResize={true}
-          cursorRef={cursorRef}
-          playbackRef={playbackRef}
-          metroVol={metronomeVolume / 100}
-          bpm={bpm}
-          zoom={zoom}
-          followCursor={true}
-          dynamicStability={dynStability}
-          pitch={pitch}
-          pitchConfidence={confidence}
-          startPitchTrack={startPitchTrack}
-          showPitchTrack={showPitchTrack}
-          recordVol={midiVolume / 100}
-          isResetButtonPressed={isResetButtonPressed}
-          repeatsIterator={repeatsIterator}
-          showRepeatsInfo={handleReceiveRepetitionInfo}
-          onResetDone={onResetDone}
-          cursorActivity={handleFinishedCursorOSMDCallback}
-          mode={practiceMode}
-          dataToDownload={handleGetJsonCallback}
-          canDownload={canDownload}
-          visual={"no"}
-        />
-      </div>
-
-      <div className="flex justify-center mb-32">
-        <ControlBar
-          onTransposeChange={(newTranspose) => setTranspose(newTranspose)}
-          onBpmChange={(newBpm) => setBpm(newBpm)}
-          onMidiVolumeChange={(newVolume) => setMidiVolume(newVolume)}
-          onMetronomeVolumeChange={(newMetronomeVolume) =>
-            setMetronomeVolume(newMetronomeVolume)
-          }
-          onModeChange={(newMode) => {
-            setPracticeMode(newMode);
-            setIsResetButtonPressed(true);
-
-            const playbackManager = playbackRef.current;
-            resetAudio(playbackManager);
-          }}
-          onToggleListen={handleToggleListen}
-          onTogglePlay={handleTogglePlay}
-          onReset={() => {
-            const playbackManager = playbackRef.current;
-            resetAudio(playbackManager);
-
-            setIsListening(false);
-            setIsPlaying(false);
-            setIsResetButtonPressed(true);
-          }}
-          onRecord={() => {
-            const playbackManager = playbackRef.current;
-            if (isRecording) {
-              stopRecordingAudio(playbackManager);
-            } else {
-              recordAudio(playbackManager);
-            }
-          }}
-          handleViewAllRecordings={handleViewAllRecordings}
-          isListening={isListening}
-          isPlaying={isPlaying}
-          isRecording={isRecording}
-          isBpmDisabled={isBpmDeactivated}
-          playbackMode={false} // playback mode is the mode for listening back to a recording
-        />
-      </div>
-
-      {showCountDownTimer ? (
-        <CountDownTimer
-          bpm={bpm}
-          mode={practiceMode}
-          onCountDownFinished={handleCountDownFinished}
-        />
-      ) : null}
-
-      <PopUpWindow isOpen={showSaveRecordingPopUp}>
-        <div className="mb-4">
-          <label className="block text-gray-700 mb-2" htmlFor="fileName">
-            Name Recording:
-          </label>
-          <input
-            type="text"
-            id="fileName"
-            value={fileName}
-            onChange={handleRenameFile}
-            className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+    <HotKeys keyMap={keyMap} handlers={handlers}>
+      <div className="flex flex-col min-h-screen justify-between">
+        <div>
+          <OpenSheetMusicDisplay
+            file={`${folderBasePath}/${params.files}.xml`}
+            autoResize={true}
+            cursorRef={cursorRef}
+            playbackRef={playbackRef}
+            metroVol={metronomeVolume / 100}
+            bpm={bpm}
+            zoom={zoom}
+            followCursor={true}
+            dynamicStability={dynStability}
+            pitch={pitch}
+            pitchConfidence={confidence}
+            startPitchTrack={startPitchTrack}
+            showPitchTrack={showPitchTrack}
+            recordVol={midiVolume / 100}
+            isResetButtonPressed={isResetButtonPressed}
+            repeatsIterator={repeatsIterator}
+            showRepeatsInfo={handleReceiveRepetitionInfo}
+            onResetDone={onResetDone}
+            cursorActivity={handleFinishedCursorOSMDCallback}
+            mode={practiceMode}
+            dataToDownload={handleGetJsonCallback}
+            canDownload={canDownload}
+            visual={"no"}
           />
         </div>
-        <div className="flex justify-between space-x-2">
-          <button
-            onClick={handleSaveRecording}
-            className="bg-green-500 border-none outline-none text-white px-4 py-2 rounded-lg hover:bg-green-700 transition duration-300 ease-in-out w-full"
-          >
-            Save
-          </button>
-          <button
-            onClick={handleDeleteRecording}
-            className="bg-red-500 border-none outline-none text-white px-4 py-2 rounded-lg hover:bg-red-700 transition duration-300 ease-in-out w-full"
-          >
-            Delete
-          </button>
+
+        <div className="flex justify-center mb-32">
+          <ControlBar
+            onTransposeChange={(newTranspose) => setTranspose(newTranspose)}
+            onBpmChange={(newBpm) => setBpm(newBpm)}
+            onMidiVolumeChange={(newVolume) => setMidiVolume(newVolume)}
+            onMetronomeVolumeChange={(newMetronomeVolume) =>
+              setMetronomeVolume(newMetronomeVolume)
+            }
+            onModeChange={(newMode) => {
+              setPracticeMode(newMode);
+              handleToggleMode();
+            }}
+            onToggleListen={handleToggleListen}
+            onTogglePlay={handleTogglePlay}
+            onReset={handleToggleReset}
+            onRecord={handleToggleRecord}
+            handleViewAllRecordings={handleViewAllRecordings}
+            isListening={isListening}
+            isPlaying={isPlaying}
+            isRecording={isRecording}
+            isBpmDisabled={isBpmDeactivated}
+            playbackMode={false} // playback mode is the mode for listening back to a recording
+            practiceMode={practiceMode}
+            handleToggleInfo={handleToggleInfo}
+            showInfo={showInfo}
+            isMac={isMac}
+          />
         </div>
-      </PopUpWindow>
-    </div>
+
+        {showCountDownTimer ? (
+          <CountDownTimer
+            bpm={bpm}
+            mode={practiceMode}
+            onCountDownFinished={handleCountDownFinished}
+          />
+        ) : null}
+
+        <PopUpWindow isOpen={showSaveRecordingPopUp}>
+          <div className="mb-4">
+            <label className="block text-gray-700 mb-2" htmlFor="fileName">
+              Name Recording:
+            </label>
+            <input
+              type="text"
+              id="fileName"
+              value={fileName}
+              onChange={handleRenameFile}
+              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+            />
+          </div>
+          <div className="flex justify-between space-x-2">
+            <button
+              onClick={handleSaveRecording}
+              className="bg-green-500 border-none outline-none text-white px-4 py-2 rounded-lg hover:bg-green-700 transition duration-300 ease-in-out w-full"
+            >
+              Save
+            </button>
+            <button
+              onClick={handleDeleteRecording}
+              className="bg-red-500 border-none outline-none text-white px-4 py-2 rounded-lg hover:bg-red-700 transition duration-300 ease-in-out w-full"
+            >
+              Delete
+            </button>
+          </div>
+        </PopUpWindow>
+      </div>
+    </HotKeys>
   );
 };
 
