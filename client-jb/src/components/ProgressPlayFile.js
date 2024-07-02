@@ -457,8 +457,45 @@ const ProgressPlayFile = () => {
     }
   }, [pitchValue, dynamicValue]);
 
+  // Delete recording if system crashes or user leaves page while recording
+  useEffect(() => {
+    const handleBeforeUnload = (event) => {
+      // Ensure recording is not saved and audioStreamer is properly cleaned up
+      if (isRecording) {
+        audioStreamer.save_or_not("delete");
+        stopRecordingAudio(playbackRef.current);
+      }
+      // Cancel the event as stated by the standard
+      event.preventDefault();
+      // Chrome requires returnValue to be set
+      event.returnValue = "";
+    };
+
+    window.addEventListener("beforeunload", handleBeforeUnload);
+
+    return () => {
+      window.removeEventListener("beforeunload", handleBeforeUnload);
+      if (isMicrophoneActive()) {
+        stopMicrophone();
+      }
+      audioStreamer && audioStreamer.close();
+    };
+  }, []);
+
+  // TEMPORARY: Simulate a crash scenario (for demonstration purposes)
+  const [simulateCrash, setSimulateCrash] = useState(false);
+  // useEffect to simulate crash
+  useEffect(() => {
+    if (simulateCrash) {
+      // Simulate a crash scenario (for demonstration purposes)
+      throw new Error("Simulated crash for testing");
+    }
+  }, [simulateCrash]);
+
   return (
     <div className="flex flex-col min-h-screen justify-between">
+      <button onClick={() => setSimulateCrash(true)}>Simulate Crash</button>
+
       <div>
         <OpenSheetMusicDisplay
           file={`${folderBasePath}/${params.files}.xml`}
