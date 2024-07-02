@@ -89,14 +89,16 @@ const ProgressPlayFile = () => {
   const [isSwitchingMode, setIsSwitchingMode] = useState(false);
   const [showInfo, setShowInfo] = useState(false);
 
+  const [isMac, setIsMac] = useState(false);
+
   // Hot keys map and handlers
   const keyMap = {
-    TOGGLE_LISTEN: "command+l",
-    TOGGLE_PLAY: "command+p",
-    TOGGLE_RECORD: "command+r",
-    TOGGLE_RESET: "ctrl+shift+r",
-    TOGGLE_MODE: "command+m",
-    TOGGLE_INFO: "ctrl+shift+i",
+    TOGGLE_LISTEN: `${isMac ? "command" : "ctrl"}+l`,
+    TOGGLE_PLAY: `${isMac ? "command" : "ctrl"}+p`,
+    TOGGLE_RECORD: `${isMac ? "command" : "ctrl"}+r`,
+    TOGGLE_RESET: `${isMac ? "command" : "ctrl"}+shift+r`,
+    TOGGLE_MODE: `${isMac ? "command" : "ctrl"}+m`,
+    TOGGLE_INFO: `${isMac ? "command" : "ctrl"}+shift+i`,
   };
 
   const handlers = {
@@ -447,6 +449,18 @@ const ProgressPlayFile = () => {
     setShowInfo((prevShowInfo) => !prevShowInfo);
   };
 
+  // Detect if the OS is macOS
+  const isMacOs = async () => {
+    if (navigator.userAgentData) {
+      const uaData = await navigator.userAgentData.getHighEntropyValues([
+        "platform",
+      ]);
+      return uaData.platform === "macOS";
+    } else {
+      return /mac/i.test(navigator.userAgent);
+    }
+  };
+
   // Handle audio operations based on isListening and isPlaying changes
   useEffect(() => {
     const playbackManager = playbackRef.current;
@@ -560,6 +574,16 @@ const ProgressPlayFile = () => {
     }
   }, [pitchValue, dynamicValue]);
 
+  // Effect to set isMac based on the detected OS
+  useEffect(() => {
+    const checkIsMacOs = async () => {
+      const result = await isMacOs();
+      setIsMac(result);
+    };
+
+    checkIsMacOs();
+  }, []);
+
   return (
     <HotKeys keyMap={keyMap} handlers={handlers}>
       <div className="flex flex-col min-h-screen justify-between">
@@ -616,6 +640,7 @@ const ProgressPlayFile = () => {
             practiceMode={practiceMode}
             handleToggleInfo={handleToggleInfo}
             showInfo={showInfo}
+            isMac={isMac}
           />
         </div>
 

@@ -43,6 +43,7 @@ const ControlBar = ({
   showInfo,
   stats,
   practiceMode,
+  isMac,
 }) => {
   const [practiceModeOn, setPracticeModeOn] = useState(true);
   const [initialMidiVolume, setInitialMidiVolume] = useState(
@@ -194,19 +195,21 @@ const ControlBar = ({
       <ControlBarPanel show={showInfo} stats={stats}>
         <div className={`${practiceModeOn ? "pb-2" : "pb-8"}`}>
           <p className="font-bold text-white text-2xl mb-3">Shortcuts</p>
-          <div className="flex justify-between">
+          <div className="flex justify-between space-x-4">
             <div>
               {!playbackMode && practiceMode && (
                 <div>
                   <span className="text-white font-bold">
-                    Ctrl + Shift + R:{" "}
+                    {isMac ? "Command" : "Ctrl"} + Shift + R:{" "}
                   </span>
                   <span className="text-white opacity-75">Reset</span>
                 </div>
               )}
               <div>
                 <span className="text-white font-bold">
-                  {playbackMode ? "Ctrl + Shift + S: " : "Command + M: "}
+                  {playbackMode
+                    ? `${isMac ? "Command" : "Ctrl"} + Shift + S: `
+                    : `${isMac ? "Command" : "Ctrl"} + M: `}
                 </span>
                 <span className="text-white opacity-75">
                   {playbackMode ? "Toggle Stats" : "Switch Modes"}
@@ -216,13 +219,17 @@ const ControlBar = ({
             <div>
               {!playbackMode && practiceModeOn && (
                 <div>
-                  <span className="text-white font-bold">Command + L: </span>
+                  <span className="text-white font-bold">
+                    {isMac ? "Command" : "Ctrl"} + L:{" "}
+                  </span>
                   <span className="text-white opacity-75">Toggle Listen</span>
                 </div>
               )}
               {practiceModeOn && (
                 <div>
-                  <span className="text-white font-bold">Command + P: </span>
+                  <span className="text-white font-bold">
+                    {isMac ? "Command" : "Ctrl"} + P:{" "}
+                  </span>
                   <span className="text-white opacity-75">
                     {playbackMode ? "Toggle Playback" : "Toggle Practice"}
                   </span>
@@ -230,14 +237,18 @@ const ControlBar = ({
               )}
               {!playbackMode && !practiceModeOn && (
                 <div>
-                  <span className="text-white font-bold">Command + R: </span>
+                  <span className="text-white font-bold">
+                    {isMac ? "Command" : "Ctrl"} + R:{" "}
+                  </span>
                   <span className="text-white opacity-75">Toggle Record</span>
                 </div>
               )}
             </div>
             <div>
               <div>
-                <span className="text-white font-bold">Ctrl + Shift + I: </span>
+                <span className="text-white font-bold">
+                  {isMac ? "Command" : "Ctrl"} + Shift + I:{" "}
+                </span>
                 <span className="text-white opacity-75">View Shortcuts</span>
               </div>
             </div>

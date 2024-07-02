@@ -63,12 +63,14 @@ const ProgressPlayFileVisual = () => {
     date: null,
   });
 
+  const [isMac, setIsMac] = useState(false);
+
   // Hot keys map and handlers
   const keyMap = {
-    TOGGLE_RESET: "ctrl+shift+r",
-    TOGGLE_PLAY: "command+p",
-    TOGGLE_STATS: "ctrl+shift+s",
-    TOGGLE_INFO: "ctrl+shift+i",
+    TOGGLE_RESET: `${isMac ? "command" : "ctrl"}+shift+r`,
+    TOGGLE_PLAY: `${isMac ? "command" : "ctrl"}+p`,
+    TOGGLE_STATS: `${isMac ? "command" : "ctrl"}+shift+s`,
+    TOGGLE_INFO: `${isMac ? "command" : "ctrl"}+shift+i`,
   };
 
   const handlers = {
@@ -277,6 +279,18 @@ const ProgressPlayFileVisual = () => {
     setToggleInfo(true);
   };
 
+  // Detect if the OS is macOS
+  const isMacOs = async () => {
+    if (navigator.userAgentData) {
+      const uaData = await navigator.userAgentData.getHighEntropyValues([
+        "platform",
+      ]);
+      return uaData.platform === "macOS";
+    } else {
+      return /mac/i.test(navigator.userAgent);
+    }
+  };
+
   // Ensure that stats panel is shown when triggered and shortcuts panel is hidden
   useEffect(() => {
     if (toggleStats) {
@@ -317,6 +331,16 @@ const ProgressPlayFileVisual = () => {
       stopAudio();
     };
   }, [newUrl]);
+
+  // Effect to set isMac based on the detected OS
+  useEffect(() => {
+    const checkIsMacOs = async () => {
+      const result = await isMacOs();
+      setIsMac(result);
+    };
+
+    checkIsMacOs();
+  }, []);
 
   return (
     <HotKeys keyMap={keyMap} handlers={handlers}>
@@ -368,6 +392,7 @@ const ProgressPlayFileVisual = () => {
             showStats={showStats}
             stats={metaData}
             practiceMode={true} // Passed as true because we do not have any recording features in playback
+            isMac={isMac}
           />
         </div>
 
