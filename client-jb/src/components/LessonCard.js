@@ -9,7 +9,7 @@
     Typography,
     CircularProgress,
     LinearProgress,
-    Button, 
+    //Button, 
     Tooltip, 
     IconButton 
   } from "@mui/material";
@@ -17,8 +17,9 @@
   import AudioPlayerIcon from "./AudioPlayerIcon";
   import StarRating from "./StarRating";
   import QueueMusicIcon from '@mui/icons-material/QueueMusic';
-  import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder';
-  import FavoriteIcon from '@mui/icons-material/Favorite';
+  // import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder';
+  // import FavoriteIcon from '@mui/icons-material/Favorite';
+  import FavouriteButton from './FavouriteButton';
 
   const LessonCard = ({
     title,
@@ -44,7 +45,7 @@
     const [deletionStatus, setDeletionStatus] = useState(null);
     const [deletedRecordingIds, setDeletedRecordingIds] = useState([]);
     const [playingAudioId, setPlayingAudioId] = useState(null);
-    const [isFavourite, setIsFavourite] = useState(false);
+    //const [isFavourite, setIsFavourite] = useState(false);
 
     const modalRef = useRef(null);
 
@@ -201,14 +202,6 @@
       }
     };
 
-    const handleAddToFavourites = () => {
-      setIsFavourite(true);
-    }
-
-    const handleRemoveFromFavourites = () => {
-      setIsFavourite(false);
-    }
-
     return (
       <div>
         <div className ="flex">
@@ -264,7 +257,7 @@
                   </Tooltip> 
                   ) : null}
 
-                  {isFavourite ? (
+                  {/* {isFavourite ? (
                     <Tooltip placement="bottom" title="Remove From Favourites" arrow>
                       <IconButton
                         aria-label="Remove From Favourites"
@@ -290,7 +283,8 @@
                         <FavoriteBorderIcon className="hover:text-rose-300 sm:text-2xl md:text-2xl lg:text-3xl xl:text-3xl" />
                       </IconButton>
                     </Tooltip> 
-                  )}
+                  )} */}
+                  <FavouriteButton songId={id} />
                 </div>
               </div>
             </CardContent>

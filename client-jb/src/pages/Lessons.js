@@ -6,7 +6,6 @@ import LoadingScreen from "../components/LoadingScreen.js";
 
 const Lessons = () => {
     const [lessonList, setLessonList] = useState({});
-    const [lessonsData, setLessonsData] = useState([]);
     const [localScoreData, setLocalScoreData] = useState(null);
     const [userData, setUserData] = useState(null);
     const { getCurrentUser } = useAppContext();
@@ -16,10 +15,10 @@ const Lessons = () => {
 
     const filters = [
         "All Lessons",
-        // "Least Practised",
-        // "Almost perfect!",
-        // "My Favourites",
-        // "Imported Scores",
+        "Least Practised",
+        "Almost perfect!",
+        "My Favourites",
+        "Imported Scores",
     ];
 
     // get all data
@@ -94,7 +93,6 @@ const Lessons = () => {
             }, {});
 
             setLessonList(lessonData);
-            setLessonsData(lessonData)
         }
     }, [localScoreData, recordingList]);
 
