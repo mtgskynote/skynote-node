@@ -9,9 +9,21 @@ const AudioPlayerIcon = ({ audio, isPlaying, onPlay }) => {
   const [audioPlayer, setAudioPlayer] = useState(null);
   const [isAudioPlaying, setIsAudioPlaying] = useState(isPlaying);
 
+  const determineMimeType = (arrayBuffer) => {
+    console.log(arrayBuffer);
+    const arr = new Uint8Array(arrayBuffer).subarray(0, 4);
+    let header = "";
+    for (let i = 0; i < arr.length; i++) {
+      header += arr[i].toString(16);
+    }
+    return header;
+  };
+
   // Initialize audio player
   useEffect(() => {
     const uint8Array = new Uint8Array(audio.data);
+    const mimeTypeHeader = determineMimeType(audio.data);
+    console.log(mimeTypeHeader);
     const blob = new Blob([uint8Array], { type: "audio/mpeg" });
     const audioUrl = URL.createObjectURL(blob);
     const newAudioPlayer = new Audio(audioUrl);
