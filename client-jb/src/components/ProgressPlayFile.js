@@ -482,20 +482,8 @@ const ProgressPlayFile = () => {
     };
   }, []);
 
-  // TEMPORARY: Simulate a crash scenario (for demonstration purposes)
-  const [simulateCrash, setSimulateCrash] = useState(false);
-  // useEffect to simulate crash
-  useEffect(() => {
-    if (simulateCrash) {
-      // Simulate a crash scenario (for demonstration purposes)
-      throw new Error("Simulated crash for testing");
-    }
-  }, [simulateCrash]);
-
   return (
     <div className="flex flex-col min-h-screen justify-between">
-      <button onClick={() => setSimulateCrash(true)}>Simulate Crash</button>
-
       <div>
         <OpenSheetMusicDisplay
           file={`${folderBasePath}/${params.files}.xml`}
