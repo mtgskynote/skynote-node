@@ -19,8 +19,7 @@ const SubLevelCard = ({
     totalStars,
     subLevelLessons,
     isOpen,
-    onCardClick,
-    filter
+    onCardClick
 }) => {
     const containerRef = useRef(null);
     const [violinIcon, setViolinIcon] = useState(violinPic);
@@ -45,6 +44,10 @@ const SubLevelCard = ({
             setViolinIcon(violinPic);
         }
     }, [subLevelName]);
+
+    if (subLevelLessons.length === 0) {
+        return null;
+    }
 
     return (
         <div className="w-full" ref={containerRef}>

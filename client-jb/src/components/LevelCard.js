@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import SubLevelCard from "./SubLevelCard";
 
-const LevelCard = ({ levelName, levelNumber, levelLessons, filter}) => {
+const LevelCard = ({ levelName, levelNumber, levelLessons}) => {
     const [openCardIndex, setOpenCardIndex] = useState(null);
 
     const handleCardClick = (index) => {
@@ -19,6 +19,13 @@ const LevelCard = ({ levelName, levelNumber, levelLessons, filter}) => {
         });
         return starCount;
     };
+
+    // Check if all arrays within levelLessons are empty
+    const isEmpty = Object.keys(levelLessons).every((skill) => levelLessons[skill].length === 0);
+
+    if (isEmpty) {
+        return null;
+    }
 
     return (
         <div className="w-full flex flex-col items-center justify-center mb-10">
@@ -47,7 +54,6 @@ const LevelCard = ({ levelName, levelNumber, levelLessons, filter}) => {
                         subLevelLessons={levelLessons[skill]}
                         isOpen={openCardIndex === index}
                         onCardClick={handleCardClick}
-                        filter={filter}
                     /> )
                 ))}
             </div>

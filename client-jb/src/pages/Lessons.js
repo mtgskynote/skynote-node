@@ -7,6 +7,7 @@ import LoadingScreen from "../components/LoadingScreen.js";
 
 const Lessons = () => {
     const [lessonList, setLessonList] = useState({});
+    const [fullLessonList, setFullLessonList] = useState({});
     const [localScoreData, setLocalScoreData] = useState(null);
     const [userData, setUserData] = useState(null);
     const { getCurrentUser } = useAppContext();
@@ -14,6 +15,7 @@ const Lessons = () => {
     const [favourites, setFavourites] = useState(null);
     const [selectedFilter, setSelectedFilter] = useState("All Lessons");
     const [isLoading, setIsLoading] = useState(true);
+    const [filteredLessons, setFilteredLessons] = useState({}); // State for filtered lessons
 
     const filters = [
         "All Lessons",
@@ -85,9 +87,39 @@ const Lessons = () => {
             }, {});
 
             setLessonList(lessonData);
+            setFullLessonList(lessonData); // Store full lesson list
             setIsLoading(false);
         }
     }, [localScoreData, recordingList, favourites]);
+
+    useEffect(() => {
+        // Apply filters to lesson list based on selected filter
+        if (selectedFilter === "My Favourites") {
+            const filtered = {};
+            Object.keys(lessonList).forEach((level) => {
+                filtered[level] = {};
+                Object.keys(lessonList[level]).forEach((skill) => {
+                    filtered[level][skill] = lessonList[level][skill].filter(
+                        (lesson) => lesson.favourite
+                    );
+                });
+            });
+            setFilteredLessons(filtered);
+        } else if (selectedFilter === "Almost perfect!") {
+            const filtered = {};
+            Object.keys(lessonList).forEach((level) => {
+                filtered[level] = {};
+                Object.keys(lessonList[level]).forEach((skill) => {
+                    filtered[level][skill] = lessonList[level][skill].filter(
+                        (lesson) => lesson.stars === 2
+                    );
+                });
+            });
+            setFilteredLessons(filtered);
+        } else {
+            setFilteredLessons(lessonList); // Default to full lesson list
+        }
+    }, [lessonList, selectedFilter]);
 
     const calculateStars = (lessonId) => {
         if (!recordingList) return 0;
@@ -126,12 +158,12 @@ const Lessons = () => {
                     </span>
                 ))}
             </div>
-            {Object.keys(lessonList).map((level, index) => (
+            {Object.keys(filteredLessons).map((level, index) => (
                 <LevelCard
                     key={index}
                     levelNumber={index + 1}
                     levelName={level}
-                    levelLessons={lessonList[level]}
+                    levelLessons={filteredLessons[level]}
                     filter={selectedFilter}
                 />
             ))}
