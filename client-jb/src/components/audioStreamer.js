@@ -73,9 +73,7 @@ var makeAudioStreamer = function (
         },
       });
 
-      mediaRecorder = new MediaRecorder(mediaStream, {
-        mimeType: "audio/mpeg",
-      });
+      mediaRecorder = new MediaRecorder(mediaStream);
       mediaRecorder.ondataavailable = (event) => {
         if (event.data.size > 0) {
           audioChunks.push(event.data);
