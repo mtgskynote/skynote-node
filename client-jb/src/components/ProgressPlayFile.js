@@ -103,7 +103,7 @@ const ProgressPlayFile = () => {
           setUserData(result);
         })
         .catch((error) => {
-          console.log(`getCurentUser() error: ${error}`);
+          console.log(`getCurrentUser() error: ${error}`);
         });
     }
   };

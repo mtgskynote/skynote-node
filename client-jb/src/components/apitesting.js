@@ -29,14 +29,14 @@ const Apitesting = () => {
   // First we get the user info into "data" when the page loads so it can be used for sending/receiving messages. 
   useEffect(() => {
     const fetchDataFromAPI = () => {
-      console.log(`in fetchDataFromAPI, about to call getCurentUser()`)
+      console.log(`in fetchDataFromAPI, about to call getCurrentUser()`)
       getCurrentUser() // fetchData is already an async function
         .then((result) => {
-          console.log(`getCurentUser() has returnd this result: ${JSON.stringify(result)}`)
+          console.log(`getCurrentUser() has returned this result: ${JSON.stringify(result)}`)
           setData(result);
         })
         .catch((error) => {
-          console.log(`getCurentUser() error: ${error}`)
+          console.log(`getCurrentUser() error: ${error}`)
           // Handle errors if necessary
         });
     };

@@ -113,7 +113,7 @@ const SubLevelCard = ({
                                 type="button"
                                 className={`bg-black text-white text-sm text-center p-2`}
                             >
-                                {isOpen ? "Hide Songs" : "View Songs"}
+                                {isOpen ? "Hide Pieces" : "View Pieces"}
                             </Button>
                         </div>
                     </div>
@@ -121,13 +121,16 @@ const SubLevelCard = ({
                 {isOpen && (
                     <div className="w-full flex justify-start px-3 overflow-x-auto">
                         <div className="flex space-x-4 items-start">
-                            {subLevelLessons.map((lesson, index) => (
+                        {subLevelLessons.map((lesson, index) => {
+                            console.log(`Lesson ${index + 1} favourite value:`, lesson.favourite); // Log the value
+                            return (
                                 <LessonCard
                                     key={index}
                                     title={lesson.title}
                                     skill={lesson.skill}
                                     level={levelNumber}
                                     stars={lesson.stars}
+                                    isFavourite={lesson.favourite}
                                     xml={lesson.route_path}
                                     id={lesson.id}
                                     renderViewRecordings={false}
@@ -136,7 +139,8 @@ const SubLevelCard = ({
                                     hoverBackgroundColour={"hover:bg-slate-200"}
                                     textColour={"text-black"}
                                 />
-                            ))}
+                            );
+                        })}
                         </div>
                     </div>
                 )}

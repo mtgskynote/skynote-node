@@ -6,37 +6,13 @@ import IconButton from "@mui/material/IconButton";
 import FavoriteIcon from "@mui/icons-material/Favorite";
 import FavoriteBorderIcon from "@mui/icons-material/FavoriteBorder";
 
-const FavouriteButton = ({ songId }) => {
-    const [isFavourite, setIsFavourite] = useState(false);
+const FavouriteButton = ({ 
+    songId, 
+    initialIsFavourite 
+}) => {
+    const [isFavourite, setIsFavourite] = useState(initialIsFavourite);
     const [initialLoad, setInitialLoad] = useState(true); // Track initial load state
     const { getCurrentUser } = useAppContext();
-
-    useEffect(() => {
-        fetchDataFromAPI(); // Fetch initial favourite status on component mount
-    }, []);
-
-    const fetchDataFromAPI = async () => {
-        try {
-            const result = await getCurrentUser();
-            const response = await axios.get("/api/v1/auth/getProfileData", {
-                params: {
-                    userId: result.id,
-                },
-                headers: {
-                    Authorization: `Bearer ${localStorage.getItem("token")}`,
-                },
-            });
-            if (response.status === 200) {
-                const isFav = response.data.user.favourites.some(
-                    (fav) => fav.songId === songId
-                );
-                setIsFavourite(isFav); // Update initial favourite status
-                setInitialLoad(false); // Mark initial load as complete
-            }
-        } catch (error) {
-            console.error(error);
-        }
-    };
 
     const handleToggleFavourite = async () => {
         try {

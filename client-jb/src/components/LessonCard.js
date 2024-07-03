@@ -26,6 +26,7 @@
     skill,
     level,
     stars,
+    isFavourite,
     xml,
     id,
     recordings,
@@ -45,9 +46,8 @@
     const [deletionStatus, setDeletionStatus] = useState(null);
     const [deletedRecordingIds, setDeletedRecordingIds] = useState([]);
     const [playingAudioId, setPlayingAudioId] = useState(null);
-    //const [isFavourite, setIsFavourite] = useState(false);
-
-  const modalRef = useRef(null);
+    
+    const modalRef = useRef(null);
 
   // set defaults
   const viewRecordings =
@@ -234,66 +234,37 @@
               </div>
             </div>
 
-            <div className="whitespace-normal w-fit">
-              <Typography
-                variant="body2"
-                color="textSecondary"
-                gutterBottom
-                className={`${tColour} sm:text-xs md:text-xs lg:text-xs xl:text-sm`}
-              >
-                {skill}
-              </Typography>
-            </div>
-            <div className="absolute inset-x-0 bottom-0 w-full p-3 flex align-text-bottom">
-              <StarRating
-                stars={stars}
-                size={"sm:text-3xl md:text-3xl lg:text-3xl xl:text-4xl"}
-              />
-              <div
-                className={
-                  viewRecordings ? "grid grid-cols-2 ml-auto" : "ml-auto"
-                }
-              >
-                {viewRecordings ? (
-                  <Tooltip placement="bottom" title="View All Recordings" arrow>
-                    <IconButton
-                      aria-label="View All Recordings"
-                      className={`${tColour} cursor-pointer`}
-                      onClick={handleOpenRecordingsModal}
-                    >
-                      <QueueMusicIcon className="sm:text-3xl md:text-3xl lg:text-4xl xl:text-4xl" />
-                    </IconButton>
-                  </Tooltip>
-                ) : null}
-
-                  {/* {isFavourite ? (
-                    <Tooltip placement="bottom" title="Remove From Favourites" arrow>
+              <div className="whitespace-normal w-fit">
+                <Typography
+                  variant="body2"
+                  color="textSecondary"
+                  gutterBottom
+                  className={`${tColour} sm:text-xs md:text-xs lg:text-xs xl:text-sm`}
+                >
+                  {skill}
+                </Typography>
+              </div>
+              <div className="absolute inset-x-0 bottom-0 w-full p-3 flex align-text-bottom">
+                <StarRating 
+                  stars={stars}
+                  size= {"sm:text-3xl md:text-3xl lg:text-3xl xl:text-4xl"}
+                />
+                <div className={viewRecordings ? "grid grid-cols-2 ml-auto" : "ml-auto"}>
+                  {viewRecordings ? ( 
+                    <Tooltip placement="bottom" title="View All Recordings" arrow>
                       <IconButton
-                        aria-label="Remove From Favourites"
-                        className={`text-rose-300 cursor-pointer`}
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          handleRemoveFromFavourites();
-                        }}
-                      >
-                        <FavoriteIcon className="sm:text-2xl md:text-2xl lg:text-3xl xl:text-3xl" />
-                      </IconButton>
-                    </Tooltip> 
-                  ) : (
-                    <Tooltip placement="bottom" title="Add To Favourites" arrow>
-                      <IconButton
-                        aria-label="Add To Favourites"
+                        aria-label="View All Recordings"
                         className={`${tColour} cursor-pointer`}
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          handleAddToFavourites();
-                        }}
+                        onClick={handleOpenRecordingsModal}
                       >
-                        <FavoriteBorderIcon className="hover:text-rose-300 sm:text-2xl md:text-2xl lg:text-3xl xl:text-3xl" />
+                        <QueueMusicIcon className="sm:text-3xl md:text-3xl lg:text-4xl xl:text-4xl" />
                       </IconButton>
-                    </Tooltip> 
-                  )} */}
-                  <FavouriteButton songId={id} />
+                  </Tooltip> 
+                  ) : null}
+                  <FavouriteButton 
+                    songId={id}
+                    initialIsFavourite={isFavourite} 
+                  />
                 </div>
               </div>
             </CardContent>

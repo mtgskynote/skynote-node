@@ -4,6 +4,7 @@ import { useAppContext } from "../../context/appContext";
 import { getAllRecData } from "../../utils/studentRecordingMethods.js";
 import { getMessages } from "../../utils/messagesMethods.js";
 import { getAllAssignments } from "../../utils/assignmentsMethods.js";
+import { getUserFavourites } from "../../utils/usersMethods.js";
 import LessonCard from "../../components/LessonCard.js";
 import RecordingsProgressChart from "../../components/RecordingsProgressChart.js";
 import LevelsProgressChart from "../../components/LevelsProgressChart.js";
@@ -37,6 +38,7 @@ const Stats = () => {
   const [dueTasksContent, setDueTasksContent] = useState([]);
   const [lastWeekRecordings, setLastWeekRecordings] = useState(null);
   const [starPercentages, setStarPercentages] = useState(null);
+  const [favourites, setFavourites] = useState(null);
 
   const getScoreById = (id) => {
     return scoresData.find((score) => score._id === id);
@@ -99,22 +101,24 @@ const Stats = () => {
     //this will trigger the reloading of the useEffect in charge of sending data to child components
   };
 
-  const fetchDataFromAPI = () => {
-    getCurrentUser() // fetchData is already an async function
-      .then((result) => {
-        setUserData(result);
-      })
-      .catch((error) => {
-        console.log(`getCurentUser() error: ${error}`);
-      });
-  };
-
-  //get User Data
   useEffect(() => {
-    if (userData === null) {
-      fetchDataFromAPI();
+    const fetchData = async () => {
+        try {
+            const currentUser = await getCurrentUser();
+            setUserData(currentUser);
+
+            const favs = await getUserFavourites(currentUser.id);
+            setFavourites(favs); // Assuming setFavourites updates state with favorites
+            console.log("Got favourites: ", favs);
+        } catch (error) {
+            console.log("Error fetching data: ", error);
+        }
+    };
+
+    if (!userData) {
+        fetchData();
     }
-  }, [userData]);
+}, [userData]);
 
   //get Scores data
   useEffect(() => {
@@ -415,21 +419,27 @@ const Stats = () => {
           <div className="relative overflow-x-auto whitespace-no-wrap no-scrollbar">
             <div className="inline-flex items-start space-x-8 mr-8">
               {Object.keys(recentScores).map((title, index) => {
+                const lesson = recentScores[title];
+                const isFavourite = favourites.some(fav => fav.songId === lesson.id);
+                console.log(favourites)
+                console.log(`Lesson ${index + 1} favourite value:`, isFavourite); // Log the value
+
                 return (
-                  <LessonCard
-                    key={index}
-                    title={title}
-                    skill={recentScores[title].skill}
-                    level={recentScores[title].level}
-                    stars={recentScores[title].stars}
-                    xml={recentScores[title].xml}
-                    id={recentScores[title].id}
-                    recordings={recentScores[title].recordings}
-                    reloadRecordingsCallback={reloadRecordingsCallback}
-                    renderViewRecordings={true}
-                  />
+                    <LessonCard
+                        key={index}
+                        title={title}
+                        skill={lesson.skill}
+                        level={lesson.level}
+                        stars={lesson.stars}
+                        isFavourite={isFavourite}
+                        xml={lesson.xml}
+                        id={lesson.id}
+                        recordings={lesson.recordings}
+                        reloadRecordingsCallback={reloadRecordingsCallback}
+                        renderViewRecordings={true}
+                    />
                 );
-              })}
+          })}
             </div>
           </div>
         </div>
