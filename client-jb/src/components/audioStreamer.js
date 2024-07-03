@@ -178,7 +178,7 @@ var makeAudioStreamer = function (
     save_or_not: async function (answer) {
       if (answer === "save") {
         //This creates an audioBlob
-        const audioBlob = new Blob(audioChunks, { type: "audio/mp3" });
+        const audioBlob = new Blob(audioChunks, { type: "audio/mpeg" });
         // Transform audioBlob to audioArray
         try {
           // Convert Blob to ArrayBuffer using await
