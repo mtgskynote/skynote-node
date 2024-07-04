@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import SubLevelCard from "./SubLevelCard";
 
-const LevelCard = ({ levelName, levelNumber, levelLessons}) => {
+const LevelCard = ({ levelName, levelNumber, levelLessons, refreshData}) => {
     const [openCardIndex, setOpenCardIndex] = useState(null);
 
     const handleCardClick = (index) => {
@@ -54,6 +54,7 @@ const LevelCard = ({ levelName, levelNumber, levelLessons}) => {
                         subLevelLessons={levelLessons[skill]}
                         isOpen={openCardIndex === index}
                         onCardClick={handleCardClick}
+                        refreshData={refreshData}
                     /> )
                 ))}
             </div>

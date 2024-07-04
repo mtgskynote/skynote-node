@@ -4,10 +4,10 @@ import { useAppContext } from "../context/appContext";
 import { getUserFavourites } from "../utils/usersMethods.js";
 import { getAllRecData } from "../utils/studentRecordingMethods.js";
 import LoadingScreen from "../components/LoadingScreen.js";
+import InDevelopment from "../components/InDevelopment.js";
 
 const Lessons = () => {
     const [lessonList, setLessonList] = useState({});
-    const [fullLessonList, setFullLessonList] = useState({});
     const [localScoreData, setLocalScoreData] = useState(null);
     const [userData, setUserData] = useState(null);
     const { getCurrentUser } = useAppContext();
@@ -61,6 +61,7 @@ const Lessons = () => {
                 const levelNameMapping = {
                     1: "Getting Started",
                     2: "Building Your Repertoire",
+                    3: "Imported Scores",
                 };
                 const mappedLevel = levelNameMapping[level] || level;
 
@@ -87,7 +88,6 @@ const Lessons = () => {
             }, {});
 
             setLessonList(lessonData);
-            setFullLessonList(lessonData); // Store full lesson list
             setIsLoading(false);
         }
     }, [localScoreData, recordingList, favourites]);
@@ -116,8 +116,12 @@ const Lessons = () => {
                 });
             });
             setFilteredLessons(filtered);
+        } else if (selectedFilter === "Imported Scores") {
+            setFilteredLessons({});
+        } else if (selectedFilter === "Least Practised") {
+            setFilteredLessons(lessonList);
         } else {
-            setFilteredLessons(lessonList); // Default to full lesson list
+            setFilteredLessons(lessonList);
         }
     }, [lessonList, selectedFilter]);
 
@@ -141,6 +145,11 @@ const Lessons = () => {
         setSelectedFilter(filter);
     };
 
+    const refreshData = async () => {
+        const favs = await getUserFavourites(userData.id);
+        setFavourites(favs);
+    };
+
     if (isLoading) {
         return <LoadingScreen />;
     }
@@ -158,15 +167,20 @@ const Lessons = () => {
                     </span>
                 ))}
             </div>
-            {Object.keys(filteredLessons).map((level, index) => (
-                <LevelCard
-                    key={index}
-                    levelNumber={index + 1}
-                    levelName={level}
-                    levelLessons={filteredLessons[level]}
-                    filter={selectedFilter}
-                />
-            ))}
+            { Object.keys(filteredLessons).length > 0 ? (
+                Object.keys(filteredLessons).map((level, index) => (
+                    <LevelCard
+                        key={index}
+                        levelNumber={index + 1}
+                        levelName={level}
+                        levelLessons={filteredLessons[level]}
+                        filter={selectedFilter}
+                        refreshData={refreshData}
+                    />
+                ))
+            ) : (
+                <InDevelopment/>
+            )}
         </div>
     );
 };

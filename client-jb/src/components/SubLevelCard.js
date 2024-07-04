@@ -19,7 +19,8 @@ const SubLevelCard = ({
     totalStars,
     subLevelLessons,
     isOpen,
-    onCardClick
+    onCardClick, 
+    refreshData
 }) => {
     const containerRef = useRef(null);
     const [violinIcon, setViolinIcon] = useState(violinPic);
@@ -125,7 +126,6 @@ const SubLevelCard = ({
                     <div className="w-full flex justify-start px-3 overflow-x-auto">
                         <div className="flex space-x-4 items-start">
                         {subLevelLessons.map((lesson, index) => {
-                            console.log(`Lesson ${index + 1} favourite value:`, lesson.favourite); // Log the value
                             return (
                                 <LessonCard
                                     key={index}
@@ -141,6 +141,7 @@ const SubLevelCard = ({
                                     backgroundColour={"bg-slate-50"}
                                     hoverBackgroundColour={"hover:bg-slate-200"}
                                     textColour={"text-black"}
+                                    refreshData={refreshData}
                                 />
                             );
                         })}

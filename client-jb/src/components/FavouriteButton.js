@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import axios from "axios";
 import { useAppContext } from "../context/appContext";
 import Tooltip from "@mui/material/Tooltip";
@@ -8,11 +8,13 @@ import FavoriteBorderIcon from "@mui/icons-material/FavoriteBorder";
 
 const FavouriteButton = ({ 
     songId, 
-    initialIsFavourite 
+    initialIsFavourite, 
+    refreshData
 }) => {
     const [isFavourite, setIsFavourite] = useState(initialIsFavourite);
-    const [initialLoad, setInitialLoad] = useState(true); // Track initial load state
     const { getCurrentUser } = useAppContext();
+
+    console.log(songId, ": ", initialIsFavourite)
 
     const handleToggleFavourite = async () => {
         try {
@@ -33,6 +35,7 @@ const FavouriteButton = ({
                 });
                 setIsFavourite(true); // Update state optimistically
             }
+            refreshData();
         } catch (error) {
             console.error(error);
         }
@@ -45,7 +48,7 @@ const FavouriteButton = ({
             arrow
         >
             <IconButton
-                aria-label={isFavourite  | !initialLoad ? "Remove From Favourites" : "Add To Favourites"}
+                aria-label={isFavourite ? "Remove From Favourites" : "Add To Favourites"}
                 className={`text-rose-300 cursor-pointer`}
                 onClick={(e) => {
                     e.stopPropagation();

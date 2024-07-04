@@ -9,7 +9,6 @@
     Typography,
     CircularProgress,
     LinearProgress,
-    //Button, 
     Tooltip, 
     IconButton 
   } from "@mui/material";
@@ -17,8 +16,6 @@
   import AudioPlayerIcon from "./AudioPlayerIcon";
   import StarRating from "./StarRating";
   import QueueMusicIcon from '@mui/icons-material/QueueMusic';
-  // import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder';
-  // import FavoriteIcon from '@mui/icons-material/Favorite';
   import FavouriteButton from './FavouriteButton';
 
   const LessonCard = ({
@@ -35,7 +32,8 @@
     width,
     backgroundColour,
     hoverBackgroundColour, 
-    textColour
+    textColour, 
+    refreshData
   }) => {
     const navigate = useNavigate();
     const [allRecordings, setAllRecordings] = useState(recordings);
@@ -263,7 +261,8 @@
                   ) : null}
                   <FavouriteButton 
                     songId={id}
-                    initialIsFavourite={isFavourite} 
+                    initialIsFavourite={isFavourite}
+                    refreshData={refreshData} 
                   />
                 </div>
               </div>
