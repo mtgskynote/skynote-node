@@ -197,7 +197,7 @@ const ControlBar = ({
           <p className="font-bold text-white text-2xl mb-3">Shortcuts</p>
           <div className="flex justify-between space-x-4">
             <div>
-              {!playbackMode && practiceMode && (
+              {(playbackMode || practiceModeOn) && (
                 <div>
                   <span className="text-white font-bold">
                     {isMac ? "Command" : "Ctrl"} + Shift + R:{" "}
@@ -207,9 +207,7 @@ const ControlBar = ({
               )}
               <div>
                 <span className="text-white font-bold">
-                  {playbackMode
-                    ? `${isMac ? "Command" : "Ctrl"} + Shift + S: `
-                    : `${isMac ? "Command" : "Ctrl"} + M: `}
+                  {playbackMode ? `S: ` : `M: `}
                 </span>
                 <span className="text-white opacity-75">
                   {playbackMode ? "Toggle Stats" : "Switch Modes"}
@@ -219,17 +217,13 @@ const ControlBar = ({
             <div>
               {!playbackMode && practiceModeOn && (
                 <div>
-                  <span className="text-white font-bold">
-                    {isMac ? "Command" : "Ctrl"} + L:{" "}
-                  </span>
+                  <span className="text-white font-bold">L: </span>
                   <span className="text-white opacity-75">Toggle Listen</span>
                 </div>
               )}
               {practiceModeOn && (
                 <div>
-                  <span className="text-white font-bold">
-                    {isMac ? "Command" : "Ctrl"} + P:{" "}
-                  </span>
+                  <span className="text-white font-bold">P: </span>
                   <span className="text-white opacity-75">
                     {playbackMode ? "Toggle Playback" : "Toggle Practice"}
                   </span>
@@ -237,18 +231,14 @@ const ControlBar = ({
               )}
               {!playbackMode && !practiceModeOn && (
                 <div>
-                  <span className="text-white font-bold">
-                    {isMac ? "Command" : "Ctrl"} + R:{" "}
-                  </span>
+                  <span className="text-white font-bold">R: </span>
                   <span className="text-white opacity-75">Toggle Record</span>
                 </div>
               )}
             </div>
             <div>
               <div>
-                <span className="text-white font-bold">
-                  {isMac ? "Command" : "Ctrl"} + Shift + I:{" "}
-                </span>
+                <span className="text-white font-bold">I: </span>
                 <span className="text-white opacity-75">View Shortcuts</span>
               </div>
             </div>

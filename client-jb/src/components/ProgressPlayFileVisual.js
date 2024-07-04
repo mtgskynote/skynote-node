@@ -68,9 +68,9 @@ const ProgressPlayFileVisual = () => {
   // Hot keys map and handlers
   const keyMap = {
     TOGGLE_RESET: `${isMac ? "command" : "ctrl"}+shift+r`,
-    TOGGLE_PLAY: `${isMac ? "command" : "ctrl"}+p`,
-    TOGGLE_STATS: `${isMac ? "command" : "ctrl"}+shift+s`,
-    TOGGLE_INFO: `${isMac ? "command" : "ctrl"}+shift+i`,
+    TOGGLE_PLAY: `p`,
+    TOGGLE_STATS: `s`,
+    TOGGLE_INFO: `i`,
   };
 
   const handlers = {

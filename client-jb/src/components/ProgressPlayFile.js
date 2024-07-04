@@ -88,17 +88,20 @@ const ProgressPlayFile = () => {
   const [practiceMode, setPracticeMode] = useState(true);
   const [isSwitchingMode, setIsSwitchingMode] = useState(false);
   const [showInfo, setShowInfo] = useState(false);
-
   const [isMac, setIsMac] = useState(false);
+
+  const showSaveRecordingPopUpRef = useRef(showSaveRecordingPopUp);
+  const practiceModeRef = useRef(practiceMode);
+  const showCountDownTimerRef = useRef(showCountDownTimer);
 
   // Hot keys map and handlers
   const keyMap = {
-    TOGGLE_LISTEN: `${isMac ? "command" : "ctrl"}+l`,
-    TOGGLE_PLAY: `${isMac ? "command" : "ctrl"}+p`,
-    TOGGLE_RECORD: `${isMac ? "command" : "ctrl"}+r`,
+    TOGGLE_LISTEN: `l`,
+    TOGGLE_PLAY: `p`,
+    TOGGLE_RECORD: `r`,
     TOGGLE_RESET: `${isMac ? "command" : "ctrl"}+shift+r`,
-    TOGGLE_MODE: `${isMac ? "command" : "ctrl"}+m`,
-    TOGGLE_INFO: `${isMac ? "command" : "ctrl"}+shift+i`,
+    TOGGLE_MODE: `m`,
+    TOGGLE_INFO: `i`,
   };
 
   const handlers = {
@@ -108,11 +111,17 @@ const ProgressPlayFile = () => {
     },
     TOGGLE_PLAY: (event) => {
       event.preventDefault();
-      if (practiceMode) handleTogglePlay();
+      if (practiceMode && !showCountDownTimerRef.current) handleTogglePlay();
     },
     TOGGLE_RECORD: (event) => {
       event.preventDefault();
-      if (!practiceMode) handleToggleRecord();
+
+      if (
+        !practiceModeRef.current &&
+        !showSaveRecordingPopUpRef.current &&
+        !showCountDownTimerRef.current
+      )
+        handleToggleRecord();
     },
     TOGGLE_RESET: (event) => {
       event.preventDefault();
@@ -460,6 +469,18 @@ const ProgressPlayFile = () => {
       return /mac/i.test(navigator.userAgent);
     }
   };
+
+  useEffect(() => {
+    showSaveRecordingPopUpRef.current = showSaveRecordingPopUp;
+  }, [showSaveRecordingPopUp]);
+
+  useEffect(() => {
+    practiceModeRef.current = practiceMode;
+  }, [practiceMode]);
+
+  useEffect(() => {
+    showCountDownTimerRef.current = showCountDownTimer;
+  }, [showCountDownTimer]);
 
   // Handle audio operations based on isListening and isPlaying changes
   useEffect(() => {
