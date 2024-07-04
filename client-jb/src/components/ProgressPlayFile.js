@@ -90,6 +90,7 @@ const ProgressPlayFile = () => {
   const [showInfo, setShowInfo] = useState(false);
   const [isMac, setIsMac] = useState(false);
 
+  // Refs for hotkey events
   const showSaveRecordingPopUpRef = useRef(showSaveRecordingPopUp);
   const practiceModeRef = useRef(practiceMode);
   const showCountDownTimerRef = useRef(showCountDownTimer);
@@ -470,14 +471,17 @@ const ProgressPlayFile = () => {
     }
   };
 
+  // Get real time state update from showSaveRecordingPopup for hotkey events
   useEffect(() => {
     showSaveRecordingPopUpRef.current = showSaveRecordingPopUp;
   }, [showSaveRecordingPopUp]);
 
+  // Get real time state update from practiceMode for hotkey events
   useEffect(() => {
     practiceModeRef.current = practiceMode;
   }, [practiceMode]);
 
+  // Get real time state update from showCountDownTimer for hotkey events
   useEffect(() => {
     showCountDownTimerRef.current = showCountDownTimer;
   }, [showCountDownTimer]);
