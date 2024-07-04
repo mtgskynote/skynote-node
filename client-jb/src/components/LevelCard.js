@@ -1,7 +1,13 @@
-import React, { useState } from 'react';
+import React, { useState } from "react";
 import SubLevelCard from "./SubLevelCard";
 
-const LevelCard = ({ levelName, levelNumber, levelLessons, refreshData}) => {
+const LevelCard = ({
+    levelName,
+    levelNumber,
+    levelLessons,
+    refreshData,
+    subLevelIsOpen,
+}) => {
     const [openCardIndex, setOpenCardIndex] = useState(null);
 
     const handleCardClick = (index) => {
@@ -21,7 +27,9 @@ const LevelCard = ({ levelName, levelNumber, levelLessons, refreshData}) => {
     };
 
     // Check if all arrays within levelLessons are empty
-    const isEmpty = Object.keys(levelLessons).every((skill) => levelLessons[skill].length === 0);
+    const isEmpty = Object.keys(levelLessons).every(
+        (skill) => levelLessons[skill].length === 0
+    );
 
     if (isEmpty) {
         return null;
@@ -42,21 +50,24 @@ const LevelCard = ({ levelName, levelNumber, levelLessons, refreshData}) => {
 
             {/* SubLevelCards */}
             <div className="w-4/5 flex flex-wrap justify-center mt-4">
-                {Object.keys(levelLessons).map((skill, index) => (
-                    levelLessons[skill] && ( <SubLevelCard
-                        index={index}
-                        key={index}
-                        subLevelName={skill}
-                        levelNumber={levelNumber}
-                        category={levelName}
-                        timeRecorded="4h 15min"
-                        totalStars={countStars(levelLessons[skill])}
-                        subLevelLessons={levelLessons[skill]}
-                        isOpen={openCardIndex === index}
-                        onCardClick={handleCardClick}
-                        refreshData={refreshData}
-                    /> )
-                ))}
+                {Object.keys(levelLessons).map(
+                    (skill, index) =>
+                        levelLessons[skill] && (
+                            <SubLevelCard
+                                index={index}
+                                key={index}
+                                subLevelName={skill}
+                                levelNumber={levelNumber}
+                                category={levelName}
+                                timeRecorded="4h 15min"
+                                totalStars={countStars(levelLessons[skill])}
+                                subLevelLessons={levelLessons[skill]}
+                                isOpen={(openCardIndex === index) && subLevelIsOpen}
+                                onCardClick={handleCardClick}
+                                refreshData={refreshData}
+                            />
+                        )
+                )}
             </div>
         </div>
     );

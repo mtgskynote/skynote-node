@@ -53,7 +53,7 @@ const SubLevelCard = ({
     return (
         <div className="w-full" ref={containerRef}>
             <div
-                className={`w-full shadow-sm rounded-lg mb-3 h-fixed transition-all duration-300 ease-in-out ${isOpen ? "bg-blue-400" : "bg-gray-100 hover:bg-slate-200"}`}
+                className={`w-full shadow-sm rounded-lg mb-3 h-fixed transition-all duration-500 ease-in-out ${isOpen ? "bg-blue-400" : "bg-gray-100 hover:bg-slate-200 cursor-pointer"}`}
                 style={{ height: isOpen ? `${expandedHeight}px` : "90px" }}
                 onClick={() => {
                     onCardClick(index);
@@ -111,13 +111,14 @@ const SubLevelCard = ({
                                 <span>{`${totalStars}/${maxStars}`}</span>
                             </div>
                         </div>
-                        <div className="flex items-center">
+                        <div className="items-center">
                             <Button
                                 variant="contained"
                                 type="button"
                                 className={`bg-black text-white text-sm text-center p-2`}
+                                style={{ minWidth: '120px' }}
                             >
-                                {isOpen ? "Hide Pieces" : "View Pieces"}
+                                {isOpen ? "Hide Lessons" : "View Lessons"}
                             </Button>
                         </div>
                     </div>

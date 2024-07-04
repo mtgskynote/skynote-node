@@ -119,7 +119,7 @@ const Lessons = () => {
         } else if (selectedFilter === "Imported Scores") {
             setFilteredLessons({});
         } else if (selectedFilter === "Least Practised") {
-            setFilteredLessons(lessonList);
+            setFilteredLessons({});
         } else {
             setFilteredLessons(lessonList);
         }
