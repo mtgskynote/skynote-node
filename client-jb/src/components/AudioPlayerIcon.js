@@ -7,34 +7,44 @@ import PauseCircleOutlineIcon from "@mui/icons-material/PauseCircleOutline";
 // Component for controlling audio playback with play/pause button.
 const AudioPlayerIcon = ({ audio, isPlaying, onPlay }) => {
   const [audioPlayer, setAudioPlayer] = useState(null);
+  const [isAudioPlaying, setIsAudioPlaying] = useState(isPlaying);
 
-  // Initializez audio player
+  // Initialize audio player
   useEffect(() => {
     const uint8Array = new Uint8Array(audio.data);
     const blob = new Blob([uint8Array], { type: "audio/*" });
     const audioUrl = URL.createObjectURL(blob);
     const newAudioPlayer = new Audio(audioUrl);
+
+    // Event listener for when audio finishes playing
+    const onAudioEnded = () => {
+      setIsAudioPlaying(false);
+    };
+
+    newAudioPlayer.addEventListener("ended", onAudioEnded);
+
     setAudioPlayer(newAudioPlayer);
 
     // Cleanup
     return () => {
       newAudioPlayer.pause();
       URL.revokeObjectURL(audioUrl);
+      newAudioPlayer.removeEventListener("ended", onAudioEnded); // Remove event listener
     };
   }, [audio]);
 
   // Runs whenever isPlaying or audioPlayer changes and plays or pauses the audio based on the isPlaying state.
   useEffect(() => {
-    if (isPlaying) {
+    if (isAudioPlaying) {
       audioPlayer?.play();
     } else {
       audioPlayer?.pause();
     }
-  }, [isPlaying, audioPlayer]);
+  }, [isAudioPlaying, audioPlayer]);
 
   // Toggles the audio playback state based on the isPlaying prop and notifies the parent component.
   const toggleAudio = () => {
-    if (isPlaying && audioPlayer) {
+    if (isAudioPlaying && audioPlayer) {
       audioPlayer.pause();
       onPlay();
     } else {
@@ -46,11 +56,11 @@ const AudioPlayerIcon = ({ audio, isPlaying, onPlay }) => {
 
   // Pauses the audio and resets playback to start when isPlaying is false.
   useEffect(() => {
-    if (!isPlaying && audioPlayer) {
+    if (!isAudioPlaying && audioPlayer) {
       audioPlayer.pause();
       audioPlayer.currentTime = 0;
     }
-  }, [isPlaying, audioPlayer]);
+  }, [isAudioPlaying, audioPlayer]);
 
   // Listens for 'stopAllAudio' event to stop and reset audio.
   useEffect(() => {
@@ -68,15 +78,20 @@ const AudioPlayerIcon = ({ audio, isPlaying, onPlay }) => {
     };
   }, [audioPlayer]);
 
+  // Updates isAudioPlaying based on the audio id passed from the parent component
+  useEffect(() => {
+    setIsAudioPlaying(isPlaying);
+  }, [isPlaying]);
+
   return (
     <IconButton
       onClick={(e) => {
         e.stopPropagation();
         toggleAudio();
       }}
-      className={`hover:text-blue-500 ${isPlaying ? "text-blue-500" : ""}`}
+      className={`hover:text-blue-500 ${isAudioPlaying ? "text-blue-500" : ""}`}
     >
-      {isPlaying ? <PauseCircleOutlineIcon /> : <PlayCircleOutlineIcon />}
+      {isAudioPlaying ? <PauseCircleOutlineIcon /> : <PlayCircleOutlineIcon />}
     </IconButton>
   );
 };
