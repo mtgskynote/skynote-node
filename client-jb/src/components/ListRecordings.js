@@ -19,7 +19,7 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 import PopUpWindowEdit from "./PopUpWindowEdit.js";
 import LoadingScreen from "./LoadingScreen.js";
-import LessonCard from "./LessonCard.js";
+import RecordingCard from "./RecordingCard.js";
 
 const ListRecordings = () => {
   const { getCurrentUser } = useAppContext();
@@ -28,10 +28,16 @@ const ListRecordings = () => {
   const [recordingNames, setRecordingNames] = useState(null);
   const [recordingStars, setRecordingStars] = useState(null);
   const [recordingDates, setRecordingDates] = useState(null);
+  const [recordingIds, setRecordingIds] = useState(null);
   const [scoreSkill, setScoreSkill] = useState(null);
   const [scoreLevel, setScoreLevel] = useState(null);
+  const [scoreXml, setScoreXml] = useState(null);
   const [idSelectedEdit, setIdSelectedEdit] = useState(null);
   const [showPopUpEdit, setShowPopUpEdit] = useState(false);
+
+  const [showDeleteBanner, setShowDeleteBanner] = useState(false);
+  const [deleteMessage, setDeleteMessage] = useState("");
+
   const location = useLocation();
   const navigate = useNavigate();
   // Define options for formatting date
@@ -55,6 +61,7 @@ const ListRecordings = () => {
     const scoreID = itemFoundLocalStorage._id;
     setScoreLevel(itemFoundLocalStorage.level);
     setScoreSkill(itemFoundLocalStorage.skill);
+    setScoreXml(itemFoundLocalStorage.fname);
     const fetchDataFromAPI = () => {
       if (userData === null) {
         getCurrentUser() // fetchData is already an async function
@@ -69,6 +76,7 @@ const ListRecordings = () => {
         getRecData(userData.id, scoreID)
           .then((result) => {
             setRecordingList(result);
+            setRecordingIds(result.map((recording) => recording.recordingId));
             setRecordingNames(
               result.map((recording) => recording.recordingName)
             );
@@ -123,29 +131,33 @@ const ListRecordings = () => {
     }
   };
 
-  // Event handler for click on Trash
-  const handleTrashClick = (nameOfFile, number) => {
-    if (recordingNames.indexOf(nameOfFile) !== -1) {
-      const idToDelete =
-        recordingList[recordingNames.indexOf(nameOfFile)].recordingId;
-      const auxArrayNames = recordingNames.filter(
-        (item, index) => index !== recordingNames.indexOf(nameOfFile)
-      );
-      const auxArrayList = recordingList.filter(
-        (item, index) => index !== recordingNames.indexOf(nameOfFile)
-      );
-      const auxArrayDates = recordingDates.filter(
-        (item, index) => index !== recordingNames.indexOf(nameOfFile)
-      );
-      deleteRecording(idToDelete)
+  // Handle delete recording by
+  const handleDeleteRecording = (recordingName, recordingId) => {
+    const index = recordingNames.indexOf(recordingName);
+    if (index !== -1) {
+      const newRecordingNames = recordingNames.filter((_, i) => i !== index);
+      const newRecordingList = recordingList.filter((_, i) => i !== index);
+      const newRecordingDates = recordingDates.filter((_, i) => i !== index);
+      const newRecordingIds = recordingIds.filter((_, i) => i !== index);
+      deleteRecording(recordingId)
         .then(() => {
-          setRecordingNames(auxArrayNames);
-          setRecordingList(auxArrayList);
-          setRecordingDates(auxArrayDates);
-          //window.location.reload();
+          setDeleteMessage(`Successfully deleted ${recordingName}.`);
+          setShowDeleteBanner(true); // Show delete banner
+          setTimeout(() => {
+            setShowDeleteBanner(false); // Hide delete banner after 3 seconds
+          }, 3000); // Adjust timing as needed
+          setRecordingNames(newRecordingNames);
+          setRecordingList(newRecordingList);
+          setRecordingDates(newRecordingDates);
+          setRecordingIds(newRecordingIds);
         })
         .catch((error) => {
-          console.log(`Cannot delete recordings from database: ${error}`);
+          console.log(`Cannot delete recording from database: ${error}`);
+          setDeleteMessage(`Could not delete ${recordingName}.`);
+          setShowDeleteBanner(true); // Show delete banner
+          setTimeout(() => {
+            setShowDeleteBanner(false); // Hide delete banner after 3 seconds
+          }, 3000); // Adjust timing as needed
         });
     }
   };
@@ -174,20 +186,29 @@ const ListRecordings = () => {
         </div>
       </div>
       <hr className="h-0.5 border-t-0 bg-gray-700 mb-10" />
-      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-        {recordingNames.length !== 0 ? (
-          recordingNames.map((fileName, index) => (
+      {recordingNames.length !== 0 ? (
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+          {recordingNames.map((recordingName, index) => (
             <div key={index} className="flex justify-center">
-              <LessonCard
-                title={fileName}
+              <RecordingCard
+                recordingName={recordingName}
                 stars={recordingStars[index]}
-                renderViewRecordings={false}
+                recordingId={recordingIds[index]}
+                xml={scoreXml}
+                onDeleteRecording={handleDeleteRecording}
               />
             </div>
-          ))
-        ) : (
-          <p className="w-full text-center">No recordings</p>
-        )}
+          ))}
+        </div>
+      ) : (
+        <p className="w-full">No recordings found.</p>
+      )}
+      <div
+        className={`fixed bottom-0 left-0 right-0 bg-green-500 text-white p-3 flex items-center justify-center transition-transform transform ${
+          showDeleteBanner ? "translate-y-0" : "translate-y-full"
+        }`}
+      >
+        <p>{deleteMessage}</p>
       </div>
     </div>
     // <div className={ListRecordingsCSS.container}>
