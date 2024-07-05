@@ -27,7 +27,7 @@ const Landing = () => {
     <div >
 
       {/* Header */}
-      <header className="flex items-center justify-between h-32 bg-white">
+      <header className="flex items-center justify-between h-22 bg-white">
   <div className="flex items-center">
     <img src={logo} alt="Logo" className="h-20 ml-4" />
   </div>
@@ -40,7 +40,7 @@ const Landing = () => {
       RESEARCH
     </a>
     <div className="bg-gray-400 text-white px-1 py-4 hidden sm:block md:block lg:block"></div>
-    <a href="google.com" className="text-gray-500 hover:text-gray-700">
+    <a href="#" className="text-gray-500 hover:text-gray-700">
       CONTACT
     </a>
   </nav>
