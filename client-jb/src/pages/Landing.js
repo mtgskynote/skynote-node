@@ -7,6 +7,7 @@ import cimg2 from "../assets/images/Logo_Tecniospring_INDUSTRY_transparent.png";
 import cimg3 from "../assets/images/EU_emblem_and_funding_declaration_EN.PNG";
 import pub2_img from "../assets/images/publications/pub2_img.png";
 import pub3_img from "../assets/images/publications/pub3_img.jpeg";
+import Skynote_Full_Demos_Video from "../assets/videos/Skynote_Full_Demos_Video_sm.mp4";
 
 const Landing = () => {
   const navigate = useNavigate();
@@ -29,17 +30,17 @@ const Landing = () => {
       {/* Header */}
       <header className="flex items-center justify-between h-22 bg-white">
   <div className="flex items-center">
-    <img src={logo} alt="Logo" className="h-20 ml-4" />
+    <img src={logo} alt="Logo" className="h-20 ml-0 md:ml-4" />
   </div>
-  <nav className="flex items-center justify-end text-xl space-x-8 mr-4 sm:space-x-8 md:space-x-8 lg:space-x-8">
+  <nav className="flex items-center justify-end text-sm   sm:text-base lg:text-xl  mr-2  sm:mr-3 space-x-3 sm:space-x-6 md:space-x-8 ">
     <a href="#" className="text-gray-500 hover:text-gray-700">
       HOME
     </a>
-    <div className="bg-gray-400 text-white px-1 py-4 hidden sm:block md:block lg:block"></div>
+    <div className="bg-gray-400 text-white px-1 py-4  hidden sm:block"></div>
     <a href="/research" className="text-gray-500 hover:text-gray-700">
       RESEARCH
     </a>
-    <div className="bg-gray-400 text-white px-1 py-4 hidden sm:block md:block lg:block"></div>
+    <div className="bg-gray-400 text-white px-1 py-4   hidden sm:block "></div>
     <a href="#" className="text-gray-500 hover:text-gray-700">
       CONTACT
     </a>
@@ -52,7 +53,7 @@ const Landing = () => {
       <div className="bg-[url('hero-image.png')] bg-cover bg-center h-full flex items-center justify-center">
         <div className="bg-blue-500 bg-opacity-80 p-8 text-white">
           <h1 className="mt-6 text-6xl font-bold mb-4">Try Skynote Today</h1>
-          <div className="grid grid-cols-2 gap-8">
+          <div className="grid  grid-cols-1 md:grid-cols-2 gap-8">
             <div>
               <p className="mb-4 text-2xl">
                 The intelligent music learning app based ​on real-time sound and motion analysis, ​backed by the latest artificial intelligence ​technology.
@@ -64,13 +65,15 @@ const Landing = () => {
               </div>
             </div>
             <div>
-              <iframe
-                src="https://www.youtube.com/embed/dQw4w9WgXcQ"
-                frameBorder="0"
-                allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture"
-                allowFullScreen
-                className="w-full h-64"
-              ></iframe>
+            <iframe
+              src={Skynote_Full_Demos_Video}
+              frameBorder="0"
+              allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture"
+              allowFullScreen
+              className="w-full h-64"
+              autoPlay
+              muted
+            ></iframe>
             </div>
           </div>
         </div>
@@ -93,7 +96,7 @@ const Landing = () => {
           <div className="relative mt-4 flex justify-center">
             <img src={pub2_img} alt="Research" className="w-64 absolute  right-20" />
             <img
-              src={pub3_img} alt="Research" className="w-64 absolute top-10 right-30"
+              src={pub3_img} alt="Research" className="w-64 absolute top-16 right-25"
             />
           </div>
 
