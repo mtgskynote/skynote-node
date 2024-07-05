@@ -7,6 +7,7 @@ import cimg2 from "../assets/images/Logo_Tecniospring_INDUSTRY_transparent.png";
 import cimg3 from "../assets/images/EU_emblem_and_funding_declaration_EN.PNG";
 import pub2_img from "../assets/images/publications/pub2_img.png";
 import pub3_img from "../assets/images/publications/pub3_img.jpeg";
+import Skynote_Full_Demos_Video from "../assets/videos/Skynote_Full_Demos_Video_sm.mp4";
 
 const Landing = () => {
   const navigate = useNavigate();
@@ -29,17 +30,17 @@ const Landing = () => {
       {/* Header */}
       <header className="flex items-center justify-between h-22 bg-white">
   <div className="flex items-center">
-    <img src={logo} alt="Logo" className="h-20 ml-1 md:ml-4" />
+    <img src={logo} alt="Logo" className="h-20 ml-0 md:ml-4" />
   </div>
   <nav className="flex items-center justify-end text-sm   sm:text-base lg:text-xl  mr-2  sm:mr-3 space-x-3 sm:space-x-6 md:space-x-8 ">
     <a href="#" className="text-gray-500 hover:text-gray-700">
       HOME
     </a>
-    <div className="bg-gray-400 text-white px-1 py-4  block md:block lg:block"></div>
+    <div className="bg-gray-400 text-white px-1 py-4  hidden sm:block"></div>
     <a href="/research" className="text-gray-500 hover:text-gray-700">
       RESEARCH
     </a>
-    <div className="bg-gray-400 text-white px-1 py-4  block md:block lg:block"></div>
+    <div className="bg-gray-400 text-white px-1 py-4   hidden sm:block "></div>
     <a href="#" className="text-gray-500 hover:text-gray-700">
       CONTACT
     </a>
@@ -64,13 +65,15 @@ const Landing = () => {
               </div>
             </div>
             <div>
-              <iframe
-                src="https://www.youtube.com/embed/dQw4w9WgXcQ"
-                frameBorder="0"
-                allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture"
-                allowFullScreen
-                className="w-full h-64"
-              ></iframe>
+            <iframe
+              src={Skynote_Full_Demos_Video}
+              frameBorder="0"
+              allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture"
+              allowFullScreen
+              className="w-full h-64"
+              autoPlay
+              muted
+            ></iframe>
             </div>
           </div>
         </div>
@@ -93,7 +96,7 @@ const Landing = () => {
           <div className="relative mt-4 flex justify-center">
             <img src={pub2_img} alt="Research" className="w-64 absolute  right-20" />
             <img
-              src={pub3_img} alt="Research" className="w-64 absolute top-10 right-30"
+              src={pub3_img} alt="Research" className="w-64 absolute top-16 right-25"
             />
           </div>
 
