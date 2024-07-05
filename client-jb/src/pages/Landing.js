@@ -29,17 +29,17 @@ const Landing = () => {
       {/* Header */}
       <header className="flex items-center justify-between h-22 bg-white">
   <div className="flex items-center">
-    <img src={logo} alt="Logo" className="h-20 ml-4" />
+    <img src={logo} alt="Logo" className="h-20 ml-1 md:ml-4" />
   </div>
-  <nav className="flex items-center justify-end text-xl space-x-8 mr-4 sm:space-x-8 md:space-x-8 lg:space-x-8">
+  <nav className="flex items-center justify-end text-sm   sm:text-base lg:text-xl  mr-2  sm:mr-3 space-x-3 sm:space-x-6 md:space-x-8 ">
     <a href="#" className="text-gray-500 hover:text-gray-700">
       HOME
     </a>
-    <div className="bg-gray-400 text-white px-1 py-4 hidden sm:block md:block lg:block"></div>
+    <div className="bg-gray-400 text-white px-1 py-4  block md:block lg:block"></div>
     <a href="/research" className="text-gray-500 hover:text-gray-700">
       RESEARCH
     </a>
-    <div className="bg-gray-400 text-white px-1 py-4 hidden sm:block md:block lg:block"></div>
+    <div className="bg-gray-400 text-white px-1 py-4  block md:block lg:block"></div>
     <a href="#" className="text-gray-500 hover:text-gray-700">
       CONTACT
     </a>
@@ -52,7 +52,7 @@ const Landing = () => {
       <div className="bg-[url('hero-image.png')] bg-cover bg-center h-full flex items-center justify-center">
         <div className="bg-blue-500 bg-opacity-80 p-8 text-white">
           <h1 className="mt-6 text-6xl font-bold mb-4">Try Skynote Today</h1>
-          <div className="grid grid-cols-2 gap-8">
+          <div className="grid  grid-cols-1 md:grid-cols-2 gap-8">
             <div>
               <p className="mb-4 text-2xl">
                 The intelligent music learning app based ​on real-time sound and motion analysis, ​backed by the latest artificial intelligence ​technology.
