@@ -1,6 +1,6 @@
 import express from "express";
 import dotenv from "dotenv";
-import bodyParser from 'body-parser';
+import bodyParser from "body-parser";
 
 dotenv.config();
 import "express-async-errors"; // this is a package that allows us to use async await in express
@@ -20,7 +20,7 @@ import profileRouter from "./routes/profileRoutes.js";
 // middleware
 import notFoundMiddleWare from "./middleware-jb/not-found.js";
 import errorHandlerMiddleWare from "./middleware-jb/error-handler.js"; // best practice to import it at the last
-import authenticateUser from "./middleware-jb/authenticateUser.js";
+import { authenticateUser } from "./middleware-jb/authenticateUser.js";
 
 import { dirname } from "path";
 import { fileURLToPath } from "url";
@@ -28,14 +28,13 @@ import path from "path";
 
 const app = express();
 
-app.use(express.json({ limit: '16mb' })); // For JSON payloads
-app.use(express.urlencoded({ limit: '16mb', extended: true })); // For URL-encoded data
+app.use(express.json({ limit: "16mb" })); // For JSON payloads
+app.use(express.urlencoded({ limit: "16mb", extended: true })); // For URL-encoded data
 
 // Middleware to parse application/x-www-form-urlencoded
 app.use(bodyParser.urlencoded({ extended: false }));
 // Middleware to parse application/json
 app.use(bodyParser.json());
-
 
 if (process.env.NODE_ENV !== "production") {
   app.use(morgan("dev")); // morgan is a middleware that allows us to log the requests in the console

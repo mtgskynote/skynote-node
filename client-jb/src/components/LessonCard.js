@@ -5,15 +5,20 @@ import {
   deleteRecording,
 } from "../utils/studentRecordingMethods";
 import {
-  Card,
   CardContent,
   Typography,
   CircularProgress,
   LinearProgress,
+  Button,
+  Tooltip,
+  IconButton,
 } from "@mui/material";
 import { CloseRounded as CloseRoundedIcon } from "@mui/icons-material";
 import AudioPlayerIcon from "./AudioPlayerIcon";
 import StarRating from "./StarRating";
+import QueueMusicIcon from "@mui/icons-material/QueueMusic";
+import FavoriteBorderIcon from "@mui/icons-material/FavoriteBorder";
+import FavoriteIcon from "@mui/icons-material/Favorite";
 
 const LessonCard = ({
   title,
@@ -24,6 +29,11 @@ const LessonCard = ({
   id,
   recordings,
   reloadRecordingsCallback,
+  renderViewRecordings,
+  width,
+  backgroundColour,
+  hoverBackgroundColour,
+  textColour,
 }) => {
   const navigate = useNavigate();
   const [allRecordings, setAllRecordings] = useState(recordings);
@@ -34,8 +44,19 @@ const LessonCard = ({
   const [deletionStatus, setDeletionStatus] = useState(null);
   const [deletedRecordingIds, setDeletedRecordingIds] = useState([]);
   const [playingAudioId, setPlayingAudioId] = useState(null);
+  const [isFavourite, setIsFavourite] = useState(false);
 
   const modalRef = useRef(null);
+
+  // set defaults
+  const viewRecordings =
+    renderViewRecordings !== false ? renderViewRecordings : false;
+  const xSize = width ? width : "290px";
+  const bColour = backgroundColour ? backgroundColour : "bg-blue-400";
+  const hoverColour = hoverBackgroundColour
+    ? hoverBackgroundColour
+    : "hover:bg-blue-500";
+  const tColour = textColour ? textColour : "text-white";
 
   // Resets the deletionStatus to null after 10 seconds when it changes.
   useEffect(() => {
@@ -74,13 +95,19 @@ const LessonCard = ({
   // Handles the click event for viewing the score of the lesson and navigates to the '/all-lessons' route.
   const handleViewScore = (e) => {
     e.stopPropagation(); // Prevents the event from bubbling up to the parent component.
-    navigate(`/all-lessons/${xml}`, { state: { id } });
+
+    let path = xml;
+    const basePath = "/all-lessons/";
+    if (!xml.startsWith(basePath)) {
+      path = `${basePath}${xml}`;
+    }
+
+    navigate(path, { state: { id } });
   };
 
   // Opens the recordings modal, fetches the audio for all recordings if not already fetched, and updates the state accordingly.
   const handleOpenRecordingsModal = async (e) => {
     e.stopPropagation(); // Prevents the event from bubbling up to the parent component.
-    console.log(recordingsAudio);
 
     setOpenRecordingsModal(true);
     setLoading(true);
@@ -103,7 +130,6 @@ const LessonCard = ({
 
         setRecordingsAudio(recordingAudios);
       }
-      console.log(recordingsAudio);
     } catch (error) {
       console.error("Error fetching recordings audio:", error);
     } finally {
@@ -176,49 +202,113 @@ const LessonCard = ({
     }
   };
 
+  const handleAddToFavourites = () => {
+    setIsFavourite(true);
+  };
+
+  const handleRemoveFromFavourites = () => {
+    setIsFavourite(false);
+  };
+
   return (
     <div>
-      <Card
-        className={`h-48 w-80 transition ease-in-out delay-50 max-w-sm relative rounded overflow-hidden shadow-md hover:shadow-lg bg-blue-400 hover:bg-blue-500 hover:cursor-pointer`}
-        onClick={handleViewScore}
-        id={id}
-      >
-        <CardContent>
-          <div className="flex justify-between items-center text-white">
-            <div className="w-3/4 overflow-hidden">
-              <Typography
-                variant="h5"
-                component="div"
-                className="font-bold text-clip w-full whitespace-normal"
+      <div className="flex">
+        <div
+          className={`relative transition ease-in-out delay-50 rounded overflow-hidden shadow-md hover:shadow-lg ${bColour} ${hoverColour} hover:cursor-pointer mb-3`}
+          style={{ width: xSize, aspectRatio: "3 / 2" }}
+          onClick={handleViewScore}
+          id={id}
+        >
+          <CardContent>
+            {/* Top Section */}
+            <div
+              className={`flex justify-between items-start ${tColour} align-text-top`}
+            >
+              <div className="overflow-hidden">
+                <Typography
+                  variant="h5"
+                  component="div"
+                  className={`font-bold text-clip sm:text-lg md:text-lg lg:text-lg xl:text-xl whitespace-normal mr-6 max-w-36`}
+                >
+                  {title}
+                </Typography>
+              </div>
+              <div></div>
+              <div
+                className={`sm:text-xs md:text-xs lg:text-xs xl:text-sm font-extralight p-1 rounded align-right`}
               >
-                {title}
+                Level {level}
+              </div>
+            </div>
+
+            <div className="whitespace-normal w-fit">
+              <Typography
+                variant="body2"
+                color="textSecondary"
+                gutterBottom
+                className={`${tColour} sm:text-xs md:text-xs lg:text-xs xl:text-sm`}
+              >
+                {skill}
               </Typography>
             </div>
-            <div className="text-xl font-extralight p-1 rounded">
-              Level {level}
+            <div className="absolute inset-x-0 bottom-0 w-full p-3 flex align-text-bottom">
+              <StarRating
+                stars={stars}
+                size={"sm:text-3xl md:text-3xl lg:text-3xl xl:text-4xl"}
+              />
+              <div
+                className={
+                  viewRecordings ? "grid grid-cols-2 ml-auto" : "ml-auto"
+                }
+              >
+                {viewRecordings ? (
+                  <Tooltip placement="bottom" title="View All Recordings" arrow>
+                    <IconButton
+                      aria-label="View All Recordings"
+                      className={`${tColour} cursor-pointer`}
+                      onClick={handleOpenRecordingsModal}
+                    >
+                      <QueueMusicIcon className="sm:text-3xl md:text-3xl lg:text-4xl xl:text-4xl" />
+                    </IconButton>
+                  </Tooltip>
+                ) : null}
+
+                {isFavourite ? (
+                  <Tooltip
+                    placement="bottom"
+                    title="Remove From Favourites"
+                    arrow
+                  >
+                    <IconButton
+                      aria-label="Remove From Favourites"
+                      className={`text-rose-300 cursor-pointer`}
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        handleRemoveFromFavourites();
+                      }}
+                    >
+                      <FavoriteIcon className="sm:text-2xl md:text-2xl lg:text-3xl xl:text-3xl" />
+                    </IconButton>
+                  </Tooltip>
+                ) : (
+                  <Tooltip placement="bottom" title="Add To Favourites" arrow>
+                    <IconButton
+                      aria-label="Add To Favourites"
+                      className={`${tColour} cursor-pointer`}
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        handleAddToFavourites();
+                      }}
+                    >
+                      <FavoriteBorderIcon className="hover:text-rose-300 sm:text-2xl md:text-2xl lg:text-3xl xl:text-3xl" />
+                    </IconButton>
+                  </Tooltip>
+                )}
+              </div>
             </div>
-          </div>
-          <div className="whitespace-normal">
-            <Typography
-              variant="body2"
-              color="textSecondary"
-              gutterBottom
-              className="text-slate-100 text-md"
-            >
-              {skill}
-            </Typography>
-          </div>
-          <div className="absolute inset-x-0 bottom-0 p-3 flex items-end">
-            <StarRating stars={stars} />
-            <button
-              onClick={handleOpenRecordingsModal}
-              className="ml-auto hover:cursor-pointer transition ease-in-out delay-50 text-center text-gray-800 border-transparent focus:border-transparent focus:ring-0 focus:outline-none bg-slate-50 hover:bg-blue-700 hover:text-white font-extralight hover:font-bold py-1 px-2 rounded-l-none outline-none rounded"
-            >
-              View All Recordings
-            </button>
-          </div>
-        </CardContent>
-      </Card>
+          </CardContent>
+        </div>
+      </div>
 
       {/* Modal */}
       <div
@@ -248,7 +338,7 @@ const LessonCard = ({
                         e.stopPropagation();
                         handleCloseRecordingsModal();
                       }}
-                      className="bg-red-500 hover:bg-red-400 text-white focus:outline-none border-none rounded"
+                      className={`bg-red-500 hover:bg-red-400 ${tColour} focus:outline-none border-none rounded`}
                     >
                       <CloseRoundedIcon className="rounded text-2xl" />
                     </button>
