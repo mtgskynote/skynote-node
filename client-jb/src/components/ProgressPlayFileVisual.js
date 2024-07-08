@@ -245,6 +245,9 @@ const ProgressPlayFileVisual = () => {
     };
   }, [newUrl]);
 
+  const playbackManager = playbackRef.current;
+  console.log(playbackManager.timingSource.getCurrentTimeInMs());
+
   return (
     <div className="flex flex-col min-h-screen justify-between">
       <div>

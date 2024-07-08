@@ -542,6 +542,7 @@ const ProgressPlayFile = () => {
             if (isRecording) {
               stopRecordingAudio(playbackManager);
             } else {
+              playbackManager.setPlaybackStart(0);
               recordAudio(playbackManager);
             }
           }}
