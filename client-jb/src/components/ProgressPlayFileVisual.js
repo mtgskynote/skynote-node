@@ -20,7 +20,6 @@ const ProgressPlayFileVisual = () => {
   const [songFile, setSongFile] = useState(null);
   const pauseTimeRef = useRef(0);
   const startTimeRef = useRef(0);
-  const timestampRef = useRef(null);
 
   const cursorRef = useRef(null);
   const playbackRef = useRef(null);
@@ -40,7 +39,6 @@ const ProgressPlayFileVisual = () => {
   const [startPitchTrack, setStartPitchTrack] = useState(false);
   const [showPitchTrack, setShowPitchTrack] = useState(false);
   const [isPlaying, setIsPlaying] = useState(false);
-  const [startFromTheBeginning, setStartFromTheBeginning] = useState(true);
 
   const [isResetButtonPressed, setIsResetButtonPressed] = useState(false);
   const [repeatsIterator, setRepeatsIterator] = useState(false);
@@ -198,22 +196,9 @@ const ProgressPlayFileVisual = () => {
       setIsPlaying(false);
       stopAudio(); // Stop recording audio
       playbackManager.pause(); // Stop OSMD
-
-      const currentTimestamp =
-        playbackManager.timingSource.getCurrentTimestamp();
-      timestampRef.current = currentTimestamp;
     } else {
       setIsPlaying(true);
       playAudio(); // Play recording audio
-
-      if (startFromTheBeginning) {
-        playbackManager.setPlaybackStart(0);
-        setStartFromTheBeginning(false);
-      }
-      // else {
-      //   playbackManager.setPlaybackStart(timestampRef.current);
-      // }
-
       playbackManager.play(); // Play OSMD
     }
   };
@@ -245,7 +230,6 @@ const ProgressPlayFileVisual = () => {
     if (cursorFinished) {
       setCursorFinished(false);
       setIsPlaying(false);
-      setStartFromTheBeginning(true);
 
       // Reset start and pause times when playback is finished
       startTimeRef.current = 0;
@@ -262,7 +246,7 @@ const ProgressPlayFileVisual = () => {
 
   return (
     <div className="flex flex-col min-h-screen justify-between">
-      <div>
+      <div className="relative">
         <OpenSheetMusicDisplay
           file={`${folderBasePath}/${params.files}.xml`}
           autoResize={true}
@@ -286,7 +270,10 @@ const ProgressPlayFileVisual = () => {
           mode={true} // Passed as true to indicate that we are not in a type of record mode
           visual={"yes"}
           visualJSON={json}
+          className="z-10 relative"
         />
+        {/* Overlay div */}
+        <div className="absolute top-0 left-0 w-full h-full bg-transparent z-20 pointer-events-auto"></div>
       </div>
 
       <div className="flex justify-center mb-32">
