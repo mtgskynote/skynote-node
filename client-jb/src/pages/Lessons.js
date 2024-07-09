@@ -15,12 +15,14 @@ const Lessons = () => {
     const [favourites, setFavourites] = useState(null);
     const [selectedFilter, setSelectedFilter] = useState("All Lessons");
     const [isLoading, setIsLoading] = useState(true);
-    const [filteredLessons, setFilteredLessons] = useState({}); // State for filtered lessons
+    const [filteredLessons, setFilteredLessons] = useState({});
+    const [openSubLevel, setOpenSubLevel] = useState(null);
+    const [subLevelCounts, setSubLevelCounts] = useState({});
 
     const filters = [
         "All Lessons",
-        "Least Practised",
-        "Almost perfect!",
+        "Least Recorded",
+        "Almost Perfect!",
         "My Favourites",
         "Imported Scores",
     ];
@@ -79,6 +81,7 @@ const Lessons = () => {
                     skill,
                     level: mappedLevel,
                     stars: calculateStars(_id),
+                    recordings: calculateRecordings(_id),
                     favourite: isFavourite,
                 };
 
@@ -105,7 +108,7 @@ const Lessons = () => {
                 });
             });
             setFilteredLessons(filtered);
-        } else if (selectedFilter === "Almost perfect!") {
+        } else if (selectedFilter === "Almost Perfect!") {
             const filtered = {};
             Object.keys(lessonList).forEach((level) => {
                 filtered[level] = {};
@@ -118,12 +121,67 @@ const Lessons = () => {
             setFilteredLessons(filtered);
         } else if (selectedFilter === "Imported Scores") {
             setFilteredLessons({});
-        } else if (selectedFilter === "Least Practised") {
-            setFilteredLessons({});
+        } else if (selectedFilter === "Least Recorded") {
+            const filtered = {};
+            // find maximum recording number 
+            let maxRecordings = 0;
+            Object.keys(lessonList).forEach((level) => {
+                Object.keys(lessonList[level]).forEach((skill) => {
+                    lessonList[level][skill].forEach((lesson) => {
+                        const recordings = lesson.recordings;
+                        if (recordings > maxRecordings) {
+                            maxRecordings = recordings;
+                        }
+                    });
+                });
+            });
+
+            console.log('max:', maxRecordings)
+
+            const threshold = Math.floor(maxRecordings * 0.6); 
+
+            console.log('threshold', threshold)
+            
+            Object.keys(lessonList).forEach((level) => {
+                filtered[level] = {};
+                Object.keys(lessonList[level]).forEach((skill) => {
+                    filtered[level][skill] = lessonList[level][skill].filter(
+                        (lesson) => lesson.recordings < threshold
+                    );
+                });
+            });
+            setFilteredLessons(filtered);
         } else {
             setFilteredLessons(lessonList);
         }
     }, [lessonList, selectedFilter]);
+
+    useEffect(() => {
+        // Count sublevels dynamically and calculate base index for each level
+        let prevCount = 0;
+        const counts = {};
+        Object.keys(filteredLessons).forEach((level) => {
+            counts[level] = prevCount;
+            Object.keys(filteredLessons[level]).forEach((skill) => {
+                prevCount += filteredLessons[level][skill].length;
+            });
+        });
+        setSubLevelCounts(counts);
+    }, [filteredLessons]);
+
+    const calculateRecordings = (lessonId) => {
+        if (!recordingList) return 0;
+
+        const lessonRecordings = recordingList.filter(
+            (recording) => recording.scoreID === lessonId
+        );
+
+        if (lessonRecordings.length > 0) {
+            return lessonRecordings.length
+        } else {
+            return 0;
+        }
+    };
 
     const calculateStars = (lessonId) => {
         if (!recordingList) return 0;
@@ -143,6 +201,14 @@ const Lessons = () => {
 
     const handleFilterClick = (filter) => {
         setSelectedFilter(filter);
+    };
+
+    const handleSubLevelClick = (subLevelIndex) => {
+        if (openSubLevel === subLevelIndex) {
+            setOpenSubLevel(null); // Close if the same sublevel is clicked again
+        } else {
+            setOpenSubLevel(subLevelIndex); // Open the clicked sublevel
+        }
     };
 
     const refreshData = async () => {
@@ -168,14 +234,18 @@ const Lessons = () => {
                 ))}
             </div>
             { Object.keys(filteredLessons).length > 0 ? (
-                Object.keys(filteredLessons).map((level, index) => (
+                Object.keys(filteredLessons).map((level, levelIndex) => (
                     <LevelCard
-                        key={index}
-                        levelNumber={index + 1}
+                        key={levelIndex}
+                        levelNumber={levelIndex + 1}
                         levelName={level}
                         levelLessons={filteredLessons[level]}
                         filter={selectedFilter}
                         refreshData={refreshData}
+                        subLevelIsOpen={openSubLevel !== null}
+                        handleSubLevelClick={handleSubLevelClick}
+                        openSubLevel={openSubLevel}
+                        baseSubLevelIndex={subLevelCounts[level]}
                     />
                 ))
             ) : (
@@ -186,3 +256,4 @@ const Lessons = () => {
 };
 
 export default Lessons;
+

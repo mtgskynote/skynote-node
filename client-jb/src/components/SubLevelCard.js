@@ -88,14 +88,15 @@ const SubLevelCard = ({
                     <div className="flex-grow"></div>
                     <div className="grid grid-cols-3 gap-8 p-4 ml-5 items-center">
                         <div className="flex items-center">
-                            <div
+                            { /*TO DO: need to decide what is shows as time if wanted (see ENG-64) */
+                            /* <div
                                 className={`text-sm font-normal ${
                                     isOpen ? "text-white" : "text-black"
                                 } flex items-center`}
                             >
                                 <AccessTimeIcon className="mr-2" />
                                 <span>{timeRecorded}</span>
-                            </div>
+                            </div> */}
                         </div>
                         <div className="flex items-center">
                             <div

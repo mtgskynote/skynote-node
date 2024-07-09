@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React from "react";
 import SubLevelCard from "./SubLevelCard";
 
 const LevelCard = ({
@@ -7,17 +7,10 @@ const LevelCard = ({
     levelLessons,
     refreshData,
     subLevelIsOpen,
+    handleSubLevelClick,
+    openSubLevel,
+    baseSubLevelIndex
 }) => {
-    const [openCardIndex, setOpenCardIndex] = useState(null);
-
-    const handleCardClick = (index) => {
-        if (openCardIndex === index) {
-            setOpenCardIndex(null); // Clicking on the same open sublevel card closes it
-        } else {
-            setOpenCardIndex(index); // Clicking on a different sublevel card opens it
-        }
-    };
-
     const countStars = (subLevelLessons) => {
         let starCount = 0;
         subLevelLessons.forEach((lesson) => {
@@ -42,7 +35,6 @@ const LevelCard = ({
                 <span className="font-bold text-xl text-black">
                     {`Level ${levelNumber}: ${levelName}`}
                 </span>
-                {/* Invisible content to push text to the left */}
                 <div className="flex-grow"></div>
             </div>
             {/* Line Separator */}
@@ -54,7 +46,7 @@ const LevelCard = ({
                     (skill, index) =>
                         levelLessons[skill] && (
                             <SubLevelCard
-                                index={index}
+                                index={baseSubLevelIndex + index} // Calculate unique index
                                 key={index}
                                 subLevelName={skill}
                                 levelNumber={levelNumber}
@@ -62,8 +54,8 @@ const LevelCard = ({
                                 timeRecorded="4h 15min"
                                 totalStars={countStars(levelLessons[skill])}
                                 subLevelLessons={levelLessons[skill]}
-                                isOpen={(openCardIndex === index) && subLevelIsOpen}
-                                onCardClick={handleCardClick}
+                                isOpen={openSubLevel === (baseSubLevelIndex + index) && subLevelIsOpen}
+                                onCardClick={handleSubLevelClick}
                                 refreshData={refreshData}
                             />
                         )

@@ -259,8 +259,10 @@
                       </IconButton>
                   </Tooltip> 
                   ) : null}
-                  <FavouriteButton 
+                  <FavouriteButton
+                    key={id} 
                     songId={id}
+                    singTitle={title}
                     initialIsFavourite={isFavourite}
                     refreshData={refreshData} 
                   />

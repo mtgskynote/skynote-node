@@ -8,13 +8,12 @@ import FavoriteBorderIcon from "@mui/icons-material/FavoriteBorder";
 
 const FavouriteButton = ({ 
     songId, 
+    singTitle,
     initialIsFavourite, 
     refreshData
 }) => {
     const [isFavourite, setIsFavourite] = useState(initialIsFavourite);
     const { getCurrentUser } = useAppContext();
-
-    console.log(songId, ": ", initialIsFavourite)
 
     const handleToggleFavourite = async () => {
         try {
