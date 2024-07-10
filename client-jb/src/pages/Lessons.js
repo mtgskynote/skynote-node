@@ -140,14 +140,14 @@ const Lessons = () => {
 
       const threshold = Math.floor(maxRecordings * 0.6);
 
-      if (maxRecordings == 0) {
+      if (maxRecordings === 0) {
         setFilteredLessons(lessonList);
-      } else if (maxRecordings == 1) {
+      } else if (maxRecordings === 1) {
         Object.keys(lessonList).forEach((level) => {
           filtered[level] = {};
           Object.keys(lessonList[level]).forEach((skill) => {
             filtered[level][skill] = lessonList[level][skill].filter(
-              (lesson) => lesson.recordings == 0
+              (lesson) => lesson.recordings === 0
             );
           });
         });
