@@ -60,7 +60,7 @@ function App() {
     return () => {
       window.removeEventListener("storage", handleStorageChange);
     };
-  }, [logoutUser]);
+  }, []);
 
   // Logout user whenver the JWT token is about to expire
   useEffect(() => {

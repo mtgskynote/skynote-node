@@ -3,7 +3,7 @@ import { useAppContext } from "../../context/appContext";
 import axios from "axios";
 import LoadingScreen from "../../components/LoadingScreen";
 import Error from "../../components/Error";
-import AlertNew from "../../components/AlertNew"; 
+import AlertNew from "../../components/AlertNew";
 
 const Profile = () => {
   const { getCurrentUser } = useAppContext();
@@ -50,7 +50,7 @@ const Profile = () => {
       } catch (error) {
         console.error("Network error:", error);
         showAlertMessage("Network error", "error");
-        setFormData(initialFormData)
+        setFormData(initialFormData);
       }
     };
 
@@ -72,7 +72,7 @@ const Profile = () => {
 
   const handleSubmit = async (event) => {
     event.preventDefault();
-  
+
     const currentUser = initialFormData;
     const updatedFormData = {
       name: formData.name,
@@ -80,7 +80,7 @@ const Profile = () => {
       email: formData.email,
       instrument: initialFormData.instrument,
     };
-  
+
     const updateProfileData = async () => {
       try {
         const profileResponse = await axios.post(
@@ -93,7 +93,7 @@ const Profile = () => {
             },
           }
         );
-  
+
         if (profileResponse.status === 200) {
           setIsEditing(false);
           console.log("Profile updated successfully!", profileResponse.data);
@@ -101,26 +101,25 @@ const Profile = () => {
         } else {
           console.error("Error updating profile:", profileResponse.statusText);
           showAlertMessage("Error updating profile", "error");
-          setFormData(initialFormData)
+          setFormData(initialFormData);
         }
-
       } catch (error) {
         console.error("Network error:", error);
         showAlertMessage("Network error", "error");
-        setFormData(initialFormData)
+        setFormData(initialFormData);
       }
     };
-  
+
     const updatePassword = async () => {
       if (newPassword !== confirmPassword) {
-        console.log('not the same')
+        console.log("not the same");
         showAlertMessage("New passwords do not match", "error");
-        setIsEditing(true)
+        setIsEditing(true);
         return;
       }
 
       try {
-        console.log('trying to update password')
+        console.log("trying to update password");
         const passwordResponse = await axios.post(
           "/api/v1/profile/changePassword",
           { newPassword: newPassword },
@@ -131,40 +130,42 @@ const Profile = () => {
             },
           }
         );
-  
+
         if (passwordResponse.status === 200) {
           setIsEditing(false);
           console.log("Password updated successfully!");
           showAlertMessage("Password updated successfully!", "success");
         } else {
-          console.error("Error updating password:", passwordResponse.statusText);
+          console.error(
+            "Error updating password:",
+            passwordResponse.statusText
+          );
           showAlertMessage("Error updating password", "error");
-          setFormData(initialFormData)
+          setFormData(initialFormData);
         }
       } catch (error) {
         console.error("Network error:", error);
         showAlertMessage("Network error", "error");
-        setFormData(initialFormData)
+        setFormData(initialFormData);
       }
     };
-  
+
     // Check if profile information has changed
     const isProfileDataChanged =
       formData.name !== currentUser.name ||
       formData.lastName !== currentUser.lastName ||
       formData.email !== currentUser.email;
-  
+
     // Update profile data if changed
     if (isProfileDataChanged) {
       await updateProfileData();
     }
-  
+
     // Update password if changePassword is true
     if (changePassword && newPassword && confirmPassword) {
       await updatePassword();
     }
   };
-  
 
   const handleChange = (event) => {
     setFormData({
@@ -182,7 +183,6 @@ const Profile = () => {
   if (isPageLoading) {
     return <LoadingScreen />;
   }
-
 
   return (
     <div className="flex flex-col items-center justify-start mt-20 h-screen">
@@ -274,7 +274,11 @@ const Profile = () => {
                   />
                   <button
                     type="button"
-                    className={`ml-4 ${changePassword ? "bg-red-200 hover:bg-red-300 text-red-700" : "bg-blue-300 hover:bg-blue-400 text-blue-700"} text-sm border-none font-small rounded-lg px-2 py-1.5`}
+                    className={`ml-4 ${
+                      changePassword
+                        ? "bg-red-200 hover:bg-red-300 text-red-700"
+                        : "bg-blue-300 hover:bg-blue-400 text-blue-700"
+                    } text-sm border-none font-small rounded-lg px-2 py-1.5`}
                     onClick={() => {
                       setChangePassword(!changePassword);
                       setNewPassword("");
@@ -376,7 +380,7 @@ const Profile = () => {
           ) : (
             <button
               onClick={() => {
-                setIsEditing(true); 
+                setIsEditing(true);
               }}
               className="text-white bg-blue-500 hover:bg-blue-600 border-none font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800 mb-2"
             >
