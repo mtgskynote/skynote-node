@@ -83,6 +83,16 @@ const UserSchema = new mongoose.Schema({
       },
     },
   ],
+  recordingsPastWeek: {
+    type: [Number],
+    validate: {
+      validator: function (val) {
+        return val.length <= 7;
+      },
+      message:
+        "recordingsPastWeek should not contain more than 7 days worth of data.",
+    },
+  },
 });
 
 // Hash the password before saving the user

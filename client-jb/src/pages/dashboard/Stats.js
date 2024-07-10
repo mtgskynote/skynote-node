@@ -36,7 +36,9 @@ const Stats = () => {
   const [unreadMessages, setUnreadMessages] = useState(null);
   const [unansweredTasks, setUnansweredTasks] = useState(null);
   const [dueTasksContent, setDueTasksContent] = useState([]);
-  const [lastWeekRecordings, setLastWeekRecordings] = useState(null);
+  const [lastWeekRecordings, setLastWeekRecordings] = useState(
+    Array(7).fill(0)
+  );
   const [starPercentages, setStarPercentages] = useState(null);
   const [favourites, setFavourites] = useState(null);
 
@@ -377,6 +379,12 @@ const Stats = () => {
       setRecentScores(top10Scores);
     }
   }, [recentRecordings]);
+
+  useEffect(() => {
+    if (userData !== null) {
+      setLastWeekRecordings(userData.recordingsPastWeek);
+    }
+  }, [userData]);
 
   useEffect(() => {
     if (userData && scoresData && recordingList !== null) {
