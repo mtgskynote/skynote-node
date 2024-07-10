@@ -345,7 +345,7 @@ const ProgressPlayFileVisual = () => {
   return (
     <HotKeys keyMap={keyMap} handlers={handlers}>
       <div className="flex flex-col min-h-screen justify-between">
-        <div>
+        <div className="relative">
           <OpenSheetMusicDisplay
             file={`${folderBasePath}/${params.files}.xml`}
             autoResize={true}
@@ -370,6 +370,7 @@ const ProgressPlayFileVisual = () => {
             visual={"yes"}
             visualJSON={json}
           />
+          <div className="absolute top-0 left-0 w-full h-full bg-transparent z-20 pointer-events-auto"></div>
         </div>
 
         <div className="flex justify-center mb-32">
