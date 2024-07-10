@@ -1,97 +1,116 @@
-// AudioPlayerIcon.js
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { IconButton } from "@mui/material";
 import PlayCircleOutlineIcon from "@mui/icons-material/PlayCircleOutline";
 import PauseCircleOutlineIcon from "@mui/icons-material/PauseCircleOutline";
+import { getAudioContext } from "../context/audioContext";
 
-// Component for controlling audio playback with play/pause button.
 const AudioPlayerIcon = ({ audio, isPlaying, onPlay }) => {
-  const [audioPlayer, setAudioPlayer] = useState(null);
-  const [isAudioPlaying, setIsAudioPlaying] = useState(isPlaying);
+  const [internalPlayState, setInternalPlayState] = useState(false);
+  const currentSourceRef = useRef(null);
 
-  // Initialize audio player
-  useEffect(() => {
-    const uint8Array = new Uint8Array(audio.data);
-    const blob = new Blob([uint8Array], { type: "audio/*" });
-    const audioUrl = URL.createObjectURL(blob);
-    const newAudioPlayer = new Audio(audioUrl);
+  let audioContext = getAudioContext();
 
-    // Event listener for when audio finishes playing
-    const onAudioEnded = () => {
-      setIsAudioPlaying(false);
-    };
-
-    newAudioPlayer.addEventListener("ended", onAudioEnded);
-
-    setAudioPlayer(newAudioPlayer);
-
-    // Cleanup
-    return () => {
-      newAudioPlayer.pause();
-      URL.revokeObjectURL(audioUrl);
-      newAudioPlayer.removeEventListener("ended", onAudioEnded); // Remove event listener
-    };
-  }, [audio]);
-
-  // Runs whenever isPlaying or audioPlayer changes and plays or pauses the audio based on the isPlaying state.
-  useEffect(() => {
-    if (isAudioPlaying) {
-      audioPlayer?.play();
-    } else {
-      audioPlayer?.pause();
-    }
-  }, [isAudioPlaying, audioPlayer]);
-
-  // Toggles the audio playback state based on the isPlaying prop and notifies the parent component.
-  const toggleAudio = () => {
-    if (isAudioPlaying && audioPlayer) {
-      audioPlayer.pause();
-      onPlay();
-    } else {
-      if (onPlay) {
-        onPlay();
+  // Play audio using audioContext
+  const playAudio = async () => {
+    try {
+      if (audioContext.state === "suspended") {
+        await audioContext.resume();
       }
+
+      if (audioContext && audio) {
+        const uint8Array = new Uint8Array(audio.data);
+        const arrayBuffer = uint8Array.buffer;
+        const audioBuffer = await audioContext.decodeAudioData(arrayBuffer);
+
+        // Stop any currently playing audio
+        if (currentSourceRef.current) {
+          currentSourceRef.current.stop();
+          currentSourceRef.current.disconnect();
+        }
+
+        // Create a new source and start from the beginning
+        const source = audioContext.createBufferSource();
+        source.buffer = audioBuffer;
+        source.connect(audioContext.destination);
+        source.start(0); // Start from the beginning
+        source.onended = () => {
+          setInternalPlayState(false);
+        };
+        currentSourceRef.current = source;
+        setInternalPlayState(true);
+        if (onPlay) {
+          onPlay();
+        }
+      }
+    } catch (error) {
+      console.error("Error playing audio:", error);
     }
   };
 
-  // Pauses the audio and resets playback to start when isPlaying is false.
-  useEffect(() => {
-    if (!isAudioPlaying && audioPlayer) {
-      audioPlayer.pause();
-      audioPlayer.currentTime = 0;
+  // Stop audio playback
+  const stopAudio = () => {
+    if (currentSourceRef.current) {
+      currentSourceRef.current.stop();
+      currentSourceRef.current.disconnect();
+      currentSourceRef.current = null;
+      setInternalPlayState(false);
     }
-  }, [isAudioPlaying, audioPlayer]);
+  };
 
-  // Listens for 'stopAllAudio' event to stop and reset audio.
+  // Plays or stops audio based on the internal play state
   useEffect(() => {
-    const stopAudioHandler = () => {
-      if (audioPlayer) {
-        audioPlayer.pause();
-        audioPlayer.currentTime = 0;
-      }
-    };
+    if (internalPlayState) {
+      playAudio();
+    } else {
+      stopAudio();
+    }
+  }, [internalPlayState]);
 
-    window.addEventListener("stopAllAudio", stopAudioHandler);
-
+  // Cleanup on unmount or context change
+  useEffect(() => {
     return () => {
-      window.removeEventListener("stopAllAudio", stopAudioHandler);
+      stopAudio();
     };
-  }, [audioPlayer]);
+  }, [audioContext]);
 
-  // Updates isAudioPlaying based on the audio id passed from the parent component
+  // Ensure the audio stops playing when navigating away from the page
   useEffect(() => {
-    setIsAudioPlaying(isPlaying);
+    return () => {
+      stopAudio();
+    };
+  }, []);
+
+  // Updates internalPlayState based on the audio id passed from the parent component
+  useEffect(() => {
+    if (isPlaying) {
+      setInternalPlayState(true);
+    } else {
+      setInternalPlayState(false);
+    }
   }, [isPlaying]);
+
+  // Handle click event to toggle play state
+  const handleClick = (e) => {
+    e.stopPropagation();
+    if (internalPlayState) {
+      setInternalPlayState(false);
+    } else {
+      setInternalPlayState(true);
+    }
+  };
 
   return (
     <IconButton
-      onClick={(e) => {
-        e.stopPropagation();
-        toggleAudio();
-      }}
-      className={`hover:text-blue-500 ${isAudioPlaying ? "text-blue-500" : ""}`}
+      onClick={handleClick}
+      className={`hover:text-blue-500 ${
+        internalPlayState ? "text-blue-500" : ""
+      }`}
     >
-      {isAudioPlaying ? <PauseCircleOutlineIcon /> : <PlayCircleOutlineIcon />}
+      {internalPlayState ? (
+        <PauseCircleOutlineIcon />
+      ) : (
+        <PlayCircleOutlineIcon />
+      )}
     </IconButton>
   );
 };

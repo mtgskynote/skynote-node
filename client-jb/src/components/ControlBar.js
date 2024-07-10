@@ -11,12 +11,14 @@ import {
   HearingDisabled as ListenPauseIcon,
   RestartAlt as ResetIcon,
   Equalizer as StatsIcon,
+  Info as InfoIcon,
 } from "@mui/icons-material";
 import IconButton from "@mui/material/IconButton";
 import Tooltip from "@mui/material/Tooltip";
 import ControlBarPopover from "./ControlBarPopover";
 import RangeInput from "./RangeInput";
-import ControlBarStats from "./ControlBarStats";
+import ControlBarPanel from "./ControlBarPanel";
+import StarRating from "./StarRating";
 
 const ControlBar = ({
   onTransposeChange,
@@ -35,10 +37,15 @@ const ControlBar = ({
   isBpmDisabled,
   playbackMode,
   handleShowPopUpWindow,
+  handleToggleStats,
+  handleToggleInfo,
+  showStats,
+  showInfo,
   stats,
+  practiceMode,
+  isMac,
 }) => {
   const [practiceModeOn, setPracticeModeOn] = useState(true);
-  const [showStats, setShowStats] = useState(false);
   const [initialMidiVolume, setInitialMidiVolume] = useState(
     practiceModeOn ? 50 : 0
   );
@@ -91,8 +98,16 @@ const ControlBar = ({
     {
       tooltip: "Stats",
       icon: <StatsIcon className="text-4xl" />,
+      toggle: handleToggleStats,
       showInPlaybackMode: true,
       showInInteractiveMode: false,
+    },
+    {
+      tooltip: "Shortcuts",
+      icon: <InfoIcon className="text-4xl" />,
+      toggle: handleToggleInfo,
+      showInPlaybackMode: true,
+      showInInteractiveMode: true,
     },
   ];
 
@@ -142,13 +157,15 @@ const ControlBar = ({
     onModeChange(newMode);
   };
 
-  const handleToggleStats = () => {
-    setShowStats(!showStats);
-  };
-
+  // Handle resetting MIDI volume based on mode
   useEffect(() => {
     setInitialMidiVolume(practiceModeOn ? 50 : 0);
   }, [practiceModeOn]);
+
+  // Ensure that component practice mode state variable reflects parent component's state
+  useEffect(() => {
+    setPracticeModeOn(practiceMode);
+  }, [practiceMode]);
 
   return (
     <div
@@ -156,7 +173,78 @@ const ControlBar = ({
         playbackMode ? "lg:w-1/2" : "lg:w-3/5"
       } md:mx-8 md:w-full sm:w-5/6`}
     >
-      <ControlBarStats show={showStats} stats={stats} />
+      {playbackMode && (
+        <ControlBarPanel show={showStats} stats={stats}>
+          <div className="flex justify-between">
+            <div>
+              <p className="text-white font-bold text-2xl mb-0">{stats.name}</p>
+              <p className="text-white opacity-75 mb-3">
+                {stats.date} | {stats.bpm} BPM
+              </p>
+              <StarRating size="text-3xl" stars={stats.stars} />
+            </div>
+            <div>
+              <p className="text-white font-bold text-xl mb-0 text-right">
+                Level {stats.level}
+              </p>
+              <p className="text-white opacity-75">{stats.skill}</p>
+            </div>
+          </div>
+        </ControlBarPanel>
+      )}
+      <ControlBarPanel show={showInfo} stats={stats}>
+        <div className={`${practiceModeOn ? "pb-2" : "pb-8"}`}>
+          <p className="font-bold text-white text-2xl mb-3">Shortcuts</p>
+          <div className="flex justify-between space-x-4">
+            <div>
+              {(playbackMode || practiceModeOn) && (
+                <div>
+                  <span className="text-white font-bold">
+                    {isMac ? "Command" : "Ctrl"} + Shift + R:{" "}
+                  </span>
+                  <span className="text-white opacity-75">Reset</span>
+                </div>
+              )}
+              <div>
+                <span className="text-white font-bold">
+                  {playbackMode ? `S: ` : `M: `}
+                </span>
+                <span className="text-white opacity-75">
+                  {playbackMode ? "Toggle Stats" : "Switch Modes"}
+                </span>
+              </div>
+            </div>
+            <div>
+              {!playbackMode && practiceModeOn && (
+                <div>
+                  <span className="text-white font-bold">L: </span>
+                  <span className="text-white opacity-75">Toggle Listen</span>
+                </div>
+              )}
+              {practiceModeOn && (
+                <div>
+                  <span className="text-white font-bold">P: </span>
+                  <span className="text-white opacity-75">
+                    {playbackMode ? "Toggle Playback" : "Toggle Practice"}
+                  </span>
+                </div>
+              )}
+              {!playbackMode && !practiceModeOn && (
+                <div>
+                  <span className="text-white font-bold">R: </span>
+                  <span className="text-white opacity-75">Toggle Record</span>
+                </div>
+              )}
+            </div>
+            <div>
+              <div>
+                <span className="text-white font-bold">I: </span>
+                <span className="text-white opacity-75">View Shortcuts</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </ControlBarPanel>
       <div
         className={`px-4 py-3 bg-blue-400 ${
           showStats ? "rounded-t-none rounded-b-3xl" : "rounded-3xl"
@@ -166,7 +254,8 @@ const ControlBar = ({
           {!playbackMode && (
             <div>
               <ModeToggle
-                onModeChange={(newMode) => handleModeChange(newMode)}
+                onModeChange={handleModeChange}
+                practiceMode={practiceMode}
               />
             </div>
           )}
@@ -220,14 +309,16 @@ const ControlBar = ({
                   >
                     {modeIcon.icon}
                   </IconButton>
-                ) : modeIcon.tooltip === "Stats" ? (
-                  <IconButton
-                    key={index}
-                    className="text-white"
-                    onClick={handleToggleStats}
-                  >
-                    {modeIcon.icon}
-                  </IconButton>
+                ) : modeIcon.tooltip === "Stats" ||
+                  modeIcon.tooltip === "Shortcuts" ? (
+                  <Tooltip title={modeIcon.tooltip} key={index}>
+                    <IconButton
+                      className="text-white"
+                      onClick={modeIcon.toggle}
+                    >
+                      {modeIcon.icon}
+                    </IconButton>
+                  </Tooltip>
                 ) : (
                   <ControlBarPopover key={index}>
                     {/* Popover trigger */}
@@ -258,7 +349,7 @@ const ControlBar = ({
 
           <div className="mr-6 h-auto w-0.5 self-stretch bg-white/20"></div>
 
-          <div className="justify-between items-center space-x-2">
+          <div className="flex justify-between items-center space-x-2">
             <button
               onClick={handleViewAllRecordings}
               className="ml-auto hover:cursor-pointer transition ease-in-out delay-50 text-center text-gray-700 hover:text-gray-900 border-transparent focus:border-transparent focus:ring-0 focus:outline-none bg-slate-50 hover:bg-slate-100 font-extralight py-1 px-2 rounded-l-none outline-none rounded"

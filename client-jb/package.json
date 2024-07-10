@@ -50,6 +50,7 @@
     "recharts": "^2.5.0",
     "styled-components": "^5.3.6",
     "web-vitals": "^2.1.4",
+    "react-hotkeys": "2.0.0",
     "jwt-decode": "4.0.0"
   },
   "scripts": {
