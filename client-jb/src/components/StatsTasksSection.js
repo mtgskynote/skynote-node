@@ -24,7 +24,7 @@ const StatsTasksSection = () => {
         .then((result) => {
           setUserData(result);
         }).catch((error) => {
-          console.log(`getCurentUser() error: ${error}`)
+          console.log(`getCurrentUser() error: ${error}`)
           // Handle errors if necessary
         })
     }, [setUserData]);

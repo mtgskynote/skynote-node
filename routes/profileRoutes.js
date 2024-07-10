@@ -2,6 +2,8 @@ import express from "express";
 import {
   changePassword,
   updateProfileData,
+  addFavourite,
+  removeFavourite,
 } from "../controllers/profileController.js";
 import { authenticateUser } from "../middleware-jb/authenticateUser.js";
 
@@ -17,5 +19,9 @@ router
 router
   .route("/updateProfileData")
   .post(authenticateUser, formParser, updateProfileData);
+router
+  .route("/favourite/:userId/:songId")
+  .post(authenticateUser, addFavourite)
+  .delete(authenticateUser, removeFavourite);
 
 export default router;
