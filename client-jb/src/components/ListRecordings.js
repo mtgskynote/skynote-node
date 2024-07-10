@@ -1,35 +1,26 @@
 // ListRecordings.js
-import React, { useState, useEffect } from 'react';
-import { useLocation, useNavigate } from 'react-router-dom';
-import ListRecordingsCSS from './ListRecordings.module.css';
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { getRecData, deleteRecording } from "../utils/studentRecordingMethods.js";
+import React, { useState, useEffect } from "react";
+import { useLocation, useNavigate } from "react-router-dom";
+import { getRecData } from "../utils/studentRecordingMethods.js";
 import { useAppContext } from "../context/appContext";
-import {
-  faTrash,
-  faEye,
-  faStar,
-  faPencilSquare,
-  faBoxArchive,
-  faMusic,
-  faPenToSquare,
-} from "@fortawesome/free-solid-svg-icons";
-import PopUpWindowEdit from './PopUpWindowEdit.js';
+import LoadingScreen from "./LoadingScreen.js";
+import RecordingCard from "./RecordingCard.js";
 
 const ListRecordings = () => {
-
   const { getCurrentUser } = useAppContext();
   const [userData, setUserData] = useState(null);
   const [recordingList, setRecordingList] = useState(null);
   const [recordingNames, setRecordingNames] = useState(null);
   const [recordingStars, setRecordingStars] = useState(null);
   const [recordingDates, setRecordingDates] = useState(null);
+  const [recordingIds, setRecordingIds] = useState(null);
   const [scoreSkill, setScoreSkill] = useState(null);
   const [scoreLevel, setScoreLevel] = useState(null);
-  const [idSelectedEdit, setIdSelectedEdit] = useState(null);
-  const [showPopUpEdit, setShowPopUpEdit] = useState(false);
+  const [scoreXml, setScoreXml] = useState(null);
+
   const location = useLocation();
   const navigate = useNavigate();
+
   // Define options for formatting date
   const options = {
     year: "numeric",
@@ -40,166 +31,128 @@ const ListRecordings = () => {
   };
 
   // Access the passed variables from the location object
-  const score = location.state?.score || 'DefaultSong';
-  const song = location.state?.song || 'DefaultSong1';
+  const score = location.state?.score || "DefaultSong";
+  const song = location.state?.song || "DefaultSong1";
 
-  // Starting --> load recordings from userID and scoreID
+  // Load recordings from userID and scoreID
   useEffect(() => {
-    const itemFoundLocalStorage=JSON.parse(localStorage.getItem("scoreData")).find(item => item.fname === score)
-    const scoreID=itemFoundLocalStorage._id;
-    setScoreLevel(itemFoundLocalStorage.level)
-    setScoreSkill(itemFoundLocalStorage.skill)
+    const itemFoundLocalStorage = JSON.parse(
+      localStorage.getItem("scoreData")
+    ).find((item) => item.fname === score);
+    const scoreID = itemFoundLocalStorage._id;
+    setScoreLevel(itemFoundLocalStorage.level);
+    setScoreSkill(itemFoundLocalStorage.skill);
+    setScoreXml(itemFoundLocalStorage.fname);
     const fetchDataFromAPI = () => {
-      if(userData===null){
+      if (userData === null) {
         getCurrentUser() // fetchData is already an async function
           .then((result) => {
             setUserData(result);
           }).catch((error) => {
             console.log(`getCurrentUser() error: ${error}`)
+          });
+      }
+      if (userData !== null) {
+        getRecData(userData.id, scoreID)
+          .then((result) => {
+            setRecordingList(result);
+            setRecordingIds(result.map((recording) => recording.recordingId));
+            setRecordingNames(
+              result.map((recording) => recording.recordingName)
+            );
+            setRecordingStars(
+              result.map((recording) => recording.recordingStars)
+            );
+            setRecordingDates(
+              result.map((recording) => {
+                // Set correct date format
+                const recordingDate = new Date(recording.recordingDate);
+                return recordingDate.toLocaleDateString("en-UK", options);
+              })
+            );
           })
+          .catch((error) => {
+            console.log(`Cannot get recordings from database: ${error}`);
+          });
       }
-      if(userData !== null){
-        getRecData(userData.id, scoreID).then((result) => {
-          setRecordingList(result);
-          setRecordingNames(result.map((recording) => recording.recordingName));
-          setRecordingStars(result.map((recording) => recording.recordingStars));
-          setRecordingDates(result.map((recording) => {
-            //Set correct date format
-            const recordingDate = new Date(recording.recordingDate);
-            return recordingDate.toLocaleDateString("es-ES", options);
-          }))
-        }).catch((error) => {
-          console.log(`Cannot get recordings from database: ${error}`)
-        })
-
-      }
-    };   
+    };
 
     fetchDataFromAPI();
-
-    
-    
   }, [userData]);
 
-  //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-  // Event handler for going back
+  // Go back to previous page
   const handleGoBack = () => {
-    // Use navigate to go back to the previous page
-    //navigate(-1);
-    navigate(`/all-lessons/${score}`);
+    navigate(-1);
   };
 
-  // Event handler for click on See
-  const handleSeeClick = (nameOfFile, number)=> {
-    const recording = recordingList[recordingNames.indexOf(nameOfFile)];
-    //Pass recording ID to ProgressPlayfileVisual
-    navigate(score, {state:{'id':recording.recordingId }})
-  };
-  
-  // Event handler for click on Edit
-  const handleEditClick = (action, nameOfFile)=> {
-    if(action==="open"){
-      const id = recordingList[recordingNames.indexOf(nameOfFile)].recordingId;
-      //Store id to edit so that popupwindow can access it
-      setIdSelectedEdit(id)
-      // Show pop up window component
-      setShowPopUpEdit(true)
-    }else{
-      // Dont show pop up window component
-      setShowPopUpEdit(false)
-      //Delete stored id
-      setIdSelectedEdit(null)
-    }
-    
-  }
+  // Update state variables after deleting recording
+  const handleDeleteRecording = (recordingName) => {
+    const index = recordingNames.indexOf(recordingName);
+    if (index !== -1) {
+      const newRecordingNames = recordingNames.filter((_, i) => i !== index);
+      const newRecordingList = recordingList.filter((_, i) => i !== index);
+      const newRecordingDates = recordingDates.filter((_, i) => i !== index);
+      const newRecordingIds = recordingIds.filter((_, i) => i !== index);
 
-
-  // Event handler for click on Trash
-  const handleTrashClick = (nameOfFile, number) => {
-    if (recordingNames.indexOf(nameOfFile) !== -1) {
-      const idToDelete = recordingList[recordingNames.indexOf(nameOfFile)].recordingId;
-      const auxArrayNames = recordingNames.filter((item, index) => index !== recordingNames.indexOf(nameOfFile));
-      const auxArrayList = recordingList.filter((item, index) => index !== recordingNames.indexOf(nameOfFile));
-      const auxArrayDates = recordingDates.filter((item, index) => index !== recordingNames.indexOf(nameOfFile));
-      deleteRecording(idToDelete).then(() => {
-        setRecordingNames(auxArrayNames);
-        setRecordingList(auxArrayList);
-        setRecordingDates(auxArrayDates);
-        //window.location.reload();
-      }).catch((error) => {
-        console.log(`Cannot delete recordings from database: ${error}`)
-      })
+      setRecordingNames(newRecordingNames);
+      setRecordingList(newRecordingList);
+      setRecordingDates(newRecordingDates);
+      setRecordingIds(newRecordingIds);
     }
   };
 
-
+  // Update state variables after editing recording
+  const handleEditRecording = (recordingName, newRecordingName) => {
+    const index = recordingNames.indexOf(recordingName);
+    if (index !== -1) {
+      const updatedRecordingNames = [...recordingNames];
+      updatedRecordingNames[index] = newRecordingName;
+      setRecordingNames(updatedRecordingNames);
+    }
+  };
 
   if (recordingNames === null) {
-    return <p>Loading...</p>;
+    return <LoadingScreen />;
   }
 
-
-
-  // Your component logic using the variables
   return (
-    <div className={ListRecordingsCSS.container}>
-      <h2>
-        <FontAwesomeIcon icon={faMusic} className={ListRecordingsCSS.auxIcon}/>
-        {song} 
-        <FontAwesomeIcon icon={faMusic} className={ListRecordingsCSS.auxIcon}/>
-      </h2> 
-      <div className={ListRecordingsCSS.textGroup}>
-        <div><h6 >
-          <FontAwesomeIcon icon={faPencilSquare} className={ListRecordingsCSS.auxIcon}/>
-          {scoreSkill} 
-        </h6></div>
-        <div><h6 >
-          <FontAwesomeIcon icon={faBoxArchive} className={ListRecordingsCSS.auxIcon}/>
-          Level {scoreLevel}
-        </h6></div>
-      </div>
-
-      {/* List of songs */}
-      {recordingNames.length !==0?
-      <div className={ListRecordingsCSS.songlist}>
-        {recordingNames.map((nameOfFile, index) => (
-          <div className={ListRecordingsCSS.songelement} key={index}>
-          <li key={index}>
-          <div className={ListRecordingsCSS.recTitle}>
-            <h5 >{nameOfFile} <FontAwesomeIcon icon={faPenToSquare} className={ListRecordingsCSS.iconModify} onClick={() => handleEditClick("open",nameOfFile)}/> </h5>
-            
-          </div>
-              <div className={ListRecordingsCSS.starsGroup}>
-                <FontAwesomeIcon icon={faStar} className={recordingStars[index]>=1 ? ListRecordingsCSS.completeStar : ListRecordingsCSS.incompleteStar}/>
-                <FontAwesomeIcon icon={faStar} className={recordingStars[index]>=2 ? ListRecordingsCSS.completeStar : ListRecordingsCSS.incompleteStar}/>
-                <FontAwesomeIcon icon={faStar} className={recordingStars[index]>=3 ? ListRecordingsCSS.completeStar : ListRecordingsCSS.incompleteStar}/>
-              </div>
-              <div>
-                <button className={ListRecordingsCSS.iconbutton} onClick={() => handleSeeClick(nameOfFile, index)}>
-                  <FontAwesomeIcon icon={faEye} />
-                </button>
-                <button className={ListRecordingsCSS.iconbutton} onClick={() => handleTrashClick(nameOfFile, index)}>
-                  <FontAwesomeIcon icon={faTrash} />
-                </button>
-              </div>
-              <div className={ListRecordingsCSS.dateTime}>
-                <i>{recordingDates[index]}</i>
-              </div>
-            </li>
-            </div>
-        ))}
-      </div>  : 
-      <div> No recordings for this score
-      </div>
-
-      }
-
-      {/* Button to go back */}
-      <button className={ListRecordingsCSS.backbutton} onClick={handleGoBack}>
-        Back
+    <div className="container mx-auto px-4 py-8">
+      <button
+        onClick={handleGoBack}
+        className="ml-auto hover:cursor-pointer transition ease-in-out delay-50 text-center text-white text-sm border-transparent focus:border-transparent focus:ring-0 focus:outline-none bg-blue-400 hover:bg-blue-500 font-extralight py-1 px-2 rounded-l-none outline-none rounded"
+      >
+        Go Back
       </button>
-      {showPopUpEdit?< PopUpWindowEdit idEdit={idSelectedEdit} handlerBack={handleEditClick}/>:""}
+      <div className="flex items-center justify-between mt-12">
+        {/* Left side: Title */}
+        <div className="text-4xl font-bold capitalize">{song}</div>
 
+        {/* Right side: Skill and Level */}
+        <div className="text-lg text-gray-600 text-right">
+          <div>{scoreSkill}</div>
+          <div>Level {scoreLevel}</div>
+        </div>
+      </div>
+      <hr className="h-0.5 border-t-0 bg-gray-700 mb-10" />
+      {recordingNames.length !== 0 ? (
+        <div className="grid sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4 gap-4">
+          {recordingNames.map((recordingName, index) => (
+            <div key={index} className="flex justify-center">
+              <RecordingCard
+                recordingName={recordingName}
+                stars={recordingStars[index]}
+                recordingId={recordingIds[index]}
+                recordingDate={recordingDates[index]}
+                xml={scoreXml}
+                onDeleteRecording={handleDeleteRecording}
+                onEditRecording={handleEditRecording}
+              />
+            </div>
+          ))}
+        </div>
+      ) : (
+        <p className="w-full">No recordings found.</p>
+      )}
     </div>
   );
 };
