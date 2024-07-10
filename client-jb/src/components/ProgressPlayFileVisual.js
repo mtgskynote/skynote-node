@@ -1,5 +1,6 @@
 import React, { useEffect, useState, useRef } from "react";
 import { useParams, useNavigate, useLocation } from "react-router-dom";
+import { HotKeys } from "react-hotkeys";
 import OpenSheetMusicDisplay from "./OpenSheetMusicDisplay";
 import PopUpWindow from "./PopUpWindow.js";
 import {
@@ -40,6 +41,11 @@ const ProgressPlayFileVisual = () => {
   const [showPitchTrack, setShowPitchTrack] = useState(false);
   const [isPlaying, setIsPlaying] = useState(false);
 
+  const [showStats, setShowStats] = useState(false);
+  const [showInfo, setShowInfo] = useState(false);
+  const [toggleStats, setToggleStats] = useState(false);
+  const [toggleInfo, setToggleInfo] = useState(false);
+
   const [isResetButtonPressed, setIsResetButtonPressed] = useState(false);
   const [repeatsIterator, setRepeatsIterator] = useState(false);
   const [showRepetitionMessage, setShowRepetitionMessage] = useState(false);
@@ -56,6 +62,35 @@ const ProgressPlayFileVisual = () => {
     stars: null,
     date: null,
   });
+
+  const [isMac, setIsMac] = useState(false);
+
+  // Hot keys map and handlers
+  const keyMap = {
+    TOGGLE_RESET: `${isMac ? "command" : "ctrl"}+shift+r`,
+    TOGGLE_PLAY: `p`,
+    TOGGLE_STATS: `s`,
+    TOGGLE_INFO: `i`,
+  };
+
+  const handlers = {
+    TOGGLE_RESET: (event) => {
+      event.preventDefault();
+      handleToggleReset();
+    },
+    TOGGLE_PLAY: (event) => {
+      event.preventDefault();
+      handleTogglePlay();
+    },
+    TOGGLE_STATS: (event) => {
+      event.preventDefault();
+      handleToggleStats();
+    },
+    TOGGLE_INFO: (event) => {
+      event.preventDefault();
+      handleToggleInfo();
+    },
+  };
 
   const location = useLocation();
   const navigate = useNavigate();
@@ -141,7 +176,6 @@ const ProgressPlayFileVisual = () => {
 
       // Transform data type and play
       const uint8Array = new Uint8Array(songFile.data);
-      console.log(songFile.data);
       const arrayBuffer = uint8Array.buffer;
       const audioBuffer = await audioContext.decodeAudioData(arrayBuffer);
       currentSource = audioContext.createBufferSource();
@@ -205,6 +239,14 @@ const ProgressPlayFileVisual = () => {
     }
   };
 
+  const handleToggleReset = () => {
+    const playbackManager = playbackRef.current;
+    resetAudio(playbackManager);
+
+    setIsPlaying(false);
+    setIsResetButtonPressed(true);
+  };
+
   // Handle opening the delete recording popup window
   const handleShowPopUpWindow = () => {
     setShowDeleteRecordingPopUp(true);
@@ -227,6 +269,50 @@ const ProgressPlayFileVisual = () => {
       });
   };
 
+  // Toggle stats panel in control bar (toggle in parent component for hot key support)
+  const handleToggleStats = () => {
+    setToggleStats(true);
+  };
+
+  // Toggle shortcuts panel in control bar (toggle in parent component for hot key support)
+  const handleToggleInfo = () => {
+    setToggleInfo(true);
+  };
+
+  // Detect if the OS is macOS
+  const isMacOs = async () => {
+    if (navigator.userAgentData) {
+      const uaData = await navigator.userAgentData.getHighEntropyValues([
+        "platform",
+      ]);
+      return uaData.platform === "macOS";
+    } else {
+      return /mac/i.test(navigator.userAgent);
+    }
+  };
+
+  // Ensure that stats panel is shown when triggered and shortcuts panel is hidden
+  useEffect(() => {
+    if (toggleStats) {
+      if (showInfo) {
+        setShowInfo(false);
+      }
+      setShowStats((prevShowStats) => !prevShowStats);
+      setToggleStats(false);
+    }
+  }, [toggleStats, showInfo]);
+
+  // Ensure that shortcuts panel is shown when triggered and stats panel is hidden
+  useEffect(() => {
+    if (toggleInfo) {
+      if (showStats) {
+        setShowStats(false);
+      }
+      setShowInfo((prevShowInfo) => !prevShowInfo);
+      setToggleInfo(false);
+    }
+  }, [toggleInfo, showStats]);
+
   // Reset cursor to the beginning of the OSMD score when the cursor reaches the end
   useEffect(() => {
     if (cursorFinished) {
@@ -246,85 +332,98 @@ const ProgressPlayFileVisual = () => {
     };
   }, [newUrl]);
 
+  // Effect to set isMac based on the detected OS
+  useEffect(() => {
+    const checkIsMacOs = async () => {
+      const result = await isMacOs();
+      setIsMac(result);
+    };
+
+    checkIsMacOs();
+  }, []);
+
   return (
-    <div className="flex flex-col min-h-screen justify-between">
-      <div>
-        <OpenSheetMusicDisplay
-          file={`${folderBasePath}/${params.files}.xml`}
-          autoResize={true}
-          cursorRef={cursorRef}
-          playbackRef={playbackRef}
-          metroVol={metronomeVolume / 100}
-          bpm={bpm}
-          zoom={zoom}
-          followCursor={true}
-          pitch={pitch}
-          pitchConfidence={confidence}
-          startPitchTrack={startPitchTrack}
-          showPitchTrack={showPitchTrack}
-          recordVol={midiVolume}
-          isResetButtonPressed={isResetButtonPressed}
-          repeatsIterator={repeatsIterator}
-          showRepeatsInfo={handleReceiveRepetitionInfo}
-          onResetDone={onResetDone}
-          cursorActivity={handleFinishedCursorOSMDCallback}
-          cursorJumpsBack={handleJumpedCursorOSMDCallback}
-          mode={true} // Passed as true to indicate that we are not in a type of record mode
-          visual={"yes"}
-          visualJSON={json}
-        />
-      </div>
-
-      <div className="flex justify-center mb-32">
-        <ControlBar
-          onTransposeChange={(newTranspose) => setTranspose(newTranspose)}
-          onBpmChange={(newBpm) => setBpm(newBpm)}
-          onMidiVolumeChange={(newVolume) => setMidiVolume(newVolume)}
-          onMetronomeVolumeChange={(newMetronomeVolume) =>
-            setMetronomeVolume(newMetronomeVolume)
-          }
-          onTogglePlay={handleTogglePlay}
-          onReset={() => {
-            const playbackManager = playbackRef.current;
-            resetAudio(playbackManager);
-
-            setIsPlaying(false);
-            setIsResetButtonPressed(true);
-          }}
-          handleViewAllRecordings={handleViewAllRecordings}
-          isPlaying={isPlaying}
-          playbackMode={true}
-          handleShowPopUpWindow={handleShowPopUpWindow}
-          stats={metaData}
-        />
-      </div>
-
-      <PopUpWindow isOpen={showDeleteRecordingPopUp}>
-        <div>
-          <p className="text-xl font-extrabold text-gray-800 mb-1">
-            Are you sure you want to delete{" "}
-            <span className="capitalize">{metaData.name}</span>?
-          </p>
-          <p className="text-gray-600 mb-4">
-            This action is permanent and cannot be undone
-          </p>
-          <div className="flex justify-between space-x-2">
-            <button
-              onClick={handleHidePopUpWindow}
-              className="bg-slate-50 border-solid border-slate-500 outline-none text-slate-500 px-4 py-2 rounded-lg hover:bg-slate-100 transition duration-300 ease-in-out w-full"
-            >
-              Cancel
-            </button>
-            <button
-              onClick={handleDeleteRecording}
-              className="bg-red-500 border-none outline-none text-white px-4 py-2 rounded-lg hover:bg-red-700 transition duration-300 ease-in-out w-full"
-            >
-              Delete
-            </button>
-          </div>
+    <HotKeys keyMap={keyMap} handlers={handlers}>
+      <div className="flex flex-col min-h-screen justify-between">
+        <div className="relative">
+          <OpenSheetMusicDisplay
+            file={`${folderBasePath}/${params.files}.xml`}
+            autoResize={true}
+            cursorRef={cursorRef}
+            playbackRef={playbackRef}
+            metroVol={metronomeVolume / 100}
+            bpm={bpm}
+            zoom={zoom}
+            followCursor={true}
+            pitch={pitch}
+            pitchConfidence={confidence}
+            startPitchTrack={startPitchTrack}
+            showPitchTrack={showPitchTrack}
+            recordVol={midiVolume}
+            isResetButtonPressed={isResetButtonPressed}
+            repeatsIterator={repeatsIterator}
+            showRepeatsInfo={handleReceiveRepetitionInfo}
+            onResetDone={onResetDone}
+            cursorActivity={handleFinishedCursorOSMDCallback}
+            cursorJumpsBack={handleJumpedCursorOSMDCallback}
+            mode={true} // Passed as true to indicate that we are not in a type of record mode
+            visual={"yes"}
+            visualJSON={json}
+          />
+          <div className="absolute top-0 left-0 w-full h-full bg-transparent z-20 pointer-events-auto"></div>
         </div>
-      </PopUpWindow>
-    </div>
+
+        <div className="flex justify-center mb-32">
+          <ControlBar
+            onTransposeChange={(newTranspose) => setTranspose(newTranspose)}
+            onBpmChange={(newBpm) => setBpm(newBpm)}
+            onMidiVolumeChange={(newVolume) => setMidiVolume(newVolume)}
+            onMetronomeVolumeChange={(newMetronomeVolume) =>
+              setMetronomeVolume(newMetronomeVolume)
+            }
+            onTogglePlay={handleTogglePlay}
+            onReset={handleToggleReset}
+            handleViewAllRecordings={handleViewAllRecordings}
+            isPlaying={isPlaying}
+            playbackMode={true}
+            handleShowPopUpWindow={handleShowPopUpWindow}
+            handleToggleStats={handleToggleStats}
+            handleToggleInfo={handleToggleInfo}
+            showInfo={showInfo}
+            showStats={showStats}
+            stats={metaData}
+            practiceMode={true} // Passed as true because we do not have any recording features in playback
+            isMac={isMac}
+          />
+        </div>
+
+        <PopUpWindow isOpen={showDeleteRecordingPopUp}>
+          <div>
+            <p className="text-xl font-extrabold text-gray-800 mb-1">
+              Are you sure you want to delete{" "}
+              <span className="capitalize">{metaData.name}</span>?
+            </p>
+            <p className="text-gray-600 mb-4">
+              This action is permanent and cannot be undone
+            </p>
+            <div className="flex justify-between space-x-2">
+              <button
+                onClick={handleHidePopUpWindow}
+                className="bg-slate-50 border-solid border-slate-500 outline-none text-slate-500 px-4 py-2 rounded-lg hover:bg-slate-100 transition duration-300 ease-in-out w-full"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={handleDeleteRecording}
+                className="bg-red-500 border-none outline-none text-white px-4 py-2 rounded-lg hover:bg-red-700 transition duration-300 ease-in-out w-full"
+              >
+                Delete
+              </button>
+            </div>
+          </div>
+        </PopUpWindow>
+      </div>
+    </HotKeys>
   );
 };
 

@@ -1,189 +1,119 @@
-import skynote_demo from "../assets/videos/SNDemo-3.mp4";
-import BackgroundImage from "../components/BackgroundImage";
-import WhiteLogo from "../components/WhiteLogo";
-import LandingCSS from './Landing.module.css';
-import { Link } from "react-router-dom";
-import "bootstrap/dist/css/bootstrap.min.css";
-import Violinist from "../components/Violinist";
-import Violinist2 from "../components/Violinist-2";
-import Violinist3 from "../components/Violinist-3";
+import React from 'react';
+import { useNavigate } from 'react-router-dom';
 
+import logo from "../assets/images/new_logo_2023.jpg";
 import cimg1 from "../assets/images/CREDIT_accio.jpg";
 import cimg2 from "../assets/images/Logo_Tecniospring_INDUSTRY_transparent.png";
 import cimg3 from "../assets/images/EU_emblem_and_funding_declaration_EN.PNG";
-
-
+import pub2_img from "../assets/images/publications/pub2_img.png";
+import pub3_img from "../assets/images/publications/pub3_img.jpeg";
+import Skynote_Full_Demos_Video from "../assets/videos/Skynote_Full_Demos_Video_sm.mp4";
 
 const Landing = () => {
+  const navigate = useNavigate();
 
-
+  const handleNavigation = (url) => {
+    // Check if the URL starts with 'http://' or 'https://'
+    // to determine if it's an external website
+    if (url.startsWith('http://') || url.startsWith('https://')) {
+      // Open the external website in a new tab/window
+      window.open(url, '_blank');
+    } else {
+      // Navigate to a route within your application
+      navigate(url);
+    }
+  };
+  
   return (
-    <div>
-      <div className={LandingCSS.siteHeader}>
-        <div className={LandingCSS.tabRowContainer}>
-          <div className={LandingCSS.tabRow}>
-              <div className={LandingCSS.tabLogin}><Link to="/landing" className={LandingCSS.tabLink}> Home </Link></div>
-              <div className={LandingCSS.tabLogin}><Link to="/demos" className={LandingCSS.tabLink}> Demos </Link></div>
-              <div className={LandingCSS.tabLogin}><Link to="/ourteam" className={LandingCSS.tabLink}> Our Team </Link></div>
-              <div className={LandingCSS.tabLogin}><Link to="/research" className={LandingCSS.tabLink}> Research </Link></div>
-              <div className={LandingCSS.tabLogin}><Link to="https://docs.google.com/forms/d/e/1FAIpQLSdE6QIt2Xfno67jWjBi2SJOB1dImKhmvJYr9Mzi9Qbo1BGHuw/viewform" className={LandingCSS.tabLink}> Interest Form </Link></div>
-              <div className={LandingCSS.tabLogin}><Link to="/register" className={LandingCSS.tabLink}> Login Register </Link></div>
-          </div>
+    <div >
+
+      {/* Header */}
+      <header className="flex items-center justify-between h-22 bg-white">
+  <div className="flex items-center">
+    <img src={logo} alt="Logo" className="h-20 ml-0 md:ml-4" />
+  </div>
+  <nav className="flex items-center justify-end text-sm   sm:text-base lg:text-xl  mr-2  sm:mr-3 space-x-3 sm:space-x-6 md:space-x-8 ">
+    <a href="#" className="text-gray-500 hover:text-gray-700">
+      HOME
+    </a>
+    <div className="bg-gray-400 text-white px-1 py-4  hidden sm:block"></div>
+    <a href="/research" className="text-gray-500 hover:text-gray-700">
+      RESEARCH
+    </a>
+    <div className="bg-gray-400 text-white px-1 py-4   hidden sm:block "></div>
+    <a href="#" className="text-gray-500 hover:text-gray-700">
+      CONTACT
+    </a>
+  </nav>
+</header>
 
 
-          <div className={LandingCSS.dropdown}>
-            <input type="checkbox" id="dropdown-toggle" className={LandingCSS.dropdownToggle}></input>
-            <label className={LandingCSS.dropbtn} htmlFor="dropdown-toggle">Menu</label>
-            <div className={LandingCSS.dropdownContent}>
-              <ul>
-                <li><Link to="/landing" className={LandingCSS.tabLink}> Home </Link></li>
-                <li><Link to="/demos" className={LandingCSS.tabLink}> Demos </Link></li>
-                <li><Link to="/ourteam" className={LandingCSS.tabLink}> Our Team </Link></li>
-                <li><Link to="/research" className={LandingCSS.tabLink}> Research </Link></li>
-                <li><Link to="https://docs.google.com/forms/d/e/1FAIpQLSdE6QIt2Xfno67jWjBi2SJOB1dImKhmvJYr9Mzi9Qbo1BGHuw/viewform" className={LandingCSS.tabLink}> Interest Form </Link></li>
-                <li><Link to="/register" className={LandingCSS.tabLink}> Login Register </Link></li>
-              </ul>
-            </div>
-          </div>  
 
-        </div>
-
-        <div className={LandingCSS.logoContainer}> 
-          <WhiteLogo/>
-        </div>
-        <div className={LandingCSS.skynoteContainer}>
-          SkyNote
-        </div>
-      </div>
-   
-
-      <div className={LandingCSS.workSectionTop}>
-        <div>
-         <div className={LandingCSS.backgroundImageContainer}>
-          <div className={LandingCSS.backgroundImage}>
-              <BackgroundImage imgClassName={LandingCSS.backgroundImage}/>
-          
-            <div className={LandingCSS.backgroundImageOverlay}>
-              <h2>
-                Enhance Your Musical Abilities With SkyNote
-              </h2>
-              <p>
-                An intelligent music learning app based on real-time sound and motion analysis, backed by artificial intelligence technology.
+      {/* Hero Section */}
+      <div className="bg-[url('hero-image.png')] bg-cover bg-center h-full flex items-center justify-center">
+        <div className="bg-blue-500 bg-opacity-80 p-8 text-white">
+          <h1 className="mt-6 text-6xl font-bold mb-4">Try Skynote Today</h1>
+          <div className="grid  grid-cols-1 md:grid-cols-2 gap-8">
+            <div>
+              <p className="mb-4 text-2xl">
+                The intelligent music learning app based ​on real-time sound and motion analysis, ​backed by the latest artificial intelligence ​technology.
               </p>
-              <div id= "overlay-signup-button" className={LandingCSS.loginButton}>
-                <Link to="/register" className="login-link">
-                  Sign Up
-                </Link>
-              </div>
-              <div className={LandingCSS.interestLink}>
-                <Link to="https://docs.google.com/forms/d/e/1FAIpQLSdE6QIt2Xfno67jWjBi2SJOB1dImKhmvJYr9Mzi9Qbo1BGHuw/viewform">Stay updated on SkyNote</Link>
+              <div className="col-span-1 flex justify-center items-center">
+                <button className="text-2xl bg-white text-blue-500 font-bold py-3 px-6 rounded-full hover:bg-blue-500 hover:text-blue-900" onClick={() => handleNavigation('/register')}>
+                  Login now
+                </button>
               </div>
             </div>
-          </div> 
-        </div>
-
-        </div>
-        
-        <div className={LandingCSS.iphoneContainer}>
-          <video autoPlay muted loop className={LandingCSS.backgroundVideo}>
-            <source src={skynote_demo} type="video/mp4" />
-          </video> 
-          <div className={LandingCSS.iphoneNotch}></div>
-        </div>
-
-      </div> 
-
-
-
-
-
-      <div className={LandingCSS.gridContainer}>
-        <div className={LandingCSS.gridItem}>
-            <div className={LandingCSS.gridTextContainer}>
-            <h2>
-              Personalized Learning
-            </h2>
-            <p>
-            With SkyNote, enhance your musical abilities with personalized goals and achievements. <br/>
-            <br/>Our dynamic system has multiple learning paths that help to develop different skills.<br/>
-            <br/>Using AI-based multimodal analysis, SkyNote gives students live feedback on sound quality, intonation, pitch, rhythm, dynamics, gestures, and expressions.
-            </p>
+            <div>
+            <iframe
+              src={Skynote_Full_Demos_Video}
+              frameBorder="0"
+              allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture"
+              allowFullScreen
+              className="w-full h-64"
+              autoPlay
+              muted
+            ></iframe>
+            </div>
           </div>
-        </div>
-
-        <div className={LandingCSS.gridItem}>
-        <Violinist/>
-
-        </div>
-
-        </div>
-        <div className={LandingCSS.gridContainer}>
-
-        <div className={LandingCSS.gridItem}>
-          <Violinist2/>
-        </div>
-        <div className={LandingCSS.gridItem}>
-
-            <div className={LandingCSS.gridTextContainer}>
-              <h2>
-                For Teachers and Students
-              </h2>
-              <p>
-                SkyNote empowers students with tools to detect and correct errors, building awareness of their technique.<br/>
-                <br/>Our app aims to eliminate the lack of feedback between lessons and independent rehearsal for students, allowing them to practice more efficiently alone or in a class setting.<br/>
-                <br/>SkyNote has been designed with both teachers and students from a wide range of levels in mind, from begginers to professional players.<br/>
-              </p>
-            </div>
-
-        </div>
-
-
-        </div>
-        <div className={LandingCSS.gridContainer}>
-
-
-
-        <div className={LandingCSS.gridItem}>
-
-
-            <div className={LandingCSS.gridTextContainer}>
-              <h2>
-                Catalogue
-              </h2>
-              <p>
-                Enjoy our catalogue of exercises and pieces that focus on specific skills and vary in difficulty level.<br/>
-                <br/>Also available to SkyNote users are recordings from experts performing the pieces in our catalogue.<br/>
-                <br/>If you have a specific piece or exercise you would like to practice in SkyNote, you can also import pieces from MusicXML files in the app. <br/>
-              </p>
-            </div>
-
-
-
-        </div>
-        <div className={LandingCSS.gridItem}>
-          <Violinist3/>
         </div>
       </div>
 
+      {/* Research Section */}
+      <div className="bg-blue-900 py-16 pb-64">
+        <h1 className="text-center text-6xl font-bold text-white mb-8">Research</h1>
+        <div className="max-w-4xl mx-auto">
+          <p className="text-2xl text-white mb-8 ml-12 mr-12">
+            Skynote has been developed as a product of ​cutting edge research focused on music ​synthesis and analysis. Our systems and ​processes were designed by fulltime musicians, ​who on their spare time conduct PhD research at ​UPF and Royal College of Music.
+          </p>
+          <div className="col-span-1 flex justify-center items-center">
+            <button className="text-2xl bg-white text-blue-500 font-bold py-3 px-6 rounded-full hover:bg-blue-500 hover:text-blue-900" onClick={() => handleNavigation('/research')}>
+              Learn More
+            </button>
+          </div>
 
-      <div>
-        <div className={LandingCSS.bottomContainer}>
-          <h2>Experience SkyNote today</h2>
-          <div>
-          <div className={LandingCSS.loginButtonBottom}>
-            <Link to="/register" className={LandingCSS.loginLinkBottom}>
-              Sign Up
-            </Link>
+
+          <div className="relative mt-4 flex justify-center">
+            <img src={pub2_img} alt="Research" className="w-64 absolute  right-20" />
+            <img
+              src={pub3_img} alt="Research" className="w-64 absolute top-16 right-25"
+            />
           </div>
-          </div>
-        </div>
-        <div className={LandingCSS.creditscontainer}>
-        <img className={LandingCSS.creditsimg} src={cimg1} alt="img 1"/>
-        <img className={LandingCSS.creditsimgtio} src={cimg2} alt="img 2"/>
-        <img className={LandingCSS.creditsimgeu} src={cimg3} alt="img 3"/>
+
+
         </div>
       </div>
+
+      {/* Footer */}
+      <footer className="bg-white mx-1 my-1 ">
+        <div className="flex justify-between">
+          <img src={cimg1} alt="Footer" className="mx-4 w-1/4 h-auto object-contain" />
+          <img src={cimg2} alt="Footer" className="mx-4 w-1/4 h-auto object-contain" />
+          <img src={cimg3} alt="Footer" className="mx-4 w-1/4 h-auto object-contain" />
+        </div>
+      </footer>
     </div>
+
   );
 };
 

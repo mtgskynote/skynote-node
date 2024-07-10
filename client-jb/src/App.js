@@ -1,5 +1,6 @@
 import React, { useEffect } from "react";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { jwtDecode } from "jwt-decode";
 import {
   Register,
   OurTeam,
@@ -59,7 +60,32 @@ function App() {
     return () => {
       window.removeEventListener("storage", handleStorageChange);
     };
-  }, [logoutUser]);
+  }, []);
+
+  // Logout user whenver the JWT token is about to expire
+  useEffect(() => {
+    const token = localStorage.getItem("token");
+    if (token) {
+      try {
+        const decodedToken = jwtDecode(token);
+        const currentTime = Date.now() / 1000;
+        if (decodedToken.exp < currentTime) {
+          // Token expired
+          logoutUser();
+        } else {
+          // Set a timeout to logout just before token expiration
+          const timeout = (decodedToken.exp - currentTime - 60) * 1000; // 60 seconds before expiry
+          const logoutTimer = setTimeout(() => {
+            logoutUser();
+          }, timeout);
+          return () => clearTimeout(logoutTimer); // Clean up timer on component unmount
+        }
+      } catch (error) {
+        console.error("Error decoding JWT token:", error);
+        logoutUser(); // Handle error by logging out
+      }
+    }
+  }, []);
 
   return (
     <div>

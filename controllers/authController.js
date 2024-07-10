@@ -26,6 +26,7 @@ const register = async (req, res) => {
 
   res.status(StatusCodes.CREATED).json({
     user: {
+      id: user._id,
       email: user.email,
       name: user.name,
       lastName: user.lastName,
@@ -59,7 +60,6 @@ const login = async (req, res) => {
       email: user.email,
       role: user.role,
       name: user.name,
-      id: user._id,
       role: user.role,
       teacher: user.teacher,
       instrument: user.instrument,
@@ -89,7 +89,6 @@ const updateUser = async (req, res) => {
   });
 };
 
-
 // getProfileData is used to get the user's email and name
 const getProfileData = async (req, res) => {
   console.log(`getting current user from the database`);
@@ -106,10 +105,4 @@ const logout = async (req, res) => {
   res.status(StatusCodes.OK).json({ msg: "user logged out!" });
 };
 
-export {
-  register,
-  login,
-  updateUser,
-  getProfileData,
-  logout,
-};
+export { register, login, updateUser, getProfileData, logout };

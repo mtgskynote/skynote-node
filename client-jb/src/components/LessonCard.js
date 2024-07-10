@@ -9,7 +9,6 @@ import {
   Typography,
   CircularProgress,
   LinearProgress,
-  Button,
   Tooltip,
   IconButton,
 } from "@mui/material";
@@ -17,14 +16,14 @@ import { CloseRounded as CloseRoundedIcon } from "@mui/icons-material";
 import AudioPlayerIcon from "./AudioPlayerIcon";
 import StarRating from "./StarRating";
 import QueueMusicIcon from "@mui/icons-material/QueueMusic";
-import FavoriteBorderIcon from "@mui/icons-material/FavoriteBorder";
-import FavoriteIcon from "@mui/icons-material/Favorite";
+import FavouriteButton from "./FavouriteButton";
 
 const LessonCard = ({
   title,
   skill,
   level,
   stars,
+  isFavourite,
   xml,
   id,
   recordings,
@@ -34,6 +33,7 @@ const LessonCard = ({
   backgroundColour,
   hoverBackgroundColour,
   textColour,
+  refreshData,
 }) => {
   const navigate = useNavigate();
   const [allRecordings, setAllRecordings] = useState(recordings);
@@ -44,7 +44,6 @@ const LessonCard = ({
   const [deletionStatus, setDeletionStatus] = useState(null);
   const [deletedRecordingIds, setDeletedRecordingIds] = useState([]);
   const [playingAudioId, setPlayingAudioId] = useState(null);
-  const [isFavourite, setIsFavourite] = useState(false);
 
   const modalRef = useRef(null);
 
@@ -202,14 +201,6 @@ const LessonCard = ({
     }
   };
 
-  const handleAddToFavourites = () => {
-    setIsFavourite(true);
-  };
-
-  const handleRemoveFromFavourites = () => {
-    setIsFavourite(false);
-  };
-
   return (
     <div>
       <div className="flex">
@@ -272,38 +263,13 @@ const LessonCard = ({
                     </IconButton>
                   </Tooltip>
                 ) : null}
-
-                {isFavourite ? (
-                  <Tooltip
-                    placement="bottom"
-                    title="Remove From Favourites"
-                    arrow
-                  >
-                    <IconButton
-                      aria-label="Remove From Favourites"
-                      className={`text-rose-300 cursor-pointer`}
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        handleRemoveFromFavourites();
-                      }}
-                    >
-                      <FavoriteIcon className="sm:text-2xl md:text-2xl lg:text-3xl xl:text-3xl" />
-                    </IconButton>
-                  </Tooltip>
-                ) : (
-                  <Tooltip placement="bottom" title="Add To Favourites" arrow>
-                    <IconButton
-                      aria-label="Add To Favourites"
-                      className={`${tColour} cursor-pointer`}
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        handleAddToFavourites();
-                      }}
-                    >
-                      <FavoriteBorderIcon className="hover:text-rose-300 sm:text-2xl md:text-2xl lg:text-3xl xl:text-3xl" />
-                    </IconButton>
-                  </Tooltip>
-                )}
+                <FavouriteButton
+                  key={id}
+                  songId={id}
+                  singTitle={title}
+                  initialIsFavourite={isFavourite}
+                  refreshData={refreshData}
+                />
               </div>
             </div>
           </CardContent>
