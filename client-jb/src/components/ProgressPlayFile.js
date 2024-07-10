@@ -390,13 +390,14 @@ const ProgressPlayFile = () => {
 
   // Toggle the recording state
   const handleToggleRecord = () => {
-    setIsPlaying((prevIsRecording) => !prevIsRecording);
+    setIsRecording((prevIsRecording) => !prevIsRecording);
   };
 
   // Reset and stop all recording and MIDI playback
   const handleToggleReset = () => {
     const playbackManager = playbackRef.current;
     resetAudio(playbackManager);
+    playbackManager.setPlaybackStart(0);
 
     setIsListening(false);
     setIsPlaying(false);
@@ -525,6 +526,7 @@ const ProgressPlayFile = () => {
     const playbackManager = playbackRef.current;
     if (playbackManager) {
       if (isRecording) {
+        playbackManager.setPlaybackStart(0);
         recordAudio(playbackManager);
       } else {
         stopRecordingAudio(playbackManager);
@@ -637,7 +639,7 @@ const ProgressPlayFile = () => {
   return (
     <HotKeys keyMap={keyMap} handlers={handlers}>
       <div className="flex flex-col min-h-screen justify-between">
-        <div>
+        <div className="relative">
           <OpenSheetMusicDisplay
             file={`${folderBasePath}/${params.files}.xml`}
             autoResize={true}
@@ -663,6 +665,9 @@ const ProgressPlayFile = () => {
             canDownload={canDownload}
             visual={"no"}
           />
+          {(isRecording || isPlaying) && (
+            <div className="absolute top-0 left-0 w-full h-full bg-transparent z-20 pointer-events-auto"></div>
+          )}
         </div>
 
         <div className="flex justify-center mb-32">
