@@ -76,11 +76,13 @@ const UserSchema = new mongoose.Schema({
     },
   },
   // User's favourite songs to play will be added here
-  favourites: [{
-    songId: {
-      type: mongoose.Schema.Types.ObjectId
-    }
-  }]
+  favourites: [
+    {
+      songId: {
+        type: mongoose.Schema.Types.ObjectId,
+      },
+    },
+  ],
 });
 
 // Hash the password before saving the user

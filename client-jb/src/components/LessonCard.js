@@ -1,51 +1,51 @@
-  import React, { useState, useEffect, useRef } from "react";
-  import { useNavigate } from "react-router-dom";
-  import {
-    getManyRecordings,
-    deleteRecording,
-  } from "../utils/studentRecordingMethods";
-  import {
-    CardContent,
-    Typography,
-    CircularProgress,
-    LinearProgress,
-    Tooltip, 
-    IconButton 
-  } from "@mui/material";
-  import { CloseRounded as CloseRoundedIcon } from "@mui/icons-material";
-  import AudioPlayerIcon from "./AudioPlayerIcon";
-  import StarRating from "./StarRating";
-  import QueueMusicIcon from '@mui/icons-material/QueueMusic';
-  import FavouriteButton from './FavouriteButton';
+import React, { useState, useEffect, useRef } from "react";
+import { useNavigate } from "react-router-dom";
+import {
+  getManyRecordings,
+  deleteRecording,
+} from "../utils/studentRecordingMethods";
+import {
+  CardContent,
+  Typography,
+  CircularProgress,
+  LinearProgress,
+  Tooltip,
+  IconButton,
+} from "@mui/material";
+import { CloseRounded as CloseRoundedIcon } from "@mui/icons-material";
+import AudioPlayerIcon from "./AudioPlayerIcon";
+import StarRating from "./StarRating";
+import QueueMusicIcon from "@mui/icons-material/QueueMusic";
+import FavouriteButton from "./FavouriteButton";
 
-  const LessonCard = ({
-    title,
-    skill,
-    level,
-    stars,
-    isFavourite,
-    xml,
-    id,
-    recordings,
-    reloadRecordingsCallback,
-    renderViewRecordings,
-    width,
-    backgroundColour,
-    hoverBackgroundColour, 
-    textColour, 
-    refreshData
-  }) => {
-    const navigate = useNavigate();
-    const [allRecordings, setAllRecordings] = useState(recordings);
-    const [openRecordingsModal, setOpenRecordingsModal] = useState(false);
-    const [recordingsAudio, setRecordingsAudio] = useState(null);
-    const [loading, setLoading] = useState(false);
-    const [deletingRecording, setDeletingRecording] = useState(null);
-    const [deletionStatus, setDeletionStatus] = useState(null);
-    const [deletedRecordingIds, setDeletedRecordingIds] = useState([]);
-    const [playingAudioId, setPlayingAudioId] = useState(null);
-    
-    const modalRef = useRef(null);
+const LessonCard = ({
+  title,
+  skill,
+  level,
+  stars,
+  isFavourite,
+  xml,
+  id,
+  recordings,
+  reloadRecordingsCallback,
+  renderViewRecordings,
+  width,
+  backgroundColour,
+  hoverBackgroundColour,
+  textColour,
+  refreshData,
+}) => {
+  const navigate = useNavigate();
+  const [allRecordings, setAllRecordings] = useState(recordings);
+  const [openRecordingsModal, setOpenRecordingsModal] = useState(false);
+  const [recordingsAudio, setRecordingsAudio] = useState(null);
+  const [loading, setLoading] = useState(false);
+  const [deletingRecording, setDeletingRecording] = useState(null);
+  const [deletionStatus, setDeletionStatus] = useState(null);
+  const [deletedRecordingIds, setDeletedRecordingIds] = useState([]);
+  const [playingAudioId, setPlayingAudioId] = useState(null);
+
+  const modalRef = useRef(null);
 
   // set defaults
   const viewRecordings =
@@ -192,14 +192,14 @@
     navigate(`/ListRecordings/${xml}`, { state: { id: recordingId } });
   };
 
-    // Toggles the playing audio ID based on the provided audioId.
-    const handleAudioPlay = (audioId) => {
-      if (playingAudioId === audioId) {
-        setPlayingAudioId(null); // If the currently playing audio is clicked again, set playingAudioId to null
-      } else {
-        setPlayingAudioId(audioId); // Set the new audio as playing
-      }
-    };
+  // Toggles the playing audio ID based on the provided audioId.
+  const handleAudioPlay = (audioId) => {
+    if (playingAudioId === audioId) {
+      setPlayingAudioId(null); // If the currently playing audio is clicked again, set playingAudioId to null
+    } else {
+      setPlayingAudioId(audioId); // Set the new audio as playing
+    }
+  };
 
   return (
     <div>
@@ -232,45 +232,49 @@
               </div>
             </div>
 
-              <div className="whitespace-normal w-fit">
-                <Typography
-                  variant="body2"
-                  color="textSecondary"
-                  gutterBottom
-                  className={`${tColour} sm:text-xs md:text-xs lg:text-xs xl:text-sm`}
-                >
-                  {skill}
-                </Typography>
-              </div>
-              <div className="absolute inset-x-0 bottom-0 w-full p-3 flex align-text-bottom">
-                <StarRating 
-                  stars={stars}
-                  size= {"sm:text-3xl md:text-3xl lg:text-3xl xl:text-4xl"}
+            <div className="whitespace-normal w-fit">
+              <Typography
+                variant="body2"
+                color="textSecondary"
+                gutterBottom
+                className={`${tColour} sm:text-xs md:text-xs lg:text-xs xl:text-sm`}
+              >
+                {skill}
+              </Typography>
+            </div>
+            <div className="absolute inset-x-0 bottom-0 w-full p-3 flex align-text-bottom">
+              <StarRating
+                stars={stars}
+                size={"sm:text-3xl md:text-3xl lg:text-3xl xl:text-4xl"}
+              />
+              <div
+                className={
+                  viewRecordings ? "grid grid-cols-2 ml-auto" : "ml-auto"
+                }
+              >
+                {viewRecordings ? (
+                  <Tooltip placement="bottom" title="View All Recordings" arrow>
+                    <IconButton
+                      aria-label="View All Recordings"
+                      className={`${tColour} cursor-pointer`}
+                      onClick={handleOpenRecordingsModal}
+                    >
+                      <QueueMusicIcon className="sm:text-3xl md:text-3xl lg:text-4xl xl:text-4xl" />
+                    </IconButton>
+                  </Tooltip>
+                ) : null}
+                <FavouriteButton
+                  key={id}
+                  songId={id}
+                  singTitle={title}
+                  initialIsFavourite={isFavourite}
+                  refreshData={refreshData}
                 />
-                <div className={viewRecordings ? "grid grid-cols-2 ml-auto" : "ml-auto"}>
-                  {viewRecordings ? ( 
-                    <Tooltip placement="bottom" title="View All Recordings" arrow>
-                      <IconButton
-                        aria-label="View All Recordings"
-                        className={`${tColour} cursor-pointer`}
-                        onClick={handleOpenRecordingsModal}
-                      >
-                        <QueueMusicIcon className="sm:text-3xl md:text-3xl lg:text-4xl xl:text-4xl" />
-                      </IconButton>
-                  </Tooltip> 
-                  ) : null}
-                  <FavouriteButton
-                    key={id} 
-                    songId={id}
-                    singTitle={title}
-                    initialIsFavourite={isFavourite}
-                    refreshData={refreshData} 
-                  />
-                </div>
               </div>
-            </CardContent>
-          </div>
+            </div>
+          </CardContent>
         </div>
+      </div>
 
       {/* Modal */}
       <div

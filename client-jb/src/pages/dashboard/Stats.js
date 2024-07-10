@@ -103,22 +103,22 @@ const Stats = () => {
 
   useEffect(() => {
     const fetchData = async () => {
-        try {
-            const currentUser = await getCurrentUser();
-            setUserData(currentUser);
+      try {
+        const currentUser = await getCurrentUser();
+        setUserData(currentUser);
 
-            const favs = await getUserFavourites(currentUser.id);
-            setFavourites(favs); // Assuming setFavourites updates state with favorites
-            console.log("Got favourites: ", favs);
-        } catch (error) {
-            console.log("Error fetching data: ", error);
-        }
+        const favs = await getUserFavourites(currentUser.id);
+        setFavourites(favs); // Assuming setFavourites updates state with favorites
+        console.log("Got favourites: ", favs);
+      } catch (error) {
+        console.log("Error fetching data: ", error);
+      }
     };
 
     if (!userData) {
-        fetchData();
+      fetchData();
     }
-}, [userData]);
+  }, [userData]);
 
   //get Scores data
   useEffect(() => {
@@ -420,26 +420,31 @@ const Stats = () => {
             <div className="inline-flex items-start space-x-8 mr-8">
               {Object.keys(recentScores).map((title, index) => {
                 const lesson = recentScores[title];
-                const isFavourite = favourites.some(fav => fav.songId === lesson.id);
-                console.log(favourites)
-                console.log(`Lesson ${index + 1} favourite value:`, isFavourite); // Log the value
+                const isFavourite = favourites.some(
+                  (fav) => fav.songId === lesson.id
+                );
+                console.log(favourites);
+                console.log(
+                  `Lesson ${index + 1} favourite value:`,
+                  isFavourite
+                ); // Log the value
 
                 return (
-                    <LessonCard
-                        key={index}
-                        title={title}
-                        skill={lesson.skill}
-                        level={lesson.level}
-                        stars={lesson.stars}
-                        isFavourite={isFavourite}
-                        xml={lesson.xml}
-                        id={lesson.id}
-                        recordings={lesson.recordings}
-                        reloadRecordingsCallback={reloadRecordingsCallback}
-                        renderViewRecordings={true}
-                    />
+                  <LessonCard
+                    key={index}
+                    title={title}
+                    skill={lesson.skill}
+                    level={lesson.level}
+                    stars={lesson.stars}
+                    isFavourite={isFavourite}
+                    xml={lesson.xml}
+                    id={lesson.id}
+                    recordings={lesson.recordings}
+                    reloadRecordingsCallback={reloadRecordingsCallback}
+                    renderViewRecordings={true}
+                  />
                 );
-          })}
+              })}
             </div>
           </div>
         </div>
