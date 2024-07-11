@@ -11,14 +11,21 @@
     "build-client": "cd client-jb && npm run build",
     "server": "nodemon server",
     "client": "npm start --prefix client-jb",
-    "start": "concurrently  --kill-others-on-fail  \"npm run server\" \"npm run client\" "
+    "start": "concurrently  --kill-others-on-fail  \"npm run server\" \"npm run client\" ",
+    "lint": "eslint .",
+    "prettier:check": "prettier --check .",
+    "prettier:write": "prettier --write ."
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "devDependencies": {
     "concurrently": "^7.6.0",
-    "nodemon": "^3.0.1"
+    "nodemon": "^3.0.1", 
+    "eslint": "^8.0.0",
+    "prettier": "^2.0.0",
+    "eslint-config-prettier": "^8.0.0",
+    "eslint-plugin-prettier": "^4.0.0"
   },
   "dependencies": {
     "@emotion/react": "^11.4.1",
