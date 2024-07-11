@@ -251,7 +251,9 @@ class OpenSheetMusicDisplay extends Component {
     this.showingRep = 0;
     this.selectionEndReached = false;
     this.calculatePunctuation = false;
+    this.handleBeforeUnload = this.handleBeforeUnload.bind(this);
   }
+
   //this.IPlaybackListener=new IPlaybackListener()
 
   // defining the playback manager for playing music and cursor controls
@@ -396,6 +398,10 @@ class OpenSheetMusicDisplay extends Component {
   //function to check cursor change
   //#region CURSOR CHANGE
   checkCursorChange = () => {
+    if (!this.osmd || !this.osmd.cursor) {
+      return;
+    }
+
     const cursorCurrent = this.osmd.cursor.Iterator.currentTimeStamp.RealValue;
 
     //WHEN CURSOR REACHES THE END /////////////
@@ -1084,7 +1090,25 @@ class OpenSheetMusicDisplay extends Component {
     //#endregion
   }
 
+  componentWillUnmount() {
+    if (this.osmd) {
+      this.osmd.cursor.hide();
+      this.osmd = null;
+    }
+    window.removeEventListener("beforeunload", this.handleBeforeUnload);
+  }
+
+  handleBeforeUnload(event) {
+    if (this.props.isRecording) {
+      this.props.audioStreamer.save_or_not("delete");
+      this.props.stopRecordingAudio(this.props.playbackRef.current);
+    }
+    event.preventDefault();
+    event.returnValue = "";
+  }
+
   componentDidMount() {
+    window.addEventListener("beforeunload", this.handleBeforeUnload);
     this.setupOsmd();
 
     // Add a listener for cursor change events

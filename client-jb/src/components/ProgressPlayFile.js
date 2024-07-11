@@ -474,17 +474,23 @@ const ProgressPlayFile = () => {
 
   // Get real time state update from showSaveRecordingPopup for hotkey events
   useEffect(() => {
-    showSaveRecordingPopUpRef.current = showSaveRecordingPopUp;
+    if (showSaveRecordingPopUpRef.current !== null) {
+      showSaveRecordingPopUpRef.current = showSaveRecordingPopUp;
+    }
   }, [showSaveRecordingPopUp]);
 
   // Get real time state update from practiceMode for hotkey events
   useEffect(() => {
-    practiceModeRef.current = practiceMode;
+    if (practiceModeRef.current !== null) {
+      practiceModeRef.current = practiceMode;
+    }
   }, [practiceMode]);
 
   // Get real time state update from showCountDownTimer for hotkey events
   useEffect(() => {
-    showCountDownTimerRef.current = showCountDownTimer;
+    if (showCountDownTimerRef.current !== null) {
+      showCountDownTimerRef.current = showCountDownTimer;
+    }
   }, [showCountDownTimer]);
 
   // Handle audio operations based on isListening and isPlaying changes
@@ -549,7 +555,7 @@ const ProgressPlayFile = () => {
   useEffect(() => {
     if (cursorFinished) {
       const playbackManager = playbackRef.current;
-      playbackManager.setPlaybackStart(0);
+      if (playbackManager) playbackManager.setPlaybackStart(0);
 
       setCursorFinished(false);
       setIsListening(false);
@@ -584,7 +590,7 @@ const ProgressPlayFile = () => {
       ]);
 
       // Play MIDI audio playback
-      playAudio(playbackManager);
+      if (playbackManager) playAudio(playbackManager);
       setShowCountDownTimer(false);
     }
 
@@ -617,7 +623,8 @@ const ProgressPlayFile = () => {
       // Ensure recording is not saved and audioStreamer is properly cleaned up
       if (isRecording) {
         audioStreamer.save_or_not("delete");
-        stopRecordingAudio(playbackRef.current);
+        const playbackManager = playbackRef.current;
+        if (playbackManager) stopRecordingAudio(playbackManager);
       }
       // Cancel the event as stated by the standard
       event.preventDefault();
