@@ -60,17 +60,11 @@ const updateRecordingsPastWeek = async (userId) => {
       throw new Error("No token found");
     }
 
-    const response = await axios.post(
-      `/api/v1/profile/recordingsPastWeek/${userId}`,
-      null,
-      {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      }
-    );
-
-    console.log("Recordings updated successfully:", response.data);
+    await axios.post(`/api/v1/profile/recordingsPastWeek/${userId}`, null, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
   } catch (error) {
     console.error("Error on updateRecordingsPastWeek", error);
     throw error;

@@ -118,7 +118,6 @@ const Stats = () => {
 
         const recordingsPastWeek = await getRecordingsPastWeek(currentUser.id);
         setLastWeekRecordings(recordingsPastWeek);
-        console.log(recordingsPastWeek);
       } catch (error) {
         console.log("Error fetching data: ", error);
       }
