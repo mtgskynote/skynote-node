@@ -4,6 +4,7 @@ import {
   updateProfileData,
   addFavourite,
   removeFavourite,
+  updateRecordingsPastWeek,
 } from "../controllers/profileController.js";
 import { authenticateUser } from "../middleware-jb/authenticateUser.js";
 
@@ -23,5 +24,8 @@ router
   .route("/favourite/:userId/:songId")
   .post(authenticateUser, addFavourite)
   .delete(authenticateUser, removeFavourite);
+router
+  .route("/recordingsPastWeek/:userId")
+  .post(authenticateUser, updateRecordingsPastWeek);
 
 export default router;

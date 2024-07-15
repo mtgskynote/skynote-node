@@ -4,7 +4,10 @@ import { useAppContext } from "../../context/appContext";
 import { getAllRecData } from "../../utils/studentRecordingMethods.js";
 import { getMessages } from "../../utils/messagesMethods.js";
 import { getAllAssignments } from "../../utils/assignmentsMethods.js";
-import { getUserFavourites } from "../../utils/usersMethods.js";
+import {
+  getUserFavourites,
+  getRecordingsPastWeek,
+} from "../../utils/usersMethods.js";
 import LessonCard from "../../components/LessonCard.js";
 import RecordingsProgressChart from "../../components/RecordingsProgressChart.js";
 import LevelsProgressChart from "../../components/LevelsProgressChart.js";
@@ -112,6 +115,10 @@ const Stats = () => {
         const favs = await getUserFavourites(currentUser.id);
         setFavourites(favs); // Assuming setFavourites updates state with favorites
         console.log("Got favourites: ", favs);
+
+        const recordingsPastWeek = await getRecordingsPastWeek(currentUser.id);
+        setLastWeekRecordings(recordingsPastWeek);
+        console.log(recordingsPastWeek);
       } catch (error) {
         console.log("Error fetching data: ", error);
       }
@@ -184,29 +191,6 @@ const Stats = () => {
             })
           );
           setRecordingScoresIds(result.map((recording) => recording.scoreID));
-
-          const today = new Date();
-          const lastWeek = new Date(today);
-          lastWeek.setDate(lastWeek.getDate() - 6); // Calculate the date 7 days ago
-
-          const countsPerDay = Array(7).fill(0);
-
-          // Filter the studentData array to get entries within the last week
-          result.forEach((recording) => {
-            const recordingDate = new Date(recording.recordingDate); // Assuming the date attribute is a string representation of a date
-
-            const dayOffset = Math.floor(
-              (today - recordingDate) / (1000 * 60 * 60 * 24)
-            );
-            const lastIndex = 6; // The last index of the array
-            const reverseIndex = lastIndex - dayOffset;
-
-            if (reverseIndex >= 0 && reverseIndex <= lastIndex) {
-              countsPerDay[reverseIndex]++;
-            }
-          });
-
-          setLastWeekRecordings(countsPerDay);
         })
         .catch((error) => {
           console.log(`Cannot get recordings from database: ${error}`);
@@ -379,12 +363,6 @@ const Stats = () => {
       setRecentScores(top10Scores);
     }
   }, [recentRecordings]);
-
-  useEffect(() => {
-    if (userData !== null) {
-      setLastWeekRecordings(userData.recordingsPastWeek);
-    }
-  }, [userData]);
 
   useEffect(() => {
     if (userData && scoresData && recordingList !== null) {
