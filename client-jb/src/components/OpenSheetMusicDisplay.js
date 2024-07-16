@@ -7,6 +7,8 @@ import {
   LinearTimingSource,
   BasicAudioPlayer,
   IAudioMetronomePlayer,
+  TransposeCalculator,
+  KeyInstruction,
 } from "opensheetmusicdisplay";
 
 import LineChart from "./LineChartOSMD";
@@ -326,7 +328,10 @@ class OpenSheetMusicDisplay extends Component {
 
     //define the osmd features to be included
     this.osmd.load(this.props.file).then(() => {
+      this.osmd.TransposeCalculator = new TransposeCalculator();
       if (this.osmd.Sheet) {
+        this.osmd.Sheet.Transpose = 2;
+        this.osmd.updateGraphic();
         this.osmd.render();
         this.osmd.cursor.CursorOptions.color = "#4ade80";
         this.osmd.render();
