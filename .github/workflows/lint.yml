@@ -31,6 +31,8 @@ jobs:
             npm install --save-dev @babel/plugin-proposal-private-property-in-object
 
       - name: Run linters
+        env:
+            GITHUB_TOKEN: ${{ secrets.SKYNOTEWORKFLOWSECRET }}
         uses: wearerequired/lint-action@v2
         with:
           eslint: true
