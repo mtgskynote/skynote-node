@@ -27,6 +27,9 @@
     "eslint-config-prettier": "^8.0.0",
     "eslint-plugin-prettier": "^4.0.0"
   },
+  "eslintConfig": {
+    "extends": ["react-app"]
+  },
   "dependencies": {
     "@emotion/react": "^11.4.1",
     "@emotion/styled": "^11.3.0",
