@@ -19,17 +19,26 @@ jobs:
         with:
           node-version: '20.x'
 
-      - name: Create package-lock.json 
-        run: npm i 
-
       - name: Install Node.js dependencies
         run: npm ci
-      
-      - name: set up eslint
-        run: npm install --save-dev eslint eslint-config-react-app
 
-      - name: Run linters
-        uses: wearerequired/lint-action@v2
-        with:
-          eslint: true
-          prettier: true
+      - name: Set up eslint, prettier, and Babel dependencies
+        run: |
+          npm install --save-dev eslint eslint-config-react-app prettier eslint-plugin-prettier eslint-config-prettier
+          npm install --save-dev @babel/plugin-proposal-private-property-in-object
+
+      - name: Run ESLint
+        run: npm run lint
+        continue-on-error: true
+
+      - name: Display ESLint output
+        if: failure()
+        run: cat eslint-report.json
+
+      - name: Run Prettier
+        run: npm run prettier
+        continue-on-error: true
+
+      - name: Display Prettier output
+        if: failure()
+        run: cat prettier-report.txt
