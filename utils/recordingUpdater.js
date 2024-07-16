@@ -5,10 +5,17 @@ export const updateRecordings = async () => {
     const users = await User.find();
 
     const promises = users.map(async (user) => {
-      // Remove the first element and add a 0 at the end
-      user.recordingsPastWeek.shift();
-      user.recordingsPastWeek.push(0);
-      await user.save();
+      try {
+        // Remove the first element and add a 0 at the end
+        user.recordingsPastWeek.shift();
+        user.recordingsPastWeek.push(0);
+        await user.save();
+      } catch (error) {
+        console.error(
+          `Error updating recordings for user ${user._id}:`,
+          error.message
+        );
+      }
     });
 
     await Promise.all(promises);
