@@ -24,6 +24,9 @@ jobs:
 
       - name: Install Node.js dependencies
         run: npm ci
+      
+      - name: set up eslint
+        run: npm install --save-dev eslint eslint-config-react-app
 
       - name: Run linters
         uses: wearerequired/lint-action@v2
