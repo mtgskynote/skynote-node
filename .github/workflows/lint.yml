@@ -1,7 +1,6 @@
 name: Lint
 
 on:
-  # Trigger the workflow on push or pull request for any branch
   push:
     branches:
       - "**"
@@ -21,10 +20,12 @@ jobs:
       - name: Set up Node.js
         uses: actions/setup-node@v1
         with:
-          node-version: 12
+          node-version: 10
+
+      - name: Create package-lock.json 
+        run: npm i 
 
       - name: Install Node.js dependencies
-        run: npm i
         run: npm ci
 
       - name: Run linters
