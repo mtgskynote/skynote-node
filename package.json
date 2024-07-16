@@ -14,12 +14,12 @@
     "start": "concurrently  --kill-others-on-fail  \"npm run server\" \"npm run client\" ",
     "prettier:check": "prettier --check .",
     "prettier:write": "prettier --write .",
-    "lint": "eslint --ext .ts,.tsx ./src",
-    "fix": "yarn format && yarn lint:fix",
-    "format": "prettier --write 'src/**/*.{js,jsx,ts,tsx}'",
-    "lint:fix": "eslint --fix 'src/**/*.{js,jsx,ts,tsx}'",
-    "fix:eslint": "eslint src --ext .js,.ts,.jsx,.tsx --fix",
-    "fix:prettier": "prettier --write ."
+    "lint": "eslint .",
+    "lint:fix": "eslint --fix .",
+    "fix:eslint": "eslint . --fix",
+    "format": "prettier --write .",
+    "fix:prettier": "prettier --write .",
+    "fix": "npm run format && npm run lint:fix"
   },
   "keywords": [],
   "author": "",
