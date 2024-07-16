@@ -1,6 +1,6 @@
 
 import React, { useRef, useState } from 'react';
-import PieChart from "./pieChart";
+import PieChartGPT from "./pieChart";
 
 const randInt = function (min, max) {
   return Math.floor(min + (max + 1 - min) * Math.random());
@@ -24,15 +24,15 @@ const TimbreVisualization = () => {
   return (
     <div>
       <h2>Pie Chart</h2>
-      <PieChart ref={pieChartRef} />
+      <PieChartGPT ref={pieChartRef} />
     </div>
   );
 };
 
 //==================================================================================================
 
-const PieChart = React.forwardRef((props, ref) => {
-  console.log(`recreate PieChart`)
+const PieChartGPT = React.forwardRef((props, ref) => {
+  console.log(`recreate PieChartGPT`)
   const [data, setData] = useState([10, 20, 30, 40]);
 
   const updateData = (updatedData) => {
