@@ -1,6 +1,6 @@
 
 import React, { useRef, useState } from 'react';
-import PieChartGPT from "./pieChart";
+import PieChart from "./pieChart";
 
 const randInt = function (min, max) {
   return Math.floor(min + (max + 1 - min) * Math.random());
@@ -24,36 +24,36 @@ const TimbreVisualization = () => {
   return (
     <div>
       <h2>Pie Chart</h2>
-      <PieChartGPT ref={pieChartRef} />
+      <PieChart ref={pieChartRef} />
     </div>
   );
 };
 
 //==================================================================================================
 
-const PieChartGPT = React.forwardRef((props, ref) => {
-  console.log(`recreate PieChartGPT`)
-  const [data, setData] = useState([10, 20, 30, 40]);
+// const PieChartGPT = React.forwardRef((props, ref) => {
+//   console.log(`recreate PieChartGPT`)
+//   const [data, setData] = useState([10, 20, 30, 40]);
 
-  const updateData = (updatedData) => {
-    // Perform the update logic here
-    console.log('Updated pie chart data:', updatedData);
-    setData(updatedData);
-  };
+//   const updateData = (updatedData) => {
+//     // Perform the update logic here
+//     console.log('Updated pie chart data:', updatedData);
+//     setData(updatedData);
+//   };
 
-  React.useImperativeHandle(ref, () => ({
-    updateData: updateData
-  }));
+//   React.useImperativeHandle(ref, () => ({
+//     updateData: updateData
+//   }));
 
-  // Render the pie chart using the data
-  // This is just a placeholder component for demonstration purposes
-  return (
-    <div>
-      <p>Data: {data.join(', ')}</p>
-      {/* Render the pie chart here */}
-    </div>
-  );
-});
+//   // Render the pie chart using the data
+//   // This is just a placeholder component for demonstration purposes
+//   return (
+//     <div>
+//       <p>Data: {data.join(', ')}</p>
+//       {/* Render the pie chart here */}
+//     </div>
+//   );
+// });
 
 
 
