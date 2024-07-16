@@ -20,20 +20,41 @@ jobs:
           node-version: '20.x'
 
       - name: Create package-lock.json 
-        run: npm i 
+        run: npm i
 
-      - name: Install Node.js dependencies
-        run: npm ci
-      
-      - name: Set up eslint
+      - name: Set up ESLint and Prettier
         run: |
-            npm install --save-dev eslint eslint-config-react-app
-            npm install --save-dev @babel/plugin-proposal-private-property-in-object
+          npm install --save-dev eslint eslint-config-react-app
+          npm install --save-dev @babel/plugin-proposal-private-property-in-object
 
-      - name: Run linters
+      - name: Run ESLint
         env:
-            GITHUB_TOKEN: ${{ secrets.SKYNOTEWORKFLOWSECRET }}
-        uses: wearerequired/lint-action@v2
-        with:
-          eslint: true
-          prettier: true
+          GITHUB_TOKEN: ${{ secrets.SKYNOTEWORKFLOWSECRET }}
+        run: |
+          # Run ESLint with formatter to output GitHub-compatible annotations
+          npm install eslint-formatter-github --save-dev
+          eslint --format=github '**/*.js' '**/*.jsx' > eslint-report.json || echo "ESLint failed."
+
+      - name: Run Prettier
+        run: |
+          # Run Prettier and store results in a file
+          npx prettier --check . > prettier-report.json || echo "Prettier failed."
+
+      - name: Display ESLint and Prettier results
+        run: |
+          # Example script to display ESLint and Prettier results
+          if [ -f eslint-report.json ]; then
+            echo "ESLint Results:"
+            cat eslint-report.json
+          fi
+          if [ -f prettier-report.json ]; then
+            echo "Prettier Results:"
+            cat prettier-report.json
+          fi
+
+      - name: Fail workflow on linting errors
+        run: |
+          # Check if ESLint or Prettier found errors and fail the workflow
+          if [ -f eslint-report.json ] || [ -f prettier-report.json ]; then
+            exit 1
+          fi
