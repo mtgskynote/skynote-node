@@ -4,9 +4,12 @@ This document contains steps for setting up the project and navigating around so
 
 1. clone from the repo
 2. npm run install-dependencies --legacy-peer-deps
-3. mv your .env file to the root dir (or edit dotenv.txt and save it to .env)
-4. replace everything inside (root)/node_modules/opensheetmusicdisplay/build with the OSMD _extended_ version of opensheetmusicdisplay.min.js
+3. move your .env file to the root dir (or edit dotenv.txt and save it to .env)
+4. replace everything inside (client-jb)/node_modules/opensheetmusicdisplay/build with the OSMD \_extended\* version of opensheetmusicdisplay.min.js
 5. npm start to run the development version of the code
+
+6. for updating the dependencies of the app:
+   npm run update-app
 
 <hr>
 
