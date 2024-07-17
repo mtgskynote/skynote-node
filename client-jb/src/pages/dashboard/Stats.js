@@ -2,7 +2,6 @@ import React, { useEffect, useState } from "react";
 import { Chart as ChartJS, ArcElement, Tooltip, Legend } from "chart.js";
 import { useAppContext } from "../../context/appContext";
 import { getAllRecData } from "../../utils/studentRecordingMethods.js";
-import { getMessages } from "../../utils/messagesMethods.js";
 import { getAllAssignments } from "../../utils/assignmentsMethods.js";
 import {
   getUserFavourites,
@@ -36,7 +35,6 @@ const Stats = () => {
   const [achievedStarsPerLevel, setAchievedStarsPerLevel] = useState(null);
   const [recentRecordings, setRecentRecordings] = useState(null);
   const [recentScores, setRecentScores] = useState({});
-  const [unreadMessages, setUnreadMessages] = useState(null);
   const [unansweredTasks, setUnansweredTasks] = useState(null);
   const [dueTasksContent, setDueTasksContent] = useState([]);
   const [lastWeekRecordings, setLastWeekRecordings] = useState(
@@ -114,10 +112,10 @@ const Stats = () => {
 
         const favs = await getUserFavourites(currentUser.id);
         setFavourites(favs); // Assuming setFavourites updates state with favorites
-        console.log("Got favourites: ", favs);
 
         const recordingsPastWeek = await getRecordingsPastWeek(currentUser.id);
         setLastWeekRecordings(recordingsPastWeek);
+        
       } catch (error) {
         console.log("Error fetching data: ", error);
       }
@@ -193,23 +191,6 @@ const Stats = () => {
         })
         .catch((error) => {
           console.log(`Cannot get recordings from database: ${error}`);
-        });
-      getMessages(userData.id, userData.teacher)
-        .then((result) => {
-          var messageCount = 0;
-          //I have to filter the messages sent by the teacher that have seen=false
-          result.forEach((message, index) => {
-            // Check if the message is sent by the teacher and not seen
-            if (message.sender === userData.teacher && message.seen === false) {
-              messageCount = messageCount + 1;
-            }
-          });
-          setUnreadMessages(messageCount);
-        })
-        .catch((error) => {
-          console.log(
-            `Cannot get number of chat messages from database: ${error}`
-          );
         });
 
       getAllAssignments(userData.id)
@@ -408,11 +389,6 @@ const Stats = () => {
                 const isFavourite = favourites.some(
                   (fav) => fav.songId === lesson.id
                 );
-                console.log(favourites);
-                console.log(
-                  `Lesson ${index + 1} favourite value:`,
-                  isFavourite
-                ); // Log the value
 
                 return (
                   <LessonCard
