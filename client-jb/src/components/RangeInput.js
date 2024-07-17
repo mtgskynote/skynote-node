@@ -11,9 +11,19 @@ const RangeInput = ({ label, min, max, initial, onValueChange, disabled }) => {
 
   // Updates the value state whenever the inputs change and passes the new value to the parent components
   const handleValueChange = (e) => {
-    setValue(e.target.value);
+    let newValue = e.target.value;
+
+    if (newValue !== "" && (Number(newValue) < min || Number(newValue) > max)) {
+      if (Number(newValue) < min) {
+        newValue = min;
+      } else if (Number(newValue) > max) {
+        newValue = max;
+      }
+    }
+
+    setValue(newValue);
     if (onValueChange) {
-      onValueChange(e.target.value);
+      onValueChange(newValue);
     }
   };
 

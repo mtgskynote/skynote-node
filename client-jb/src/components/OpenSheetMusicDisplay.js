@@ -213,6 +213,79 @@ const renderPitchLineZoom = (osmd, state, prevZoom, showingRep) => {
 };
 //#endregion
 
+const renderPitchLineTransposition = (
+  osmd,
+  state,
+  transpositionInterval,
+  showingRep
+) => {
+  let staves = osmd.graphic.measureList;
+  let copy_pitchPositionX = state.pitchPositionX.slice();
+  let copy_pitchPositionY = state.pitchPositionY.slice();
+
+  for (let stave_index = 0; stave_index < staves.length; stave_index++) {
+    let stave = staves[stave_index][0];
+    const staveLines = document.getElementsByClassName("vf-stave")[stave_index];
+    const upperLineStave = staveLines.children[0].getBoundingClientRect().top; //upper line
+    const middleLineStave = staveLines.children[2].getBoundingClientRect().top; //middle line
+    const lowerLineStave = staveLines.children[4].getBoundingClientRect().top; //lower line
+    const oneStepPixels = Math.abs(upperLineStave - lowerLineStave) / 4 / 2; //steps corresponding to one step in staff
+
+    for (
+      let note_index = 0;
+      note_index < stave.staffEntries.length;
+      note_index++
+    ) {
+      let note = stave.staffEntries[note_index];
+      let noteID = note.graphicalVoiceEntries[0].notes[0].getSVGId();
+      let noteNEWID = osmd.IDdict[noteID];
+      let noteX = note.graphicalVoiceEntries[0].notes[0]
+        .getSVGGElement()
+        .getBoundingClientRect().x;
+      //check for notehead color
+      const colorsArray = state.colorNotes.slice();
+      const index = colorsArray.findIndex(
+        (item) => item[0][0] === noteNEWID && item[0][2] === showingRep
+      );
+      if (index !== -1) {
+        //note has a color assigned--> color notehead
+        // this is for all the notes except the quarter and whole notes
+        const svgElement =
+          note.graphicalVoiceEntries[0].notes[0].getSVGGElement();
+        svgElement.children[0].children[0].children[0].style.fill =
+          colorsArray[index][0][1]; // notehead
+        if (
+          svgElement &&
+          svgElement.children[0] &&
+          svgElement.children[0].children[0] &&
+          svgElement.children[0].children[1]
+        ) {
+          //this is for all the quarter and whole notes
+          svgElement.children[0].children[0].children[0].style.fill =
+            colorsArray[index][0][1]; // notehead
+          svgElement.children[0].children[1].children[0].style.fill =
+            colorsArray[index][0][1]; // notehead
+        }
+      }
+      //check for pitch tracking line
+      for (let index = 0; index < copy_pitchPositionX.length; index++) {
+        if (state.recordedNoteIDs[index] === noteID) {
+          //this note has been recorded
+          let midiToStaffStep = midi2StaffGaps(
+            freq2midipitch(state.pitchData[index])
+          );
+          let transpositionSteps = transpositionInterval; // transposition interval in semitones
+          copy_pitchPositionX[index] = noteX;
+          copy_pitchPositionY[index] =
+            middleLineStave +
+            (midiToStaffStep + transpositionSteps) * oneStepPixels;
+        }
+      }
+    }
+  }
+  return [copy_pitchPositionX, copy_pitchPositionY];
+};
+
 //#region CREATING THE CLASS COMPONENT
 class OpenSheetMusicDisplay extends Component {
   constructor(props) {
@@ -398,11 +471,10 @@ class OpenSheetMusicDisplay extends Component {
   //#endregion
 
   updateTranspose(newTranspose) {
-    console.log(newTranspose);
-    if (this.osmd.Sheet) {
-      this.osmd.Sheet.Transpose = newTranspose;
+    if (newTranspose !== undefined && newTranspose) {
+      this.osmd.Sheet.Transpose = parseInt(newTranspose);
       this.osmd.updateGraphic();
-      this.osmd.render();
+      if (this.osmd.IsReadyToRender()) this.osmd.render();
     }
   }
 
@@ -532,6 +604,7 @@ class OpenSheetMusicDisplay extends Component {
       if (this.osmd.cursor.NotesUnderCursor()[0].Pitch !== undefined) {
         //note
         notePitch = this.osmd.cursor.NotesUnderCursor()[0].Pitch.frequency;
+        console.log(this.osmd.cursor.NotesUnderCursor()[0].Pitch);
         //Check if pitch was matched or not, only if confidence of newPitchdata is >=0.5
         if (lastPitchConfidenceData >= 0.5) {
           if (
@@ -861,6 +934,16 @@ class OpenSheetMusicDisplay extends Component {
 
     if (this.props.transpose !== prevProps.transpose) {
       this.updateTranspose(this.props.transpose);
+      // const [updatedPitchPositionX, updatedPitchPositionY] =
+      //   renderPitchLineTransposition(
+      //     this.osmd,
+      //     this.state,
+      //     this.showingRep,
+      //     this.osmd.Sheet.Transpose
+      //   );
+      // this.setState({ pitchPositionX: updatedPitchPositionX });
+      // this.setState({ pitchPositionY: updatedPitchPositionY });
+      // console.log(this.state.pitchPositionY);
     }
 
     // for zoom changes
@@ -1000,11 +1083,15 @@ class OpenSheetMusicDisplay extends Component {
             this.props.pitch[this.props.pitch.length - 1],
           ];
           this.setState({ pitchData: newPitchData });
+          console.log(this.props.pitch[this.props.pitch.length - 1]);
           //Add pitch confidence data
           const newPitchConfidenceData = [
             ...this.state.pitchConfidenceData,
             this.props.pitchConfidence[this.props.pitchConfidence.length - 1],
           ];
+          console.log(
+            this.props.pitchConfidence[this.props.pitchConfidence.length - 1]
+          );
           this.setState({ pitchConfidenceData: newPitchConfidenceData });
           //Add X position to array
           const addedNewPositionX = [

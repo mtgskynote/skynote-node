@@ -63,7 +63,7 @@ const ControlBar = ({
       maxs: [12],
       initials: [initialTranspose],
       onChanges: [onTransposeChange],
-      slidersDisabled: practiceModeOn ? [false] : [true],
+      slidersDisabled: practiceModeOn ? [false] : [isBpmDisabled],
       showInPlaybackMode: false,
       showInInteractiveMode: true,
     },
