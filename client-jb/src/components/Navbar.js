@@ -55,7 +55,7 @@ function Navbar() {
       fetchDataFromAPI();
     }
 
-    if (userData !== null) {
+    if (userData !== null && userData.teacher) {
       getMessages(userData.id, userData.teacher)
         .then((result) => {
           let messagesCount = 0;
