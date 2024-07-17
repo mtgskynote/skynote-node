@@ -1,7 +1,9 @@
 name: front-linter
 
 on:
-  # Triggers the workflow on pull request events on any branch
+  # Triggers the workflow on pull request events on any branch and pushes
+  push:
+    branches: ['main']
   pull_request:
     branches: '**'
   # Allows you to run this workflow manually from the Actions tab
@@ -19,5 +21,12 @@ jobs:
         run: npm install
       - name: Run Prettier
         run: npx prettier --write .
+      - name: Commit changes
+        run: |
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+          git add .
+          git commit -m "chore: apply Prettier auto-formatting" || echo "No changes to commit"
+          git push
       - name: Run ESLint
         run: npx eslint .
