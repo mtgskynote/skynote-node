@@ -63,7 +63,7 @@ const ControlBar = ({
       maxs: [12],
       initials: [initialTranspose],
       onChanges: [onTransposeChange],
-      slidersDisabled: [true],
+      slidersDisabled: practiceModeOn ? [false] : [true],
       showInPlaybackMode: false,
       showInInteractiveMode: true,
     },
@@ -301,16 +301,8 @@ const ControlBar = ({
                   : modeIcon.showInInteractiveMode
               )
               .map((modeIcon, index) =>
-                modeIcon.tooltip === "Transpose" ? (
-                  <IconButton
-                    key={index}
-                    disabled
-                    className="text-white opacity-50"
-                  >
-                    {modeIcon.icon}
-                  </IconButton>
-                ) : modeIcon.tooltip === "Stats" ||
-                  modeIcon.tooltip === "Shortcuts" ? (
+                modeIcon.tooltip === "Stats" ||
+                modeIcon.tooltip === "Shortcuts" ? (
                   <Tooltip title={modeIcon.tooltip} key={index}>
                     <IconButton
                       className="text-white"

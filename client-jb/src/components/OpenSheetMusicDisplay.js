@@ -8,7 +8,6 @@ import {
   BasicAudioPlayer,
   IAudioMetronomePlayer,
   TransposeCalculator,
-  KeyInstruction,
 } from "opensheetmusicdisplay";
 
 import LineChart from "./LineChartOSMD";
@@ -330,7 +329,7 @@ class OpenSheetMusicDisplay extends Component {
     this.osmd.load(this.props.file).then(() => {
       this.osmd.TransposeCalculator = new TransposeCalculator();
       if (this.osmd.Sheet) {
-        this.osmd.Sheet.Transpose = 2;
+        this.osmd.Sheet.Transpose = this.props.transpose;
         this.osmd.updateGraphic();
         this.osmd.render();
         this.osmd.cursor.CursorOptions.color = "#4ade80";
@@ -397,6 +396,15 @@ class OpenSheetMusicDisplay extends Component {
     }
   }
   //#endregion
+
+  updateTranspose(newTranspose) {
+    console.log(newTranspose);
+    if (this.osmd.Sheet) {
+      this.osmd.Sheet.Transpose = newTranspose;
+      this.osmd.updateGraphic();
+      this.osmd.render();
+    }
+  }
 
   //function to check cursor change
   //#region CURSOR CHANGE
@@ -849,6 +857,10 @@ class OpenSheetMusicDisplay extends Component {
 
     if (this.props.bpm !== prevProps.bpm) {
       this.updateBpm(this.props.bpm);
+    }
+
+    if (this.props.transpose !== prevProps.transpose) {
+      this.updateTranspose(this.props.transpose);
     }
 
     // for zoom changes
