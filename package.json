@@ -25,17 +25,22 @@
   "author": "",
   "license": "ISC",
   "devDependencies": {
+    "@babel/plugin-proposal-private-property-in-object": "^7.16.7",
+    "@eslint/js": "^9.7.0",
     "concurrently": "^7.6.0",
-    "nodemon": "^3.0.1", 
-    "eslint": "^8.0.0",
-    "prettier": "^2.0.0",
+    "eslint": "^8.57.0",
     "eslint-config-prettier": "^8.0.0",
-    "eslint-plugin-prettier": "^4.0.0", 
     "eslint-config-react-app": "^7.0.0",
-    "@babel/plugin-proposal-private-property-in-object": "^7.16.7"
+    "eslint-plugin-prettier": "^4.0.0",
+    "eslint-plugin-react": "^7.34.4",
+    "globals": "^15.8.0",
+    "nodemon": "^3.0.1",
+    "prettier": "^2.0.0"
   },
   "eslintConfig": {
-    "extends": ["react-app"]
+    "extends": [
+      "react-app"
+    ]
   },
   "dependencies": {
     "@emotion/react": "^11.4.1",

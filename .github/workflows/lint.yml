@@ -1,91 +1,18 @@
-# name: Lint
-
-# on:
-#   push:
-#       branches: [ "main" ]
-#   pull_request:
-#     branches:
-#       - "**"
-
-# jobs:
-#   run-linters:
-#     name: Run linters
-#     runs-on: ubuntu-latest
-
-#     steps:
-#       - name: Check out Git repository
-#         uses: actions/checkout@v3
-
-#       - name: Set up Node.js
-#         uses: actions/setup-node@v2
-#         with:
-#           node-version: '20.x'
-
-#       - name: Create package-lock.json 
-#         run: npm i
-
-#       - name: Set up ESLint and Prettier
-#         run: |
-#           npm install --save-dev eslint eslint-config-react-app
-#           npm install --save-dev @babel/plugin-proposal-private-property-in-object
-
-#       - name: Run ESLint
-#         env:
-#           GITHUB_TOKEN: ${{ secrets.SKYNOTEWORKFLOWSECRET }}
-#         run: |
-#           # Run ESLint with formatter to output GitHub-compatible annotations
-#           npm install eslint-formatter-github --save-dev
-#           eslint --format=github '**/*.js' '**/*.jsx' > eslint-report.json || echo "ESLint failed."
-
-#       - name: Run Prettier
-#         run: |
-#           # Run Prettier and store results in a file
-#           npx prettier --check . > prettier-report.json || echo "Prettier failed."
-
-#       - name: Display ESLint and Prettier results
-#         run: |
-#           # Example script to display ESLint and Prettier results
-#           if [ -f eslint-report.json ]; then
-#             echo "ESLint Results:"
-#             cat eslint-report.json
-#           fi
-#           if [ -f prettier-report.json ]; then
-#             echo "Prettier Results:"
-#             cat prettier-report.json
-#           fi
-
-#       - name: Fail workflow on linting errors
-#         run: |
-#           # Check if ESLint or Prettier found errors and fail the workflow
-#           if [ -f eslint-report.json ] || [ -f prettier-report.json ]; then
-#             exit 1
-#           fi
-
-
-
-# This is a basic workflow to help you get started with Actions
 name: front-linter
-# Controls when the workflow will run
 on:
-  # Triggers the workflow on push or pull request events but only for the "main" branch
-  push:
-    branches: [ "main" ]
+  # Triggers the workflow on push or pull request on any branch
   pull_request:
-    branches: "**"
-# Allows you to run this workflow manually from the Actions tab
+    branches: '**'
+  # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
-# A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
-  # This workflow contains a single job called "build"
   build:
-    # The type of runner that the job will run on
     runs-on: ubuntu-latest
-# Steps represent a sequence of tasks that will be executed as part of the job
     steps:
       - uses: actions/checkout@v2
       - uses: actions/setup-node@v2
         with:
-          node-version: '20'
+          node-version: ''
       - name: install
         run: yarn install
       - name: ESLint
