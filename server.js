@@ -70,7 +70,7 @@ app.use(notFoundMiddleWare);
 app.use(errorHandlerMiddleWare);
 
 // Schedule the task to run every day at midnight
-cron.schedule("* * * * *", updateRecordings);
+cron.schedule("0 0 * * *", updateRecordings);
 
 const port = process.env.PORT || 5000;
 
