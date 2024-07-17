@@ -19,7 +19,7 @@
     "fix:eslint": "eslint . --fix",
     "format": "prettier --write .",
     "fix:prettier": "prettier --write .",
-    "fix": "npm run format && npm run lint:fix"
+    "fix": "npm run format && npm run lint:fix",
     "test": "mocha"
   },
   "keywords": [],
@@ -35,10 +35,8 @@
     "eslint-plugin-prettier": "^4.0.0",
     "eslint-plugin-react": "^7.34.4",
     "globals": "^15.8.0",
-    "nodemon": "^3.0.1",
     "prettier": "^2.0.0",
     "chai": "^5.1.1",
-    "concurrently": "^7.6.0",
     "mocha": "^10.6.0",
     "nodemon": "^3.0.1",
     "sinon": "^18.0.0"
