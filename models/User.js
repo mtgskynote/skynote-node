@@ -60,7 +60,7 @@ const UserSchema = new mongoose.Schema({
     required: false, // should actually be required for students ...
     validate: {
       validator: async (value) => {
-        const user = await mongoose.model("User").findById(value);
+        const user = await mongoose.model("Users").findById(value);
         return !!user; // Returns true if user exists, false otherwise
       },
       message: "Invalid teacher ID. Must reference an existing user.",
@@ -83,6 +83,16 @@ const UserSchema = new mongoose.Schema({
       },
     },
   ],
+  recordingsPastWeek: {
+    type: [Number],
+    validate: {
+      validator: function (val) {
+        return val.length <= 7;
+      },
+      message:
+        "recordingsPastWeek should not contain more than 7 days worth of data.",
+    },
+  },
 });
 
 // Hash the password before saving the user

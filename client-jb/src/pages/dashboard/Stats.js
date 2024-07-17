@@ -2,9 +2,11 @@ import React, { useEffect, useState } from "react";
 import { Chart as ChartJS, ArcElement, Tooltip, Legend } from "chart.js";
 import { useAppContext } from "../../context/appContext";
 import { getAllRecData } from "../../utils/studentRecordingMethods.js";
-import { getMessages } from "../../utils/messagesMethods.js";
 import { getAllAssignments } from "../../utils/assignmentsMethods.js";
-import { getUserFavourites } from "../../utils/usersMethods.js";
+import {
+  getUserFavourites,
+  getRecordingsPastWeek,
+} from "../../utils/usersMethods.js";
 import LessonCard from "../../components/LessonCard.js";
 import RecordingsProgressChart from "../../components/RecordingsProgressChart.js";
 import LevelsProgressChart from "../../components/LevelsProgressChart.js";
@@ -33,10 +35,11 @@ const Stats = () => {
   const [achievedStarsPerLevel, setAchievedStarsPerLevel] = useState(null);
   const [recentRecordings, setRecentRecordings] = useState(null);
   const [recentScores, setRecentScores] = useState({});
-  const [unreadMessages, setUnreadMessages] = useState(null);
   const [unansweredTasks, setUnansweredTasks] = useState(null);
   const [dueTasksContent, setDueTasksContent] = useState([]);
-  const [lastWeekRecordings, setLastWeekRecordings] = useState(null);
+  const [lastWeekRecordings, setLastWeekRecordings] = useState(
+    Array(7).fill(0)
+  );
   const [starPercentages, setStarPercentages] = useState(null);
   const [favourites, setFavourites] = useState(null);
 
@@ -109,7 +112,10 @@ const Stats = () => {
 
         const favs = await getUserFavourites(currentUser.id);
         setFavourites(favs); // Assuming setFavourites updates state with favorites
-        console.log("Got favourites: ", favs);
+
+        const recordingsPastWeek = await getRecordingsPastWeek(currentUser.id);
+        setLastWeekRecordings(recordingsPastWeek);
+        
       } catch (error) {
         console.log("Error fetching data: ", error);
       }
@@ -182,49 +188,9 @@ const Stats = () => {
             })
           );
           setRecordingScoresIds(result.map((recording) => recording.scoreID));
-
-          const today = new Date();
-          const lastWeek = new Date(today);
-          lastWeek.setDate(lastWeek.getDate() - 6); // Calculate the date 7 days ago
-
-          const countsPerDay = Array(7).fill(0);
-
-          // Filter the studentData array to get entries within the last week
-          result.forEach((recording) => {
-            const recordingDate = new Date(recording.recordingDate); // Assuming the date attribute is a string representation of a date
-
-            const dayOffset = Math.floor(
-              (today - recordingDate) / (1000 * 60 * 60 * 24)
-            );
-            const lastIndex = 6; // The last index of the array
-            const reverseIndex = lastIndex - dayOffset;
-
-            if (reverseIndex >= 0 && reverseIndex <= lastIndex) {
-              countsPerDay[reverseIndex]++;
-            }
-          });
-
-          setLastWeekRecordings(countsPerDay);
         })
         .catch((error) => {
           console.log(`Cannot get recordings from database: ${error}`);
-        });
-      getMessages(userData.id, userData.teacher)
-        .then((result) => {
-          var messageCount = 0;
-          //I have to filter the messages sent by the teacher that have seen=false
-          result.forEach((message, index) => {
-            // Check if the message is sent by the teacher and not seen
-            if (message.sender === userData.teacher && message.seen === false) {
-              messageCount = messageCount + 1;
-            }
-          });
-          setUnreadMessages(messageCount);
-        })
-        .catch((error) => {
-          console.log(
-            `Cannot get number of chat messages from database: ${error}`
-          );
         });
 
       getAllAssignments(userData.id)
@@ -423,11 +389,6 @@ const Stats = () => {
                 const isFavourite = favourites.some(
                   (fav) => fav.songId === lesson.id
                 );
-                console.log(favourites);
-                console.log(
-                  `Lesson ${index + 1} favourite value:`,
-                  isFavourite
-                ); // Log the value
 
                 return (
                   <LessonCard

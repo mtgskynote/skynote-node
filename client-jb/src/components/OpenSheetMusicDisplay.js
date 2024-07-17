@@ -651,10 +651,12 @@ class OpenSheetMusicDisplay extends Component {
     }
 
     const container = document.getElementById("osmdSvgPage1");
-    this.coords = [
-      container.getBoundingClientRect().width,
-      container.getBoundingClientRect().height,
-    ];
+    if (container) {
+      this.coords = [
+        container.getBoundingClientRect().width,
+        container.getBoundingClientRect().height,
+      ];
+    }
 
     //#region AUTO-SCROLL PART 2
     //THIS DEALS WITH THE AUTO-SCROLL OF THE CURSOR, IT MIGHT NOT BE THE MOST EFFICIENT WAY OF DOING IT
@@ -662,11 +664,18 @@ class OpenSheetMusicDisplay extends Component {
     if (scrolled === true) {
       scrolled = false;
       //this.osmd.render(); // update the OSMD instance after changing the zoom level
-      const [updatedPitchPositionX, updatedPitchPositionY, updatedNoteIndex] =
-        renderPitchLineZoom(this.osmd, this.state, this.zoom, this.showingRep);
-      this.setState({ pitchPositionX: updatedPitchPositionX });
-      this.setState({ pitchPositionY: updatedPitchPositionY });
-      this.setState({ recordedNoteIndex: updatedNoteIndex });
+      if (this.osmd.graphic?.measureList) {
+        const [updatedPitchPositionX, updatedPitchPositionY, updatedNoteIndex] =
+          renderPitchLineZoom(
+            this.osmd,
+            this.state,
+            this.zoom,
+            this.showingRep
+          );
+        this.setState({ pitchPositionX: updatedPitchPositionX });
+        this.setState({ pitchPositionY: updatedPitchPositionY });
+        this.setState({ recordedNoteIndex: updatedNoteIndex });
+      }
     }
     //////////////////////////////////////////////////////////
     //#endregion
@@ -755,68 +764,74 @@ class OpenSheetMusicDisplay extends Component {
       //Update color of notes, to be able to see them as well as update position X and Y for pitch track line points
       let copy_pitchPositionX = json.pitchX.slice();
       let copy_pitchPositionY = json.pitchY.slice();
-      let staves = this.osmd.graphic.measureList;
-      for (let stave_index = 0; stave_index < staves.length; stave_index++) {
-        let stave = staves[stave_index][0];
-        const staveLines =
-          document.getElementsByClassName("vf-stave")[stave_index];
-        const upperLineStave =
-          staveLines.children[0].getBoundingClientRect().top; //upper line
-        const middleLineStave =
-          staveLines.children[2].getBoundingClientRect().top; //middle line
-        const lowerLineStave =
-          staveLines.children[4].getBoundingClientRect().top; //lower line
-        const oneStepPixels = Math.abs(upperLineStave - lowerLineStave) / 4 / 2; //steps corresponding to one step in staff
-        for (
-          let note_index = 0;
-          note_index < stave.staffEntries.length;
-          note_index++
-        ) {
-          let note = stave.staffEntries[note_index];
-          let noteID = note.graphicalVoiceEntries[0].notes[0].getSVGId();
-          let noteNEWID = this.osmd.IDdict[noteID];
-          let noteX = note.graphicalVoiceEntries[0].notes[0]
-            .getSVGGElement()
-            .getBoundingClientRect().x;
-          //check for notehead color
-          const colorsArray = json.noteColors.slice();
-          const index = colorsArray.findIndex(
-            (item) => item[0][0] === noteNEWID && item[0][2] === this.showingRep
-          );
-          if (index !== -1) {
-            //note has a color assigned--> color notehead
-            // this is for all the notes except the quarter and whole notes
-            const svgElement =
-              note.graphicalVoiceEntries[0].notes[0].getSVGGElement();
-            svgElement.children[0].children[0].children[0].style.fill =
-              colorsArray[index][0][1]; // notehead
-            if (
-              svgElement &&
-              svgElement.children[0] &&
-              svgElement.children[0].children[0] &&
-              svgElement.children[0].children[1]
-            ) {
-              //this is for all the quarter and whole notes
+
+      if (this.osmd.graphic.measureList) {
+        let staves = this.osmd.graphic.measureList;
+        for (let stave_index = 0; stave_index < staves.length; stave_index++) {
+          let stave = staves[stave_index][0];
+          const staveLines =
+            document.getElementsByClassName("vf-stave")[stave_index];
+          const upperLineStave =
+            staveLines.children[0].getBoundingClientRect().top; //upper line
+          const middleLineStave =
+            staveLines.children[2].getBoundingClientRect().top; //middle line
+          const lowerLineStave =
+            staveLines.children[4].getBoundingClientRect().top; //lower line
+          const oneStepPixels =
+            Math.abs(upperLineStave - lowerLineStave) / 4 / 2; //steps corresponding to one step in staff
+          for (
+            let note_index = 0;
+            note_index < stave.staffEntries.length;
+            note_index++
+          ) {
+            let note = stave.staffEntries[note_index];
+            let noteID = note.graphicalVoiceEntries[0].notes[0].getSVGId();
+            let noteNEWID = this.osmd.IDdict[noteID];
+            let noteX = note.graphicalVoiceEntries[0].notes[0]
+              .getSVGGElement()
+              .getBoundingClientRect().x;
+            //check for notehead color
+            const colorsArray = json.noteColors.slice();
+            const index = colorsArray.findIndex(
+              (item) =>
+                item[0][0] === noteNEWID && item[0][2] === this.showingRep
+            );
+            if (index !== -1) {
+              //note has a color assigned--> color notehead
+              // this is for all the notes except the quarter and whole notes
+              const svgElement =
+                note.graphicalVoiceEntries[0].notes[0].getSVGGElement();
               svgElement.children[0].children[0].children[0].style.fill =
                 colorsArray[index][0][1]; // notehead
-              svgElement.children[0].children[1].children[0].style.fill =
-                colorsArray[index][0][1]; // notehead
+              if (
+                svgElement &&
+                svgElement.children[0] &&
+                svgElement.children[0].children[0] &&
+                svgElement.children[0].children[1]
+              ) {
+                //this is for all the quarter and whole notes
+                svgElement.children[0].children[0].children[0].style.fill =
+                  colorsArray[index][0][1]; // notehead
+                svgElement.children[0].children[1].children[0].style.fill =
+                  colorsArray[index][0][1]; // notehead
+              }
             }
-          }
-          //check for pitch tracking line
-          for (let index = 0; index < copy_pitchPositionX.length; index++) {
-            if (AUXrecordedNoteIds[index] === noteID) {
-              //this note has been recorded
-              let midiToStaffStep = midi2StaffGaps(
-                freq2midipitch(json.pitchTrackPoints[index])
-              );
-              copy_pitchPositionX[index] = noteX;
-              copy_pitchPositionY[index] =
-                middleLineStave + midiToStaffStep * oneStepPixels;
+            //check for pitch tracking line
+            for (let index = 0; index < copy_pitchPositionX.length; index++) {
+              if (AUXrecordedNoteIds[index] === noteID) {
+                //this note has been recorded
+                let midiToStaffStep = midi2StaffGaps(
+                  freq2midipitch(json.pitchTrackPoints[index])
+                );
+                copy_pitchPositionX[index] = noteX;
+                copy_pitchPositionY[index] =
+                  middleLineStave + midiToStaffStep * oneStepPixels;
+              }
             }
           }
         }
       }
+
       //Save in state the new pitch track line X and Y point positions
       this.setState({ pitchPositionX: copy_pitchPositionX });
       this.setState({ pitchPositionY: copy_pitchPositionY });

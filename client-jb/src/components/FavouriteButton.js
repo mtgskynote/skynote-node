@@ -33,7 +33,7 @@ const FavouriteButton = ({ songId, initialIsFavourite, refreshData }) => {
         );
         setIsFavourite(true); // Update state optimistically
       }
-      refreshData();
+      if (refreshData) refreshData();
     } catch (error) {
       console.error(error);
     }

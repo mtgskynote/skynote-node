@@ -127,4 +127,45 @@ const removeFavourite = async (req, res) => {
   }
 };
 
-export { changePassword, updateProfileData, addFavourite, removeFavourite };
+// Endpoint handler to update recordingsPastWeek
+const updateRecordingsPastWeek = async (req, res, next) => {
+  const userId = req.params.userId;
+
+  // Validate userId
+  if (!mongoose.Types.ObjectId.isValid(userId)) {
+    return res.status(400).json({ error: "Invalid userId format" });
+  }
+
+  try {
+    const user = await User.findById(userId);
+    if (!user) {
+      return res
+        .status(404)
+        .json({ error: `User with ID ${userId} not found` });
+    }
+
+    // Update recordingsPastWeek (increment the last element)
+    const lastIndex = user.recordingsPastWeek.length - 1;
+    user.recordingsPastWeek[lastIndex] += 1;
+    await user.save();
+
+    console.log(`Successfully updated recordings for user with ID ${userId}`);
+    return res.status(200).json({ message: "Recordings updated successfully" });
+  } catch (error) {
+    console.error(
+      `Error updating recordings for user with ID ${userId}:`,
+      error
+    );
+    return res
+      .status(500)
+      .json({ error: `Internal Server Error: ${error.message}` });
+  }
+};
+
+export {
+  changePassword,
+  updateProfileData,
+  addFavourite,
+  removeFavourite,
+  updateRecordingsPastWeek,
+};

@@ -3,13 +3,13 @@ import { HotKeys } from "react-hotkeys";
 import { useParams, useNavigate } from "react-router-dom";
 import OpenSheetMusicDisplay from "./OpenSheetMusicDisplay";
 import ControlBar from "./ControlBar.js";
-import { makeAudioStreamer, destroyAudioStreamer } from "./audioStreamer.js";
+import { makeAudioStreamer } from "./audioStreamer.js";
 import CountDownTimer from "./CountDownTimer.js";
-//import { log } from "@tensorflow/tfjs";
 import Queue from "../utils/QueueWithMaxLength";
 import PopUpWindow from "./PopUpWindow.js";
 import XMLParser from "react-xml-parser";
 import { putRecording } from "../utils/studentRecordingMethods.js";
+import { updateRecordingsPastWeek } from "../utils/usersMethods.js";
 import { Buffer } from "buffer";
 import { useAppContext } from "../context/appContext";
 import {
@@ -205,8 +205,9 @@ const ProgressPlayFile = () => {
     // Upload info to database
     try {
       await putRecording(jsonComplete);
+      await updateRecordingsPastWeek(userData.id);
     } catch (error) {
-      console.log(`error in putRecording`, error);
+      console.error("Error handling download:", error);
     }
   }
 
