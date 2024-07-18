@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import AnyMessageCSS from './AnyMessage.module.css'
 
 const Message = (props) => {
@@ -15,6 +15,10 @@ const Message = (props) => {
   )
 
   return Message
+}
+
+Message.propTypes = {
+  message: PropTypes.string.isRequired,
 }
 
 export default Message

@@ -1,5 +1,6 @@
 import React from 'react'
 import { useNavigate } from 'react-router-dom'
+import PropTypes from 'prop-types'
 import Card from '@mui/material/Card'
 import CardContent from '@mui/material/CardContent'
 
@@ -70,6 +71,13 @@ const AssignmentCard = ({ assignmentId, daysLeft, dueDate, score }) => {
       </CardContent>
     </Card>
   )
+}
+
+AssignmentCard.propTypes = {
+  assignmentId: PropTypes.string.,
+  daysLeft: ,
+  dueDate: ,
+  score: ,
 }
 
 export default AssignmentCard
