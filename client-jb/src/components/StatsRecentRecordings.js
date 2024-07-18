@@ -21,7 +21,7 @@ const StatsRecentRecordings = (props) => {
   const navigate = useNavigate()
 
   // Event handler for click on See
-  const handleSeeClick = (nameOfFile, number) => {
+  const handleSeeClick = (nameOfFile) => {
     const id = recordingIds[recordingNames.indexOf(nameOfFile)]
     const score = recordingScoresXML[recordingNames.indexOf(nameOfFile)]
     //Pass recording ID to ProgressPlayfileVisual
@@ -29,7 +29,7 @@ const StatsRecentRecordings = (props) => {
   }
 
   // Event handler for click on Trash
-  const handleTrashClick = (nameOfFile, number) => {
+  const handleTrashClick = (nameOfFile) => {
     if (recordingNames.indexOf(nameOfFile) !== -1) {
       const idToDelete = recordingIds[recordingNames.indexOf(nameOfFile)]
       //delete from all arrays

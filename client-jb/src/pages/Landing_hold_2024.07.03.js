@@ -1,3 +1,4 @@
+import React from 'react'
 import skynote_demo from '../assets/videos/SNDemo-3.mp4'
 import BackgroundImage from '../components/BackgroundImage'
 import WhiteLogo from '../components/WhiteLogo'

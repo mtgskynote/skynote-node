@@ -22,8 +22,8 @@ const makePieStructure = function (
   center = { x: 0, y: 0 },
   radius = 100,
   labels = def_labels,
-  m_width = 200,
-  m_height = 200,
+  // m_width = 200,
+  // m_height = 200,
   segments = def_segments
 ) {
   for (let i = 0; i < 3; i++) {
@@ -120,9 +120,9 @@ const PieChart = ({
 }) => {
   const svgRef = useRef(null)
 
-  var updateSegments = function (foo) {
-    console.log('calling piechart updatesegments')
-  }
+  // var updateSegments = function (foo) {
+  //   console.log('calling piechart updatesegments')
+  // }
 
   var pie = {
     numSegments: segments.length,

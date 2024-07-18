@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from 'react'
-import { useLocation } from 'react-router-dom'
 import PopUpWindowCSS from './PopUpWindow.module.css'
 import StatsRecentCSS from './StatsRecentRecordings.module.css'
 import { getRecData } from '../utils/studentRecordingMethods.js'
@@ -57,6 +56,7 @@ const PopUpWindowRecordings = (props) => {
   const handleClose = () => {
     props.handlerBack('close')
   }
+
   const handleSubmitRecording = (option, index) => {
     if (option === 'check') {
       setCheckOption(true)
@@ -71,7 +71,7 @@ const PopUpWindowRecordings = (props) => {
           userId,
           scoreId,
           recordingIds[recordingIndexSubmit]
-        ).then((result) => {
+        ).then(() => {
           window.location.reload()
         })
       } else {

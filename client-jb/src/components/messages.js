@@ -150,7 +150,7 @@ const Messages = (props) => {
           </div>
           <div className={AssignmentsCSS.chat}>
             {userChat !== null ? (
-              Object.values(userChat).map((message, index) => {
+              Object.values(userChat).map((message) => {
                 return message.student ? (
                   <div className={AssignmentsCSS.chatItemStudent}>
                     {message.message}

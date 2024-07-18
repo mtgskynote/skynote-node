@@ -1,3 +1,4 @@
+import React from 'react'
 import { Logo } from '../components' // Named export
 import main from '../assets/images/main.svg'
 import Wrapper from '../assets/wrappers/Testing'

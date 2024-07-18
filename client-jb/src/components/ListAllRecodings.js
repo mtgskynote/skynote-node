@@ -142,7 +142,7 @@ const ListAllRecordings = () => {
   }
 
   // Event handler for click on Trash
-  const handleTrashClick = (nameOfFile, index) => {
+  const handleTrashClick = (nameOfFile) => {
     if (recordingNames.indexOf(nameOfFile) !== -1) {
       const idToDelete =
         recordingList[recordingNames.indexOf(nameOfFile)].recordingId

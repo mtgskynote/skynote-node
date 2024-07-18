@@ -1,9 +1,5 @@
 import React, { useState, useRef } from 'react'
-import {
-  getAudioContext,
-  suspendAudioContext,
-  resumeAudioContext,
-} from '../context/audioContext'
+import { getAudioContext } from '../context/audioContext'
 
 const AudioPlayer = () => {
   const [audioBuffer, setAudioBuffer] = useState(null)

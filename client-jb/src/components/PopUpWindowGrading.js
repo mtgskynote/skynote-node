@@ -1,3 +1,4 @@
+import React from 'react'
 import PopUpWindowCSS from './PopUpWindow.module.css'
 
 const PopUpWindowGrading = (props) => {

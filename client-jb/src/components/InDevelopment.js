@@ -1,12 +1,9 @@
 import React from 'react'
 import img from '../assets/images/pencil_violin.png'
 
-const InDevelopment = (width = '100px') => {
+const InDevelopment = () => {
   return (
-    <div
-      className={'relative rounded overflow-hidden w-full'}
-      //style={{ width: width, aspectRatio: '2 / 3' }}
-    >
+    <div className={'relative rounded overflow-hidden w-full'}>
       <div className="flex items-center justify-center">
         <div className="relative flex items-center resizable p-4 bg-white">
           <div className="flex flex-col items-start">

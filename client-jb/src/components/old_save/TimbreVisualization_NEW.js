@@ -1,6 +1,6 @@
-import React, { useEffect, useState } from 'react'
+import React from 'react'
 import PieChart from './pieChart'
-import { makeAudioStreamer, getPitch } from './audioStreamer.js'
+import { makeAudioStreamer } from './audioStreamer.js'
 import Queue from '../utils/QueueWithMaxLength'
 
 const labels = ['pitch', 'rms', 'energy', 'spectralCentroid']

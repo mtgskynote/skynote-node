@@ -22,8 +22,8 @@ const makePieStructure = function (
   center = { x: 0, y: 0 },
   radius = 100,
   labels = def_labels,
-  m_width = 200,
-  m_height = 200,
+  // m_width = 200,
+  // m_height = 200,
   segments = def_segments
 ) {
   for (let i = 0; i < 3; i++) {
@@ -119,7 +119,7 @@ const PieChart = React.forwardRef(
       radius = 100,
       m_width = 200,
       m_height = 200,
-      onLoad, // Ensure onLoad is declared as a prop
+      // onLoad, // Ensure onLoad is declared as a prop
     },
     ref
   ) => {

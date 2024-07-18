@@ -1,3 +1,4 @@
+import React from 'react'
 import violinImg from '../assets/images/violin/violinDisplay.jpg'
 import { Card, Button } from 'react-bootstrap'
 import { Link } from 'react-router-dom'

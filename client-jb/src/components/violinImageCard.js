@@ -1,3 +1,4 @@
+import React from 'react'
 import logo from '../assets/images/new_logo_2023.jpg'
 import violinImg from '../assets/images/violin/violinDisplay.jpg'
 import { Card, Button } from 'react-bootstrap'

@@ -1,13 +1,12 @@
 import React, { useEffect, useState } from 'react'
-import { useParams } from 'react-router-dom'
 import PieChart from './pieChart'
 //import { useControlBar } from "./controlbar";
-import { makeAudioStreamer, getPitch } from './audioStreamer.js'
+import { makeAudioStreamer } from './audioStreamer.js'
 import Queue from '../utils/QueueWithMaxLength'
 
-const randInt = function (min, max) {
-  return Math.floor(min + (max + 1 - min) * Math.random())
-}
+// const randInt = function (min, max) {
+//   return Math.floor(min + (max + 1 - min) * Math.random())
+// }
 
 const TimbreVisualization = () => {
   console.log(`STARTING Timbre Visualization, about to create audio streamer.`)

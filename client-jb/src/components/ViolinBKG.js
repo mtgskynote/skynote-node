@@ -1,3 +1,4 @@
+import React from 'react'
 import violinBKG from '../assets/images/violinBKG.jpeg'
 
 const ViolinBKG = ({ height, width }) => {

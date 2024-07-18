@@ -1,6 +1,7 @@
+import React from 'react'
 import new_logo_2023 from '../assets/images/new_logo_2023.jpg'
 
-const WhiteLogo = ({ height, width }) => {
+const WhiteLogo = () => {
   return (
     <img
       src={new_logo_2023}

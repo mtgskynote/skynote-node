@@ -1,3 +1,4 @@
+import React from 'react'
 import iphone_border from '../assets/images/iphone_border.png'
 
 const IphoneBorder = ({ height, width }) => {

@@ -22,7 +22,7 @@ import Messages from './messages.js'
 import LoadingScreen from './LoadingScreen.js'
 import Error from './Error.js'
 
-const Assignments = (props) => {
+const Assignments = () => {
   const navigate = useNavigate()
   const { getCurrentUser } = useAppContext()
 

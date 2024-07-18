@@ -27,7 +27,7 @@ let isScrolling
 let scrolled = false
 window.addEventListener(
   'scroll',
-  function (event) {
+  function () {
     // Clear our timeout throughout the scroll
     window.clearTimeout(isScrolling)
 
@@ -265,7 +265,7 @@ class OpenSheetMusicDisplay extends Component {
       new BasicAudioPlayer(),
       undefined
     )
-    const handleSelectionEndReached = (o) => {
+    const handleSelectionEndReached = () => {
       console.log('end')
       // Update the flag when the event occurs
       this.selectionEndReached = true
@@ -276,12 +276,12 @@ class OpenSheetMusicDisplay extends Component {
     }
     var myListener = {
       selectionEndReached: handleSelectionEndReached,
-      resetOccurred: function (o) {},
+      resetOccurred: function () {},
       cursorPositionChanged: function (timestamp, data) {},
-      pauseOccurred: function (o) {
+      pauseOccurred: function () {
         console.log('pause')
       },
-      notesPlaybackEventOccurred: function (o) {},
+      notesPlaybackEventOccurred: function () {},
     }
     this.playbackManager.addListener(myListener)
 

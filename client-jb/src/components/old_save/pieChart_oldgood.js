@@ -1,4 +1,4 @@
-import React, { useRef, useEffect, useState } from 'react'
+import React, { useRef, useEffect } from 'react'
 const static_xmlns = 'http://www.w3.org/2000/svg'
 
 // ---------  Constants  --------------------------//
@@ -22,8 +22,8 @@ const makePieStructure = function (
   center = { x: 0, y: 0 },
   radius = 100,
   labels = def_labels,
-  m_width = 200,
-  m_height = 200,
+  // m_width = 200,
+  // m_height = 200,
   segments = def_segments
 ) {
   for (let i = 0; i < 3; i++) {

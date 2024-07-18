@@ -1,5 +1,7 @@
+import React from 'react'
 import musictech from '../assets/images/musictech.jpg'
-const MusicTech = ({ height, width }) => {
+
+const MusicTech = () => {
   return (
     <img
       src={musictech}

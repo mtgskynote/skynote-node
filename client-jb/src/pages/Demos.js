@@ -1,3 +1,4 @@
+import React from 'react'
 import ViolinIpad from '../components/violinipad.js'
 import { Link } from 'react-router-dom'
 import 'bootstrap/dist/css/bootstrap.min.css'
