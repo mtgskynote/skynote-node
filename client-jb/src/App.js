@@ -31,6 +31,20 @@ import Assignments from "./components/Assignments";
 import Apitesting from "./components/apitesting";
 import Error from "./components/Error";
 
+import {
+  ThemeProvider,
+  createTheme,
+  makeStyles,
+} from "@material-ui/core/styles";
+
+const theme = createTheme();
+
+const useStyles = makeStyles((theme) => {
+  root: {
+    // some css that access to theme
+  }
+});
+
 function App() {
   const { logoutUser } = useAppContext();
 
@@ -88,56 +102,58 @@ function App() {
   }, []);
 
   return (
-    <div>
-      <ErrorBoundary>
-        <div className="App">
-          <BrowserRouter>
-            <Routes>
-              <Route
-                path="/"
-                element={
-                  <ProtectedRoute>
-                    <SharedLayout />
-                  </ProtectedRoute>
-                }
-              >
-                <Route index element={<Stats />} />
-                <Route path="profile" element={<Profile />} />
-                <Route path="apitesting" element={<Apitesting />} />
-                <Route path="lessons" element={<Lessons />} />
-                {/* <Route path="imported-scores" element={<ImportedScores />} /> */}
+    <ThemeProvider theme={theme}>
+      <div>
+        <ErrorBoundary>
+          <div className="App">
+            <BrowserRouter>
+              <Routes>
                 <Route
-                  path="all-lessons/:files"
-                  element={<ProgressPlayFile />}
-                />
-                <Route path="/levels/levelone" element={<LevelOne />} />
-                <Route path="/levels/leveltwo" element={<LevelTwo />} />
-                <Route path="/levels/levelthree" element={<LevelThree />} />
-                <Route
-                  path="/TimbreVisualization"
-                  element={<TimbreVisualization />}
-                />
-                <Route path="/Assignments" element={<Assignments />} />
-                <Route path="/ListRecordings" element={<ListRecordings />} />
-                <Route
-                  path="ListRecordings/:files"
-                  element={<ProgressPlayFileVisual mode="visual" />}
-                />
-                <Route path="myrecordings" element={<ListAllRecordings />} />
-              </Route>
+                  path="/"
+                  element={
+                    <ProtectedRoute>
+                      <SharedLayout />
+                    </ProtectedRoute>
+                  }
+                >
+                  <Route index element={<Stats />} />
+                  <Route path="profile" element={<Profile />} />
+                  <Route path="apitesting" element={<Apitesting />} />
+                  <Route path="lessons" element={<Lessons />} />
+                  {/* <Route path="imported-scores" element={<ImportedScores />} /> */}
+                  <Route
+                    path="all-lessons/:files"
+                    element={<ProgressPlayFile />}
+                  />
+                  <Route path="/levels/levelone" element={<LevelOne />} />
+                  <Route path="/levels/leveltwo" element={<LevelTwo />} />
+                  <Route path="/levels/levelthree" element={<LevelThree />} />
+                  <Route
+                    path="/TimbreVisualization"
+                    element={<TimbreVisualization />}
+                  />
+                  <Route path="/Assignments" element={<Assignments />} />
+                  <Route path="/ListRecordings" element={<ListRecordings />} />
+                  <Route
+                    path="ListRecordings/:files"
+                    element={<ProgressPlayFileVisual mode="visual" />}
+                  />
+                  <Route path="myrecordings" element={<ListAllRecordings />} />
+                </Route>
 
-              <Route path="/AudioPlayer" element={<AudioPlayer />} />
-              <Route path="/register" element={<Register />} />
-              <Route path="/ourteam" element={<OurTeam />} />
-              <Route path="/research" element={<Research />} />
-              <Route path="/demos" element={<Demos />} />
-              <Route path="/landing" element={<Landing />} />
-              <Route path="*" element={<Error type={"404"} />} />
-            </Routes>
-          </BrowserRouter>
-        </div>
-      </ErrorBoundary>
-    </div>
+                <Route path="/AudioPlayer" element={<AudioPlayer />} />
+                <Route path="/register" element={<Register />} />
+                <Route path="/ourteam" element={<OurTeam />} />
+                <Route path="/research" element={<Research />} />
+                <Route path="/demos" element={<Demos />} />
+                <Route path="/landing" element={<Landing />} />
+                <Route path="*" element={<Error type={"404"} />} />
+              </Routes>
+            </BrowserRouter>
+          </div>
+        </ErrorBoundary>
+      </div>
+    </ThemeProvider>
   );
 }
 

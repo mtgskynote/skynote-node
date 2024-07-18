@@ -49,15 +49,14 @@ const connectDB = async (url) => {
     console.log("private key not found from .env file");
   }
 
-
-  console.log(`Let's try to connect to ${url}`)
+  console.log(`Let's try to connect to ${url}`);
 
   const connectionDone = mongoose
     .connect(
       url,
       {
-        useNewUrlParser: true,
-        useUnifiedTopology: true,
+        // useNewUrlParser: true,
+        // useUnifiedTopology: true,
       }
       // ,
       // (err) => {
