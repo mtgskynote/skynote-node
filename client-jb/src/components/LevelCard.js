@@ -1,5 +1,5 @@
-import React from "react";
-import SubLevelCard from "./SubLevelCard";
+import React from 'react'
+import SubLevelCard from './SubLevelCard'
 
 const LevelCard = ({
   levelName,
@@ -12,20 +12,20 @@ const LevelCard = ({
   baseSubLevelIndex,
 }) => {
   const countStars = (subLevelLessons) => {
-    let starCount = 0;
+    let starCount = 0
     subLevelLessons.forEach((lesson) => {
-      starCount += lesson.stars;
-    });
-    return starCount;
-  };
+      starCount += lesson.stars
+    })
+    return starCount
+  }
 
   // Check if all arrays within levelLessons are empty
   const isEmpty = Object.keys(levelLessons).every(
     (skill) => levelLessons[skill].length === 0
-  );
+  )
 
   if (isEmpty) {
-    return null;
+    return null
   }
 
   return (
@@ -64,7 +64,7 @@ const LevelCard = ({
         )}
       </div>
     </div>
-  );
-};
+  )
+}
 
-export default LevelCard;
+export default LevelCard

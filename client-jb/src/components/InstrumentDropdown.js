@@ -1,58 +1,58 @@
-import React, { useState, useEffect, useRef } from "react";
-import ArrowDropDownIcon from "@mui/icons-material/ArrowDropDown";
-import ArrowDropUpIcon from "@mui/icons-material/ArrowDropUp";
-import { FaMicrophone } from "react-icons/fa";
-import { GiViolin } from "react-icons/gi";
-import { useAppContext } from "../context/appContext";
+import React, { useState, useEffect, useRef } from 'react'
+import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown'
+import ArrowDropUpIcon from '@mui/icons-material/ArrowDropUp'
+import { FaMicrophone } from 'react-icons/fa'
+import { GiViolin } from 'react-icons/gi'
+import { useAppContext } from '../context/appContext'
 
 const InstrumentDropdown = () => {
   const instruments = [
-    { name: "violin", icon: <GiViolin />, disabled: false },
-    { name: "voice", icon: <FaMicrophone />, disabled: true },
-  ];
+    { name: 'violin', icon: <GiViolin />, disabled: false },
+    { name: 'voice', icon: <FaMicrophone />, disabled: true },
+  ]
 
-  const [isOpen, setIsOpen] = useState(false);
-  const [selectedInstrument, setSelectedInstrument] = useState(instruments[0]);
-  const dropdownRef = useRef(null);
+  const [isOpen, setIsOpen] = useState(false)
+  const [selectedInstrument, setSelectedInstrument] = useState(instruments[0])
+  const dropdownRef = useRef(null)
 
   const { setInstrumentLocalStorage, getInstrumentLocalStorage } =
-    useAppContext();
+    useAppContext()
 
   // Handle the selection of an instrument from the dropdown
   const handleSelect = (instrument) => {
     if (!instrument.disabled) {
-      setSelectedInstrument(instrument);
-      setInstrumentLocalStorage(instrument.name);
-      setIsOpen(false);
+      setSelectedInstrument(instrument)
+      setInstrumentLocalStorage(instrument.name)
+      setIsOpen(false)
     }
-  };
+  }
 
   // Handle when a click is made outside the dropdown
   const handleClickOutside = (event) => {
     if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
-      setIsOpen(false);
+      setIsOpen(false)
     }
-  };
+  }
 
   // Add and clean up the event listener for clicks outside the dropdown
   useEffect(() => {
-    document.addEventListener("mousedown", handleClickOutside);
+    document.addEventListener('mousedown', handleClickOutside)
     return () => {
-      document.removeEventListener("mousedown", handleClickOutside);
-    };
-  }, []);
+      document.removeEventListener('mousedown', handleClickOutside)
+    }
+  }, [])
 
   // useEffect hook to retrieve the saved instrument from local storage and set it as the selected instrument
   useEffect(() => {
-    let savedInstrument = getInstrumentLocalStorage();
-    if (savedInstrument === "undefined" || !savedInstrument) {
-      savedInstrument = instruments[0].name;
-      setInstrumentLocalStorage(savedInstrument);
+    let savedInstrument = getInstrumentLocalStorage()
+    if (savedInstrument === 'undefined' || !savedInstrument) {
+      savedInstrument = instruments[0].name
+      setInstrumentLocalStorage(savedInstrument)
     }
     setSelectedInstrument(
       instruments.find((instrument) => instrument.name === savedInstrument)
-    );
-  }, []);
+    )
+  }, [])
 
   return (
     <div className="relative" ref={dropdownRef}>
@@ -73,11 +73,11 @@ const InstrumentDropdown = () => {
             <div
               key={index}
               className={`px-4 py-2 ${
-                selectedInstrument === instrument ? "bg-gray-200" : ""
+                selectedInstrument === instrument ? 'bg-gray-200' : ''
               } ${
                 instrument.disabled
-                  ? "text-gray-500 cursor-not-allowed"
-                  : "hover:bg-gray-100 cursor-pointer"
+                  ? 'text-gray-500 cursor-not-allowed'
+                  : 'hover:bg-gray-100 cursor-pointer'
               }`}
               onClick={() => handleSelect(instrument)}
             >
@@ -88,7 +88,7 @@ const InstrumentDropdown = () => {
         </div>
       )}
     </div>
-  );
-};
+  )
+}
 
-export default InstrumentDropdown;
+export default InstrumentDropdown

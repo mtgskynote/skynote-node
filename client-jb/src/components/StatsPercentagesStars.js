@@ -1,44 +1,37 @@
-import React, { useEffect, useState } from "react";
-import { Bar } from 'react-chartjs-2';
+import React, { useEffect, useState } from 'react'
+import { Bar } from 'react-chartjs-2'
 import percentagesStarsStatsCSS from './StatsPercentagesStars.module.css'
 import {
-    Chart as ChartJS,
-    CategoryScale,
-    LinearScale,
-    BarElement,
-    Title,
-    Tooltip,
-    Legend,
-  } from 'chart.js';
-  
-ChartJS.register(
-    CategoryScale,
-    LinearScale,
-    BarElement,
-    Title,
-    Tooltip,
-    Legend
-);
+  Chart as ChartJS,
+  CategoryScale,
+  LinearScale,
+  BarElement,
+  Title,
+  Tooltip,
+  Legend,
+} from 'chart.js'
+
+ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend)
 
 const PercentagesStarsStats = (props) => {
-  const [percentagesLevel, setPercentagesLevel] = useState(null);
+  const [percentagesLevel, setPercentagesLevel] = useState(null)
 
   useEffect(() => {
-    const total = props.starsPerLevel;
-    const achieved = props.achievedStarsPerLevel;
+    const total = props.starsPerLevel
+    const achieved = props.achievedStarsPerLevel
 
     if (total !== null && achieved !== null) {
-      let percentages = {};
+      let percentages = {}
       for (const level in total) {
         if (achieved[level] === undefined) {
-          percentages[level] = 0;
+          percentages[level] = 0
         } else {
-          percentages[level] = (achieved[level] * 100) / total[level];
+          percentages[level] = (achieved[level] * 100) / total[level]
         }
       }
-      setPercentagesLevel(percentages);
+      setPercentagesLevel(percentages)
     }
-  }, [props]);
+  }, [props])
 
   const data = {
     labels: Object.keys(percentagesLevel || {}),
@@ -51,14 +44,14 @@ const PercentagesStarsStats = (props) => {
         borderWidth: 5,
       },
     ],
-  };
+  }
 
   const options = {
     scales: {
       x: {
         beginAtZero: true,
         max: 100, // Set max value to 100
-        min: 0,  // Set min value to 0
+        min: 0, // Set min value to 0
         ticks: {
           stepSize: 25, // Set the step size for x-axis ticks
         },
@@ -75,19 +68,14 @@ const PercentagesStarsStats = (props) => {
         },
       },
     },
-  };
+  }
 
   return (
     <div className={percentagesStarsStatsCSS.content}>
-      <h4 className={percentagesStarsStatsCSS.title}>
-      
-        Progress 
-        
-      </h4>
+      <h4 className={percentagesStarsStatsCSS.title}>Progress</h4>
       <Bar data={data} options={options} />
     </div>
-  );
-};
+  )
+}
 
-export default PercentagesStarsStats;
-    
+export default PercentagesStarsStats

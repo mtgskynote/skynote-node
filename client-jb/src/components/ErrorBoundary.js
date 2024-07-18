@@ -1,24 +1,24 @@
-import React, { Component } from "react";
-import Error from "./Error";
+import React, { Component } from 'react'
+import Error from './Error'
 
 class ErrorBoundary extends Component {
   constructor(props) {
-    super(props);
-    this.state = { hasError: false };
+    super(props)
+    this.state = { hasError: false }
   }
 
   componentDidCatch(error, info) {
-    this.setState({ hasError: true });
+    this.setState({ hasError: true })
     // Log the error to an error reporting service
   }
 
   render() {
     if (this.state.hasError) {
       // Return a fallback UI for the error state
-      return <Error message={"Something went wrong."} />;
+      return <Error message={'Something went wrong.'} />
     }
-    return this.props.children;
+    return this.props.children
   }
 }
 
-export default ErrorBoundary;
+export default ErrorBoundary

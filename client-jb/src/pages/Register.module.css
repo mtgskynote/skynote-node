@@ -1,155 +1,155 @@
 .fullPage {
-    display: grid;
-    align-items: center;
+  display: grid;
+  align-items: center;
 }
 .logo {
-    display: block;
-    margin: 0 auto;
-    margin-bottom: 1.38rem;
-    width: 175px;
-    height: 75px;
+  display: block;
+  margin: 0 auto;
+  margin-bottom: 1.38rem;
+  width: 175px;
+  height: 75px;
 }
 .regForm {
-    width: 90vw;
-    max-width: 400px;
-    border-top: 5px solid var(--primary-500);
-    background: var(--white);
-    border-radius: var(--borderRadius);
-    box-shadow: var(--shadow-2);
-    padding: 2rem 2.5rem;
-    margin: 3rem auto;
-    transition: var(--transition);
-    /* display: flex; */
-    justify-content: center;
-    align-items: center;
-} 
+  width: 90vw;
+  max-width: 400px;
+  border-top: 5px solid var(--primary-500);
+  background: var(--white);
+  border-radius: var(--borderRadius);
+  box-shadow: var(--shadow-2);
+  padding: 2rem 2.5rem;
+  margin: 3rem auto;
+  transition: var(--transition);
+  /* display: flex; */
+  justify-content: center;
+  align-items: center;
+}
 
 .regForm h3 {
-    text-align: center;
+  text-align: center;
 }
 
-.siteHeader{
-    background-color: #23292B; 
-    height: 70px; 
-    width: 100%; 
-    position: fixed; 
-    top: 0; 
-    left: 0; 
-    z-index: 9999; 
+.siteHeader {
+  background-color: #23292b;
+  height: 70px;
+  width: 100%;
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 9999;
 }
-.tabRow{
-    display: flex; 
-    justify-content: center; 
-    align-items: center; 
-    height: 3rem; 
-    background-color: transparent;
-    border-radius: 25px;
+.tabRow {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 3rem;
+  background-color: transparent;
+  border-radius: 25px;
 }
-.tabLogin{
-    display: flex; 
-    justify-content: center; 
-    align-items: center; 
-    height: 2.5rem; 
-    background-color: transparent;
-    border-radius: 20px;
-    margin-right: 0;
-    width: auto;
+.tabLogin {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 2.5rem;
+  background-color: transparent;
+  border-radius: 20px;
+  margin-right: 0;
+  width: auto;
 }
-.tabLogin:hover{
-    background-color:white;
-    transition: 1;
-}
-
-.tabRowContainer{
-    display: flex; 
-    justify-content: flex-end; 
-    width: min-width; 
-    position: absolute; 
-    margin-right: 20px;
-    margin-top: 5px;
-    margin-bottom: 10px;
-    top: 0;
-    right: 0; 
-    padding: 5px 5px;
+.tabLogin:hover {
+  background-color: white;
+  transition: 1;
 }
 
-.tabLink{
-    margin: 0 0.5rem; 
-    padding: 0.5rem 1rem; 
-    background-color: transparent; 
-    font-family: var(--lato);
-    border: none; 
-    color: var(--blue-300);
-    font-weight: 700; 
-    text-decoration: none; 
-    cursor: pointer; 
-    font-size: 16px;
+.tabRowContainer {
+  display: flex;
+  justify-content: flex-end;
+  width: min-width;
+  position: absolute;
+  margin-right: 20px;
+  margin-top: 5px;
+  margin-bottom: 10px;
+  top: 0;
+  right: 0;
+  padding: 5px 5px;
 }
 
-.logoContainer{
-    position: absolute;
-    width: 20%;
-    height: 20%; 
-    top: 20%; 	
-    left: 10px;
-    align-items: center; 
-    justify-content: flex-start;
-    /* padding: 20px;  */
+.tabLink {
+  margin: 0 0.5rem;
+  padding: 0.5rem 1rem;
+  background-color: transparent;
+  font-family: var(--lato);
+  border: none;
+  color: var(--blue-300);
+  font-weight: 700;
+  text-decoration: none;
+  cursor: pointer;
+  font-size: 16px;
 }
-.skynoteContainer{
-    position: absolute; 
-    height: 60px;
-    top: 0;
-    left: 0; 
-    margin-left: 8%;
-    margin-top: 3px;
-    text-align: left;
-    color: var(--blue-300); 
-    text-align: center;
-    font-size: 50px;
-    font-family: var(--lato);
-    font-style: normal;
-    font-weight: 400;
-    line-height: normal;
-    z-index: 1;
+
+.logoContainer {
+  position: absolute;
+  width: 20%;
+  height: 20%;
+  top: 20%;
+  left: 10px;
+  align-items: center;
+  justify-content: flex-start;
+  /* padding: 20px;  */
+}
+.skynoteContainer {
+  position: absolute;
+  height: 60px;
+  top: 0;
+  left: 0;
+  margin-left: 8%;
+  margin-top: 3px;
+  text-align: left;
+  color: var(--blue-300);
+  text-align: center;
+  font-size: 50px;
+  font-family: var(--lato);
+  font-style: normal;
+  font-weight: 400;
+  line-height: normal;
+  z-index: 1;
 }
 
 .regForm p {
-    color: var(--primary-500);
-    margin: 0;
-    margin-top: 1rem;
-    text-align: center;
+  color: var(--primary-500);
+  margin: 0;
+  margin-top: 1rem;
+  text-align: center;
 }
 .btn {
-    margin-top: 2rem;
+  margin-top: 2rem;
 }
 .memberBtn {
-    background: transparent;
-    border: transparent;
-    color: var(--primary-500);
-    cursor: pointer;
-    letter-spacing: var(--letterSpacing);
+  background: transparent;
+  border: transparent;
+  color: var(--primary-500);
+  cursor: pointer;
+  letter-spacing: var(--letterSpacing);
 }
 .memberBtn:hover {
-    background-color: white;
+  background-color: white;
 }
 .logo {
-    padding: 0% 50%;
-    margin: 10%;
+  padding: 0% 50%;
+  margin: 10%;
 }
 img {
-    align-self: center;
+  align-self: center;
 }
 .googleBtn {
-    padding: 5px;
-    width: 100%;
-    border: transparent;
-    background-color: transparent;
-    border-radius: 0.5rem;
-    color: var(--primary-500);
-    transition: all 0.4s;
-    cursor: pointer;
+  padding: 5px;
+  width: 100%;
+  border: transparent;
+  background-color: transparent;
+  border-radius: 0.5rem;
+  color: var(--primary-500);
+  transition: all 0.4s;
+  cursor: pointer;
 }
 .googleBtn:hover {
-    background-color: white;
+  background-color: white;
 }

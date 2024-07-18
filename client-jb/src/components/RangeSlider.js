@@ -1,23 +1,23 @@
-import React, { useState, useRef, useEffect } from "react";
-import RangeSliderCSS from "./RangeSlider.module.css";
+import React, { useState, useRef, useEffect } from 'react'
+import RangeSliderCSS from './RangeSlider.module.css'
 
 const RangeSlider = ({ min, max, initial, onValueChange, disabled }) => {
-  const [value, setValue] = useState(initial);
-  const sliderRef = useRef();
+  const [value, setValue] = useState(initial)
+  const sliderRef = useRef()
 
   // Updates the value state whenever the inputs change and passes the new value to the parent components
   const handleChange = (event) => {
-    setValue(event.target.value);
-    onValueChange(event);
-  };
+    setValue(event.target.value)
+    onValueChange(event)
+  }
 
   useEffect(() => {
-    setValue(initial);
-  }, [initial]);
+    setValue(initial)
+  }, [initial])
 
   const sliderClass = disabled
     ? `${RangeSliderCSS.slider} ${RangeSliderCSS.sliderDisabled}`
-    : RangeSliderCSS.slider;
+    : RangeSliderCSS.slider
 
   return (
     <div className="w-full relative">
@@ -32,7 +32,7 @@ const RangeSlider = ({ min, max, initial, onValueChange, disabled }) => {
         disabled={disabled}
       />
     </div>
-  );
-};
+  )
+}
 
-export default RangeSlider;
+export default RangeSlider

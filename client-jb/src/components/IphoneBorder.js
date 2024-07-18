@@ -1,4 +1,4 @@
-import iphone_border from "../assets/images/iphone_border.png";
+import iphone_border from '../assets/images/iphone_border.png'
 
 const IphoneBorder = ({ height, width }) => {
   return (
@@ -9,7 +9,7 @@ const IphoneBorder = ({ height, width }) => {
       height={height}
       width={width}
     />
-  );
-};
+  )
+}
 
-export default IphoneBorder;
+export default IphoneBorder

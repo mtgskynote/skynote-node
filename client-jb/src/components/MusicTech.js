@@ -1,4 +1,4 @@
-import musictech from "../assets/images/musictech.jpg";
+import musictech from '../assets/images/musictech.jpg'
 const MusicTech = ({ height, width }) => {
   return (
     <img
@@ -6,7 +6,7 @@ const MusicTech = ({ height, width }) => {
       alt="music-tech"
       style={{ width: '100vw', height: '600px' }}
     />
-  );
-};
+  )
+}
 
-export default MusicTech;
+export default MusicTech

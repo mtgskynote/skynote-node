@@ -1,79 +1,79 @@
-import { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
-import { Logo, Alert } from "../components";
-import { useAppContext } from "../context/appContext";
+import { useState, useEffect } from 'react'
+import { useNavigate } from 'react-router-dom'
+import { Logo, Alert } from '../components'
+import { useAppContext } from '../context/appContext'
 
 // default initial state of form
 const initialState = {
-  name: "",
-  email: "",
-  password: "",
-  role: "student",
-  instrument: "violin",
+  name: '',
+  email: '',
+  password: '',
+  role: 'student',
+  instrument: 'violin',
   isMember: true,
-};
+}
 // available roles to choose from when registering
 const roles = [
-  { value: "student", label: "Student" },
-  { value: "teacher", label: "Teacher" },
-];
+  { value: 'student', label: 'Student' },
+  { value: 'teacher', label: 'Teacher' },
+]
 // available instruments to choose from when registering
-const instruments = [{ value: "violin", label: "Violin" }];
+const instruments = [{ value: 'violin', label: 'Violin' }]
 
 function Register() {
-  const [formData, setFormData] = useState(initialState);
-  const navigate = useNavigate();
+  const [formData, setFormData] = useState(initialState)
+  const navigate = useNavigate()
 
-  const { user, showAlert, displayAlert, setupUser } = useAppContext();
+  const { user, showAlert, displayAlert, setupUser } = useAppContext()
 
   // Function to toggle the 'isMember' state
   const toggleMember = () => {
     setFormData({
       ...formData,
       isMember: !formData.isMember,
-    });
-  };
+    })
+  }
 
   // Function to handle changes in form inputs
   const handleChange = (e) => {
-    const { name, value } = e.target;
-    setFormData({ ...formData, [name]: value });
-  };
+    const { name, value } = e.target
+    setFormData({ ...formData, [name]: value })
+  }
 
   // Function to handle form submission
   const onSubmit = (e) => {
-    e.preventDefault();
-    const { name, email, role, password, isMember, instrument } = formData;
+    e.preventDefault()
+    const { name, email, role, password, isMember, instrument } = formData
     if (!email || !password || (!isMember && !name && !instrument)) {
-      displayAlert();
-      return;
+      displayAlert()
+      return
     }
-    const currentUser = { name, email, role, password, instrument };
+    const currentUser = { name, email, role, password, instrument }
 
     // If the user is a member, log them in, otherwise register them
     if (isMember) {
       setupUser({
         currentUser,
-        endPoint: "login",
-        alertText: "Login Successful! Redirecting...",
-      });
+        endPoint: 'login',
+        alertText: 'Login Successful! Redirecting...',
+      })
     } else {
       setupUser({
         currentUser,
-        endPoint: "register",
-        alertText: "User Created! Redirecting...",
-      });
+        endPoint: 'register',
+        alertText: 'User Created! Redirecting...',
+      })
     }
-  };
+  }
 
   // useEffect hook to navigate to home page if user is logged in or registered
   useEffect(() => {
     if (user) {
       setTimeout(() => {
-        navigate("/");
-      }, 3000);
+        navigate('/')
+      }, 3000)
     }
-  }, [user, navigate]);
+  }, [user, navigate])
 
   return (
     <div className="bg-gray-100 flex items-center justify-center h-screen">
@@ -163,7 +163,7 @@ function Register() {
                     <option key={index} value={role.value}>
                       {role.label}
                     </option>
-                  );
+                  )
                 })}
               </select>
             </div>
@@ -190,7 +190,7 @@ function Register() {
                     <option key={index} value={instrument.value}>
                       {instrument.label}
                     </option>
-                  );
+                  )
                 })}
               </select>
             </div>
@@ -202,20 +202,20 @@ function Register() {
               className="w-full md:w-auto bg-blue-500 text-white py-2 px-4 rounded-lg hover:bg-blue-600 outline-none border-none focus:outline-none focus:ring-2 focus:ring-blue-400"
               type="submit"
             >
-              {formData.isMember ? "Login" : "Register"}
+              {formData.isMember ? 'Login' : 'Register'}
             </button>
 
             <p
               className="inline-block align-baseline font-bold text-sm text-blue-500 hover:text-blue-800 cursor-pointer"
               onClick={toggleMember}
             >
-              {formData.isMember ? "Not a member?" : "Back to login"}
+              {formData.isMember ? 'Not a member?' : 'Back to login'}
             </p>
           </div>
         </form>
       </div>
     </div>
-  );
+  )
 }
 
-export default Register;
+export default Register

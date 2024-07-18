@@ -1,6 +1,3 @@
-
-
-
 ///////////////////////////////////////////
 //// THIS FILE DOESN'T SEEM TO BE USED ////
 ///////////////////////////////////////////
@@ -72,7 +69,7 @@ const Wrapper = styled.nav`
     display: none;
     margin: 0;
   }
-/*
+  /*
 
   @media (min-width: 992px) {
     position: sticky;

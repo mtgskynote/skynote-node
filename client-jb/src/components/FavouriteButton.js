@@ -1,58 +1,58 @@
-import React, { useState } from "react";
-import axios from "axios";
-import { useAppContext } from "../context/appContext";
-import Tooltip from "@mui/material/Tooltip";
-import IconButton from "@mui/material/IconButton";
-import FavoriteIcon from "@mui/icons-material/Favorite";
-import FavoriteBorderIcon from "@mui/icons-material/FavoriteBorder";
+import React, { useState } from 'react'
+import axios from 'axios'
+import { useAppContext } from '../context/appContext'
+import Tooltip from '@mui/material/Tooltip'
+import IconButton from '@mui/material/IconButton'
+import FavoriteIcon from '@mui/icons-material/Favorite'
+import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder'
 
 const FavouriteButton = ({ songId, initialIsFavourite, refreshData }) => {
-  const [isFavourite, setIsFavourite] = useState(initialIsFavourite);
-  const { getCurrentUser } = useAppContext();
+  const [isFavourite, setIsFavourite] = useState(initialIsFavourite)
+  const { getCurrentUser } = useAppContext()
 
   const handleToggleFavourite = async () => {
     try {
-      const result = await getCurrentUser();
-      const userId = result.id;
+      const result = await getCurrentUser()
+      const userId = result.id
       if (isFavourite) {
         await axios.delete(`/api/v1/profile/favourite/${userId}/${songId}`, {
           headers: {
-            Authorization: `Bearer ${localStorage.getItem("token")}`,
+            Authorization: `Bearer ${localStorage.getItem('token')}`,
           },
-        });
-        setIsFavourite(false); // Update state optimistically
+        })
+        setIsFavourite(false) // Update state optimistically
       } else {
         await axios.post(
           `/api/v1/profile/favourite/${userId}/${songId}`,
           null,
           {
             headers: {
-              Authorization: `Bearer ${localStorage.getItem("token")}`,
+              Authorization: `Bearer ${localStorage.getItem('token')}`,
             },
           }
-        );
-        setIsFavourite(true); // Update state optimistically
+        )
+        setIsFavourite(true) // Update state optimistically
       }
-      if (refreshData) refreshData();
+      if (refreshData) refreshData()
     } catch (error) {
-      console.error(error);
+      console.error(error)
     }
-  };
+  }
 
   return (
     <Tooltip
       placement="bottom"
-      title={isFavourite ? "Remove From Favourites" : "Add To Favourites"}
+      title={isFavourite ? 'Remove From Favourites' : 'Add To Favourites'}
       arrow
     >
       <IconButton
         aria-label={
-          isFavourite ? "Remove From Favourites" : "Add To Favourites"
+          isFavourite ? 'Remove From Favourites' : 'Add To Favourites'
         }
         className={`text-rose-300 cursor-pointer`}
         onClick={(e) => {
-          e.stopPropagation();
-          handleToggleFavourite();
+          e.stopPropagation()
+          handleToggleFavourite()
         }}
       >
         {isFavourite ? (
@@ -62,7 +62,7 @@ const FavouriteButton = ({ songId, initialIsFavourite, refreshData }) => {
         )}
       </IconButton>
     </Tooltip>
-  );
-};
+  )
+}
 
-export default FavouriteButton;
+export default FavouriteButton

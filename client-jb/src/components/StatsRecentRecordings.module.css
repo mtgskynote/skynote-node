@@ -1,19 +1,19 @@
-.container{
-  width:100%;
+.container {
+  width: 100%;
 }
-.tableBox{
+.tableBox {
   height: 300px;
   overflow-y: scroll;
-  border:#e5e5e5 solid 1px;
-  padding:10px;
+  border: #e5e5e5 solid 1px;
+  padding: 10px;
 }
-.dynamicTable{
+.dynamicTable {
   border-collapse: collapse;
   width: 100%;
   font-size: 15px;
 }
-.title{
-    font-weight: bold;
+.title {
+  font-weight: bold;
 }
 .dynamicTable tr {
   border: 3px none #b1b1b1;
@@ -22,9 +22,9 @@
 }
 .dynamicTable th {
   background-color: transparent; /* Gray background for headers */
-  color:#88a2cf;
+  color: #88a2cf;
 }
-.iconbutton{
-  border:none;
+.iconbutton {
+  border: none;
   background-color: transparent;
 }

@@ -1,4 +1,4 @@
-import violinBKG from "../assets/images/violinBKG.jpeg";
+import violinBKG from '../assets/images/violinBKG.jpeg'
 
 const ViolinBKG = ({ height, width }) => {
   return (
@@ -9,7 +9,7 @@ const ViolinBKG = ({ height, width }) => {
       height={height}
       width={width}
     />
-  );
-};
+  )
+}
 
-export default ViolinBKG;
+export default ViolinBKG

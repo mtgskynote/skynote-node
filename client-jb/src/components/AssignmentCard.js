@@ -1,25 +1,25 @@
-import React from "react";
-import { useNavigate } from "react-router-dom";
-import Card from "@mui/material/Card";
-import CardContent from "@mui/material/CardContent";
+import React from 'react'
+import { useNavigate } from 'react-router-dom'
+import Card from '@mui/material/Card'
+import CardContent from '@mui/material/CardContent'
 
 const AssignmentCard = ({ assignmentId, daysLeft, dueDate, score }) => {
   const dateOptions = {
-    weekDay: "short",
-    day: "numeric",
-    month: "short",
-    hour: "2-digit",
-    minute: "2-digit",
-  };
-  const navigate = useNavigate();
+    weekDay: 'short',
+    day: 'numeric',
+    month: 'short',
+    hour: '2-digit',
+    minute: '2-digit',
+  }
+  const navigate = useNavigate()
 
   const handleRecord = () => {
-    navigate(`/all-lessons/${score.fname}`);
-  };
+    navigate(`/all-lessons/${score.fname}`)
+  }
 
   const handleSeeMore = () => {
-    navigate(`/assignments/#${assignmentId}`);
-  };
+    navigate(`/assignments/#${assignmentId}`)
+  }
 
   return (
     <Card
@@ -31,15 +31,15 @@ const AssignmentCard = ({ assignmentId, daysLeft, dueDate, score }) => {
             <div className="overflow-hidden">
               <div
                 className={`${
-                  daysLeft < 0 ? "bg-red-500" : "bg-orange-500"
+                  daysLeft < 0 ? 'bg-red-500' : 'bg-orange-500'
                 } py-1 px-2 rounded`}
               >
-                {daysLeft < 0 ? "LATE" : "UNSUBMITTED"}
+                {daysLeft < 0 ? 'LATE' : 'UNSUBMITTED'}
               </div>
             </div>
             <div className="overflow-hidden">
               <div className="bg-gray-500 py-1 px-2 rounded">
-                Due {dueDate.toLocaleString("en-UK", dateOptions)}
+                Due {dueDate.toLocaleString('en-UK', dateOptions)}
               </div>
             </div>
           </div>
@@ -69,7 +69,7 @@ const AssignmentCard = ({ assignmentId, daysLeft, dueDate, score }) => {
         </div>
       </CardContent>
     </Card>
-  );
-};
+  )
+}
 
-export default AssignmentCard;
+export default AssignmentCard

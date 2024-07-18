@@ -1,346 +1,345 @@
-import React, { useEffect, useState, useRef } from "react";
-import { useParams, useNavigate, useLocation } from "react-router-dom";
-import { HotKeys } from "react-hotkeys";
-import OpenSheetMusicDisplay from "./OpenSheetMusicDisplay";
-import PopUpWindow from "./PopUpWindow.js";
+import React, { useEffect, useState, useRef } from 'react'
+import { useParams, useNavigate, useLocation } from 'react-router-dom'
+import { HotKeys } from 'react-hotkeys'
+import OpenSheetMusicDisplay from './OpenSheetMusicDisplay'
+import PopUpWindow from './PopUpWindow.js'
 import {
   getRecording,
   deleteRecording,
-} from "../utils/studentRecordingMethods.js";
-import ControlBar from "./ControlBar.js";
-import { getAudioContext } from "../context/audioContext";
+} from '../utils/studentRecordingMethods.js'
+import ControlBar from './ControlBar.js'
+import { getAudioContext } from '../context/audioContext'
 
-const folderBasePath = "/xmlScores/violin";
+const folderBasePath = '/xmlScores/violin'
 
-let currentSource = null; // Must be global so that React redraws don't lose track of the source
+let currentSource = null // Must be global so that React redraws don't lose track of the source
 
 const ProgressPlayFileVisual = () => {
-  let audioContext = getAudioContext();
-  const params = useParams();
+  let audioContext = getAudioContext()
+  const params = useParams()
 
-  const [songFile, setSongFile] = useState(null);
-  const pauseTimeRef = useRef(0);
-  const startTimeRef = useRef(0);
+  const [songFile, setSongFile] = useState(null)
+  const pauseTimeRef = useRef(0)
+  const startTimeRef = useRef(0)
 
-  const cursorRef = useRef(null);
-  const playbackRef = useRef(null);
+  const cursorRef = useRef(null)
+  const playbackRef = useRef(null)
 
-  const [metronomeVolume, setMetronomeVolume] = useState(0);
-  const [midiVolume, setMidiVolume] = useState(0);
-  const [bpm, setBpm] = useState(100);
-  const [zoom, setZoom] = useState(1.0);
-  const [transpose, setTranspose] = useState(0);
+  const [metronomeVolume, setMetronomeVolume] = useState(0)
+  const [midiVolume, setMidiVolume] = useState(0)
+  const [bpm, setBpm] = useState(100)
+  const [zoom, setZoom] = useState(1.0)
+  const [transpose, setTranspose] = useState(0)
 
   const [showDeleteRecordingPopUp, setShowDeleteRecordingPopUp] =
-    useState(false);
+    useState(false)
 
-  const [pitch, setPitch] = useState([]);
-  const [confidence, setConfidence] = useState([]);
+  const [pitch, setPitch] = useState([])
+  const [confidence, setConfidence] = useState([])
 
-  const [startPitchTrack, setStartPitchTrack] = useState(false);
-  const [showPitchTrack, setShowPitchTrack] = useState(false);
-  const [isPlaying, setIsPlaying] = useState(false);
+  const [startPitchTrack, setStartPitchTrack] = useState(false)
+  const [showPitchTrack, setShowPitchTrack] = useState(false)
+  const [isPlaying, setIsPlaying] = useState(false)
 
-  const [showStats, setShowStats] = useState(false);
-  const [showInfo, setShowInfo] = useState(false);
-  const [toggleStats, setToggleStats] = useState(false);
-  const [toggleInfo, setToggleInfo] = useState(false);
+  const [showStats, setShowStats] = useState(false)
+  const [showInfo, setShowInfo] = useState(false)
+  const [toggleStats, setToggleStats] = useState(false)
+  const [toggleInfo, setToggleInfo] = useState(false)
 
-  const [isResetButtonPressed, setIsResetButtonPressed] = useState(false);
-  const [repeatsIterator, setRepeatsIterator] = useState(false);
-  const [showRepetitionMessage, setShowRepetitionMessage] = useState(false);
+  const [isResetButtonPressed, setIsResetButtonPressed] = useState(false)
+  const [repeatsIterator, setRepeatsIterator] = useState(false)
+  const [showRepetitionMessage, setShowRepetitionMessage] = useState(false)
   const [repetitionMessage, setRepetitionMessage] = useState(
-    "No stored recordings yet"
-  );
+    'No stored recordings yet'
+  )
 
-  const [cursorFinished, setCursorFinished] = useState(false);
-  const [cursorJumped, setCursorJumped] = useState(false);
+  const [cursorFinished, setCursorFinished] = useState(false)
+  const [cursorJumped, setCursorJumped] = useState(false)
 
-  const [json, setJson] = useState([]);
+  const [json, setJson] = useState([])
   const [metaData, setMetaData] = useState({
     name: null,
     stars: null,
     date: null,
-  });
+  })
 
-  const [isMac, setIsMac] = useState(false);
+  const [isMac, setIsMac] = useState(false)
 
   // Hot keys map and handlers
   const keyMap = {
-    TOGGLE_RESET: `${isMac ? "command" : "ctrl"}+shift+r`,
+    TOGGLE_RESET: `${isMac ? 'command' : 'ctrl'}+shift+r`,
     TOGGLE_PLAY: `p`,
     TOGGLE_STATS: `s`,
     TOGGLE_INFO: `i`,
-  };
+  }
 
   const handlers = {
     TOGGLE_RESET: (event) => {
-      event.preventDefault();
-      handleToggleReset();
+      event.preventDefault()
+      handleToggleReset()
     },
     TOGGLE_PLAY: (event) => {
-      event.preventDefault();
-      handleTogglePlay();
+      event.preventDefault()
+      handleTogglePlay()
     },
     TOGGLE_STATS: (event) => {
-      event.preventDefault();
-      handleToggleStats();
+      event.preventDefault()
+      handleToggleStats()
     },
     TOGGLE_INFO: (event) => {
-      event.preventDefault();
-      handleToggleInfo();
+      event.preventDefault()
+      handleToggleInfo()
     },
-  };
+  }
 
-  const location = useLocation();
-  const navigate = useNavigate();
+  const location = useLocation()
+  const navigate = useNavigate()
   const options = {
-    weekday: "long",
-    year: "numeric",
-    month: "long",
-    day: "numeric",
-    hour: "2-digit",
-    minute: "2-digit",
-  };
-  const newUrl = window.location.href;
+    weekday: 'long',
+    year: 'numeric',
+    month: 'long',
+    day: 'numeric',
+    hour: '2-digit',
+    minute: '2-digit',
+  }
+  const newUrl = window.location.href
 
-  const recordingID = location.state?.id;
+  const recordingID = location.state?.id
 
   useEffect(() => {
     getRecording(recordingID).then((recordingJSON) => {
       // Get score info
-      const scoreInfo = JSON.parse(localStorage.getItem("scoreData")).find(
+      const scoreInfo = JSON.parse(localStorage.getItem('scoreData')).find(
         (item) => item.fname === params.files
-      );
+      )
 
       // Set MetaData
-      const recordingDate = new Date(recordingJSON.date);
+      const recordingDate = new Date(recordingJSON.date)
       setMetaData({
         name: recordingJSON.recordingName,
         stars: recordingJSON.info.stars,
-        date: recordingDate.toLocaleDateString("en-UK", options),
+        date: recordingDate.toLocaleDateString('en-UK', options),
         skill: scoreInfo.skill,
         level: scoreInfo.level,
         score: scoreInfo.title,
         bpm: recordingJSON.info.bpm,
-      });
+      })
       // Save json.info (recording data, pitch, colors...) to send to OSMD
-      setJson(recordingJSON.info);
+      setJson(recordingJSON.info)
       // Save audio
-      setBpm(recordingJSON.info.bpm);
-      setSongFile(recordingJSON.audio);
-    });
-  }, [recordingID]);
+      setBpm(recordingJSON.info.bpm)
+      setSongFile(recordingJSON.audio)
+    })
+  }, [recordingID])
 
   // Set reset flag as false when resetting is complete
   const onResetDone = () => {
-    setIsResetButtonPressed(false);
-  };
+    setIsResetButtonPressed(false)
+  }
 
   // Define recording stop when cursor finishes callback function
   const handleFinishedCursorOSMDCallback = (OSMDfinishedCursor) => {
     if (OSMDfinishedCursor) {
       // Send info to back to parent component and reset all playing
-      setCursorFinished(true);
-      const playbackManager = playbackRef.current;
-      playbackManager.pause();
-      playbackManager.setPlaybackStart(0);
-      setStartPitchTrack(false);
-      setIsResetButtonPressed(true);
+      setCursorFinished(true)
+      const playbackManager = playbackRef.current
+      playbackManager.pause()
+      playbackManager.setPlaybackStart(0)
+      setStartPitchTrack(false)
+      setIsResetButtonPressed(true)
     }
-  };
+  }
 
   // When cursor jumps (osmd detects it, we need to generate state)
   const handleJumpedCursorOSMDCallback = () => {
-    setCursorJumped(!cursorJumped);
-  };
+    setCursorJumped(!cursorJumped)
+  }
 
   // Define recording stop when cursor finishes callback function
   const handleReceiveRepetitionInfo = (showingRep, totalRep) => {
     if (totalRep === 0) {
-      setRepetitionMessage("No recordings yet");
+      setRepetitionMessage('No recordings yet')
     } else {
-      const message_aux =
-        "Seeing " + (showingRep + 1) + " of " + (totalRep + 1);
-      setRepetitionMessage(message_aux);
+      const message_aux = 'Seeing ' + (showingRep + 1) + ' of ' + (totalRep + 1)
+      setRepetitionMessage(message_aux)
     }
-  };
+  }
 
   // Play audio recording
   const playAudio = async () => {
     try {
       // Check if audioContext is suspended. If so, resume it.
-      if (audioContext.state === "suspended") {
-        await audioContext.resume();
+      if (audioContext.state === 'suspended') {
+        await audioContext.resume()
       }
 
       // Transform data type and play
-      const uint8Array = new Uint8Array(songFile.data);
-      const arrayBuffer = uint8Array.buffer;
-      const audioBuffer = await audioContext.decodeAudioData(arrayBuffer);
-      currentSource = audioContext.createBufferSource();
-      currentSource.buffer = audioBuffer;
-      currentSource.connect(audioContext.destination);
-      currentSource.start(0, pauseTimeRef.current);
-      startTimeRef.current = audioContext.currentTime - pauseTimeRef.current;
-      setIsPlaying(true);
+      const uint8Array = new Uint8Array(songFile.data)
+      const arrayBuffer = uint8Array.buffer
+      const audioBuffer = await audioContext.decodeAudioData(arrayBuffer)
+      currentSource = audioContext.createBufferSource()
+      currentSource.buffer = audioBuffer
+      currentSource.connect(audioContext.destination)
+      currentSource.start(0, pauseTimeRef.current)
+      startTimeRef.current = audioContext.currentTime - pauseTimeRef.current
+      setIsPlaying(true)
     } catch (error) {
-      console.error("Error playing audio:", error);
+      console.error('Error playing audio:', error)
     }
-  };
+  }
 
   // Stop audio playback
   const stopAudio = () => {
     if (currentSource) {
-      currentSource.stop();
-      currentSource.disconnect(); // Clean up connections
-      currentSource = null;
+      currentSource.stop()
+      currentSource.disconnect() // Clean up connections
+      currentSource = null
 
-      pauseTimeRef.current = audioContext.currentTime - startTimeRef.current;
+      pauseTimeRef.current = audioContext.currentTime - startTimeRef.current
     }
-  };
+  }
 
   // TODO: Add support for repetition sections
   const handleRepeatLayersButtonClick = () => {
     //window.location.href = "/TimbreVisualization";
-    setRepeatsIterator(!repeatsIterator);
-  };
+    setRepeatsIterator(!repeatsIterator)
+  }
 
   // Go back to previous page (usually the All Recordings page)
   const handleViewAllRecordings = () => {
-    navigate(-1);
-  };
+    navigate(-1)
+  }
 
   // Reset audio playback
   const resetAudio = (playbackManager) => {
-    playbackManager.pause();
-    playbackManager.reset();
-    stopAudio();
-    startTimeRef.current = 0;
-    pauseTimeRef.current = 0;
+    playbackManager.pause()
+    playbackManager.reset()
+    stopAudio()
+    startTimeRef.current = 0
+    pauseTimeRef.current = 0
 
-    setStartPitchTrack(false);
-    setShowPitchTrack(false);
-    setPitch([]);
-    setConfidence([]);
-  };
+    setStartPitchTrack(false)
+    setShowPitchTrack(false)
+    setPitch([])
+    setConfidence([])
+  }
 
   // Handle play button toggle to update UI in ControlBar
   const handleTogglePlay = () => {
-    const playbackManager = playbackRef.current;
+    const playbackManager = playbackRef.current
     if (playbackManager.isPlaying) {
-      setIsPlaying(false);
-      stopAudio(); // Stop recording audio
-      playbackManager.pause(); // Stop OSMD
+      setIsPlaying(false)
+      stopAudio() // Stop recording audio
+      playbackManager.pause() // Stop OSMD
     } else {
-      setIsPlaying(true);
-      playAudio(); // Play recording audio
-      playbackManager.play(); // Play OSMD
+      setIsPlaying(true)
+      playAudio() // Play recording audio
+      playbackManager.play() // Play OSMD
     }
-  };
+  }
 
   const handleToggleReset = () => {
-    const playbackManager = playbackRef.current;
-    resetAudio(playbackManager);
+    const playbackManager = playbackRef.current
+    resetAudio(playbackManager)
 
-    setIsPlaying(false);
-    setIsResetButtonPressed(true);
-  };
+    setIsPlaying(false)
+    setIsResetButtonPressed(true)
+  }
 
   // Handle opening the delete recording popup window
   const handleShowPopUpWindow = () => {
-    setShowDeleteRecordingPopUp(true);
-  };
+    setShowDeleteRecordingPopUp(true)
+  }
 
   // Handle closing the delete recording popup window
   const handleHidePopUpWindow = () => {
-    setShowDeleteRecordingPopUp(false);
-  };
+    setShowDeleteRecordingPopUp(false)
+  }
 
   // Handle deleting a recording from the database
   const handleDeleteRecording = () => {
-    setShowDeleteRecordingPopUp(false);
+    setShowDeleteRecordingPopUp(false)
     deleteRecording(recordingID)
       .then(() => {
-        navigate(-1);
+        navigate(-1)
       })
       .catch((error) => {
-        console.log(`Cannot delete recording from database: ${error}`);
-      });
-  };
+        console.log(`Cannot delete recording from database: ${error}`)
+      })
+  }
 
   // Toggle stats panel in control bar (toggle in parent component for hot key support)
   const handleToggleStats = () => {
-    setToggleStats(true);
-  };
+    setToggleStats(true)
+  }
 
   // Toggle shortcuts panel in control bar (toggle in parent component for hot key support)
   const handleToggleInfo = () => {
-    setToggleInfo(true);
-  };
+    setToggleInfo(true)
+  }
 
   // Detect if the OS is macOS
   const isMacOs = async () => {
     if (navigator.userAgentData) {
       const uaData = await navigator.userAgentData.getHighEntropyValues([
-        "platform",
-      ]);
-      return uaData.platform === "macOS";
+        'platform',
+      ])
+      return uaData.platform === 'macOS'
     } else {
-      return /mac/i.test(navigator.userAgent);
+      return /mac/i.test(navigator.userAgent)
     }
-  };
+  }
 
   // Ensure that stats panel is shown when triggered and shortcuts panel is hidden
   useEffect(() => {
     if (toggleStats) {
       if (showInfo) {
-        setShowInfo(false);
+        setShowInfo(false)
       }
-      setShowStats((prevShowStats) => !prevShowStats);
-      setToggleStats(false);
+      setShowStats((prevShowStats) => !prevShowStats)
+      setToggleStats(false)
     }
-  }, [toggleStats, showInfo]);
+  }, [toggleStats, showInfo])
 
   // Ensure that shortcuts panel is shown when triggered and stats panel is hidden
   useEffect(() => {
     if (toggleInfo) {
       if (showStats) {
-        setShowStats(false);
+        setShowStats(false)
       }
-      setShowInfo((prevShowInfo) => !prevShowInfo);
-      setToggleInfo(false);
+      setShowInfo((prevShowInfo) => !prevShowInfo)
+      setToggleInfo(false)
     }
-  }, [toggleInfo, showStats]);
+  }, [toggleInfo, showStats])
 
   // Reset cursor to the beginning of the OSMD score when the cursor reaches the end
   useEffect(() => {
     if (cursorFinished) {
-      setCursorFinished(false);
-      setIsPlaying(false);
+      setCursorFinished(false)
+      setIsPlaying(false)
 
       // Reset start and pause times when playback is finished
-      startTimeRef.current = 0;
-      pauseTimeRef.current = 0;
+      startTimeRef.current = 0
+      pauseTimeRef.current = 0
     }
-  });
+  })
 
   // Stop playing audio if the window is reloaded
   useEffect(() => {
     return () => {
-      stopAudio();
-    };
-  }, [newUrl]);
+      stopAudio()
+    }
+  }, [newUrl])
 
   // Effect to set isMac based on the detected OS
   useEffect(() => {
     const checkIsMacOs = async () => {
-      const result = await isMacOs();
-      setIsMac(result);
-    };
+      const result = await isMacOs()
+      setIsMac(result)
+    }
 
-    checkIsMacOs();
-  }, []);
+    checkIsMacOs()
+  }, [])
 
   return (
     <HotKeys keyMap={keyMap} handlers={handlers}>
@@ -367,7 +366,7 @@ const ProgressPlayFileVisual = () => {
             cursorActivity={handleFinishedCursorOSMDCallback}
             cursorJumpsBack={handleJumpedCursorOSMDCallback}
             mode={true} // Passed as true to indicate that we are not in a type of record mode
-            visual={"yes"}
+            visual={'yes'}
             visualJSON={json}
           />
           <div className="absolute top-0 left-0 w-full h-full bg-transparent z-20 pointer-events-auto"></div>
@@ -400,7 +399,7 @@ const ProgressPlayFileVisual = () => {
         <PopUpWindow isOpen={showDeleteRecordingPopUp}>
           <div>
             <p className="text-xl font-extrabold text-gray-800 mb-1">
-              Are you sure you want to delete{" "}
+              Are you sure you want to delete{' '}
               <span className="capitalize">{metaData.name}</span>?
             </p>
             <p className="text-gray-600 mb-4">
@@ -424,7 +423,7 @@ const ProgressPlayFileVisual = () => {
         </PopUpWindow>
       </div>
     </HotKeys>
-  );
-};
+  )
+}
 
-export default ProgressPlayFileVisual;
+export default ProgressPlayFileVisual

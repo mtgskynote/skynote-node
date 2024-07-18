@@ -1,35 +1,34 @@
-import React, { useRef, useEffect } from "react";
-import PieChart from "./pieChart";
-import { makeAudioStreamer } from "./audioStreamer.js";
-import Queue from "../utils/QueueWithMaxLength";
-import PitchTuner from "./pitchTuner";
+import React, { useRef, useEffect } from 'react'
+import PieChart from './pieChart'
+import { makeAudioStreamer } from './audioStreamer.js'
+import Queue from '../utils/QueueWithMaxLength'
+import PitchTuner from './pitchTuner'
 
 // Labes for pieChart starting at [0,1] and going around clockwise
 const labels = [
-  "Pitch",
-  "Dynamic Stability", // based on rms
-  "Spectral Centroid",
-  "Spectral Flux",
-];
+  'Pitch',
+  'Dynamic Stability', // based on rms
+  'Spectral Centroid',
+  'Spectral Flux',
+]
 
 const freq2midipitch = (freq) => {
-  return 12 * Math.log2(freq / 440) + 69;
-};
+  return 12 * Math.log2(freq / 440) + 69
+}
 
-let audioStreamer = null;
+let audioStreamer = null
 
 const TimbreVisualization = () => {
-  console.log(`STARTING Timbre Visualization, about to create audio streamer.`);
-  const pieChartRef = useRef(null);
-  const pitchTunerRef = useRef(null);
-
+  console.log(`STARTING Timbre Visualization, about to create audio streamer.`)
+  const pieChartRef = useRef(null)
+  const pitchTunerRef = useRef(null)
 
   //---- Send array of values to pieChart for drawing segments
   function setSegments(sarray) {
     //console.log(`spectralFlux : ${sarray[3]}`)
     //console.log(`rms mean : ${featureValues.rms.computeMean()}`)
     if (pieChartRef.current) {
-      pieChartRef.current.updateData(sarray);
+      pieChartRef.current.updateData(sarray)
     }
   }
 
@@ -40,19 +39,19 @@ const TimbreVisualization = () => {
     rms: new Queue(5, 0, 0.25, 0, 0.01),
     spectralCentroid: new Queue(5, 0, 500),
     spectralFlux: new Queue(5, 3, 1, 0, 0.1),
-  };
+  }
 
   //---- Pass to makeAudioStreamer to get callbacks with argument object pc={pitch (in Hz), confidence(in [0,1])}
   const pitchCallback = function (pc) {
     if (pc.confidence > 0.6) {
-      featureValues.pitch.push(freq2midipitch(pc.pitch));
+      featureValues.pitch.push(freq2midipitch(pc.pitch))
     } else {
       //console.log(`    No  confidence: value = ${pc.pitch},  confidence=${pc.confidence}`)
       //pitchvaluetext.innerHTML = "Not voiced"
-      featureValues.pitch.push(0);
+      featureValues.pitch.push(0)
     }
     if (pitchTunerRef.current) {
-      pitchTunerRef.current.setPitch(pc.pitch, pc.confidence);
+      pitchTunerRef.current.setPitch(pc.pitch, pc.confidence)
     }
     //setSegments([normalize(featureValues.pitch.last(), 100, 360), normalize(featureValues.rms.computeMean(),0,.1), normalize(featureValues.spectralCentroid.computeMean(),0,600), normalize(featureValues.spectralFlux.computeMean(),1,4)  ]);
     //setSegments([normalize(featureValues.pitch.last(), 100, 360), normalize(featureValues.rms.computeSD(),.003, .001), normalize(featureValues.spectralCentroid.computeMean(),0,600), normalize(featureValues.spectralFlux.computeMean(),1,4)  ]);
@@ -62,8 +61,8 @@ const TimbreVisualization = () => {
       featureValues.rms.computeSD(),
       featureValues.spectralCentroid.computeMean(),
       featureValues.spectralFlux.computeSD(),
-    ]);
-  };
+    ])
+  }
 
   //setSegments([normalize(featureValues.pitch.last(), 100, 360), normalize(featureValues.rms.computeMean(),0,.1), normalize(featureValues.spectralCentroid.computeMean(),0,600), normalize(featureValues.spectralFlux.computeMean(),1,4)  ]);
   //setSegments([normalize(featureValues.pitch.last(), 100, 360), normalize(featureValues.rms.computeSD(),.003, .001), normalize(featureValues.spectralCentroid.computeMean(),0,600), normalize(featureValues.spectralFlux.computeMean(),1,4)  ]);
@@ -73,14 +72,14 @@ const TimbreVisualization = () => {
     featureValues.rms.computeSD(),
     featureValues.spectralCentroid.computeMean(),
     featureValues.spectralFlux.computeSD(),
-  ]);
+  ])
 
   //---- Pass to makeAudioStreamer to get callbaks with object features (with attributes being Meyda features)
   const aCb = function (features) {
     //console.log(`pushing rms on to Queue : ${features.rms}`)
-    featureValues.rms.push(features.rms);
-    featureValues.spectralCentroid.push(features.spectralCentroid);
-    featureValues.spectralFlux.push(features.spectralFlux);
+    featureValues.rms.push(features.rms)
+    featureValues.spectralCentroid.push(features.spectralCentroid)
+    featureValues.spectralFlux.push(features.spectralFlux)
 
     //setSegments([normalize(featureValues.pitch.last(), 100, 360), normalize(featureValues.rms.computeMean(),0, .1), normalize(featureValues.spectralCentroid.computeMean(),0,600), normalize(featureValues.spectralFlux.computeMean(),1,4)  ]);
     //setSegments([normalize(featureValues.pitch.last(), 100, 360), normalize(featureValues.rms.computeSD(),.003, .0010), normalize(featureValues.spectralCentroid.computeMean(),0,600), normalize(featureValues.spectralFlux.computeMean(),1,4)  ]);
@@ -90,33 +89,33 @@ const TimbreVisualization = () => {
       featureValues.rms.computeSD(),
       featureValues.spectralCentroid.computeMean(),
       featureValues.spectralFlux.computeSD(),
-    ]);
-  };
+    ])
+  }
 
   // Start the streaming audio and request your callbacks
-  audioStreamer = makeAudioStreamer(pitchCallback, null, aCb);
-  audioStreamer.init(false, ["rms", "spectralCentroid", "spectralFlux"]); //LIST ONLY MEYDA FEATURES  !!!!!
+  audioStreamer = makeAudioStreamer(pitchCallback, null, aCb)
+  audioStreamer.init(false, ['rms', 'spectralCentroid', 'spectralFlux']) //LIST ONLY MEYDA FEATURES  !!!!!
 
   useEffect(() => {
     return () => {
-      audioStreamer.close();
-    };
-  }, []); //This should run only once
+      audioStreamer.close()
+    }
+  }, []) //This should run only once
 
   return (
     <div
       style={{
-        textAlign: "center",
-        margin: "auto",
+        textAlign: 'center',
+        margin: 'auto',
       }}
       className="pt-8"
     >
       <h2> Sound Quality </h2>
       <div
         style={{
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "center",
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
         }}
       >
         <PieChart
@@ -132,8 +131,8 @@ const TimbreVisualization = () => {
 
       <div
         style={{
-          textAlign: "center",
-          margin: "auto",
+          textAlign: 'center',
+          margin: 'auto',
         }}
       >
         <h2> Pitch </h2>
@@ -141,6 +140,6 @@ const TimbreVisualization = () => {
       </div>
       {/* <div>{controlbar}</div>   */}
     </div>
-  );
-};
-export default TimbreVisualization;
+  )
+}
+export default TimbreVisualization

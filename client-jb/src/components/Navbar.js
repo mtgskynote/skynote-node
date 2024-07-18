@@ -1,8 +1,8 @@
 // Navbar.js
-import React, { useState, useEffect } from "react";
-import { NavLink } from "react-router-dom";
-import { useAppContext } from "../context/appContext";
-import { getMessages } from "../utils/messagesMethods.js";
+import React, { useState, useEffect } from 'react'
+import { NavLink } from 'react-router-dom'
+import { useAppContext } from '../context/appContext'
+import { getMessages } from '../utils/messagesMethods.js'
 import {
   AppBar,
   Toolbar,
@@ -11,126 +11,126 @@ import {
   MenuItem,
   Badge,
   Tooltip,
-} from "@mui/material";
-import ClickAwayListener from "@mui/material/ClickAwayListener";
+} from '@mui/material'
+import ClickAwayListener from '@mui/material/ClickAwayListener'
 import {
   AccountCircle,
   Notifications,
   Settings,
   Menu as MenuIcon,
   MenuOpen as MenuOpenIcon,
-} from "@mui/icons-material";
-import { useMediaQuery } from "@material-ui/core";
-import InstrumentDropdown from "./InstrumentDropdown.js";
+} from '@mui/icons-material'
+import { useMediaQuery } from '@material-ui/core'
+import InstrumentDropdown from './InstrumentDropdown.js'
 
 function Navbar() {
   // State variables
-  const [userData, setUserData] = useState(null); // User data retrieved from API
-  const [unreadMessagesCount, setUnreadMessagesCount] = useState(0); // Number of unread messages
-  const [unreadMessagesContent, setUnreadMessagesContent] = useState([]); // Content of unread messages
-  const [notificationsOpen, setNotificationsOpen] = useState(false); // Whether notifications are open
-  const [profileAnchorEl, setProfileAnchorEl] = useState(null); // Anchor element for profile menu
-  const [settingsAnchorEl, setSettingsAnchorEl] = useState(null); // Anchor element for settings menu
-  const [mobileAnchorEl, setMobileAnchorEl] = useState(null); // Anchor element for mobile menu
-  const [mobileNavOpen, setMobileNavOpen] = useState(false); // Whether mobile navigation is open
+  const [userData, setUserData] = useState(null) // User data retrieved from API
+  const [unreadMessagesCount, setUnreadMessagesCount] = useState(0) // Number of unread messages
+  const [unreadMessagesContent, setUnreadMessagesContent] = useState([]) // Content of unread messages
+  const [notificationsOpen, setNotificationsOpen] = useState(false) // Whether notifications are open
+  const [profileAnchorEl, setProfileAnchorEl] = useState(null) // Anchor element for profile menu
+  const [settingsAnchorEl, setSettingsAnchorEl] = useState(null) // Anchor element for settings menu
+  const [mobileAnchorEl, setMobileAnchorEl] = useState(null) // Anchor element for mobile menu
+  const [mobileNavOpen, setMobileNavOpen] = useState(false) // Whether mobile navigation is open
 
   // App context and media query hook
-  const { logoutUser, getCurrentUser } = useAppContext();
-  const isLargeScreen = useMediaQuery("(min-width: 1024px)");
+  const { logoutUser, getCurrentUser } = useAppContext()
+  const isLargeScreen = useMediaQuery('(min-width: 1024px)')
 
   // Function to fetch user data from API
   const fetchDataFromAPI = () => {
     getCurrentUser()
       .then((result) => {
-        setUserData(result);
+        setUserData(result)
       })
       .catch((error) => {
-        console.log(`getCurrentUser() error: ${error}`);
-      });
-  };
+        console.log(`getCurrentUser() error: ${error}`)
+      })
+  }
 
   // Effect to fetch user data and unread messages on mount or when userData changes
   useEffect(() => {
     if (userData === null) {
-      fetchDataFromAPI();
+      fetchDataFromAPI()
     }
 
     if (userData !== null && userData.teacher) {
       getMessages(userData.id, userData.teacher)
         .then((result) => {
-          let messagesCount = 0;
-          const messagesContent = [];
+          let messagesCount = 0
+          const messagesContent = []
 
           result.forEach((message) => {
             if (message.sender === userData.teacher && message.seen === false) {
-              messagesCount++;
-              messagesContent.push(message.content);
+              messagesCount++
+              messagesContent.push(message.content)
             }
-          });
-          setUnreadMessagesCount(messagesCount);
-          setUnreadMessagesContent(messagesContent);
+          })
+          setUnreadMessagesCount(messagesCount)
+          setUnreadMessagesContent(messagesContent)
         })
         .catch((error) => {
           console.log(
             `Cannot get unread messages count content from database: ${error}`
-          );
-        });
+          )
+        })
     }
-  }, [userData]);
+  }, [userData])
 
   // Effect to remove mobile nav dropdown from screen when the screen is resized to large
   useEffect(() => {
     if (isLargeScreen) {
-      setMobileAnchorEl(null);
-      setMobileNavOpen(false);
+      setMobileAnchorEl(null)
+      setMobileNavOpen(false)
     }
-  }, [isLargeScreen, mobileAnchorEl]);
+  }, [isLargeScreen, mobileAnchorEl])
 
   // Handlers for profile, settings, notifications, and mobile navigation
   const handleProfileClick = (event) => {
-    setProfileAnchorEl(event.currentTarget);
-  };
+    setProfileAnchorEl(event.currentTarget)
+  }
 
   const handleSettingsClick = (event) => {
-    setSettingsAnchorEl(event.currentTarget);
-  };
+    setSettingsAnchorEl(event.currentTarget)
+  }
 
   const handleNotificationsClick = () => {
-    setNotificationsOpen((prev) => !prev);
-  };
+    setNotificationsOpen((prev) => !prev)
+  }
 
   const handleClose = () => {
-    setProfileAnchorEl(null);
-    setSettingsAnchorEl(null);
-    setNotificationsOpen(false);
-  };
+    setProfileAnchorEl(null)
+    setSettingsAnchorEl(null)
+    setNotificationsOpen(false)
+  }
 
   const handleMobileClose = () => {
-    setMobileAnchorEl(null);
-    setMobileNavOpen(false);
-  };
+    setMobileAnchorEl(null)
+    setMobileNavOpen(false)
+  }
 
   const handleClickAway = () => {
-    setNotificationsOpen(false);
-  };
+    setNotificationsOpen(false)
+  }
 
   const handleNavIcon = (event) => {
-    setMobileNavOpen(!mobileNavOpen);
-    setMobileAnchorEl(event.currentTarget);
-  };
+    setMobileNavOpen(!mobileNavOpen)
+    setMobileAnchorEl(event.currentTarget)
+  }
 
   // Navigation items
   const navItems = [
-    ["Dashboard", "/"],
-    ["Lessons", "/lessons"],
-    ["Assignments", "/assignments"],
+    ['Dashboard', '/'],
+    ['Lessons', '/lessons'],
+    ['Assignments', '/assignments'],
     // ["Imported Scores", "/imported-scores"],
-  ];
+  ]
 
   const navItemsMobile = [
-    ["Sound Visualization", "/TimbreVisualization"],
-    ["My Profile", "/profile"],
-  ];
+    ['Sound Visualization', '/TimbreVisualization'],
+    ['My Profile', '/profile'],
+  ]
 
   // Navbar component with navigation and user options
   return (
@@ -156,14 +156,14 @@ function Navbar() {
                 to={url}
                 className={({ isActive }) =>
                   [
-                    "text-slate-50 no-underline transition-all duration-300 hover:text-3xl whitespace-nowrap",
-                    isActive ? "font-bold text-3xl" : "font-normal text-2xl",
-                  ].join(" ")
+                    'text-slate-50 no-underline transition-all duration-300 hover:text-3xl whitespace-nowrap',
+                    isActive ? 'font-bold text-3xl' : 'font-normal text-2xl',
+                  ].join(' ')
                 }
               >
                 {title}
               </NavLink>
-            );
+            )
           })}
         </div>
 
@@ -174,7 +174,7 @@ function Navbar() {
             <div className="relative">
               <Tooltip
                 placement="bottom"
-                title={!notificationsOpen && "Notifications"}
+                title={!notificationsOpen && 'Notifications'}
                 arrow
               >
                 <IconButton
@@ -192,8 +192,8 @@ function Navbar() {
               <div
                 className={`z-50 absolute right-0 w-96 bg-white shadow-md rounded-sm p-4 overflow-y-auto max-h-screen-75 transition-opacity duration-300 ${
                   notificationsOpen
-                    ? "opacity-100"
-                    : "opacity-0 pointer-events-none"
+                    ? 'opacity-100'
+                    : 'opacity-0 pointer-events-none'
                 }`}
               >
                 {/* Render unread messages */}
@@ -309,14 +309,14 @@ function Navbar() {
               >
                 {title}
               </MenuItem>
-            );
+            )
           })}
           {/* Logout option */}
           <MenuItem onClick={logoutUser}>Logout</MenuItem>
         </Menu>
       </Toolbar>
     </AppBar>
-  );
+  )
 }
 
-export default Navbar;
+export default Navbar

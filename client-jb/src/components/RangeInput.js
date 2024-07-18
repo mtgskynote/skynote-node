@@ -1,26 +1,26 @@
-import React, { useState, useEffect } from "react";
-import RangeSlider from "./RangeSlider";
+import React, { useState, useEffect } from 'react'
+import RangeSlider from './RangeSlider'
 
 const RangeInput = ({ label, min, max, initial, onValueChange, disabled }) => {
-  const [value, setValue] = useState(initial);
+  const [value, setValue] = useState(initial)
 
   // Modify styling if inputs are disabled
   const inputClass = disabled
-    ? "ml-3 shadow-sm appearance-none border rounded w-full py-2 px-2 text-gray-700 leading-tight focus:outline-none focus:shadow-outline w-5/12 bg-gray-300 cursor-not-allowed"
-    : "ml-3 shadow-sm appearance-none border rounded w-full py-2 px-2 text-gray-700 leading-tight focus:outline-none focus:shadow-outline w-5/12";
+    ? 'ml-3 shadow-sm appearance-none border rounded w-full py-2 px-2 text-gray-700 leading-tight focus:outline-none focus:shadow-outline w-5/12 bg-gray-300 cursor-not-allowed'
+    : 'ml-3 shadow-sm appearance-none border rounded w-full py-2 px-2 text-gray-700 leading-tight focus:outline-none focus:shadow-outline w-5/12'
 
   // Updates the value state whenever the inputs change and passes the new value to the parent components
   const handleValueChange = (e) => {
-    setValue(e.target.value);
+    setValue(e.target.value)
     if (onValueChange) {
-      onValueChange(e.target.value);
+      onValueChange(e.target.value)
     }
-  };
+  }
 
   // Update value when initial value changes
   useEffect(() => {
-    setValue(initial);
-  }, [initial]);
+    setValue(initial)
+  }, [initial])
 
   return (
     <div className="flex items-center mb-2">
@@ -47,7 +47,7 @@ const RangeInput = ({ label, min, max, initial, onValueChange, disabled }) => {
         disabled={disabled}
       />
     </div>
-  );
-};
+  )
+}
 
-export default RangeInput;
+export default RangeInput

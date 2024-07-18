@@ -1,281 +1,275 @@
-
 @media screen and (min-width: 800px) {
-    .container{
-        width:100%;
-        display:flex;
-        padding:0;
-    }
-    .left {
-        height: 100%;
-        width:70%;
-    }
-    .right {
-        padding: 0px 0px 0px 0px; 
-        width:30%;
-        height:95vh;
-    }
+  .container {
+    width: 100%;
+    display: flex;
+    padding: 0;
+  }
+  .left {
+    height: 100%;
+    width: 70%;
+  }
+  .right {
+    padding: 0px 0px 0px 0px;
+    width: 30%;
+    height: 95vh;
+  }
 }
 @media screen and (max-width: 800px) {
-    .container{
-        width:100%;
-        display:flex;
-        padding:0;
-        flex-direction: column;
-        font-size: 15px;
-    }
-    .left {
-        height: 50vh;
-        width:100%;
-        overflow-y: scroll;
-      }
-    .right {
-        padding: 0px 0px 0px 0px; 
-        border-radius: 20px;
-        width:100%;
-        height:50vh;
-        border:solid #bababa 2px;
-    }
-    body{
-        font-size: smaller;
-    }
-}
-.tableBox{
-    height: fit-content;
-    overflow-y: scroll;
-    border:#e5e5e5 solid 1px;
-    border-radius: 20px;
-    background-color: white;
-    margin: 20px 40px;
-    box-shadow: 2px 2px 10px rgba(131, 131, 131, 0.2);
-}
-
-.title{
-    font-weight: bold;
-    text-align: center;
-    padding: 25px 50px;
-    font-weight: 800;
-}
-.openButton{
-    background-color: #c9c9c9;
-    border-radius: 10px;
-    size: 30px;
-    padding: 6px
-}
-.openIcon{
-    background-color: transparent;
-}
-
-.header{
-    background-color: #88a2cf;
-    padding: 10px 50px;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-}
-
-.announcementBody{
-    padding: 10px 50px;
-}
-.teacher{
-    display: flex;
-    align-items: left;
-    width: fit-content;
-    border-radius: 8px;
-    align-items: center;
+  .container {
     width: 100%;
+    display: flex;
+    padding: 0;
+    flex-direction: column;
+    font-size: 15px;
+  }
+  .left {
+    height: 50vh;
+    width: 100%;
+    overflow-y: scroll;
+  }
+  .right {
+    padding: 0px 0px 0px 0px;
+    border-radius: 20px;
+    width: 100%;
+    height: 50vh;
+    border: solid #bababa 2px;
+  }
+  body {
+    font-size: smaller;
+  }
 }
-.userIcon{
-    border-radius: 50%;
-    border: #c9c9c9 2px solid;
-    padding: 10px;
-    margin: 0 5px 0 5px;
-    color: #717171;
+.tableBox {
+  height: fit-content;
+  overflow-y: scroll;
+  border: #e5e5e5 solid 1px;
+  border-radius: 20px;
+  background-color: white;
+  margin: 20px 40px;
+  box-shadow: 2px 2px 10px rgba(131, 131, 131, 0.2);
 }
 
-.message{
-    font-style: oblique;
-    background-color: #f3f3f3;
-    border-radius: 10px;
-    padding: 12px 30px;
+.title {
+  font-weight: bold;
+  text-align: center;
+  padding: 25px 50px;
+  font-weight: 800;
 }
-.list{
-    list-style-type: circle;
+.openButton {
+  background-color: #c9c9c9;
+  border-radius: 10px;
+  size: 30px;
+  padding: 6px;
 }
-.note{
-    font-weight: bolder;
-    text-align: center;
-    display: flex;
-    justify-content:center;
-    margin: 10px;
+.openIcon {
+  background-color: transparent;
 }
 
-.text{
-    padding:0px 10px;
+.header {
+  background-color: #88a2cf;
+  padding: 10px 50px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
 }
-.iconbutton{
-    border:none;
-    background-color: transparent;
+
+.announcementBody {
+  padding: 10px 50px;
 }
-.exclamationIcon{
-    color:rgb(230, 37, 37)
+.teacher {
+  display: flex;
+  align-items: left;
+  width: fit-content;
+  border-radius: 8px;
+  align-items: center;
+  width: 100%;
 }
-.simpleIcon{
-    color:rgb(115, 115, 115);
-    margin:0px 10px;
+.userIcon {
+  border-radius: 50%;
+  border: #c9c9c9 2px solid;
+  padding: 10px;
+  margin: 0 5px 0 5px;
+  color: #717171;
 }
-.taskGroup{
-    display: flex;
+
+.message {
+  font-style: oblique;
+  background-color: #f3f3f3;
+  border-radius: 10px;
+  padding: 12px 30px;
 }
-.taskItem{
-    border: solid 1px #dde7fa;
-    height: fit-content;
-    width: fit-content;
-    border-radius: 7px;
-    margin: 10px;
-    box-shadow: 2px 2px 10px rgba(131, 131, 131, 0.2);
+.list {
+  list-style-type: circle;
 }
-.taskHeader{
-    background-color: #dde7fa;
-    padding: 10px 50px;
-    align-items: left;
+.note {
+  font-weight: bolder;
+  text-align: center;
+  display: flex;
+  justify-content: center;
+  margin: 10px;
 }
-.submitted{
-    padding: 10px;
-    display: flex;
-    justify-content: space-between;
-    color: #3da047;
+
+.text {
+  padding: 0px 10px;
 }
-.notSubmitted{
-    padding: 10px;
-    display: flex;
-    justify-content: space-between;
-    color: #e41e00;
+.iconbutton {
+  border: none;
+  background-color: transparent;
 }
-.cursive{
-    font-style: oblique;
+.exclamationIcon {
+  color: rgb(230, 37, 37);
 }
-.buttonGroup{
-    margin: 0px 0px 0px 0px;
-    display: flex;
-    justify-content: space-between;
+.simpleIcon {
+  color: rgb(115, 115, 115);
+  margin: 0px 10px;
 }
-.chatGroup{
+.taskGroup {
+  display: flex;
+}
+.taskItem {
+  border: solid 1px #dde7fa;
+  height: fit-content;
+  width: fit-content;
+  border-radius: 7px;
+  margin: 10px;
+  box-shadow: 2px 2px 10px rgba(131, 131, 131, 0.2);
+}
+.taskHeader {
+  background-color: #dde7fa;
+  padding: 10px 50px;
+  align-items: left;
+}
+.submitted {
+  padding: 10px;
+  display: flex;
+  justify-content: space-between;
+  color: #3da047;
+}
+.notSubmitted {
+  padding: 10px;
+  display: flex;
+  justify-content: space-between;
+  color: #e41e00;
+}
+.cursive {
+  font-style: oblique;
+}
+.buttonGroup {
+  margin: 0px 0px 0px 0px;
+  display: flex;
+  justify-content: space-between;
+}
+.chatGroup {
+  margin: 20px 40px;
+  width: 25%;
+  background-color: #ededed;
+  border: #9d9d9d 1px solid;
+  box-shadow: 4px 4px 15px rgba(131, 131, 131, 0.2);
+  border-radius: 20px;
+  position: fixed;
+}
+
+@media screen and (min-width: 800px) {
+  .chatGroup {
     margin: 20px 40px;
     width: 25%;
     background-color: #ededed;
-    border:#9d9d9d 1px solid;
+    border: #9d9d9d 1px solid;
     box-shadow: 4px 4px 15px rgba(131, 131, 131, 0.2);
-   border-radius: 20px;
-   position:fixed;
-}
-
-@media screen and (min-width: 800px) {
-    .chatGroup{
-        margin: 20px 40px;
-        width: 25%;
-        background-color: #ededed;
-        border:#9d9d9d 1px solid;
-        box-shadow: 4px 4px 15px rgba(131, 131, 131, 0.2);
-       border-radius: 20px;
-       position:fixed;
-    }
-    .chat{
-        display: flex;
-        flex-direction: column-reverse;
-        height: 400px;
-        overflow-y: scroll;
-
-    }
+    border-radius: 20px;
+    position: fixed;
+  }
+  .chat {
+    display: flex;
+    flex-direction: column-reverse;
+    height: 400px;
+    overflow-y: scroll;
+  }
 }
 @media screen and (max-width: 800px) {
-    .chat{
-        display: flex;
-        flex-direction: column-reverse;
-        height:25vh;
-        overflow-y: scroll;
-    
-    }
-    .chatGroup{
-        margin: 20px 40px;
-        width: 70%;
-        background-color: #ededed;
-        border:#9d9d9d 1px solid;
-        box-shadow: 4px 4px 15px rgba(131, 131, 131, 0.2);
-       border-radius: 20px;
-       position:fixed;
-    }
-}
-    
-.chatHeader{
-    background-color: #88a2cf;
-    padding: 10px 10px;
+  .chat {
     display: flex;
-    align-items: center;
-    justify-content: space-between;
-    border-radius: 20px 20px 0px 0px;
-    width: 100%;
-    
+    flex-direction: column-reverse;
+    height: 25vh;
+    overflow-y: scroll;
+  }
+  .chatGroup {
+    margin: 20px 40px;
+    width: 70%;
+    background-color: #ededed;
+    border: #9d9d9d 1px solid;
+    box-shadow: 4px 4px 15px rgba(131, 131, 131, 0.2);
+    border-radius: 20px;
+    position: fixed;
+  }
 }
 
-.chatItemStudent{
-    text-align: right;
-    background-color: #dde7fa;
-    border-radius: 10px;
-    margin:10px;
-    width:70%;
-    align-self: flex-end;
-    padding:10px;
+.chatHeader {
+  background-color: #88a2cf;
+  padding: 10px 10px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-radius: 20px 20px 0px 0px;
+  width: 100%;
 }
-.chatItemTeacher{
-    text-align: left;
-    align-self: flex-start;
-    background-color: #ffffff;
-    border-radius: 10px;
-    margin:10px;
-    width:70%;
-    padding:10px;
-}
-.chatItemDate{
-    text-align: right;
-    font-style: oblique;
-    font-size: smaller;
-    color:#9d9d9d
-}
-.textGroup{
-    display:flex;
-    flex-direction: column;
-    border-radius: 0px 0px 20px 20px;
-    background-color: #bababa;
-    border-radius: 6px #000000;
 
+.chatItemStudent {
+  text-align: right;
+  background-color: #dde7fa;
+  border-radius: 10px;
+  margin: 10px;
+  width: 70%;
+  align-self: flex-end;
+  padding: 10px;
 }
-.textInput{
-    width: 100%;
-    resize:none;
-    overflow-x: scroll;
-    text-align: left;
-    text-overflow: clip;
-    padding: 10px;
-    box-sizing: border-box;
-    border-radius: 20px ;
-    border: none;
+.chatItemTeacher {
+  text-align: left;
+  align-self: flex-start;
+  background-color: #ffffff;
+  border-radius: 10px;
+  margin: 10px;
+  width: 70%;
+  padding: 10px;
 }
-.button{
-    border: none;
-    background-color: transparent;
-    
+.chatItemDate {
+  text-align: right;
+  font-style: oblique;
+  font-size: smaller;
+  color: #9d9d9d;
 }
-.sendIcon{
-    border-radius: 50%;
-    padding: 5px;
-    margin: 0 5px 0 5px;
-    color: rgb(88, 88, 88);
-    border: none;
+.textGroup {
+  display: flex;
+  flex-direction: column;
+  border-radius: 0px 0px 20px 20px;
+  background-color: #bababa;
+  border-radius: 6px #000000;
 }
-.seenIcon{
-    border-radius: 50%;
-    margin-left: 5px;
-    color: rgb(43, 200, 35);
-    border: none;
-    font-size:15px;
+.textInput {
+  width: 100%;
+  resize: none;
+  overflow-x: scroll;
+  text-align: left;
+  text-overflow: clip;
+  padding: 10px;
+  box-sizing: border-box;
+  border-radius: 20px;
+  border: none;
+}
+.button {
+  border: none;
+  background-color: transparent;
+}
+.sendIcon {
+  border-radius: 50%;
+  padding: 5px;
+  margin: 0 5px 0 5px;
+  color: rgb(88, 88, 88);
+  border: none;
+}
+.seenIcon {
+  border-radius: 50%;
+  margin-left: 5px;
+  color: rgb(43, 200, 35);
+  border: none;
+  font-size: 15px;
 }

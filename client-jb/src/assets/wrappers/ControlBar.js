@@ -1,14 +1,10 @@
-
-
-
 ///////////////////////////////////////////
 ////////// THIS FILE IS OBSOLETE //////////
 ///////////////////////////////////////////
-import styled from "styled-components";
+import styled from 'styled-components'
 
 const Wrapper = styled.section`
-
-    .myDiv {
+  .myDiv {
     background-color: lightblue;
     justify-content: center;
     bottom: 20px;
@@ -17,47 +13,46 @@ const Wrapper = styled.section`
     transform: translateX(-50%);
     width: fit-content;
     border-radius: 15px;
-    }
+  }
 
-    .controlBtn {
+  .controlBtn {
     color: black;
     margin: 0.3rem 0.2rem;
     border-radius: 20px;
     font-size: 1.2rem;
-    }
+  }
 
-    .controlBtn[title="record/stopRecording"] {
+  .controlBtn[title='record/stopRecording'] {
     color: red;
-    }
+  }
 
-    .dropDownTgl {
-        color: black;
-        margin: 0;
-        border-radius: 20px;
-        background-color: lightblue;
-    }
+  .dropDownTgl {
+    color: black;
+    margin: 0;
+    border-radius: 20px;
+    background-color: lightblue;
+  }
 
-    .play-pause-icon {
-        color: var(--primary-500);
-    }
+  .play-pause-icon {
+    color: var(--primary-500);
+  }
 
-    .slider-container {
-        display: flex;
-        align-items: center;
-        margin-bottom: 10px;
-    }
+  .slider-container {
+    display: flex;
+    align-items: center;
+    margin-bottom: 10px;
+  }
 
-    .slider-label {
+  .slider-label {
     margin-right: 30px;
     font-weight: bold;
-    }
+  }
 
-    .slider-input {
+  .slider-input {
     width: 200px;
-    }
+  }
 
-
-    /* > div  {
+  /* > div  {
         display: "block";
         margin: "0 auto";
         background-color: "lightblue";
@@ -69,5 +64,5 @@ const Wrapper = styled.section`
         width: "max-content";
         border-radius: "20px";
       } */
-`;
-export default Wrapper;
+`
+export default Wrapper

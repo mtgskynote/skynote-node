@@ -14,29 +14,29 @@ USAGE:
   The array argument to audioStreamer.init are strings naming the Meyda features you want. 
 */
 
-import { makeCrepeScriptNode } from "./pitch/crepeScriptNode.js";
-import Meyda from "meyda"; //https://meyda.js.org
+import { makeCrepeScriptNode } from './pitch/crepeScriptNode.js'
+import Meyda from 'meyda' //https://meyda.js.org
 import {
   getAudioContext,
   suspendAudioContext,
   resumeAudioContext,
-} from "../context/audioContext";
+} from '../context/audioContext'
 
-const meyda_buff_fft_length = 1024; // fft length and buf size are the same for Meyda
+const meyda_buff_fft_length = 1024 // fft length and buf size are the same for Meyda
 
-let mediaRecorder = null;
-let mediaStream = null;
-let audioChunks = [];
+let mediaRecorder = null
+let mediaStream = null
+let audioChunks = []
 
 var makeAudioStreamer = function (
   pitchCallback,
   pitchVectorCallback,
   analysisCb
 ) {
-  let audioContext = getAudioContext();
-  let sourceNode = null;
-  let scriptNode = null;
-  let gain = null;
+  let audioContext = getAudioContext()
+  let sourceNode = null
+  let scriptNode = null
+  let gain = null
 
   var audioStreamer = {
     // Create an analyser node to extract amplitude data
@@ -46,22 +46,22 @@ var makeAudioStreamer = function (
     analyzerCb: analysisCb,
 
     dismantleAudioNodes: function () {
-      console.log("DiSMANTLING audio nodes");
+      console.log('DiSMANTLING audio nodes')
       // Stop all tracks on the audio source
       if (mediaStream) {
-        mediaStream.getTracks().forEach((track) => track.stop());
-        mediaStream = null;
-        console.log("MediaStream tracks stopped");
+        mediaStream.getTracks().forEach((track) => track.stop())
+        mediaStream = null
+        console.log('MediaStream tracks stopped')
       }
 
-      sourceNode && sourceNode.disconnect();
-      scriptNode && scriptNode.disconnect();
-      this.analyserNode && this.analyserNode.disconnect();
-      gain && gain.disconnect();
+      sourceNode && sourceNode.disconnect()
+      scriptNode && scriptNode.disconnect()
+      this.analyserNode && this.analyserNode.disconnect()
+      gain && gain.disconnect()
     },
 
     init: async function (recordMode, meydaFeatures = []) {
-      console.log("meydaFeatures ", meydaFeatures);
+      console.log('meydaFeatures ', meydaFeatures)
 
       mediaStream = await navigator.mediaDevices.getUserMedia({
         audio: {
@@ -71,14 +71,14 @@ var makeAudioStreamer = function (
           latency: { ideal: 0.01, max: 0.05 },
           sampleRate: 22050,
         },
-      });
+      })
 
-      mediaRecorder = new MediaRecorder(mediaStream);
+      mediaRecorder = new MediaRecorder(mediaStream)
       mediaRecorder.ondataavailable = (event) => {
         if (event.data.size > 0) {
-          audioChunks.push(event.data);
+          audioChunks.push(event.data)
         }
-      };
+      }
 
       // mediaRecorder.onstop = () => {
       //   console.log('----------MediaRecorder stopped');
@@ -95,15 +95,15 @@ var makeAudioStreamer = function (
       // };
 
       if (recordMode === true) {
-        mediaRecorder.start();
-        console.log("We're now recording stuff :D");
+        mediaRecorder.start()
+        console.log("We're now recording stuff :D")
       }
 
-      resumeAudioContext();
-      sourceNode = audioContext.createMediaStreamSource(mediaStream);
+      resumeAudioContext()
+      sourceNode = audioContext.createMediaStreamSource(mediaStream)
 
-      if (typeof Meyda === "undefined") {
-        console.log("Meyda could not be found! Have you included it?");
+      if (typeof Meyda === 'undefined') {
+        console.log('Meyda could not be found! Have you included it?')
       } else {
         const analyzer = Meyda.createMeydaAnalyzer({
           audioContext: audioContext,
@@ -114,24 +114,24 @@ var makeAudioStreamer = function (
           featureExtractors: meydaFeatures,
           callback: (features) => {
             //console.log(`CALLBACK FEATURES:  +${JSON.parse(features)}`);
-            this.analyzerCb && this.analyzerCb(features);
+            this.analyzerCb && this.analyzerCb(features)
           },
-        });
-        analyzer.start();
+        })
+        analyzer.start()
       }
 
       // // analyserNode defined in object
-      this.analyserNode.fftSize = meyda_buff_fft_length;
+      this.analyserNode.fftSize = meyda_buff_fft_length
 
       // // Connect the source node to the analyser node
-      sourceNode.connect(this.analyserNode);
+      sourceNode.connect(this.analyserNode)
 
       // The Crepe script node downsamples to 16kHz
       // We need the buffer size that is a power of two and is longer than 1024 samples when resampled to 16000 Hz.
       // In most platforms where the sample rate is 44.1 kHz or 48 kHz, this will be 4096, giving 10-12 updates/sec.
-      const minBufferSize = (audioContext.sampleRate / 16000) * 1024;
+      const minBufferSize = (audioContext.sampleRate / 16000) * 1024
       for (var bufferSize = 4; bufferSize < minBufferSize; bufferSize *= 2);
-      console.log("CREPE Buffer size = " + bufferSize);
+      console.log('CREPE Buffer size = ' + bufferSize)
       // console.log(
       //   `Setting up a crepescriptnode with pitchcallback  ${pitchCallback}`
       // );
@@ -140,71 +140,71 @@ var makeAudioStreamer = function (
         bufferSize,
         pitchCallback,
         pitchVectorCallback
-      );
+      )
 
-      sourceNode.connect(scriptNode);
-      console.log(`audioStreamer: OK = pitch node connected!!`);
+      sourceNode.connect(scriptNode)
+      console.log(`audioStreamer: OK = pitch node connected!!`)
 
       // necessary to pull audio throuth the scriptNode???????
-      gain = audioContext.createGain();
-      gain.gain.setValueAtTime(0, audioContext.currentTime);
+      gain = audioContext.createGain()
+      gain.gain.setValueAtTime(0, audioContext.currentTime)
 
-      scriptNode.connect(gain);
+      scriptNode.connect(gain)
 
-      gain.connect(audioContext.destination);
+      gain.connect(audioContext.destination)
     },
 
     close: function () {
-      console.log("audiochunks", audioChunks);
+      console.log('audiochunks', audioChunks)
       if (mediaRecorder) {
-        console.log("mediaRecorder.state is ", mediaRecorder.state);
-        mediaRecorder.stop();
+        console.log('mediaRecorder.state is ', mediaRecorder.state)
+        mediaRecorder.stop()
       }
 
-      this.dismantleAudioNodes();
+      this.dismantleAudioNodes()
     },
 
     close_not_save: function () {
       //mediaRecorder.stop();
       // audioContext.suspend();
-      this.dismantleAudioNodes();
-      suspendAudioContext();
+      this.dismantleAudioNodes()
+      suspendAudioContext()
     },
     close_maybe_save: function () {
-      mediaRecorder.stop();
-      audioStreamer.dismantleAudioNodes();
+      mediaRecorder.stop()
+      audioStreamer.dismantleAudioNodes()
       //audioContext.suspend();
     },
     save_or_not: async function (answer) {
-      if (answer === "save") {
+      if (answer === 'save') {
         //This creates an audioBlob
-        const audioBlob = new Blob(audioChunks, { type: "audio/mpeg" });
+        const audioBlob = new Blob(audioChunks, { type: 'audio/mpeg' })
         // Transform audioBlob to audioArray
         try {
           // Convert Blob to ArrayBuffer using await
-          const arrayBuffer = await audioBlob.arrayBuffer();
+          const arrayBuffer = await audioBlob.arrayBuffer()
           // Clean
-          audioChunks = [];
-          this.dismantleAudioNodes();
-          suspendAudioContext();
-          return arrayBuffer;
+          audioChunks = []
+          this.dismantleAudioNodes()
+          suspendAudioContext()
+          return arrayBuffer
         } catch (error) {
-          console.error("Error converting Blob to ArrayBuffer:", error);
+          console.error('Error converting Blob to ArrayBuffer:', error)
           // Clean
-          audioChunks = [];
+          audioChunks = []
           //audioContext.suspend();
-          suspendAudioContext();
-          return 0;
+          suspendAudioContext()
+          return 0
         }
       }
 
-      audioChunks = [];
-      audioContext.suspend();
-      suspendAudioContext();
+      audioChunks = []
+      audioContext.suspend()
+      suspendAudioContext()
     },
-  };
+  }
 
-  return audioStreamer;
-};
+  return audioStreamer
+}
 
-export { makeAudioStreamer };
+export { makeAudioStreamer }

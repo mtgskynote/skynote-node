@@ -1,10 +1,10 @@
-import React from "react";
-import img from "../assets/images/pencil_violin.png";
+import React from 'react'
+import img from '../assets/images/pencil_violin.png'
 
-const InDevelopment = (width = "100px") => {
+const InDevelopment = (width = '100px') => {
   return (
     <div
-      className={"relative rounded overflow-hidden w-full"}
+      className={'relative rounded overflow-hidden w-full'}
       //style={{ width: width, aspectRatio: '2 / 3' }}
     >
       <div className="flex items-center justify-center">
@@ -28,7 +28,7 @@ const InDevelopment = (width = "100px") => {
         </div>
       </div>
     </div>
-  );
-};
+  )
+}
 
-export default InDevelopment;
+export default InDevelopment

@@ -14,24 +14,27 @@ USAGE:
   The array argument to audioStreamer.init are strings naming the Meyda features you want. 
 */
 
-import { makeCrepeScriptNode } from "./pitch/crepeScriptNode.js";
-import Meyda from "meyda"; //https://meyda.js.org
-import { getAudioContext, suspendAudioContext, resumeAudioContext } from '../context/audioContext';
+import { makeCrepeScriptNode } from './pitch/crepeScriptNode.js'
+import Meyda from 'meyda' //https://meyda.js.org
+import {
+  getAudioContext,
+  suspendAudioContext,
+  resumeAudioContext,
+} from '../context/audioContext'
 
-const meyda_buff_fft_length = 1024; // fft length and buf size are the same for Meyda
+const meyda_buff_fft_length = 1024 // fft length and buf size are the same for Meyda
 
-var audioContext = getAudioContext();
+var audioContext = getAudioContext()
 
-
-var mediaRecorder = null;
-var audioChunks = [];
+var mediaRecorder = null
+var audioChunks = []
 
 var makeAudioStreamer = function (
   pitchCallback,
   pitchVectorCallback,
-  analysisCb,
+  analysisCb
 ) {
-  var audioStreamer = {  
+  var audioStreamer = {
     // Create an analyser node to extract amplitude data
     analyserNode: audioContext.createAnalyser(),
     pitch: null,
@@ -39,35 +42,36 @@ var makeAudioStreamer = function (
     analyzerCb: analysisCb,
 
     init: function (recordMode, meydaFeatures = []) {
-      console.log("meydaFeatures ", meydaFeatures)
+      console.log('meydaFeatures ', meydaFeatures)
       navigator.mediaDevices
-        .getUserMedia({ audio: {
-          echoCancellation: false,
-          autoGainControl: false,
-          noiseSuppression: false,
-          latency: {ideal: 0.01, max: 0.05},
-          sampleRate: 22050
-        } })
+        .getUserMedia({
+          audio: {
+            echoCancellation: false,
+            autoGainControl: false,
+            noiseSuppression: false,
+            latency: { ideal: 0.01, max: 0.05 },
+            sampleRate: 22050,
+          },
+        })
         .then(async (stream) => {
-          mediaRecorder = new MediaRecorder(stream);
+          mediaRecorder = new MediaRecorder(stream)
           mediaRecorder.ondataavailable = (event) => {
             if (event.data.size > 0) {
-              audioChunks.push(event.data);
+              audioChunks.push(event.data)
             }
-          };
+          }
 
           if (recordMode === true) {
-            mediaRecorder.start();
-            console.log("We're now recording stuff :D");
-          };
+            mediaRecorder.start()
+            console.log("We're now recording stuff :D")
+          }
 
           // audioContext.resume();
-          resumeAudioContext();
-          const sourceNode = audioContext.createMediaStreamSource(stream);
+          resumeAudioContext()
+          const sourceNode = audioContext.createMediaStreamSource(stream)
 
-
-          if (typeof Meyda === "undefined") {
-            console.log("Meyda could not be found! Have you included it?");
+          if (typeof Meyda === 'undefined') {
+            console.log('Meyda could not be found! Have you included it?')
           } else {
             const analyzer = Meyda.createMeydaAnalyzer({
               audioContext: audioContext,
@@ -78,23 +82,23 @@ var makeAudioStreamer = function (
               featureExtractors: meydaFeatures,
               callback: (features) => {
                 //console.log(`CALLBACK FEATURES:  +${JSON.parse(features)}`);
-                this.analyzerCb && this.analyzerCb(features);
+                this.analyzerCb && this.analyzerCb(features)
               },
-            });
-            analyzer.start();
+            })
+            analyzer.start()
           }
           // // analyserNode defined in object
-          this.analyserNode.fftSize = meyda_buff_fft_length;
+          this.analyserNode.fftSize = meyda_buff_fft_length
 
           // // Connect the source node to the analyser node
-          sourceNode.connect(this.analyserNode);
+          sourceNode.connect(this.analyserNode)
 
           // The Crepe script node downsamples to 16kHz
           // We need the buffer size that is a power of two and is longer than 1024 samples when resampled to 16000 Hz.
           // In most platforms where the sample rate is 44.1 kHz or 48 kHz, this will be 4096, giving 10-12 updates/sec.
-          const minBufferSize = (audioContext.sampleRate / 16000) * 1024;
+          const minBufferSize = (audioContext.sampleRate / 16000) * 1024
           for (var bufferSize = 4; bufferSize < minBufferSize; bufferSize *= 2);
-          console.log("CREPE Buffer size = " + bufferSize);
+          console.log('CREPE Buffer size = ' + bufferSize)
           // console.log(
           //   `Setting up a crepescriptnode with pitchcallback  ${pitchCallback}`
           // );
@@ -103,71 +107,70 @@ var makeAudioStreamer = function (
             bufferSize,
             pitchCallback,
             pitchVectorCallback
-          );
+          )
 
-          sourceNode.connect(scriptNode);
-          console.log(`audioStreamer: OK = pitch node connected!!`);
+          sourceNode.connect(scriptNode)
+          console.log(`audioStreamer: OK = pitch node connected!!`)
 
           // necessary to pull audio throuth the scriptNode???????
-          const gain = audioContext.createGain();
-          gain.gain.setValueAtTime(0, audioContext.currentTime);
+          const gain = audioContext.createGain()
+          gain.gain.setValueAtTime(0, audioContext.currentTime)
 
-          scriptNode.connect(gain);
+          scriptNode.connect(gain)
 
-          gain.connect(audioContext.destination);
+          gain.connect(audioContext.destination)
         })
     },
-    close: function (){
-      console.log("audiochunks", audioChunks)
-      mediaRecorder.stop();
-      console.log("audiochunks", audioChunks)
-      
+    close: function () {
+      console.log('audiochunks', audioChunks)
+      mediaRecorder.stop()
+      console.log('audiochunks', audioChunks)
+
       //audioContext.suspend();
-    },    
-    close_not_save: function (){
+    },
+    close_not_save: function () {
       //mediaRecorder.stop();
       // audioContext.suspend();
-      suspendAudioContext();
+      suspendAudioContext()
     },
-    close_maybe_save: function (){
-      mediaRecorder.stop();
+    close_maybe_save: function () {
+      mediaRecorder.stop()
       //audioContext.suspend();
     },
-    save_or_not: async function(answer){
-      if(answer==="save"){
+    save_or_not: async function (answer) {
+      if (answer === 'save') {
         //This creates an audioBlob
-        const audioBlob = new Blob(audioChunks, { type: 'audio/mp3' });
+        const audioBlob = new Blob(audioChunks, { type: 'audio/mp3' })
         // Transform audioBlob to audioArray
         try {
           // Convert Blob to ArrayBuffer using await
-          const arrayBuffer = await audioBlob.arrayBuffer();
+          const arrayBuffer = await audioBlob.arrayBuffer()
           // Clean
-          audioChunks = [];
+          audioChunks = []
           //audioContext.suspend();
-          suspendAudioContext();
-          return arrayBuffer;
+          suspendAudioContext()
+          return arrayBuffer
         } catch (error) {
-          console.error('Error converting Blob to ArrayBuffer:', error);
+          console.error('Error converting Blob to ArrayBuffer:', error)
           // Clean
-          audioChunks = [];
+          audioChunks = []
           //audioContext.suspend();
-          suspendAudioContext();
+          suspendAudioContext()
           return 0
         }
       }
-      
-      audioChunks = [];
-      audioContext.suspend();
-      suspendAudioContext();  
+
+      audioChunks = []
+      audioContext.suspend()
+      suspendAudioContext()
     },
-  };
-  
-  return audioStreamer;
-};
+  }
 
-
-var destroyAudioStreamer = function (){
-  console.log("destroyAudioStreamer");
+  return audioStreamer
 }
 
-export { makeAudioStreamer, destroyAudioStreamer };
+var destroyAudioStreamer = function () {
+  console.log('destroyAudioStreamer')
+}
+
+export { makeAudioStreamer, destroyAudioStreamer }

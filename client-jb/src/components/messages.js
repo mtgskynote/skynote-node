@@ -1,39 +1,39 @@
-import React, { useEffect, useState, useRef } from "react";
-import AssignmentsCSS from "./Assignments.module.css";
+import React, { useEffect, useState, useRef } from 'react'
+import AssignmentsCSS from './Assignments.module.css'
 import {
   getMessages,
   putMessage,
   updateMessageSeen,
-} from "../utils/messagesMethods.js";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+} from '../utils/messagesMethods.js'
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import {
   faUser,
   faPaperPlane,
   faCheck,
   faArrowRotateLeft,
-} from "@fortawesome/free-solid-svg-icons";
+} from '@fortawesome/free-solid-svg-icons'
 
 const Messages = (props) => {
-  const [user, setUser] = useState(null);
-  const [teacher, setTeacher] = useState(null);
-  const [userChat, setUserChat] = useState(null);
-  const [aux, setAux] = useState(0);
-  const chatInputRef = useRef();
+  const [user, setUser] = useState(null)
+  const [teacher, setTeacher] = useState(null)
+  const [userChat, setUserChat] = useState(null)
+  const [aux, setAux] = useState(0)
+  const chatInputRef = useRef()
 
   const options = {
-    year: "numeric",
-    month: "numeric",
-    day: "numeric",
-    hour: "2-digit",
-    minute: "2-digit",
-  };
+    year: 'numeric',
+    month: 'numeric',
+    day: 'numeric',
+    hour: '2-digit',
+    minute: '2-digit',
+  }
 
   const fetchChat = () => {
-    let mychat = {};
+    let mychat = {}
     // get chat messages to display
     getMessages(user.id, teacher.id)
       .then((result) => {
-        const messages = result;
+        const messages = result
         messages.forEach((message, index) => {
           if (message.sender === user.id) {
             //My message
@@ -42,12 +42,12 @@ const Messages = (props) => {
               message: message.content,
               student: true,
               date: new Date(message.timestamp).toLocaleDateString(
-                "es-ES",
+                'es-ES',
                 options
               ),
               teacher: message.teacher,
               seen: message.seen,
-            };
+            }
           } else {
             //Teacher message
             mychat[index] = {
@@ -55,32 +55,32 @@ const Messages = (props) => {
               message: message.content,
               student: false,
               date: new Date(message.timestamp).toLocaleDateString(
-                "es-ES",
+                'es-ES',
                 options
               ),
               teacher: message.teacher,
-            };
+            }
           }
-        });
-        setUserChat(mychat);
-        setAux(aux + 1);
+        })
+        setUserChat(mychat)
+        setAux(aux + 1)
       })
       .catch((error) => {
-        console.log(`getMessages() error: ${error}`);
-      });
+        console.log(`getMessages() error: ${error}`)
+      })
 
     // set to seen=true all messages sent by teacher to current student
     //(if student opens the chat we understand that they read all the messages)
     updateMessageSeen(user.id, teacher.id).catch((error) => {
-      console.log(`updateMessageSeen() error: ${error}`);
+      console.log(`updateMessageSeen() error: ${error}`)
       // Handle errors if necessary
-    });
-  };
+    })
+  }
 
   const handleSend = () => {
     // Update database
-    const chatInputValue = chatInputRef.current.value;
-    if (chatInputValue !== "") {
+    const chatInputValue = chatInputRef.current.value
+    if (chatInputValue !== '') {
       //Put message on DB
       putMessage(chatInputValue, user.id, teacher.id).then((message) => {
         //To not reload the page, add this message to userChat in state directly
@@ -89,33 +89,33 @@ const Messages = (props) => {
           message: message.content,
           student: true,
           date: new Date(message.timestamp).toLocaleDateString(
-            "es-ES",
+            'es-ES',
             options
           ),
           teacher: message.teacher,
           seen: message.seen,
-        };
-        const currentChat = Object.values(userChat).reverse();
-        currentChat[currentChat.length] = newMessage; //add message
+        }
+        const currentChat = Object.values(userChat).reverse()
+        currentChat[currentChat.length] = newMessage //add message
         //Update chat
-        setUserChat(currentChat.reverse());
+        setUserChat(currentChat.reverse())
         //Clear input chat box
-        chatInputRef.current.value = "";
-      });
+        chatInputRef.current.value = ''
+      })
     } else {
       // Nothing, no message is sent
     }
-  };
+  }
 
   const handleReload = () => {
-    fetchChat();
-  };
+    fetchChat()
+  }
 
   const handleKey = (event) => {
-    if (event.key === "Enter") {
-      handleSend();
+    if (event.key === 'Enter') {
+      handleSend()
     }
-  };
+  }
 
   useEffect(() => {
     if (
@@ -124,16 +124,16 @@ const Messages = (props) => {
       props.teacher !== null &&
       props.teacher !== undefined
     ) {
-      setUser(props.user);
-      setTeacher(props.teacher);
+      setUser(props.user)
+      setTeacher(props.teacher)
     }
-  }, [props]);
+  }, [props])
 
   useEffect(() => {
     if (user !== null && teacher !== null) {
-      fetchChat();
+      fetchChat()
     }
-  }, [user, teacher]);
+  }, [user, teacher])
 
   return (
     <div className={AssignmentsCSS.chatGroup}>
@@ -141,7 +141,7 @@ const Messages = (props) => {
         <div>
           <div className={AssignmentsCSS.chatHeader}>
             <div className={AssignmentsCSS.teacher}>
-              Your conversation with {teacher.name}{" "}
+              Your conversation with {teacher.name}{' '}
               <FontAwesomeIcon
                 icon={faUser}
                 className={AssignmentsCSS.userIcon}
@@ -162,7 +162,7 @@ const Messages = (props) => {
                           className={AssignmentsCSS.seenIcon}
                         />
                       ) : (
-                        ""
+                        ''
                       )}
                     </div>
                   </div>
@@ -173,7 +173,7 @@ const Messages = (props) => {
                       {message.date}
                     </div>
                   </div>
-                );
+                )
               })
             ) : (
               <div>No messages yet</div>
@@ -189,7 +189,7 @@ const Messages = (props) => {
                 <FontAwesomeIcon
                   icon={faArrowRotateLeft}
                   className={AssignmentsCSS.sendIcon}
-                />{" "}
+                />{' '}
               </button>
               <button
                 title="send"
@@ -199,7 +199,7 @@ const Messages = (props) => {
                 <FontAwesomeIcon
                   icon={faPaperPlane}
                   className={AssignmentsCSS.sendIcon}
-                />{" "}
+                />{' '}
               </button>
             </div>
             <textarea
@@ -213,10 +213,10 @@ const Messages = (props) => {
           </div>
         </div>
       ) : (
-        ""
+        ''
       )}
     </div>
-  );
-};
+  )
+}
 
-export default Messages;
+export default Messages

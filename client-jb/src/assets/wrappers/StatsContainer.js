@@ -1,6 +1,3 @@
-
-
-
 ///////////////////////////////////////////
 //// THIS FILE DOESN'T SEEM TO BE USED ////
 ///////////////////////////////////////////
@@ -11,7 +8,7 @@ const Wrapper = styled.section`
   row-gap: 2rem;
 
   /* align-items: center; */
-  .logo-text2{
+  .logo-text2 {
     align-items: center;
     text-align: center;
   }
@@ -23,6 +20,5 @@ const Wrapper = styled.section`
     grid-template-columns: 1fr 1fr 1fr;
     column-gap: 1rem;
   } */
-
 `
 export default Wrapper

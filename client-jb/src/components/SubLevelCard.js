@@ -1,14 +1,14 @@
-import React, { useRef, useState, useEffect } from "react";
-import { Button } from "@mui/material";
-import AccessTimeIcon from "@mui/icons-material/AccessTime";
-import violinPic from "../assets/images/violin/violin1.jpeg";
-import stringPic from "../assets/images/violin/violin6.jpeg";
-import bowPic from "../assets/images/violin/violinDisplay.jpg";
-import moocPic from "../assets/images/violin/violin4.jpeg";
-import piecePic from "../assets/images/violin/violin5.jpeg";
-import StarRateRoundedIcon from "@mui/icons-material/StarRateRounded";
-import StarBorderRoundedIcon from "@mui/icons-material/StarBorderRounded";
-import LessonCard from "../components/LessonCard.js";
+import React, { useRef, useState, useEffect } from 'react'
+import { Button } from '@mui/material'
+import AccessTimeIcon from '@mui/icons-material/AccessTime'
+import violinPic from '../assets/images/violin/violin1.jpeg'
+import stringPic from '../assets/images/violin/violin6.jpeg'
+import bowPic from '../assets/images/violin/violinDisplay.jpg'
+import moocPic from '../assets/images/violin/violin4.jpeg'
+import piecePic from '../assets/images/violin/violin5.jpeg'
+import StarRateRoundedIcon from '@mui/icons-material/StarRateRounded'
+import StarBorderRoundedIcon from '@mui/icons-material/StarBorderRounded'
+import LessonCard from '../components/LessonCard.js'
 
 const SubLevelCard = ({
   index,
@@ -22,32 +22,32 @@ const SubLevelCard = ({
   onCardClick,
   refreshData,
 }) => {
-  const containerRef = useRef(null);
-  const [violinIcon, setViolinIcon] = useState(violinPic);
+  const containerRef = useRef(null)
+  const [violinIcon, setViolinIcon] = useState(violinPic)
 
-  const maxStars = subLevelLessons.length * 3;
-  const levelCardWidth = 265;
-  const expandedHeight = 285;
-  const completed = totalStars === maxStars;
+  const maxStars = subLevelLessons.length * 3
+  const levelCardWidth = 265
+  const expandedHeight = 285
+  const completed = totalStars === maxStars
 
   // Set icon based on sublevel name
   useEffect(() => {
-    const sublevelString = subLevelName.toLowerCase();
-    if (sublevelString.includes("string")) {
-      setViolinIcon(stringPic);
-    } else if (sublevelString.includes("bow")) {
-      setViolinIcon(bowPic);
-    } else if (sublevelString.includes("mooc")) {
-      setViolinIcon(moocPic);
-    } else if (sublevelString.includes("piece")) {
-      setViolinIcon(piecePic);
+    const sublevelString = subLevelName.toLowerCase()
+    if (sublevelString.includes('string')) {
+      setViolinIcon(stringPic)
+    } else if (sublevelString.includes('bow')) {
+      setViolinIcon(bowPic)
+    } else if (sublevelString.includes('mooc')) {
+      setViolinIcon(moocPic)
+    } else if (sublevelString.includes('piece')) {
+      setViolinIcon(piecePic)
     } else {
-      setViolinIcon(violinPic);
+      setViolinIcon(violinPic)
     }
-  }, [subLevelName]);
+  }, [subLevelName])
 
   if (subLevelLessons.length === 0) {
-    return null;
+    return null
   }
 
   return (
@@ -55,12 +55,12 @@ const SubLevelCard = ({
       <div
         className={`w-full shadow-sm rounded-lg mb-3 h-fixed transition-all duration-500 ease-in-out ${
           isOpen
-            ? "bg-blue-400"
-            : "bg-gray-100 hover:bg-slate-200 cursor-pointer"
+            ? 'bg-blue-400'
+            : 'bg-gray-100 hover:bg-slate-200 cursor-pointer'
         }`}
-        style={{ height: isOpen ? `${expandedHeight}px` : "90px" }}
+        style={{ height: isOpen ? `${expandedHeight}px` : '90px' }}
         onClick={() => {
-          onCardClick(index);
+          onCardClick(index)
         }}
       >
         <div className="w-full flex items-center justify-between">
@@ -75,14 +75,14 @@ const SubLevelCard = ({
             <div>
               <div
                 className={`text-lg font-bold ${
-                  isOpen ? "text-white" : "text-black"
+                  isOpen ? 'text-white' : 'text-black'
                 }`}
               >
                 {subLevelName}
               </div>
               <div
                 className={`text-sm font-normal ${
-                  isOpen ? "text-white" : "text-black"
+                  isOpen ? 'text-white' : 'text-black'
                 }`}
               >
                 {category}
@@ -105,7 +105,7 @@ const SubLevelCard = ({
             <div className="flex items-center">
               <div
                 className={`flex items-center text-sm font-normal ${
-                  isOpen ? "text-white" : "text-black"
+                  isOpen ? 'text-white' : 'text-black'
                 }`}
               >
                 {completed ? (
@@ -121,9 +121,9 @@ const SubLevelCard = ({
                 variant="contained"
                 type="button"
                 className={`bg-black text-white text-sm text-center p-2`}
-                style={{ minWidth: "120px" }}
+                style={{ minWidth: '120px' }}
               >
-                {isOpen ? "Hide Lessons" : "View Lessons"}
+                {isOpen ? 'Hide Lessons' : 'View Lessons'}
               </Button>
             </div>
           </div>
@@ -144,19 +144,19 @@ const SubLevelCard = ({
                     id={lesson.id}
                     renderViewRecordings={false}
                     width={`${levelCardWidth}px`}
-                    backgroundColour={"bg-slate-50"}
-                    hoverBackgroundColour={"hover:bg-slate-200"}
-                    textColour={"text-black"}
+                    backgroundColour={'bg-slate-50'}
+                    hoverBackgroundColour={'hover:bg-slate-200'}
+                    textColour={'text-black'}
                     refreshData={refreshData}
                   />
-                );
+                )
               })}
             </div>
           </div>
         )}
       </div>
     </div>
-  );
-};
+  )
+}
 
-export default SubLevelCard;
+export default SubLevelCard

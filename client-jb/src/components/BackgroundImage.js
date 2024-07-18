@@ -1,4 +1,4 @@
-import background_image  from "../assets/images/violin/violin7.png";
+import background_image from '../assets/images/violin/violin7.png'
 
 const BackgroundImage = ({ height, width, imgClassName }) => {
   return (
@@ -9,7 +9,7 @@ const BackgroundImage = ({ height, width, imgClassName }) => {
       height={height}
       width={width}
     />
-  );
-};
+  )
+}
 
-export default BackgroundImage;
+export default BackgroundImage

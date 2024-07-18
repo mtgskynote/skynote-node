@@ -13,7 +13,7 @@ const FormRow = ({ type, name, value, handleChange, labelText }) => {
         className="form-input"
       />
     </div>
-  );
-};
+  )
+}
 
-export default FormRow;
+export default FormRow

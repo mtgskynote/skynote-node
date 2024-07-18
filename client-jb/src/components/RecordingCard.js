@@ -1,20 +1,20 @@
-import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import React, { useState } from 'react'
+import { useNavigate } from 'react-router-dom'
 import {
   deleteRecording,
   editRecording,
-} from "../utils/studentRecordingMethods";
+} from '../utils/studentRecordingMethods'
 import {
   CardContent,
   Typography,
   Tooltip,
   IconButton,
   CircularProgress,
-} from "@mui/material";
-import DeleteIcon from "@mui/icons-material/Delete";
-import EditIcon from "@mui/icons-material/Edit";
-import StarRating from "./StarRating";
-import PopUpWindow from "./PopUpWindow";
+} from '@mui/material'
+import DeleteIcon from '@mui/icons-material/Delete'
+import EditIcon from '@mui/icons-material/Edit'
+import StarRating from './StarRating'
+import PopUpWindow from './PopUpWindow'
 
 const RecordingCard = ({
   recordingName,
@@ -30,98 +30,98 @@ const RecordingCard = ({
   textColour,
   onEditRecording,
 }) => {
-  const [showEditPopUpWindow, setShowEditPopUpWindow] = useState(false);
-  const [showDeletePopUpWindow, setShowDeletePopUpWindow] = useState(false);
-  const [newRecordingName, setNewRecordingName] = useState(recordingName);
-  const [showEditWarning, setShowEditWarning] = useState(false);
-  const [showDeleteWarning, setShowDeleteWarning] = useState(false);
-  const [showEditLoading, setShowEditLoading] = useState(false);
-  const [showDeleteLoading, setShowDeleteLoading] = useState(false);
-  const navigate = useNavigate();
+  const [showEditPopUpWindow, setShowEditPopUpWindow] = useState(false)
+  const [showDeletePopUpWindow, setShowDeletePopUpWindow] = useState(false)
+  const [newRecordingName, setNewRecordingName] = useState(recordingName)
+  const [showEditWarning, setShowEditWarning] = useState(false)
+  const [showDeleteWarning, setShowDeleteWarning] = useState(false)
+  const [showEditLoading, setShowEditLoading] = useState(false)
+  const [showDeleteLoading, setShowDeleteLoading] = useState(false)
+  const navigate = useNavigate()
 
   // Set defaults
-  const xSize = width ? width : "290px";
-  const bColour = backgroundColour ? backgroundColour : "bg-blue-400";
+  const xSize = width ? width : '290px'
+  const bColour = backgroundColour ? backgroundColour : 'bg-blue-400'
   const hoverColour = hoverBackgroundColour
     ? hoverBackgroundColour
-    : "hover:bg-blue-500";
-  const tColour = textColour ? textColour : "text-white";
+    : 'hover:bg-blue-500'
+  const tColour = textColour ? textColour : 'text-white'
 
   // Navigate to the ListRecordings route with the provided xml and recordingId
   const handleViewRecording = async () => {
-    navigate(`/ListRecordings/${xml}`, { state: { id: recordingId } });
-  };
+    navigate(`/ListRecordings/${xml}`, { state: { id: recordingId } })
+  }
 
   // Handle opening the delete recording popup window
   const handleShowEditPopUpWindow = () => {
-    setShowEditPopUpWindow(true);
-  };
+    setShowEditPopUpWindow(true)
+  }
 
   // Handle closing the delete recording popup window
   const handleHideEditPopUpWindow = () => {
-    setShowEditPopUpWindow(false);
+    setShowEditPopUpWindow(false)
     setTimeout(() => {
-      setNewRecordingName(recordingName);
-      setShowEditWarning(false);
-    }, 1000);
-  };
+      setNewRecordingName(recordingName)
+      setShowEditWarning(false)
+    }, 1000)
+  }
 
   // Set new recording name whenever the user input changes
   const handleRenameRecording = (e) => {
-    setNewRecordingName(e.target.value);
-  };
+    setNewRecordingName(e.target.value)
+  }
 
   // Update recording name in the database
   const handleUpdateRecordingName = () => {
-    if (newRecordingName !== "" && newRecordingName !== recordingName) {
-      setShowEditWarning(false);
-      setShowEditLoading(true);
+    if (newRecordingName !== '' && newRecordingName !== recordingName) {
+      setShowEditWarning(false)
+      setShowEditLoading(true)
       editRecording(recordingId, newRecordingName).then(() => {
-        onEditRecording(recordingName, newRecordingName);
-        setNewRecordingName(newRecordingName);
-        setShowEditPopUpWindow(false);
-        setShowEditLoading(false);
-      });
+        onEditRecording(recordingName, newRecordingName)
+        setNewRecordingName(newRecordingName)
+        setShowEditPopUpWindow(false)
+        setShowEditLoading(false)
+      })
     } else if (newRecordingName === recordingName) {
-      setShowEditWarning(false);
-      setShowEditPopUpWindow(false);
+      setShowEditWarning(false)
+      setShowEditPopUpWindow(false)
     } else {
-      setShowEditWarning(true);
+      setShowEditWarning(true)
     }
-  };
+  }
 
   // Open the delete recording popup window
   const handleShowDeletePopUpWindow = () => {
-    setShowDeletePopUpWindow(true);
-  };
+    setShowDeletePopUpWindow(true)
+  }
 
   // Close the delete recording popup window
   const handleHideDeletePopUpWindow = () => {
-    setShowDeletePopUpWindow(false);
-  };
+    setShowDeletePopUpWindow(false)
+  }
 
   // Delete recording from the database
   const handleDeleteRecording = () => {
-    setShowDeleteLoading(true);
+    setShowDeleteLoading(true)
     deleteRecording(recordingId)
       .then(() => {
-        onDeleteRecording(recordingName);
-        setShowDeletePopUpWindow(false);
-        setShowDeleteLoading(false);
+        onDeleteRecording(recordingName)
+        setShowDeletePopUpWindow(false)
+        setShowDeleteLoading(false)
       })
       .catch((error) => {
-        console.log(`Cannot delete recording from database: ${error}`);
-        setShowDeleteLoading(false);
-        setShowDeleteWarning(true);
-      });
-  };
+        console.log(`Cannot delete recording from database: ${error}`)
+        setShowDeleteLoading(false)
+        setShowDeleteWarning(true)
+      })
+  }
 
   return (
     <div>
       <div className="flex">
         <div
           className={`relative transition ease-in-out delay-50 rounded overflow-hidden shadow-md hover:shadow-lg ${bColour} ${hoverColour} hover:cursor-pointer mb-3`}
-          style={{ width: xSize, aspectRatio: "3 / 2" }}
+          style={{ width: xSize, aspectRatio: '3 / 2' }}
           onClick={handleViewRecording}
         >
           <CardContent>
@@ -158,15 +158,15 @@ const RecordingCard = ({
             <div className="absolute inset-x-0 bottom-0 w-full p-3 flex align-text-bottom">
               <StarRating
                 stars={stars}
-                size={"sm:text-3xl md:text-3xl lg:text-3xl xl:text-4xl"}
+                size={'sm:text-3xl md:text-3xl lg:text-3xl xl:text-4xl'}
               />
               <div className="grid grid-cols-2 ml-auto">
                 <Tooltip placement="bottom" title="Edit" arrow>
                   <IconButton
                     className="text-white"
                     onClick={(e) => {
-                      e.stopPropagation();
-                      handleShowEditPopUpWindow();
+                      e.stopPropagation()
+                      handleShowEditPopUpWindow()
                     }}
                   >
                     <EditIcon className="text-3xl" />
@@ -176,8 +176,8 @@ const RecordingCard = ({
                   <IconButton
                     className="text-white"
                     onClick={(e) => {
-                      e.stopPropagation();
-                      handleShowDeletePopUpWindow();
+                      e.stopPropagation()
+                      handleShowDeletePopUpWindow()
                     }}
                   >
                     <DeleteIcon className="text-3xl" />
@@ -197,7 +197,7 @@ const RecordingCard = ({
               <CircularProgress />
             </div>
           )}
-          <div className={`mb-4 ${showEditLoading ? "opacity-50" : ""}`}>
+          <div className={`mb-4 ${showEditLoading ? 'opacity-50' : ''}`}>
             <label className="block text-gray-700 mb-2" htmlFor="recordingName">
               Edit recording name:
             </label>
@@ -242,7 +242,7 @@ const RecordingCard = ({
               <CircularProgress />
             </div>
           )}
-          <div className={`${showDeleteLoading ? "opacity-50" : ""}`}>
+          <div className={`${showDeleteLoading ? 'opacity-50' : ''}`}>
             {showDeleteWarning && (
               <div className="bg-red-100 text-red-700 text-sm py-1 px-2 mb-4 rounded-lg flex justify-center items-center transition duration-300 ease-in-out">
                 <p className="m-0">Could not delete {recordingName}.</p>
@@ -274,7 +274,7 @@ const RecordingCard = ({
         </div>
       </PopUpWindow>
     </div>
-  );
-};
+  )
+}
 
-export default RecordingCard;
+export default RecordingCard
