@@ -17,8 +17,4 @@ const Message = (props) => {
   return Message
 }
 
-Message.propTypes = {
-  message: PropTypes.string.isRequired,
-}
-
 export default Message
