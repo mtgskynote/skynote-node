@@ -4,7 +4,6 @@ import {
   SETUP_USER_BEGIN,
   SETUP_USER_SUCCESS,
   SETUP_USER_ERROR,
-
   LOGOUT_USER,
 } from "./actions";
 
@@ -16,7 +15,7 @@ const reducer = (state, action) => {
       ...state,
       showAlert: true,
       alertType: "danger",
-      alertText: "Please provide all values",
+      alertText: "Please provide all fields.",
     };
   }
 
@@ -54,7 +53,6 @@ const reducer = (state, action) => {
       alertText: action.payload.msg,
     };
   }
-
 
   if (action.type === LOGOUT_USER) {
     return {
