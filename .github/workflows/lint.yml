@@ -31,8 +31,10 @@ jobs:
           git add .
           git commit -m "Chore: Apply Prettier auto-formatting" || echo "No changes to commit"
       - name: Push changes
-        uses: ad-m/github-push-action@v0.6.0
-        with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          BRANCH=${GITHUB_HEAD_REF}
+          git push origin HEAD:$BRANCH
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - name: Run ESLint
         run: npx eslint .
