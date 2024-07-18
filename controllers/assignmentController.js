@@ -111,12 +111,9 @@ const updateTaskAssignment = async (req, res) => {
     )
 
     if (!updatedAssignment) {
-      return res
-        .status(404)
-        .json({
-          error:
-            'Assignment not found or task with specified scoreId not found',
-        })
+      return res.status(404).json({
+        error: 'Assignment not found or task with specified scoreId not found',
+      })
     }
 
     res.status(200).json(updatedAssignment)
