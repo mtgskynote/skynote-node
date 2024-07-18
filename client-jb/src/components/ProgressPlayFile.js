@@ -639,7 +639,7 @@ const ProgressPlayFile = () => {
 
   return (
     <HotKeys keyMap={keyMap} handlers={handlers}>
-      <div className="flex flex-col min-h-screen justify-between">
+      <div className="flex flex-col min-h-screen justify-between mb-40">
         <div className="relative">
           <OpenSheetMusicDisplay
             file={`${folderBasePath}/${params.files}.xml`}
@@ -671,7 +671,7 @@ const ProgressPlayFile = () => {
           )}
         </div>
 
-        <div className="flex justify-center mb-32">
+        <div className="fixed bottom-0 left-0 right-0 z-30 flex justify-center mb-32">
           <ControlBar
             onTransposeChange={(newTranspose) => setTranspose(newTranspose)}
             onBpmChange={(newBpm) => setBpm(newBpm)}
