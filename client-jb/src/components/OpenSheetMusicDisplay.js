@@ -397,6 +397,7 @@ class OpenSheetMusicDisplay extends Component {
   //#region CURSOR CHANGE
   checkCursorChange = () => {
     const cursorCurrent = this.osmd.cursor.Iterator.currentTimeStamp.RealValue;
+    console.log("CURSOR POSITION:", cursorCurrent);
 
     //WHEN CURSOR REACHES THE END /////////////
     if (this.selectionEndReached === true) {
@@ -480,6 +481,7 @@ class OpenSheetMusicDisplay extends Component {
 
       //Absolute Position
       const svgElement = gNote.getSVGGElement();
+      console.log(svgElement);
 
       if (
         svgElement &&
@@ -961,57 +963,32 @@ class OpenSheetMusicDisplay extends Component {
 
         const noteStaffPositionY =
           middleLineStave + midiToStaffStep * oneStepPixels;
-        ////////////////////////////////////////////////////////
 
-        //Add pitch to array and note identification data///////
+        // Add pitch to array and note identification data
         if (this.state.currentGNoteinScorePitch) {
-          //Add note ID
+          // Add note ID
           const noteID = this.state.currentGNoteinScorePitch.getSVGId();
-          const addNewNoteID = [...this.state.recordedNoteIDs, noteID];
-          this.setState({ recordedNoteIDs: addNewNoteID });
-          const addNewNoteNEWID = [
-            ...this.state.recordedNoteNEWIDs,
-            this.osmd.IDdict[noteID],
-          ];
-          this.setState({ recordedNoteNEWIDs: addNewNoteNEWID });
-          //Add note index
-          const addNoteIndex = [...this.state.recordedNoteIndex, this.index];
-          this.setState({ recordedNoteIndex: addNoteIndex });
-          //Add pitch data
-          const newPitchData = [
-            ...this.state.pitchData,
-            this.props.pitch[this.props.pitch.length - 1],
-          ];
-          this.setState({ pitchData: newPitchData });
-          //Add pitch confidence data
-          const newPitchConfidenceData = [
-            ...this.state.pitchConfidenceData,
-            this.props.pitchConfidence[this.props.pitchConfidence.length - 1],
-          ];
-          this.setState({ pitchConfidenceData: newPitchConfidenceData });
-          //Add X position to array
-          const addedNewPositionX = [
-            ...this.state.pitchPositionX,
-            this.notePositionX,
-          ];
-          this.setState({ pitchPositionX: addedNewPositionX });
-          //Add Y position to array
-          const addedNewPositionY = [
-            ...this.state.pitchPositionY,
-            noteStaffPositionY,
-          ];
-          this.setState({ pitchPositionY: addedNewPositionY });
-          //Add note color
-          const addPitchColor = [...this.state.pitchColor, this.color];
-          this.setState({ pitchColor: addPitchColor });
-          //Add current number of repetition
-          const addRepetitionNumber = [
-            ...this.state.repetitionNumber,
-            this.totalReps,
-          ];
-          this.setState({ repetitionNumber: addRepetitionNumber });
+          this.setState((prevState) => ({
+            recordedNoteIDs: [...prevState.recordedNoteIDs, noteID],
+            recordedNoteNEWIDs: [
+              ...prevState.recordedNoteNEWIDs,
+              this.osmd.IDdict[noteID],
+            ],
+            recordedNoteIndex: [...prevState.recordedNoteIndex, this.index],
+            pitchData: [
+              ...prevState.pitchData,
+              this.props.pitch[this.props.pitch.length - 1],
+            ],
+            pitchConfidenceData: [
+              ...prevState.pitchConfidenceData,
+              this.props.pitchConfidence[this.props.pitchConfidence.length - 1],
+            ],
+            pitchPositionX: [...prevState.pitchPositionX, this.notePositionX],
+            pitchPositionY: [...prevState.pitchPositionY, noteStaffPositionY],
+            pitchColor: [...prevState.pitchColor, this.color],
+            repetitionNumber: [...prevState.repetitionNumber, this.totalReps],
+          }));
         }
-        ////////////////////////////////////////////////////////
       }
     }
 
