@@ -1,44 +1,54 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 
-const CountDownTimer = ({ bpm, mode, onCountDownFinished }) => {
-  const [countDownBeats, setCountDownBeats] = useState(1); // Set the initial countdown time in beats
+const CountDownTimer = ({ bpm, mode, onCountDownFinished, start }) => {
+  const [countDownBeats, setCountDownBeats] = useState(0); // Set the initial countdown time in beats
+  const intervalRef = useRef(null);
 
   useEffect(() => {
-    console.log("original bpm: ", bpm);
+    if (start) {
+      console.log("original bpm: ", bpm);
 
-    let new_bpm;
+      let new_bpm = bpm > 100 ? bpm / 2 : bpm;
+      console.log("new bpm: ", new_bpm);
 
-    if (bpm > 100) {
-      new_bpm = bpm / 2;
-    } else {
-      new_bpm = bpm;
-    }
+      const timePerBeat = (1 / new_bpm) * 60 * 1000; // milliseconds per beat
 
-    console.log("new bpm: ", new_bpm);
+      // Immediately start the countdown
+      setCountDownBeats(1);
 
-    const timePerBeat = (1 / new_bpm) * 60 * 1000; // milliseconds per beat
-    let countdownInterval;
-
-    if (countDownBeats < 5) {
-      countdownInterval = setInterval(() => {
-        setCountDownBeats((prevCountDownBeats) => prevCountDownBeats + 1);
+      intervalRef.current = setInterval(() => {
+        setCountDownBeats((prevCountDownBeats) => {
+          if (prevCountDownBeats < 4) {
+            return prevCountDownBeats + 1;
+          } else {
+            clearInterval(intervalRef.current);
+            intervalRef.current = null;
+            onCountDownFinished(); // Ensure this is called only once when the countdown finishes
+            return prevCountDownBeats;
+          }
+        });
       }, timePerBeat);
-    } else {
-      setCountDownBeats("");
-    }
 
-    if (countDownBeats === 5) {
-      clearInterval(countdownInterval);
-      onCountDownFinished();
+      // Ensure the first beat is shown without delay
+      setTimeout(() => {
+        setCountDownBeats(1);
+      }, 0);
     }
 
     return () => {
-      clearInterval(countdownInterval);
+      if (intervalRef.current) {
+        clearInterval(intervalRef.current);
+        intervalRef.current = null;
+      }
     };
-  }, [bpm, countDownBeats, onCountDownFinished]);
+  }, [bpm, start, onCountDownFinished]);
 
   return (
-    <div className="fixed top-0 left-0 w-screen h-screen flex items-center justify-center z-50">
+    <div
+      className={`fixed top-0 left-0 w-screen h-screen flex items-center justify-center z-50 ${
+        !start ? "hidden" : ""
+      }`}
+    >
       <div
         key={countDownBeats}
         className={`${
@@ -47,7 +57,7 @@ const CountDownTimer = ({ bpm, mode, onCountDownFinished }) => {
             : "text-red-500 shadow-red-600"
         } text-9xl text-shadow transition-all duration-500 ease-in-out`}
       >
-        {countDownBeats}
+        {countDownBeats > 0 && countDownBeats}
       </div>
     </div>
   );

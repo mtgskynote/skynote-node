@@ -700,13 +700,14 @@ const ProgressPlayFile = () => {
           />
         </div>
 
-        {showCountDownTimer ? (
-          <CountDownTimer
-            bpm={bpm}
-            mode={practiceMode}
-            onCountDownFinished={handleCountDownFinished}
-          />
-        ) : null}
+        <CountDownTimer
+          bpm={bpm}
+          mode={practiceMode}
+          start={showCountDownTimer}
+          onCountDownFinished={() => {
+            setCountDownFinished(true);
+          }}
+        />
 
         <PopUpWindow isOpen={showSaveRecordingPopUp}>
           <div className="mb-4">
