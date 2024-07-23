@@ -1,8 +1,8 @@
-import React from 'react'
+import React from 'react';
 import PropTypes from 'prop-types';
-import { useNavigate } from 'react-router-dom'
-import Card from '@mui/material/Card'
-import CardContent from '@mui/material/CardContent'
+import { useNavigate } from 'react-router-dom';
+import Card from '@mui/material/Card';
+import CardContent from '@mui/material/CardContent';
 
 const AssignmentCard = ({ assignmentId, daysLeft, dueDate, score }) => {
   const dateOptions = {
@@ -85,4 +85,4 @@ AssignmentCard.propTypes = {
   }).isRequired,
 };
 
-export default AssignmentCard
+export default AssignmentCard;

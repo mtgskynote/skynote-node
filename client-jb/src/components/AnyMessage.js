@@ -1,6 +1,6 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
-import AnyMessageCSS from './AnyMessage.module.css'
+import AnyMessageCSS from './AnyMessage.module.css';
 
 const Message = (props) => {
   const [message, setMessage] = useState('false');
@@ -19,7 +19,7 @@ const Message = (props) => {
 };
 
 Message.propTypes = {
-  message: PropTypes.string.isRequired
-}
+  message: PropTypes.string.isRequired,
+};
 
-export default Message
+export default Message;

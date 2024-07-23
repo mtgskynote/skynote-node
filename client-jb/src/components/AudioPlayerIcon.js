@@ -1,9 +1,9 @@
-import React, { useState, useEffect, useRef } from 'react'
+import React, { useState, useEffect, useRef } from 'react';
 import PropTypes from 'prop-types';
-import { IconButton } from '@mui/material'
-import PlayCircleOutlineIcon from '@mui/icons-material/PlayCircleOutline'
-import PauseCircleOutlineIcon from '@mui/icons-material/PauseCircleOutline'
-import { getAudioContext } from '../context/audioContext'
+import { IconButton } from '@mui/material';
+import PlayCircleOutlineIcon from '@mui/icons-material/PlayCircleOutline';
+import PauseCircleOutlineIcon from '@mui/icons-material/PauseCircleOutline';
+import { getAudioContext } from '../context/audioContext';
 
 const AudioPlayerIcon = ({ audio, isPlaying, onPlay }) => {
   const [internalPlayState, setInternalPlayState] = useState(false);
@@ -119,11 +119,8 @@ const AudioPlayerIcon = ({ audio, isPlaying, onPlay }) => {
 AudioPlayerIcon.propTypes = {
   // Assuming the props for AudioPlayerIcon, adjust as necessary
   color: PropTypes.string,
-  size: PropTypes.oneOfType([
-    PropTypes.string,
-    PropTypes.number,
-  ]),
+  size: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
   onClick: PropTypes.func,
 };
 
-export default AudioPlayerIcon
+export default AudioPlayerIcon;
