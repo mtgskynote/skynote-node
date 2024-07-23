@@ -1,4 +1,5 @@
 import React, { useEffect, useRef } from 'react';
+import PropTypes from 'prop-types';
 
 //Pitch track line component
 const LineChart = (props) => {
@@ -65,6 +66,18 @@ const LineChart = (props) => {
       <canvas ref={canvasRef} width={props.width} height={props.height} />;
     </div>
   );
+};
+
+LineChart.propTypes = {
+  pitchDataPosX: PropTypes.arrayOf(PropTypes.number).isRequired,
+  pitchDataPosY: PropTypes.arrayOf(PropTypes.number).isRequired,
+  pitchIndex: PropTypes.arrayOf(PropTypes.number).isRequired,
+  pitchColor: PropTypes.arrayOf(PropTypes.string).isRequired,
+  repetitionNumber: PropTypes.arrayOf(PropTypes.number).isRequired,
+  showingRep: PropTypes.number.isRequired,
+  zoom: PropTypes.number.isRequired,
+  width: PropTypes.number.isRequired,
+  height: PropTypes.number.isRequired,
 };
 
 export default LineChart;

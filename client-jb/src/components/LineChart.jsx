@@ -117,22 +117,7 @@ const LineChart = ({ isDashboard = false }) => {
 };
 
 LineChart.propTypes = {
-  data: PropTypes.arrayOf(
-    PropTypes.shape({
-      date: PropTypes.string.isRequired,
-      value: PropTypes.number.isRequired,
-    })
-  ).isRequired,
-  width: PropTypes.number,
-  height: PropTypes.number,
-  margin: PropTypes.shape({
-    top: PropTypes.number,
-    right: PropTypes.number,
-    bottom: PropTypes.number,
-    left: PropTypes.number,
-  }),
-  xLabel: PropTypes.string,
-  yLabel: PropTypes.string,
+  isDashboard: PropTypes.bool,
 };
 
 export default LineChart;

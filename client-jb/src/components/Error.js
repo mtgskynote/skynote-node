@@ -16,7 +16,7 @@ const Error = ({ type = 'general', message = '' }) => {
           Page Not Found
         </h3>
         <p className="text-lg text-gray-600 mb-8 normal-case">
-          We can't seem to find the page you are looking for.
+          We can&apos;t seem to find the page you are looking for.
         </p>
         <Link to="/" className="text-blue-500 underline">
           back home

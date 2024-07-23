@@ -117,13 +117,11 @@ const AudioPlayerIcon = ({ audio, isPlaying, onPlay }) => {
 };
 
 AudioPlayerIcon.propTypes = {
-  // Assuming the props for AudioPlayerIcon, adjust as necessary
-  color: PropTypes.string,
-  size: PropTypes.oneOfType([
-    PropTypes.string,
-    PropTypes.number,
-  ]),
-  onClick: PropTypes.func,
+  audio: PropTypes.shape({
+    data: PropTypes.any.isRequired,
+  }).isRequired,
+  isPlaying: PropTypes.bool.isRequired,
+  onPlay: PropTypes.func,
 };
 
 export default AudioPlayerIcon

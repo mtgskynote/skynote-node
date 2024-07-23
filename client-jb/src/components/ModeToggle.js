@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import PropTypes from 'prop-types';
 import ModeIcon from '@mui/icons-material/Mode';
 import MicIcon from '@mui/icons-material/Mic';
 
@@ -31,6 +32,11 @@ const ModeToggle = ({ onModeChange, practiceMode }) => {
       </div>
     </button>
   );
+};
+
+ModeToggle.propTypes = {
+  onModeChange: PropTypes.func.isRequired,
+  practiceMode: PropTypes.bool.isRequired,
 };
 
 export default ModeToggle;

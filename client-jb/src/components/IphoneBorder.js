@@ -7,7 +7,7 @@ const IphoneBorder = ({ height, width }) => {
     <img
       src={iphone_border}
       className="iphone-border"
-      altprop="iphone-border"
+      alt="iphone-border"
       height={height}
       width={width}
     />
