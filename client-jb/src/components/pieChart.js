@@ -103,12 +103,7 @@ const circleSegmentPath = function (c, r, startAngle, endAngle) {
 
 const PieChart = React.forwardRef(
   (
-    {
-      labels = def_labels,
-      radius = 100,
-      m_width = 200,
-      m_height = 200,
-    },
+    { labels = def_labels, radius = 100, m_width = 200, m_height = 200 },
     ref
   ) => {
     const svgRef = useRef(null);
