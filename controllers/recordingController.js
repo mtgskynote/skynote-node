@@ -1,5 +1,5 @@
-import student_recordings from '../models/StudentRecordings.js'
-import { StatusCodes } from 'http-status-codes'
+import student_recordings from '../models/StudentRecordings.js';
+import { StatusCodes } from 'http-status-codes';
 
 /* see recordingRoutes.js for the routes that use these functions */
 

@@ -1,5 +1,5 @@
-import Message from '../models/Message.js'
-import mongoose from 'mongoose'
+import Message from '../models/Message.js';
+import mongoose from 'mongoose';
 
 /* see messageRoutes.js for the routes that use these functions */
 
@@ -47,7 +47,7 @@ const getAllMessages = async (req, res) => {
     console.error('Error fetching messages:', error);
     res.status(500).json({ error: 'Internal server error' });
   }
-}
+};
 
 const putMessage = async (req, res) => {
   console.log(`server putMessage starting`);

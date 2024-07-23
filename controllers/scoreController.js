@@ -1,11 +1,11 @@
-import xmlScores from '../models/xmlScoreModel.js'
-import { StatusCodes } from 'http-status-codes'
-import { BadRequestError } from '../errors/index.js'
+import xmlScores from '../models/xmlScoreModel.js';
+import { StatusCodes } from 'http-status-codes';
+import { BadRequestError } from '../errors/index.js';
 
-import { dirname } from 'path'
-import { fileURLToPath } from 'url'
-const pathname = '/xmlScores/violin'
-const rootScorePath = '../../public/xmlScores/violin'
+import { dirname } from 'path';
+import { fileURLToPath } from 'url';
+const pathname = '/xmlScores/violin';
+const rootScorePath = '../../public/xmlScores/violin';
 
 /*
   Requester may want just the name, a URL, or the path to the file (from /public) for their convenience
@@ -82,8 +82,8 @@ const xml = async (req, res) => {
   }
   let extname = fname + '.xml';
   // should check for existance
-  res.sendFile(extname, { root: scoreLocation })
-}
+  res.sendFile(extname, { root: scoreLocation });
+};
 
 //Lonce's
 const getAllScoreData = async (req, res) => {

@@ -1,5 +1,5 @@
-import assignments from '../models/Assignments.js'
-import { StatusCodes } from 'http-status-codes'
+import assignments from '../models/Assignments.js';
+import { StatusCodes } from 'http-status-codes';
 
 /* see assignmentRoutes.js for the routes that use these functions */
 const getAllAssignments = async (req, res) => {

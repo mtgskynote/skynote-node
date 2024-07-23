@@ -1,6 +1,6 @@
-import User from '../models/User.js'
-import { StatusCodes } from 'http-status-codes'
-import { BadRequestError, UnAuthenticatedError } from '../errors/index.js'
+import User from '../models/User.js';
+import { StatusCodes } from 'http-status-codes';
+import { BadRequestError, UnAuthenticatedError } from '../errors/index.js';
 
 // Register is used to register the user
 const register = async (req, res) => {
