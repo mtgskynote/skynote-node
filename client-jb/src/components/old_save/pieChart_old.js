@@ -1,3 +1,6 @@
+/* eslint-disable */
+// TODO: Eslint is disabled because this code isn't used
+
 import React, { useRef, useEffect } from 'react';
 const static_xmlns = 'http://www.w3.org/2000/svg';
 

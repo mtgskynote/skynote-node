@@ -1,4 +1,5 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 
 const MetronomeSliders = ({
   metroVol,
@@ -32,6 +33,13 @@ const MetronomeSliders = ({
       </div>
     </div>
   );
+};
+
+MetronomeSliders.propTypes = {
+  metroVol: PropTypes.number.isRequired,
+  bpmChange: PropTypes.number.isRequired,
+  handleMetroVolChange: PropTypes.func.isRequired,
+  handleBpmChange: PropTypes.func.isRequired,
 };
 
 export default MetronomeSliders;

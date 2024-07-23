@@ -1,4 +1,5 @@
 import React, { useRef, useState, useEffect } from 'react';
+import PropTypes from 'prop-types';
 import { Button } from '@mui/material';
 //import AccessTimeIcon from '@mui/icons-material/AccessTime'
 import violinPic from '../assets/images/violin/violin1.jpeg';
@@ -157,6 +158,28 @@ const SubLevelCard = ({
       </div>
     </div>
   );
+};
+
+SubLevelCard.propTypes = {
+  index: PropTypes.number.isRequired,
+  subLevelName: PropTypes.string.isRequired,
+  levelNumber: PropTypes.number.isRequired,
+  category: PropTypes.string.isRequired,
+  timeRecorded: PropTypes.string.isRequired,
+  totalStars: PropTypes.number.isRequired,
+  subLevelLessons: PropTypes.arrayOf(
+    PropTypes.shape({
+      title: PropTypes.string.isRequired,
+      skill: PropTypes.string.isRequired,
+      stars: PropTypes.number.isRequired,
+      favourite: PropTypes.bool.isRequired,
+      route_path: PropTypes.string.isRequired,
+      id: PropTypes.string.isRequired,
+    })
+  ).isRequired,
+  isOpen: PropTypes.bool.isRequired,
+  onCardClick: PropTypes.func.isRequired,
+  refreshData: PropTypes.func.isRequired,
 };
 
 export default SubLevelCard;

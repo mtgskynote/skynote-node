@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import PropTypes from 'prop-types';
 import RangeSlider from './RangeSlider';
 
 const RangeInput = ({ label, min, max, initial, onValueChange, disabled }) => {
@@ -48,6 +49,15 @@ const RangeInput = ({ label, min, max, initial, onValueChange, disabled }) => {
       />
     </div>
   );
+};
+
+RangeInput.propTypes = {
+  label: PropTypes.string.isRequired,
+  min: PropTypes.number.isRequired,
+  max: PropTypes.number.isRequired,
+  initial: PropTypes.number.isRequired,
+  onValueChange: PropTypes.func,
+  disabled: PropTypes.bool,
 };
 
 export default RangeInput;

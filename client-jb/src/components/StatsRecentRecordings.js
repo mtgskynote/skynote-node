@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import PropTypes from 'prop-types';
 import { useNavigate } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { deleteRecording } from '../utils/studentRecordingMethods.js';
@@ -204,6 +205,21 @@ const StatsRecentRecordings = (props) => {
       </div>
     </div>
   );
+};
+
+StatsRecentRecordings.propTypes = {
+  recentRecordings: PropTypes.shape({
+    names: PropTypes.arrayOf(PropTypes.string).isRequired,
+    ids: PropTypes.arrayOf(PropTypes.string).isRequired,
+    stars: PropTypes.arrayOf(PropTypes.number).isRequired,
+    scoresTitles: PropTypes.arrayOf(PropTypes.string).isRequired,
+    scoresIds: PropTypes.arrayOf(PropTypes.string).isRequired,
+    scoresXML: PropTypes.arrayOf(PropTypes.string).isRequired,
+    skills: PropTypes.arrayOf(PropTypes.string).isRequired,
+    levels: PropTypes.arrayOf(PropTypes.string).isRequired,
+    dates: PropTypes.arrayOf(PropTypes.string).isRequired,
+  }).isRequired,
+  reloadRecordingsCallBack: PropTypes.func.isRequired,
 };
 
 export default StatsRecentRecordings;

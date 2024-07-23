@@ -1,3 +1,6 @@
+/* eslint-disable */
+// TODO: Eslint is disabled because this file is still in development
+
 import React, { useEffect, useState, useRef, useCallback } from 'react';
 import { HotKeys } from 'react-hotkeys';
 import { useParams, useNavigate } from 'react-router-dom';

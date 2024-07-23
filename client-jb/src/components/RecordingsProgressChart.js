@@ -1,4 +1,5 @@
 import React, { useEffect } from 'react';
+import PropTypes from 'prop-types';
 import Chart from 'chart.js/auto';
 
 const RecordingsProgressChart = ({ id, recordingsData }) => {
@@ -84,6 +85,11 @@ const RecordingsProgressChart = ({ id, recordingsData }) => {
   };
 
   return <canvas id={id}></canvas>;
+};
+
+RecordingsProgressChart.propTypes = {
+  id: PropTypes.string.isRequired,
+  recordingsData: PropTypes.arrayOf(PropTypes.number).isRequired,
 };
 
 export default RecordingsProgressChart;

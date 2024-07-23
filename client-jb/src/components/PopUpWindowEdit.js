@@ -1,3 +1,6 @@
+/* eslint-disable */
+// TODO: Eslint is disabled because this file will be deleted
+
 import React, { useEffect, useRef, useState } from 'react';
 import PopUpWindowCSS from './PopUpWindow.module.css';
 import { editRecording } from '../utils/studentRecordingMethods.js';

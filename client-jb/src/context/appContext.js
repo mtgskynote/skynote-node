@@ -1,4 +1,5 @@
 import React, { useReducer, useContext } from 'react';
+import PropTypes from 'prop-types';
 
 import {
   DISPLAY_ALERT,
@@ -239,6 +240,10 @@ const AppProvider = ({ children }) => {
 // Create custom hook to use AppContext
 const useAppContext = () => {
   return useContext(AppContext);
+};
+
+AppContext.Provider.propTypes = {
+  children: PropTypes.node.isRequired,
 };
 
 // Export AppProvider, initialState, and useAppContext

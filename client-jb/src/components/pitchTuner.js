@@ -1,9 +1,8 @@
 import React, { useState, useRef } from 'react';
+import PropTypes from 'prop-types';
 import pitchTunerCSS from './pitchTuner.module.css';
 import notesimg from '../assets/images/notes.png';
 
-// ---------  Constants  --------------------------//
-//"\u266D" "\u266F"
 const note_objects = [
   { note: 'A', acc: ' ', mistuning: 0 },
   { note: 'B', acc: '\u266D', mistuning: 0 },
@@ -31,14 +30,10 @@ const freq2note = (freq) => {
   return noteobj;
 };
 
-//=====================================================================================================
-//              PitchTuner exported react component
-//=====================================================================================================
-//export function PitchTuner (m_width, m_height){
 var scrollval = 0;
 const PitchTuner = React.forwardRef(
   ({ m_width = 200, m_height = 200 }, ref) => {
-    const [pval, setPVal] = useState({
+    const [, setPVal] = useState({
       note: 'E',
       acc: '\u266F',
       mistuning: 0.4,
@@ -53,7 +48,6 @@ const PitchTuner = React.forwardRef(
         return; // don't move the pitch indicator if confidence is low
       }
 
-      // console.log(`Note:  ${pval.note}${pval.acc}, mistuning: ${pval.mistuning}`)
       setPVal(noteobj);
 
       // Now update the graphical pitch indicator
@@ -77,20 +71,11 @@ const PitchTuner = React.forwardRef(
         });
       }
       notesareaRef.current.scrollLeft = scrollval;
-      //console.log(`Note:  ${pval.note}${pval.acc}, is ${fpdifference} semitones from Eb`)
     };
 
     React.useImperativeHandle(ref, () => ({
       setPitch: setPitch,
     }));
-
-    //   Note:  {pval.note}{pval.acc}  <br />
-    //   Fine Tuning <br />
-    //  <input   type="range" min="-.5" max=".5" step=".01" value={pval.mistuning} className="slider" id="myRange" />
-    //  <br />
-    //  <textarea ref={textareaRef} className={pitchTunerCSS.scrollableTextarea}  width="10em" >
-    //    1 2 3 HEY This is a long scrollable text area.............................akjf;aljfdsajksdfkas;kdfjaksfaskfd;askfa;slkfaslkfa;lskdf;daslkf;alkjfdsalkjfdkjfds;akf;akfjdsakf;daskddkfj
-    //  </textarea>
 
     return (
       <>
@@ -114,5 +99,12 @@ const PitchTuner = React.forwardRef(
     );
   }
 );
+
+PitchTuner.displayName = 'PitchTuner';
+
+PitchTuner.propTypes = {
+  m_width: PropTypes.number,
+  m_height: PropTypes.number,
+};
 
 export default PitchTuner;

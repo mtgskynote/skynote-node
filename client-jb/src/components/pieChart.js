@@ -1,7 +1,7 @@
 import React, { useRef, useState } from 'react';
+import PropTypes from 'prop-types';
 const static_xmlns = 'http://www.w3.org/2000/svg';
 
-// ---------  Constants  --------------------------//
 const def_colors = [
   'IndianRed',
   'Olive',
@@ -15,15 +15,12 @@ const def_labels = ['a', 'b', 'c', 'd', 'e', 'f', 'g'];
 const def_segments = [0.1, 1, 0.8, 0.5];
 
 const circleScale = 0.82;
-//=====================================================================================================
 
 const makePieStructure = function (
   svg,
   center = { x: 0, y: 0 },
   radius = 100,
   labels = def_labels,
-  // m_width = 200,
-  // m_height = 200,
   segments = def_segments
 ) {
   for (let i = 0; i < 3; i++) {
@@ -32,7 +29,6 @@ const makePieStructure = function (
     circle.setAttributeNS(null, 'cy', center.y);
     circle.setAttributeNS(null, 'r', (circleScale * (3 - i) * radius) / 3);
     circle.setAttributeNS(null, 'stroke', 'black');
-    //circle1.setAttributeNS(null, "stroke-width", pieViz.strokeWidth);
     circle.setAttributeNS(null, 'fill', 'Azure');
     svg.appendChild(circle);
   }
@@ -68,9 +64,6 @@ const makePieStructure = function (
     // Add the text element to the SVG container to get its size
     svg.appendChild(textElement);
     var textBBox = textElement.getBBox();
-    // console.log(
-    //   `textBBox.width for ${textElement.textContent} is ${textBBox.width}`
-    // );
     svg.removeChild(textElement);
 
     var x =
@@ -91,7 +84,6 @@ const makePieStructure = function (
   }
 };
 
-//=====================================================================================================
 // generic function for creating a path string for a pie wedge
 const circleSegmentPath = function (c, r, startAngle, endAngle) {
   // Calculate the start and end points of the arc
@@ -108,9 +100,6 @@ const circleSegmentPath = function (c, r, startAngle, endAngle) {
   const path = `M ${c.x} ${c.y} L ${startX} ${startY} A ${r} ${r} 0 ${largeArcFlag} ${sweepFlag} ${endX} ${endY} L ${c.x} ${c.y}`;
   return path;
 };
-//=====================================================================================================
-//              PieChart exported react component
-//=====================================================================================================
 
 const PieChart = React.forwardRef(
   (
@@ -119,15 +108,11 @@ const PieChart = React.forwardRef(
       radius = 100,
       m_width = 200,
       m_height = 200,
-      // onLoad, // Ensure onLoad is declared as a prop
     },
     ref
   ) => {
     const svgRef = useRef(null);
     const [segments, setSegments] = useState([0, 0, 0, 0]);
-
-    // -----------   for parent component usage
-    // console.log(`recreate PieChart`)
 
     const updateData = (updatedData) => {
       // Perform the update logic here
@@ -138,21 +123,17 @@ const PieChart = React.forwardRef(
       updateData: updateData,
     }));
 
-    //----------------------------------------
-
     var pie = {
       numSegments: segments.length,
       center: { x: m_width / 2, y: m_height / 2 },
       radius: radius,
     };
 
-    //useEffect(() => {
     if (svgRef && svgRef.current) {
       while (svgRef.current.lastChild) {
         svgRef.current.removeChild(svgRef.current.lastChild);
       }
 
-      //svgRef.current.appendChild(makePieStructure(svgRef.current, pie.center, pie.radius, labels,  m_width, m_height, segments));
       makePieStructure(
         svgRef.current,
         pie.center,
@@ -164,13 +145,11 @@ const PieChart = React.forwardRef(
       );
 
       let i = 0;
-      //console.log(`segments = ${segments}`)
       for (let segmentr of segments) {
         if (Number.isNaN(segmentr)) {
           segmentr = 0;
         }
         const arc = document.createElementNS(static_xmlns, 'path');
-        //console.log(`segmentr = ${segmentr}, pie.radius=${pie.radius}, circleScale=${circleScale}, pie.numSegments=${pie.numSegments}`)
         arc.setAttribute(
           'd',
           circleSegmentPath(
@@ -188,11 +167,6 @@ const PieChart = React.forwardRef(
       }
     }
 
-    //const d = new Date();
-    //console.log(`-------------  Return new PIECHART at ${d.toISOString()}`)
-
-    //if (segments[0] > .6) {console.log(`000000000000000000000000000000000`)}
-
     return (
       <div>
         {/* Render an empty SVG container with a ref */}
@@ -201,5 +175,14 @@ const PieChart = React.forwardRef(
     );
   }
 );
+
+PieChart.displayName = 'PieChart';
+
+PieChart.propTypes = {
+  labels: PropTypes.arrayOf(PropTypes.string),
+  radius: PropTypes.number,
+  m_width: PropTypes.number,
+  m_height: PropTypes.number,
+};
 
 export default PieChart;

@@ -208,7 +208,7 @@ const Research = () => {
                       className={ResearchCSS.img2}
                     />
                   </div>
-                  <div align="center">
+                  <div>
                     <p>{data.text}</p>
                   </div>
                   <div>

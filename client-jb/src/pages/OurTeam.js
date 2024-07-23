@@ -169,7 +169,7 @@ const OurTeam = () => {
               Leader of the Head of the Music and Machine Learning Lab at the
               Universitat Pompeu Fabra, Barcelona. I am passionate about
               Artificial Intelligence and Music, and how they can help improving
-              people's lives.
+              people&apos;s lives.
             </p>
             <div className={OurTeamCSS.icons}>
               <a

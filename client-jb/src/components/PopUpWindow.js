@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import PropTypes from 'prop-types';
 
 const PopUpWindow = ({ children, isOpen }) => {
   const [isVisible, setIsVisible] = useState(isOpen);
@@ -34,6 +35,11 @@ const PopUpWindow = ({ children, isOpen }) => {
       </div>
     )
   );
+};
+
+PopUpWindow.propTypes = {
+  children: PropTypes.node.isRequired,
+  isOpen: PropTypes.bool.isRequired,
 };
 
 export default PopUpWindow;

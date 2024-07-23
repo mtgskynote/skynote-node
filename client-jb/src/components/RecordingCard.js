@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import PropTypes from 'prop-types';
 import { useNavigate } from 'react-router-dom';
 import {
   deleteRecording,
@@ -275,6 +276,21 @@ const RecordingCard = ({
       </PopUpWindow>
     </div>
   );
+};
+
+RecordingCard.propTypes = {
+  recordingName: PropTypes.string.isRequired,
+  skill: PropTypes.string.isRequired,
+  stars: PropTypes.number.isRequired,
+  xml: PropTypes.string.isRequired,
+  recordingId: PropTypes.string.isRequired,
+  recordingDate: PropTypes.string.isRequired,
+  onDeleteRecording: PropTypes.func.isRequired,
+  width: PropTypes.string,
+  backgroundColour: PropTypes.string,
+  hoverBackgroundColour: PropTypes.string,
+  textColour: PropTypes.string,
+  onEditRecording: PropTypes.func.isRequired,
 };
 
 export default RecordingCard;

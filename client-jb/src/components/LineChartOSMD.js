@@ -69,6 +69,7 @@ const LineChart = (props) => {
 };
 
 LineChart.propTypes = {
+  pitchData: PropTypes.arrayOf(PropTypes.number).isRequired,
   pitchDataPosX: PropTypes.arrayOf(PropTypes.number).isRequired,
   pitchDataPosY: PropTypes.arrayOf(PropTypes.number).isRequired,
   pitchIndex: PropTypes.arrayOf(PropTypes.number).isRequired,

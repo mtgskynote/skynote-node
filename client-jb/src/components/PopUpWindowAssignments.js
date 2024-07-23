@@ -1,4 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react';
+import PropTypes from 'prop-types';
 import PopUpWindowCSS from './PopUpWindow.module.css';
 import { putAssignment } from '../utils/assignmentsMethods.js';
 
@@ -167,6 +168,10 @@ const PopUpWindowAssignments = (props) => {
       </div>
     );
   }
+};
+
+PopUpWindowAssignments.propTypes = {
+  handlerBack: PropTypes.func.isRequired,
 };
 
 export default PopUpWindowAssignments;

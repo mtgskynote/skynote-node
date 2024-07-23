@@ -5,13 +5,6 @@ import { timer } from './SessionTimer.js';
 import PopUpWindowAssignments from './PopUpWindowAssignments';
 import PopUpWindowGrading from './PopUpWindowGrading';
 
-/*
-The useEffect hook runs once when the component mounts ([] as a dependency means it runs only once).
-Inside useEffect, an asynchronous operation (fetching data in this case) is performed.
-
-This might be overkill for grabbing the user's email, but it's a good pattern to follow for more complex data fetching from the server.
-*/
-
 const Apitesting = () => {
   const [data, setData] = useState(null);
 
@@ -115,9 +108,9 @@ const Apitesting = () => {
   /*------------ Return the component! ----------*/
   return (
     <div>
-      <div align="center">
+      <div>
         <h1>Skynote Profile</h1>
-        <div align="center">
+        <div>
           <div>
             <div>
               <button onClick={toggletimer}>toggletimer</button>
