@@ -128,8 +128,8 @@ const removeFavourite = async (req, res) => {
 };
 
 // Endpoint handler to update recordingsPastWeek
-const updateRecordingsPastWeek = async (req, res, next) => {
-  const userId = req.params.userId;
+const updateRecordingsPastWeek = async (req, res) => {
+  const userId = req.params.userId
 
   // Validate userId
   if (!mongoose.Types.ObjectId.isValid(userId)) {

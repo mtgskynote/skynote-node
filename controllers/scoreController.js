@@ -1,19 +1,11 @@
-import xmlScores from '../models/xmlScoreModel.js';
-import { StatusCodes } from 'http-status-codes';
-import { BadRequestError, UnAuthenticatedError } from '../errors/index.js';
+import xmlScores from '../models/xmlScoreModel.js'
+import { StatusCodes } from 'http-status-codes'
+import { BadRequestError } from '../errors/index.js'
 
-import { dirname } from 'path';
-import { fileURLToPath } from 'url';
-import { match } from 'assert';
-const pathname = '/xmlScores/violin';
-const rootScorePath = '../../public/xmlScores/violin';
-// import cors from "cors";
-
-// // Create an instance of the Express Router
-// const scoreRouter = express.Router();
-
-// // Use the 'cors' middleware before your route handlers
-// scoreRouter.use(cors());
+import { dirname } from 'path'
+import { fileURLToPath } from 'url'
+const pathname = '/xmlScores/violin'
+const rootScorePath = '../../public/xmlScores/violin'
 
 /*
   Requester may want just the name, a URL, or the path to the file (from /public) for their convenience
@@ -90,42 +82,8 @@ const xml = async (req, res) => {
   }
   let extname = fname + '.xml';
   // should check for existance
-  res.sendFile(extname, { root: scoreLocation });
-
-  //res.sendFile(extname, { root: scoreLocation });
-  // https://appskynote.com/musicXmlFiles/74_Minuet_2.xml
-};
-
-// //scoreRouter.route("/getAllScoreDataa").get(getAllScoreData);
-// const getAllScoreData = async (req, res) => {
-//   console.log("in allScoreData");
-//   let data = {};
-//   try{
-//     let levels = await xmlScores.distinct("level");
-
-//     for (let level of levels) {
-//       let  skills = await xmlScores.distinct("skill", {level: level});
-//       data[level] = {};
-//       //let skillnum=0
-//       for (let skill of skills) {
-//         let names = await xmlScores.find({level: level, skill: skill});
-//         //data[level][skillnum] = names;
-
-//         data[level][skill] = names.map((name) => ({
-//           name,
-//           path: `${pathname}/${name}.xml`,
-//           route_path: `/all-lessons/${name}.xml`,
-//         }));
-//         console.log(`-----data[${level}][${skill}] is ${JSON.stringify(data)}\n`)
-//         //skillnum++
-//       }
-//     }
-//     //console.log(`-----------data is ${JSON.stringify(data)}`)
-//     res.status(StatusCodes.OK).json(data);
-//   } catch (error) {
-//     console.log(`error in getAllScoreData`, error)
-//   }
-// }
+  res.sendFile(extname, { root: scoreLocation })
+}
 
 //Lonce's
 const getAllScoreData = async (req, res) => {
