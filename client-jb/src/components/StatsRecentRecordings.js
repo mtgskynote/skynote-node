@@ -106,6 +106,11 @@ const StatsRecentRecordings = (props) => {
     );
   };
 
+  ButtonGroup.propTypes = {
+    nameOfFile: PropTypes.string.isRequired,
+    index: PropTypes.number.isRequired,
+  };
+
   useEffect(() => {
     const recentRecordings = props.recentRecordings;
 

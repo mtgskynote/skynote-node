@@ -237,13 +237,13 @@ const AppProvider = ({ children }) => {
   );
 };
 
+AppContext.Provider.propTypes = {
+  children: PropTypes.node.isRequired,
+};
+
 // Create custom hook to use AppContext
 const useAppContext = () => {
   return useContext(AppContext);
-};
-
-AppContext.Provider.propTypes = {
-  children: PropTypes.node.isRequired,
 };
 
 // Export AppProvider, initialState, and useAppContext

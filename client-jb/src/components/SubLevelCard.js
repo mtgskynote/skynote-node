@@ -16,7 +16,7 @@ const SubLevelCard = ({
   subLevelName,
   levelNumber,
   category,
-  timeRecorded,
+  // timeRecorded,
   totalStars,
   subLevelLessons,
   isOpen,

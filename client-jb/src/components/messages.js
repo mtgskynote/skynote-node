@@ -1,4 +1,5 @@
 import React, { useEffect, useState, useRef } from 'react';
+import PropTypes from 'prop-types';
 import AssignmentsCSS from './Assignments.module.css';
 import {
   getMessages,
@@ -217,6 +218,17 @@ const Messages = (props) => {
       )}
     </div>
   );
+};
+
+Messages.propTypes = {
+  user: PropTypes.shape({
+    id: PropTypes.number.isRequired,
+    name: PropTypes.string.isRequired,
+  }),
+  teacher: PropTypes.shape({
+    id: PropTypes.number.isRequired,
+    name: PropTypes.string.isRequired,
+  }),
 };
 
 export default Messages;
