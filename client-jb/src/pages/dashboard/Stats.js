@@ -32,7 +32,7 @@ const Stats = () => {
   const [recordingSkills, setRecordingSkills] = useState(null);
   const [recordingLevels, setRecordingLevels] = useState(null);
   const [starsPerLevel, setStarsPerLevel] = useState(null);
-  const [achievedStarsPerLevel, setAchievedStarsPerLevel] = useState(null);
+  const [_, setAchievedStarsPerLevel] = useState(null);
   const [recentRecordings, setRecentRecordings] = useState(null);
   const [recentScores, setRecentScores] = useState({});
   const [unansweredTasks, setUnansweredTasks] = useState(null);
@@ -57,7 +57,7 @@ const Stats = () => {
     setRecordingList(
       JSON.stringify(
         JSON.parse(recordingList).filter(
-          (item, index) => item.recordingId !== idDelete
+          (item, _) => item.recordingId !== idDelete
         )
       )
     );

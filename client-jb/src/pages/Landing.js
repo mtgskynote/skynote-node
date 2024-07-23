@@ -53,9 +53,9 @@ const Landing = () => {
           <div className="grid  grid-cols-1 md:grid-cols-2 gap-8">
             <div>
               <p className="mb-4 text-2xl">
-                The intelligent music learning app based ​on real-time sound and
-                motion analysis, ​backed by the latest artificial intelligence
-                ​technology.
+                The intelligent music learning app based on real-time sound and
+                motion analysis, backed by the latest artificial intelligence
+                technology.
               </p>
               <div className="col-span-1 flex justify-center items-center">
                 <button
@@ -74,7 +74,6 @@ const Landing = () => {
                 allowFullScreen
                 className="w-full h-64"
                 autoPlay
-                muted
               ></iframe>
             </div>
           </div>
@@ -88,10 +87,10 @@ const Landing = () => {
         </h1>
         <div className="max-w-4xl mx-auto">
           <p className="text-2xl text-white mb-8 ml-12 mr-12">
-            Skynote has been developed as a product of ​cutting edge research
-            focused on music ​synthesis and analysis. Our systems and ​processes
-            were designed by fulltime musicians, ​who on their spare time
-            conduct PhD research at ​UPF and Royal College of Music.
+            Skynote has been developed as a product of cutting edge research
+            focused on music synthesis and analysis. Our systems and processes
+            were designed by fulltime musicians, who on their spare time
+            conduct PhD research at UPF and Royal College of Music.
           </p>
           <div className="col-span-1 flex justify-center items-center">
             <button
