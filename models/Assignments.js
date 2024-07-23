@@ -1,4 +1,4 @@
-import mongoose from 'mongoose'
+import mongoose from 'mongoose';
 
 const assignmentsSchema = new mongoose.Schema({
   teacherId: {
@@ -36,8 +36,8 @@ const assignmentsSchema = new mongoose.Schema({
       ],
     },
   ],
-})
+});
 
-var assignments = mongoose.model('assignments', assignmentsSchema)
+var assignments = mongoose.model('assignments', assignmentsSchema);
 
-export default assignments
+export default assignments;

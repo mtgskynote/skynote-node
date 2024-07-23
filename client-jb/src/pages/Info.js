@@ -1,8 +1,8 @@
-import React from 'react'
-import { Logo } from '../components' // Named export
-import main from '../assets/images/main.svg'
-import Wrapper from '../assets/wrappers/Testing'
-import { Link } from 'react-router-dom'
+import React from 'react';
+import { Logo } from '../components'; // Named export
+import main from '../assets/images/main.svg';
+import Wrapper from '../assets/wrappers/Testing';
+import { Link } from 'react-router-dom';
 
 const Landing = () => {
   return (
@@ -27,7 +27,7 @@ const Landing = () => {
         <img src={main} alt="look-ahead" className="img-main-img" />
       </div>
     </Wrapper>
-  )
-}
+  );
+};
 
-export default Landing
+export default Landing;

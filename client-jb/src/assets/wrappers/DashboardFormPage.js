@@ -1,7 +1,7 @@
 ///////////////////////////////////////////
 //// THIS FILE DOESN'T SEEM TO BE USED ////
 ///////////////////////////////////////////
-import styled from 'styled-components'
+import styled from 'styled-components';
 
 const Wrapper = styled.section`
   border-radius: var(--borderRadius);
@@ -68,6 +68,6 @@ const Wrapper = styled.section`
     }
   }
 */
-`
+`;
 
-export default Wrapper
+export default Wrapper;

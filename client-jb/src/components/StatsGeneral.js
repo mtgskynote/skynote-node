@@ -1,21 +1,21 @@
-import React, { useEffect, useState } from 'react'
-import StatsGeneralCSS from './StatsGeneral.module.css'
+import React, { useEffect, useState } from 'react';
+import StatsGeneralCSS from './StatsGeneral.module.css';
 
 const StatsGeneral = (props) => {
-  const [numRec, setNumRec] = useState(null)
-  const [numMes, setNumMes] = useState(null)
-  const [numTask, setNumTask] = useState(null)
+  const [numRec, setNumRec] = useState(null);
+  const [numMes, setNumMes] = useState(null);
+  const [numTask, setNumTask] = useState(null);
 
   useEffect(() => {
     if (props.numberRecordings !== null) {
-      const recNames = props.numberRecordings
-      setNumRec(recNames.length)
-      const unreadMessages = props.unreadMessages
-      setNumMes(unreadMessages)
-      const unansweredTasks = props.unansweredTasks
-      setNumTask(unansweredTasks)
+      const recNames = props.numberRecordings;
+      setNumRec(recNames.length);
+      const unreadMessages = props.unreadMessages;
+      setNumMes(unreadMessages);
+      const unansweredTasks = props.unansweredTasks;
+      setNumTask(unansweredTasks);
     }
-  }, [props])
+  }, [props]);
 
   return (
     <div className={StatsGeneralCSS.container}>
@@ -34,7 +34,7 @@ const StatsGeneral = (props) => {
         </ul>
       </div>
     </div>
-  )
-}
+  );
+};
 
-export default StatsGeneral
+export default StatsGeneral;

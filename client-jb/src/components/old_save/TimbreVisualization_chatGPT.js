@@ -1,17 +1,17 @@
-import React, { useRef } from 'react'
-import PieChart from './pieChart'
+import React, { useRef } from 'react';
+import PieChart from './pieChart';
 
 const randInt = function (min, max) {
-  return Math.floor(min + (max + 1 - min) * Math.random())
-}
+  return Math.floor(min + (max + 1 - min) * Math.random());
+};
 
 const TimbreVisualization = () => {
-  console.log(`recreate TimbreVisualization`)
-  const pieChartRef = useRef(null)
+  console.log(`recreate TimbreVisualization`);
+  const pieChartRef = useRef(null);
 
   setInterval(function () {
-    handleUpdatePieChartData()
-  }, 1000)
+    handleUpdatePieChartData();
+  }, 1000);
 
   const handleUpdatePieChartData = () => {
     const updatedData = [
@@ -19,19 +19,19 @@ const TimbreVisualization = () => {
       randInt(0, 100),
       randInt(0, 100),
       randInt(0, 100),
-    ] // Replace with your updated data
+    ]; // Replace with your updated data
     if (pieChartRef.current) {
-      pieChartRef.current.updateData(updatedData)
+      pieChartRef.current.updateData(updatedData);
     }
-  }
+  };
 
   return (
     <div>
       <h2>Pie Chart</h2>
       <PieChart ref={pieChartRef} />
     </div>
-  )
-}
+  );
+};
 
 //==================================================================================================
 
@@ -59,4 +59,4 @@ const TimbreVisualization = () => {
 //   );
 // });
 
-export default TimbreVisualization
+export default TimbreVisualization;

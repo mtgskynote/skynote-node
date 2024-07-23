@@ -11,8 +11,8 @@ const BackgroundImage = ({ height, width, imgClassName }) => {
       height={height}
       width={width}
     />
-  )
-}
+  );
+};
 
 BackgroundImage.propTypes = {
   height: PropTypes.oneOfType([

@@ -1,17 +1,17 @@
-import React from 'react'
-import skynote_demo from '../assets/videos/SNDemo-3.mp4'
-import BackgroundImage from '../components/BackgroundImage'
-import WhiteLogo from '../components/WhiteLogo'
-import LandingCSS from './Landing.module.css'
-import { Link } from 'react-router-dom'
-import 'bootstrap/dist/css/bootstrap.min.css'
-import Violinist from '../components/Violinist'
-import Violinist2 from '../components/Violinist-2'
-import Violinist3 from '../components/Violinist-3'
+import React from 'react';
+import skynote_demo from '../assets/videos/SNDemo-3.mp4';
+import BackgroundImage from '../components/BackgroundImage';
+import WhiteLogo from '../components/WhiteLogo';
+import LandingCSS from './Landing.module.css';
+import { Link } from 'react-router-dom';
+import 'bootstrap/dist/css/bootstrap.min.css';
+import Violinist from '../components/Violinist';
+import Violinist2 from '../components/Violinist-2';
+import Violinist3 from '../components/Violinist-3';
 
-import cimg1 from '../assets/images/CREDIT_accio.jpg'
-import cimg2 from '../assets/images/Logo_Tecniospring_INDUSTRY_transparent.png'
-import cimg3 from '../assets/images/EU_emblem_and_funding_declaration_EN.PNG'
+import cimg1 from '../assets/images/CREDIT_accio.jpg';
+import cimg2 from '../assets/images/Logo_Tecniospring_INDUSTRY_transparent.png';
+import cimg3 from '../assets/images/EU_emblem_and_funding_declaration_EN.PNG';
 
 const Landing = () => {
   return (
@@ -248,7 +248,7 @@ const Landing = () => {
         </div>
       </div>
     </div>
-  )
-}
+  );
+};
 
-export default Landing
+export default Landing;

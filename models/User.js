@@ -1,7 +1,7 @@
-import mongoose from 'mongoose'
-import validator from 'validator'
-import bcrypt from 'bcryptjs'
-import jwt from 'jsonwebtoken'
+import mongoose from 'mongoose';
+import validator from 'validator';
+import bcrypt from 'bcryptjs';
+import jwt from 'jsonwebtoken';
 
 // Define the User schema
 const UserSchema = new mongoose.Schema({
@@ -60,8 +60,8 @@ const UserSchema = new mongoose.Schema({
     required: false, // should actually be required for students ...
     validate: {
       validator: async (value) => {
-        const user = await mongoose.model('Users').findById(value)
-        return !!user // Returns true if user exists, false otherwise
+        const user = await mongoose.model('Users').findById(value);
+        return !!user; // Returns true if user exists, false otherwise
       },
       message: 'Invalid teacher ID. Must reference an existing user.',
     },
@@ -87,33 +87,33 @@ const UserSchema = new mongoose.Schema({
     type: [Number],
     validate: {
       validator: function (val) {
-        return val.length <= 7
+        return val.length <= 7;
       },
       message:
         'recordingsPastWeek should not contain more than 7 days worth of data.',
     },
   },
-})
+});
 
 // Hash the password before saving the user
 UserSchema.pre('save', async function () {
-  if (!this.isModified('password')) return
-  const salt = await bcrypt.genSalt(10)
-  this.password = await bcrypt.hash(this.password, salt)
-})
+  if (!this.isModified('password')) return;
+  const salt = await bcrypt.genSalt(10);
+  this.password = await bcrypt.hash(this.password, salt);
+});
 
 // Create a JSON Web Token for the user
 UserSchema.methods.createJWT = function () {
   return jwt.sign({ userId: this._id }, process.env.JWT_SECRET, {
     expiresIn: process.env.JWT_EXPIRES_IN,
-  })
-}
+  });
+};
 
 // Compare the user's password with a candidate password
 UserSchema.methods.comparePassword = async function (candidatePassword) {
-  const isMatch = await bcrypt.compare(candidatePassword, this.password)
-  return isMatch
-}
+  const isMatch = await bcrypt.compare(candidatePassword, this.password);
+  return isMatch;
+};
 
 // Export the User model
-export default mongoose.model('Users', UserSchema)
+export default mongoose.model('Users', UserSchema);

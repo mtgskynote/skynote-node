@@ -1,12 +1,12 @@
-import React from 'react'
-import { ResponsiveLine } from '@nivo/line'
-import { useTheme } from '@mui/material'
-import { tokens } from '../theme'
-import { mockLineData as data } from '../data/mockData'
+import React from 'react';
+import { ResponsiveLine } from '@nivo/line';
+import { useTheme } from '@mui/material';
+import { tokens } from '../theme';
+import { mockLineData as data } from '../data/mockData';
 
 const LineChart = ({ isDashboard = false }) => {
-  const theme = useTheme()
-  const colors = tokens(theme.palette.mode)
+  const theme = useTheme();
+  const colors = tokens(theme.palette.mode);
 
   return (
     <ResponsiveLine
@@ -112,7 +112,7 @@ const LineChart = ({ isDashboard = false }) => {
         },
       ]}
     />
-  )
-}
+  );
+};
 
-export default LineChart
+export default LineChart;

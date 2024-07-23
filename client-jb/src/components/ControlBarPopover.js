@@ -2,32 +2,32 @@ import React, { useState, useRef, useEffect } from 'react'
 import PropTypes from 'prop-types'
 
 const ControlBarPopover = ({ children }) => {
-  const [isOpen, setIsOpen] = useState(false)
-  const popoverRef = useRef(null)
+  const [isOpen, setIsOpen] = useState(false);
+  const popoverRef = useRef(null);
 
   // Toggles the control bar popover visibility (open or closed)
   const handleTogglePopover = () => {
-    setIsOpen(!isOpen)
-  }
+    setIsOpen(!isOpen);
+  };
 
   // Handles closing the control bar popover when a user clicks outside the popover
   const handleClickOutside = (event) => {
     if (popoverRef.current && !popoverRef.current.contains(event.target)) {
-      setIsOpen(false)
+      setIsOpen(false);
     }
-  }
+  };
 
   // Adds and removes a mousedown event listener for closing the popover when clicking outside of it
   useEffect(() => {
-    document.addEventListener('mousedown', handleClickOutside)
+    document.addEventListener('mousedown', handleClickOutside);
     return () => {
-      document.removeEventListener('mousedown', handleClickOutside)
-    }
-  }, [])
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, []);
 
-  const childrenArray = React.Children.toArray(children)
-  const trigger = childrenArray[0]
-  const content = childrenArray.slice(1)
+  const childrenArray = React.Children.toArray(children);
+  const trigger = childrenArray[0];
+  const content = childrenArray.slice(1);
 
   return (
     <div className="relative inline-block text-left" ref={popoverRef}>
@@ -57,8 +57,8 @@ const ControlBarPopover = ({ children }) => {
         </div>
       </div>
     </div>
-  )
-}
+  );
+};
 
 ControlBarPopover.propTypes = {
   children: PropTypes.node.isRequired,

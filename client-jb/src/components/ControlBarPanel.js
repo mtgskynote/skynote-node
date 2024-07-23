@@ -19,8 +19,8 @@ const ControlBarPanel = ({ show, children }) => {
         </div>
       )}
     </div>
-  )
-}
+  );
+};
 
 ControlBarPanel.propTypes = {
   show: PropTypes.bool.isRequired,

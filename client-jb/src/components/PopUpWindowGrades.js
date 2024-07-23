@@ -1,10 +1,10 @@
-import React from 'react'
-import PopUpWindowCSS from './PopUpWindow.module.css'
+import React from 'react';
+import PopUpWindowCSS from './PopUpWindow.module.css';
 
 const PopUpWindowGrades = (props) => {
   const handleClose = () => {
-    props.handlerBack('nosee')
-  }
+    props.handlerBack('nosee');
+  };
 
   return (
     <div className={PopUpWindowCSS.popUpWindowGrades}>
@@ -31,7 +31,7 @@ const PopUpWindowGrades = (props) => {
         </button>
       </div>
     </div>
-  )
-}
+  );
+};
 
-export default PopUpWindowGrades
+export default PopUpWindowGrades;

@@ -1,28 +1,28 @@
-import React from 'react'
-import { useNavigate } from 'react-router-dom'
+import React from 'react';
+import { useNavigate } from 'react-router-dom';
 
-import logo from '../assets/images/new_logo_2023.jpg'
-import cimg1 from '../assets/images/CREDIT_accio.jpg'
-import cimg2 from '../assets/images/Logo_Tecniospring_INDUSTRY_transparent.png'
-import cimg3 from '../assets/images/EU_emblem_and_funding_declaration_EN.PNG'
-import pub2_img from '../assets/images/publications/pub2_img.png'
-import pub3_img from '../assets/images/publications/pub3_img.jpeg'
-import Skynote_Full_Demos_Video from '../assets/videos/Skynote_Full_Demos_Video_sm.mp4'
+import logo from '../assets/images/new_logo_2023.jpg';
+import cimg1 from '../assets/images/CREDIT_accio.jpg';
+import cimg2 from '../assets/images/Logo_Tecniospring_INDUSTRY_transparent.png';
+import cimg3 from '../assets/images/EU_emblem_and_funding_declaration_EN.PNG';
+import pub2_img from '../assets/images/publications/pub2_img.png';
+import pub3_img from '../assets/images/publications/pub3_img.jpeg';
+import Skynote_Full_Demos_Video from '../assets/videos/Skynote_Full_Demos_Video_sm.mp4';
 
 const Landing = () => {
-  const navigate = useNavigate()
+  const navigate = useNavigate();
 
   const handleNavigation = (url) => {
     // Check if the URL starts with 'http://' or 'https://'
     // to determine if it's an external website
     if (url.startsWith('http://') || url.startsWith('https://')) {
       // Open the external website in a new tab/window
-      window.open(url, '_blank')
+      window.open(url, '_blank');
     } else {
       // Navigate to a route within your application
-      navigate(url)
+      navigate(url);
     }
-  }
+  };
 
   return (
     <div>
@@ -138,7 +138,7 @@ const Landing = () => {
         </div>
       </footer>
     </div>
-  )
-}
+  );
+};
 
-export default Landing
+export default Landing;

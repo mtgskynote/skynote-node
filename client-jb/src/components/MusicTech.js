@@ -1,5 +1,5 @@
-import React from 'react'
-import musictech from '../assets/images/musictech.jpg'
+import React from 'react';
+import musictech from '../assets/images/musictech.jpg';
 
 const MusicTech = () => {
   return (
@@ -8,7 +8,7 @@ const MusicTech = () => {
       alt="music-tech"
       style={{ width: '100vw', height: '600px' }}
     />
-  )
-}
+  );
+};
 
-export default MusicTech
+export default MusicTech;

@@ -1,11 +1,11 @@
-import { FaLinkedinIn } from 'react-icons/fa'
-import waddellimg from '../assets/images/team/GeorgeWaddell.jpeg'
-import lonceimg from '../assets/images/team/lonce_cnm_bust_sm2.jpg'
-import rafaelimg from '../assets/images/team/RafaelRamirez.png'
-import OurTeamCSS from './OurTeam.module.css'
-import WhiteLogo from '../components/WhiteLogo'
-import { Link } from 'react-router-dom'
-import 'bootstrap/dist/css/bootstrap.min.css'
+import { FaLinkedinIn } from 'react-icons/fa';
+import waddellimg from '../assets/images/team/GeorgeWaddell.jpeg';
+import lonceimg from '../assets/images/team/lonce_cnm_bust_sm2.jpg';
+import rafaelimg from '../assets/images/team/RafaelRamirez.png';
+import OurTeamCSS from './OurTeam.module.css';
+import WhiteLogo from '../components/WhiteLogo';
+import { Link } from 'react-router-dom';
+import 'bootstrap/dist/css/bootstrap.min.css';
 const OurTeam = () => {
   return (
     <div>
@@ -211,6 +211,6 @@ const OurTeam = () => {
         </div>
       </div>
     </div>
-  )
-}
-export default OurTeam
+  );
+};
+export default OurTeam;

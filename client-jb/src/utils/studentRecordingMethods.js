@@ -1,4 +1,4 @@
-import axios from 'axios'
+import axios from 'axios';
 
 /* getRecData  --------------
     return: res.body = [{recordingName, recordingId}, {...}, ...] 
@@ -8,16 +8,16 @@ async function getRecData(studentId, scoreId) {
     // scoreId: "64d0de60d9ac9a34a66b4d45" is for the score "V_001_Cuerdas_Al_Aire_1_Suelta_A"
     const response = await axios.get('/api/v1/recordings/getRecData', {
       params: { studentId: studentId, scoreId: scoreId },
-    })
+    });
 
     if (response.status === 200) {
-      return response.data // save results locally
+      return response.data; // save results locally
     } else {
-      console.log('getRecData response.status is not 200!')
-      return []
+      console.log('getRecData response.status is not 200!');
+      return [];
     }
   } catch (error) {
-    console.error('Error on axios getRecData', error)
+    console.error('Error on axios getRecData', error);
   }
 }
 
@@ -29,16 +29,16 @@ async function getAllRecData(studentId) {
     // scoreId: "64d0de60d9ac9a34a66b4d45" is for the score "V_001_Cuerdas_Al_Aire_1_Suelta_A"
     const response = await axios.get('/api/v1/recordings/getAllRecData', {
       params: { studentId: studentId },
-    })
+    });
 
     if (response.status === 200) {
-      return response.data // save results locally
+      return response.data; // save results locally
     } else {
-      console.log('geAllRecData response.status is not 200!')
-      return []
+      console.log('geAllRecData response.status is not 200!');
+      return [];
     }
   } catch (error) {
-    console.error('Error on axios getAllRecData', error)
+    console.error('Error on axios getAllRecData', error);
   }
 }
 
@@ -52,18 +52,18 @@ async function putRecording(recordingObject) {
     const response = await axios.put(
       '/api/v1/recordings/putRecording',
       recordingObject
-    )
+    );
     //console.log(`response from putRecording was ${JSON.stringify(response.data)}`);
     if (response.status === 201) {
       /* 201 is the status code for a successful PUT */
-      console.log('putRecording  returned OK')
-      return response.data
+      console.log('putRecording  returned OK');
+      return response.data;
     } else {
-      console.log('putRecording failed!')
-      return null
+      console.log('putRecording failed!');
+      return null;
     }
   } catch (error) {
-    console.error('Error on axios putRecording', error)
+    console.error('Error on axios putRecording', error);
   }
 }
 
@@ -77,15 +77,15 @@ async function patchViewPermissions(recordingId, sharing) {
     const response = await axios.patch(
       '/api/v1/recordings/patchViewPermissions',
       { recordingId: recordingId, sharing: sharing }
-    )
+    );
     if (response.status === 200) {
-      return response.data
+      return response.data;
     } else {
-      console.log('patchViewPermissions failed!')
-      return null
+      console.log('patchViewPermissions failed!');
+      return null;
     }
   } catch (error) {
-    console.error('Error on axios patchViewPermissions', error)
+    console.error('Error on axios patchViewPermissions', error);
   }
 }
 
@@ -97,15 +97,15 @@ async function getRecording(recordingId) {
     // foo, "V_001_Cuerdas_Al_Aire_1_Suelta_A"
     const response = await axios.get('/api/v1/recordings/getRecording', {
       params: { recordingId: recordingId },
-    })
+    });
     if (response.status === 200) {
-      return response.data
+      return response.data;
     } else {
-      console.log('getRecording failed!')
-      return null
+      console.log('getRecording failed!');
+      return null;
     }
   } catch (error) {
-    console.error('Error on axios getRecNames', error)
+    console.error('Error on axios getRecNames', error);
   }
 }
 
@@ -113,19 +113,19 @@ const getManyRecordings = async (recordingIds) => {
   try {
     const res = await axios.get('/api/v1/recordings/getManyRecordings', {
       params: { recordingIds: recordingIds },
-    })
+    });
     if (res.status === 200) {
-      return res.data // save results locally;
+      return res.data; // save results locally;
     } else {
       console.log(
         `getManyRecordings response.status is not 200! Status code: ${res.status}`
-      )
-      return null
+      );
+      return null;
     }
   } catch (error) {
-    console.error('Error on axios getManyRecordings', error)
+    console.error('Error on axios getManyRecordings', error);
   }
-}
+};
 
 /* deleteRecording  */
 async function deleteRecording(recordingId) {
@@ -133,15 +133,15 @@ async function deleteRecording(recordingId) {
     //console.log(`will try to delete recordingId ${recordingId}`)
     const response = await axios.delete(
       `/api/v1/recordings/deleteRecording/${recordingId}`
-    )
+    );
 
     if (response.status === 200) {
-      return response.data
+      return response.data;
     } else {
-      console.log('deleteRecording failed!')
+      console.log('deleteRecording failed!');
     }
   } catch (error) {
-    console.error('Error on axios deleteRecording', error)
+    console.error('Error on axios deleteRecording', error);
   }
 }
 
@@ -152,18 +152,18 @@ async function editRecording(id, name) {
     const response = await axios.put('/api/v1/recordings/editRecording', {
       id: id,
       name: name,
-    })
+    });
     //console.log(`response from putRecording was ${JSON.stringify(response.data)}`);
     if (response.status === 200) {
       /* 200 is the status code for a successful PUT */
-      console.log('editRecording  returned OK')
-      return response.data
+      console.log('editRecording  returned OK');
+      return response.data;
     } else {
-      console.log('editRecording failed!')
-      return null
+      console.log('editRecording failed!');
+      return null;
     }
   } catch (error) {
-    console.error('Error on axios editRecording', error)
+    console.error('Error on axios editRecording', error);
   }
 }
 
@@ -176,4 +176,4 @@ export {
   deleteRecording,
   patchViewPermissions,
   editRecording,
-}
+};

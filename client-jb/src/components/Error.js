@@ -1,7 +1,7 @@
-import React from 'react'
-import { Link } from 'react-router-dom'
-import img_404 from '../assets/images/not-found.svg'
-import img_general from '../assets/images/error_violin.png'
+import React from 'react';
+import { Link } from 'react-router-dom';
+import img_404 from '../assets/images/not-found.svg';
+import img_general from '../assets/images/error_violin.png';
 
 const Error = ({ type = 'general', message = '' }) => {
   if (type === '404') {
@@ -21,7 +21,7 @@ const Error = ({ type = 'general', message = '' }) => {
           back home
         </Link>
       </div>
-    )
+    );
   }
 
   return (
@@ -40,7 +40,7 @@ const Error = ({ type = 'general', message = '' }) => {
         </div>
       </div>
     </div>
-  )
-}
+  );
+};
 
-export default Error
+export default Error;

@@ -1,6 +1,6 @@
-import { Outlet } from 'react-router-dom'
-import SharedLayoutCSS from './SharedLayout.module.css'
-import Navbar from '../../components/Navbar'
+import { Outlet } from 'react-router-dom';
+import SharedLayoutCSS from './SharedLayout.module.css';
+import Navbar from '../../components/Navbar';
 
 const SharedLayout = () => {
   return (
@@ -10,7 +10,7 @@ const SharedLayout = () => {
         <Outlet />
       </div>
     </main>
-  )
-}
+  );
+};
 
-export default SharedLayout
+export default SharedLayout;

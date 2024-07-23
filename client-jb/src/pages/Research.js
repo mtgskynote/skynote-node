@@ -1,20 +1,20 @@
-import ResearchCSS from './Research.module.css'
-import pub1_img from '../assets/images/publications/pub1_img.png'
-import pub2_img from '../assets/images/publications/pub2_img.png'
-import pub3_img from '../assets/images/publications/pub3_img.jpeg'
-import pub4_img from '../assets/images/publications/pub4_img.jpeg'
-import pub5_img from '../assets/images/publications/pub5_img.jpeg'
-import pub6_img from '../assets/images/publications/pub6_img.png'
-import pub7_img from '../assets/images/publications/pub7_img.jpeg'
-import pub8_img from '../assets/images/publications/pub8_img.png'
-import pub9_img from '../assets/images/Violinist-2.jpg'
+import ResearchCSS from './Research.module.css';
+import pub1_img from '../assets/images/publications/pub1_img.png';
+import pub2_img from '../assets/images/publications/pub2_img.png';
+import pub3_img from '../assets/images/publications/pub3_img.jpeg';
+import pub4_img from '../assets/images/publications/pub4_img.jpeg';
+import pub5_img from '../assets/images/publications/pub5_img.jpeg';
+import pub6_img from '../assets/images/publications/pub6_img.png';
+import pub7_img from '../assets/images/publications/pub7_img.jpeg';
+import pub8_img from '../assets/images/publications/pub8_img.png';
+import pub9_img from '../assets/images/Violinist-2.jpg';
 
-import pub9 from '../assets/papers/SkyNote_CSEDU2023.pdf'
+import pub9 from '../assets/papers/SkyNote_CSEDU2023.pdf';
 
-import MusicTech from '../components/MusicTech.js'
-import WhiteLogo from '../components/WhiteLogo'
-import { Link } from 'react-router-dom'
-import 'bootstrap/dist/css/bootstrap.min.css'
+import MusicTech from '../components/MusicTech.js';
+import WhiteLogo from '../components/WhiteLogo';
+import { Link } from 'react-router-dom';
+import 'bootstrap/dist/css/bootstrap.min.css';
 
 const publications = [
   {
@@ -67,7 +67,7 @@ const publications = [
     imagelink: pub9_img,
     text: 'Ramirez, R. and Wyse, L. (2023) SkyNote: An AI-Enhanced Learning System for Violin, 15th International Conference on Computer Supported Education, (pg 58) Prague, Czech Republic April 21 - 23, 2023',
   },
-]
+];
 
 const Research = () => {
   return (
@@ -228,6 +228,6 @@ const Research = () => {
         </div>
       </div>
     </div>
-  )
-}
-export default Research
+  );
+};
+export default Research;

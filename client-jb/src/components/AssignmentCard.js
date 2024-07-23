@@ -11,16 +11,16 @@ const AssignmentCard = ({ assignmentId, daysLeft, dueDate, score }) => {
     month: 'short',
     hour: '2-digit',
     minute: '2-digit',
-  }
-  const navigate = useNavigate()
+  };
+  const navigate = useNavigate();
 
   const handleRecord = () => {
-    navigate(`/all-lessons/${score.fname}`)
-  }
+    navigate(`/all-lessons/${score.fname}`);
+  };
 
   const handleSeeMore = () => {
-    navigate(`/assignments/#${assignmentId}`)
-  }
+    navigate(`/assignments/#${assignmentId}`);
+  };
 
   return (
     <Card
@@ -70,8 +70,8 @@ const AssignmentCard = ({ assignmentId, daysLeft, dueDate, score }) => {
         </div>
       </CardContent>
     </Card>
-  )
-}
+  );
+};
 
 AssignmentCard.propTypes = {
   assignmentId: PropTypes.string.isRequired,

@@ -1,4 +1,4 @@
-import { tokens } from '../theme'
+import { tokens } from '../theme';
 
 export const mockDataTeam = [
   {
@@ -73,7 +73,7 @@ export const mockDataTeam = [
     phone: '(444)555-6239',
     access: 'admin',
   },
-]
+];
 
 export const mockDataContacts = [
   {
@@ -197,7 +197,7 @@ export const mockDataContacts = [
     zipCode: '1234',
     registrarId: 92197,
   },
-]
+];
 
 export const mockDataInvoices = [
   {
@@ -264,7 +264,7 @@ export const mockDataInvoices = [
     phone: '(222)444-5555',
     date: '05/02/2021',
   },
-]
+];
 
 export const mockTransactions = [
   {
@@ -315,7 +315,7 @@ export const mockTransactions = [
     date: '2022-04-01',
     cost: '133.45',
   },
-]
+];
 
 export const mockBarData = [
   {
@@ -395,7 +395,7 @@ export const mockBarData = [
     donut: 49,
     donutColor: 'hsl(274, 70%, 50%)',
   },
-]
+];
 
 export const mockPieData = [
   {
@@ -428,7 +428,7 @@ export const mockPieData = [
     value: 584,
     color: 'hsl(344, 70%, 50%)',
   },
-]
+];
 
 export const mockLineData = [
   {
@@ -593,7 +593,7 @@ export const mockLineData = [
       },
     ],
   },
-]
+];
 
 export const mockGeographyData = [
   {
@@ -1280,4 +1280,4 @@ export const mockGeographyData = [
     id: 'KOR',
     value: 171135,
   },
-]
+];

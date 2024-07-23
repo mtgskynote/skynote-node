@@ -1,18 +1,18 @@
-import React from 'react'
-import links from '../utils/links'
-import { NavLink } from 'react-router-dom'
-import MainMenuCSS from './MainMenu.module.css'
-import { useAppContext } from '../context/appContext'
-import { Button } from 'react-bootstrap'
-import SessionTimerDisplay from './SessionTimerDisplay' // Adjust the import path to where TimerDisplay is located
+import React from 'react';
+import links from '../utils/links';
+import { NavLink } from 'react-router-dom';
+import MainMenuCSS from './MainMenu.module.css';
+import { useAppContext } from '../context/appContext';
+import { Button } from 'react-bootstrap';
+import SessionTimerDisplay from './SessionTimerDisplay'; // Adjust the import path to where TimerDisplay is located
 
 const MainMenu = () => {
-  const { logoutUser } = useAppContext()
+  const { logoutUser } = useAppContext();
 
   //If user clicks anywhere outside the menu, close menu
   const handleOutsideClick = (event) => {
-    const dropdownToggle = document.getElementById('dropdown-toggle')
-    const dropdownContent = document.getElementById('dropdown-content')
+    const dropdownToggle = document.getElementById('dropdown-toggle');
+    const dropdownContent = document.getElementById('dropdown-content');
     if (
       dropdownToggle &&
       dropdownContent &&
@@ -20,11 +20,11 @@ const MainMenu = () => {
       !dropdownContent.contains(event.target) &&
       dropdownToggle.checked === true
     ) {
-      dropdownToggle.checked = false
+      dropdownToggle.checked = false;
     }
-  }
+  };
 
-  document.addEventListener('click', handleOutsideClick)
+  document.addEventListener('click', handleOutsideClick);
 
   return (
     <div className={MainMenuCSS.dropdown}>
@@ -39,7 +39,7 @@ const MainMenu = () => {
       <div className={MainMenuCSS.dropdown_content}>
         <div className="nav-links" id="dropdown-content">
           {links.map((link) => {
-            const { text, path, id, icon } = link
+            const { text, path, id, icon } = link;
 
             return (
               <NavLink
@@ -47,7 +47,7 @@ const MainMenu = () => {
                 key={id}
                 onClick={() => {
                   // console.log("clicked");
-                  document.getElementById('dropdown-toggle').checked = false
+                  document.getElementById('dropdown-toggle').checked = false;
                 }}
                 className={({ isActive }) =>
                   isActive ? 'nav-link active' : 'nav-link'
@@ -57,7 +57,7 @@ const MainMenu = () => {
                 <span className="icon">{icon}</span>
                 {text}
               </NavLink>
-            )
+            );
           })}
         </div>
 
@@ -84,7 +84,7 @@ const MainMenu = () => {
         </div>
       </div>
     </div>
-  )
-}
+  );
+};
 
-export default MainMenu
+export default MainMenu;

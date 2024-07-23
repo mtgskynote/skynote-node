@@ -1,10 +1,10 @@
-import React, { useEffect, useState } from 'react'
-import { useNavigate } from 'react-router-dom'
-import { useAppContext } from '../context/appContext'
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import AssignmentsCSS from './Assignments.module.css'
-import { getAllAssignments } from '../utils/assignmentsMethods.js'
-import { getProfileData } from '../utils/usersMethods.js'
+import React, { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { useAppContext } from '../context/appContext';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import AssignmentsCSS from './Assignments.module.css';
+import { getAllAssignments } from '../utils/assignmentsMethods.js';
+import { getProfileData } from '../utils/usersMethods.js';
 import {
   faFileImport,
   faUser,
@@ -15,30 +15,30 @@ import {
   faBoxArchive,
   faRecordVinyl,
   faBookBookmark,
-} from '@fortawesome/free-solid-svg-icons'
-import PopUpWindowGrades from './PopUpWindowGrades'
-import PopUpWindowRecordings from './PopUpWindowRecordings.js'
-import Messages from './messages.js'
-import LoadingScreen from './LoadingScreen.js'
-import Error from './Error.js'
+} from '@fortawesome/free-solid-svg-icons';
+import PopUpWindowGrades from './PopUpWindowGrades';
+import PopUpWindowRecordings from './PopUpWindowRecordings.js';
+import Messages from './messages.js';
+import LoadingScreen from './LoadingScreen.js';
+import Error from './Error.js';
 
 const Assignments = () => {
-  const navigate = useNavigate()
-  const { getCurrentUser } = useAppContext()
+  const navigate = useNavigate();
+  const { getCurrentUser } = useAppContext();
 
-  const [isLoading, setIsLoading] = useState(true)
-  const [userData, setUserData] = useState(null)
-  const [teacherData, setTeacherData] = useState(null)
-  const [scoresData, setScoresData] = useState(null)
-  const [userAnnouncements, setUserAnnouncements] = useState(null)
-  const [popUpWindowGrade, setPopUpWindowGrade] = useState(false)
-  const [popUpWindowRecordings, setPopUpWindowRecordings] = useState(false)
-  const [taskComment, setTaskComment] = useState(null)
-  const [taskGrade, setTaskGrade] = useState(null)
-  const [selectedScore, setSelectedScore] = useState(null)
-  const [selectedAnnouncement, setSelectedAnnouncement] = useState(null)
-  const [teacherDataError, setTeacherDataError] = useState(false)
-  const [assignmentsError, setAssignmentsError] = useState(false)
+  const [isLoading, setIsLoading] = useState(true);
+  const [userData, setUserData] = useState(null);
+  const [teacherData, setTeacherData] = useState(null);
+  const [scoresData, setScoresData] = useState(null);
+  const [userAnnouncements, setUserAnnouncements] = useState(null);
+  const [popUpWindowGrade, setPopUpWindowGrade] = useState(false);
+  const [popUpWindowRecordings, setPopUpWindowRecordings] = useState(false);
+  const [taskComment, setTaskComment] = useState(null);
+  const [taskGrade, setTaskGrade] = useState(null);
+  const [selectedScore, setSelectedScore] = useState(null);
+  const [selectedAnnouncement, setSelectedAnnouncement] = useState(null);
+  const [teacherDataError, setTeacherDataError] = useState(false);
+  const [assignmentsError, setAssignmentsError] = useState(false);
 
   const options = {
     year: 'numeric',
@@ -46,95 +46,95 @@ const Assignments = () => {
     day: 'numeric',
     hour: '2-digit',
     minute: '2-digit',
-  }
+  };
 
   const errorMessages = {
     teacherDataError: "We can't find a teacher for your user.",
     assignmentsError: "We can't find any assignments for your user.",
-  }
+  };
 
   const fetchDataFromAPI = () => {
     getCurrentUser()
       .then((result) => {
-        setUserData(result)
+        setUserData(result);
       })
       .catch((error) => {
-        console.log(`getCurrentUser() error: ${error}`)
-      })
-  }
+        console.log(`getCurrentUser() error: ${error}`);
+      });
+  };
 
   const handleSeeClick = (id, scoreXML) => {
-    navigate(`/ListRecordings/${scoreXML}`, { state: { id: id } })
-  }
+    navigate(`/ListRecordings/${scoreXML}`, { state: { id: id } });
+  };
 
   const handleRecord = (scoreXML) => {
-    navigate(`/all-lessons/${scoreXML}`)
-  }
+    navigate(`/all-lessons/${scoreXML}`);
+  };
 
   const handleSeeGrades = (option, comment, grade) => {
     if (option === 'see') {
-      setPopUpWindowGrade(true)
-      setTaskComment(comment)
-      setTaskGrade(grade)
+      setPopUpWindowGrade(true);
+      setTaskComment(comment);
+      setTaskGrade(grade);
     } else {
-      setPopUpWindowGrade(false)
-      setTaskComment(null)
-      setTaskGrade(null)
+      setPopUpWindowGrade(false);
+      setTaskComment(null);
+      setTaskGrade(null);
     }
-  }
+  };
 
   const handleSelectRecording = (option, scoreId, announcementId) => {
     if (option === 'open') {
-      setPopUpWindowRecordings(true)
-      setSelectedScore(scoreId)
-      setSelectedAnnouncement(announcementId)
+      setPopUpWindowRecordings(true);
+      setSelectedScore(scoreId);
+      setSelectedAnnouncement(announcementId);
     } else {
-      setPopUpWindowRecordings(false)
-      setSelectedScore(null)
-      setSelectedAnnouncement(null)
+      setPopUpWindowRecordings(false);
+      setSelectedScore(null);
+      setSelectedAnnouncement(null);
     }
-  }
+  };
 
   const fetchTeacherInfo = async (teacherId) => {
     try {
-      const result = await getProfileData(teacherId)
+      const result = await getProfileData(teacherId);
       if (result && result.user && result.user._id) {
         setTeacherData({
           id: result.user._id,
           name: result.user.name,
           lastName: result.user.lastName,
           email: result.user.email,
-        })
+        });
       } else {
-        console.error('Invalid teacher data received:', result)
-        setTeacherDataError(true)
+        console.error('Invalid teacher data received:', result);
+        setTeacherDataError(true);
       }
     } catch (error) {
-      console.error('Error getting teacher profile data:', error)
-      setTeacherDataError(true)
+      console.error('Error getting teacher profile data:', error);
+      setTeacherDataError(true);
     }
-  }
+  };
 
   //get User Data
   useEffect(() => {
     if (userData === null) {
-      fetchDataFromAPI()
+      fetchDataFromAPI();
     } else {
       if (userData.teacher) {
-        fetchTeacherInfo(userData.teacher)
+        fetchTeacherInfo(userData.teacher);
       } else {
-        setTeacherDataError(true)
+        setTeacherDataError(true);
       }
     }
-  }, [userData])
+  }, [userData]);
 
   //get Scores data
   useEffect(() => {
     // import local data
-    const local = JSON.parse(localStorage.getItem('scoreData'))
+    const local = JSON.parse(localStorage.getItem('scoreData'));
     // save in state
-    setScoresData(local)
-  }, []) // Only once
+    setScoresData(local);
+  }, []); // Only once
 
   useEffect(() => {
     if (userData !== null && scoresData !== null && teacherData !== null) {
@@ -142,42 +142,42 @@ const Assignments = () => {
       getAllAssignments(userData.id)
         .then((result) => {
           if (result.length !== 0) {
-            setUserAnnouncements(result.reverse())
+            setUserAnnouncements(result.reverse());
           } else {
-            setAssignmentsError(true)
+            setAssignmentsError(true);
           }
         })
         .catch((error) => {
-          setAssignmentsError(true)
-          console.error('Error fetching assignments:', error)
-        })
+          setAssignmentsError(true);
+          console.error('Error fetching assignments:', error);
+        });
     }
-  }, [userData, scoresData, teacherData])
+  }, [userData, scoresData, teacherData]);
 
   useEffect(() => {
     if (userAnnouncements) {
-      const hash = window.location.hash.substring(1) // Get the hash from the URL
-      const element = document.getElementById(hash) // Find the element with that ID
+      const hash = window.location.hash.substring(1); // Get the hash from the URL
+      const element = document.getElementById(hash); // Find the element with that ID
 
       if (element) {
-        const rect = element.getBoundingClientRect() // Get the position of the element
-        const offset = window.innerWidth >= 600 ? 64 : 56 // AppBar height
-        const y = rect.top + window.scrollY - offset // Calculate the y-coordinate to scroll to
+        const rect = element.getBoundingClientRect(); // Get the position of the element
+        const offset = window.innerWidth >= 600 ? 64 : 56; // AppBar height
+        const y = rect.top + window.scrollY - offset; // Calculate the y-coordinate to scroll to
 
         window.scroll({
           top: y,
           behavior: 'smooth',
-        })
+        });
       }
     }
-  }, [userAnnouncements])
+  }, [userAnnouncements]);
 
   useEffect(() => {
     if (userData && userAnnouncements && teacherData !== null) {
-      setIsLoading(false)
+      setIsLoading(false);
     }
     if (teacherDataError || assignmentsError) {
-      setIsLoading(false)
+      setIsLoading(false);
     }
   }, [
     userData,
@@ -185,10 +185,10 @@ const Assignments = () => {
     userAnnouncements,
     teacherData,
     assignmentsError,
-  ])
+  ]);
 
   if (isLoading) {
-    return <LoadingScreen />
+    return <LoadingScreen />;
   }
 
   return (
@@ -259,7 +259,7 @@ const Assignments = () => {
                           {announcement.tasks.map((task, index) => {
                             var current_score = scoresData.find(
                               (item) => item._id === task.score
-                            )
+                            );
                             return (
                               <div
                                 className={AssignmentsCSS.taskItem}
@@ -363,7 +363,7 @@ const Assignments = () => {
                                   )}
                                 </div>
                               </div>
-                            )
+                            );
                           })}
                         </div>
                       </div>
@@ -400,7 +400,7 @@ const Assignments = () => {
         </div>
       )}
     </>
-  )
-}
+  );
+};
 
-export default Assignments
+export default Assignments;

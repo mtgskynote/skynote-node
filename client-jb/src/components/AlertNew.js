@@ -7,8 +7,8 @@ const AlertNew = ({ severity, alertText }) => {
     <div className="mb-4">
       <AlertMui severity={severity}>{alertText}</AlertMui>
     </div>
-  )
-}
+  );
+};
 
 AlertNew.propTypes = {
   severity: PropTypes.oneOf(['error', 'warning', 'info', 'success']).isRequired,

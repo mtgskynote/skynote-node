@@ -1,40 +1,40 @@
-import React, { useEffect, useRef, useState } from 'react'
-import PopUpWindowCSS from './PopUpWindow.module.css'
-import { editRecording } from '../utils/studentRecordingMethods.js'
+import React, { useEffect, useRef, useState } from 'react';
+import PopUpWindowCSS from './PopUpWindow.module.css';
+import { editRecording } from '../utils/studentRecordingMethods.js';
 
 const PopUpWindowEdit = (props) => {
-  const [idEdit, setIdEdit] = useState(null)
-  const [showWarning, setShowWarning] = useState(false)
-  const userInputRef = useRef()
+  const [idEdit, setIdEdit] = useState(null);
+  const [showWarning, setShowWarning] = useState(false);
+  const userInputRef = useRef();
 
   useEffect(() => {
     if (props.idEdit !== null && props.idEdit !== undefined) {
-      setIdEdit(props.idEdit)
+      setIdEdit(props.idEdit);
     }
-  }, [props])
+  }, [props]);
 
   const handleUpdate = () => {
     // Update database
-    const userInputValue = userInputRef.current.value
-    console.log('User Input:', userInputValue)
+    const userInputValue = userInputRef.current.value;
+    console.log('User Input:', userInputValue);
     if (userInputValue !== '') {
       editRecording(idEdit, userInputValue).then(() => {
-        setShowWarning(false)
+        setShowWarning(false);
         // Close/tell to hide the window
-        props.handlerBack('close')
+        props.handlerBack('close');
         // reload to update
-        window.location.reload()
-      })
+        window.location.reload();
+      });
     } else {
-      setShowWarning(true)
+      setShowWarning(true);
     }
-  }
+  };
 
   const handleCancel = () => {
-    console.log('Cancel edit')
+    console.log('Cancel edit');
     // Close/tell to hide the window
-    props.handlerBack('close')
-  }
+    props.handlerBack('close');
+  };
 
   return (
     <div className={PopUpWindowCSS.popUpWindowEdit}>
@@ -62,7 +62,7 @@ const PopUpWindowEdit = (props) => {
         ''
       )}
     </div>
-  )
-}
+  );
+};
 
-export default PopUpWindowEdit
+export default PopUpWindowEdit;

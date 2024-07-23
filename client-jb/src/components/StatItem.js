@@ -1,8 +1,8 @@
 ///////////////////////////////////////////
 //// THIS FILE DOESN'T SEEM TO BE USED ////
 ///////////////////////////////////////////
-import React from 'react'
-import Wrapper from '../assets/wrappers/StatItem'
+import React from 'react';
+import Wrapper from '../assets/wrappers/StatItem';
 
 const StatsItem = ({ count, title, icon, color, bcg }) => {
   return (
@@ -13,7 +13,7 @@ const StatsItem = ({ count, title, icon, color, bcg }) => {
       </header>
       <h5 className="title">{title}</h5>
     </Wrapper>
-  )
-}
+  );
+};
 
-export default StatsItem
+export default StatsItem;

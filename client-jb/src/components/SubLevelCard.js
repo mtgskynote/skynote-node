@@ -1,14 +1,14 @@
-import React, { useRef, useState, useEffect } from 'react'
-import { Button } from '@mui/material'
+import React, { useRef, useState, useEffect } from 'react';
+import { Button } from '@mui/material';
 //import AccessTimeIcon from '@mui/icons-material/AccessTime'
-import violinPic from '../assets/images/violin/violin1.jpeg'
-import stringPic from '../assets/images/violin/violin6.jpeg'
-import bowPic from '../assets/images/violin/violinDisplay.jpg'
-import moocPic from '../assets/images/violin/violin4.jpeg'
-import piecePic from '../assets/images/violin/violin5.jpeg'
-import StarRateRoundedIcon from '@mui/icons-material/StarRateRounded'
-import StarBorderRoundedIcon from '@mui/icons-material/StarBorderRounded'
-import LessonCard from '../components/LessonCard.js'
+import violinPic from '../assets/images/violin/violin1.jpeg';
+import stringPic from '../assets/images/violin/violin6.jpeg';
+import bowPic from '../assets/images/violin/violinDisplay.jpg';
+import moocPic from '../assets/images/violin/violin4.jpeg';
+import piecePic from '../assets/images/violin/violin5.jpeg';
+import StarRateRoundedIcon from '@mui/icons-material/StarRateRounded';
+import StarBorderRoundedIcon from '@mui/icons-material/StarBorderRounded';
+import LessonCard from '../components/LessonCard.js';
 
 const SubLevelCard = ({
   index,
@@ -22,32 +22,32 @@ const SubLevelCard = ({
   onCardClick,
   refreshData,
 }) => {
-  const containerRef = useRef(null)
-  const [violinIcon, setViolinIcon] = useState(violinPic)
+  const containerRef = useRef(null);
+  const [violinIcon, setViolinIcon] = useState(violinPic);
 
-  const maxStars = subLevelLessons.length * 3
-  const levelCardWidth = 265
-  const expandedHeight = 285
-  const completed = totalStars === maxStars
+  const maxStars = subLevelLessons.length * 3;
+  const levelCardWidth = 265;
+  const expandedHeight = 285;
+  const completed = totalStars === maxStars;
 
   // Set icon based on sublevel name
   useEffect(() => {
-    const sublevelString = subLevelName.toLowerCase()
+    const sublevelString = subLevelName.toLowerCase();
     if (sublevelString.includes('string')) {
-      setViolinIcon(stringPic)
+      setViolinIcon(stringPic);
     } else if (sublevelString.includes('bow')) {
-      setViolinIcon(bowPic)
+      setViolinIcon(bowPic);
     } else if (sublevelString.includes('mooc')) {
-      setViolinIcon(moocPic)
+      setViolinIcon(moocPic);
     } else if (sublevelString.includes('piece')) {
-      setViolinIcon(piecePic)
+      setViolinIcon(piecePic);
     } else {
-      setViolinIcon(violinPic)
+      setViolinIcon(violinPic);
     }
-  }, [subLevelName])
+  }, [subLevelName]);
 
   if (subLevelLessons.length === 0) {
-    return null
+    return null;
   }
 
   return (
@@ -60,7 +60,7 @@ const SubLevelCard = ({
         }`}
         style={{ height: isOpen ? `${expandedHeight}px` : '90px' }}
         onClick={() => {
-          onCardClick(index)
+          onCardClick(index);
         }}
       >
         <div className="w-full flex items-center justify-between">
@@ -149,14 +149,14 @@ const SubLevelCard = ({
                     textColour={'text-black'}
                     refreshData={refreshData}
                   />
-                )
+                );
               })}
             </div>
           </div>
         )}
       </div>
     </div>
-  )
-}
+  );
+};
 
-export default SubLevelCard
+export default SubLevelCard;

@@ -1,4 +1,4 @@
-import mongoose from 'mongoose'
+import mongoose from 'mongoose';
 
 const student_recordingsSchema = new mongoose.Schema({
   // recordingId: {
@@ -38,11 +38,11 @@ const student_recordingsSchema = new mongoose.Schema({
     repetitionNumber: [Number],
     stars: Number,
   },
-})
+});
 
 var student_recordings = mongoose.model(
   'student_recordings',
   student_recordingsSchema
-)
+);
 
-export default student_recordings
+export default student_recordings;

@@ -1,4 +1,4 @@
-const plugin = require('tailwindcss/plugin')
+const plugin = require('tailwindcss/plugin');
 
 /** @type {import('tailwindcss').Config} */
 module.exports = {
@@ -28,7 +28,7 @@ module.exports = {
           '-ms-overflow-style': 'none',
           'scrollbar-width': 'none',
         },
-      })
+      });
     }),
     plugin(function ({ matchUtilities, theme }) {
       matchUtilities(
@@ -38,7 +38,7 @@ module.exports = {
           }),
         },
         { values: theme('textShadow') }
-      )
+      );
       matchUtilities(
         {
           'text-': (value) => ({
@@ -46,10 +46,10 @@ module.exports = {
           }),
         },
         { values: theme('fontSize') }
-      )
+      );
     }),
   ],
   corePlugins: {
     preflight: false,
   },
-}
+};
