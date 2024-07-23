@@ -237,7 +237,7 @@ const AppProvider = ({ children }) => {
   );
 };
 
-AppContext.Provider.propTypes = {
+AppProvider.propTypes = {
   children: PropTypes.node.isRequired,
 };
 
