@@ -1,7 +1,7 @@
 ///////////////////////////////////////////
 ////////// THIS FILE IS OBSOLETE //////////
 ///////////////////////////////////////////
-import styled from 'styled-components'
+import styled from 'styled-components';
 
 const Wrapper = styled.section`
   .myDiv {
@@ -64,5 +64,5 @@ const Wrapper = styled.section`
         width: "max-content";
         border-radius: "20px";
       } */
-`
-export default Wrapper
+`;
+export default Wrapper;

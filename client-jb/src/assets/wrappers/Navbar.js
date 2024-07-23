@@ -1,7 +1,7 @@
 ///////////////////////////////////////////
 //// THIS FILE DOESN'T SEEM TO BE USED ////
 ///////////////////////////////////////////
-import styled from 'styled-components'
+import styled from 'styled-components';
 
 const Wrapper = styled.nav`
   height: var(--nav-height);
@@ -86,5 +86,5 @@ const Wrapper = styled.nav`
     }
   }
 */
-`
-export default Wrapper
+`;
+export default Wrapper;

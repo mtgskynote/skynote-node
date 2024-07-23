@@ -1,21 +1,21 @@
-import React, { useState } from 'react'
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { Button } from '@material-ui/core'
+import React, { useState } from 'react';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { Button } from '@material-ui/core';
 //import { Dropdown } from "react-bootstrap";
-import ModeInfoButtonCSS from './ModeInfoButton.module.css'
+import ModeInfoButtonCSS from './ModeInfoButton.module.css';
 
 import {
   faInfoCircle, //info circle
-} from '@fortawesome/free-solid-svg-icons'
+} from '@fortawesome/free-solid-svg-icons';
 import {
   faStar,
   faMusic,
   faPencilSquare,
   faBoxArchive,
-} from '@fortawesome/free-solid-svg-icons'
+} from '@fortawesome/free-solid-svg-icons';
 
 const ModeInfoButton = (props) => {
-  const [showMessage, setShowMessage] = useState(false)
+  const [showMessage, setShowMessage] = useState(false);
 
   const ModeInfoMessage = () => {
     if (props.message === 1) {
@@ -41,7 +41,7 @@ const ModeInfoButton = (props) => {
             </p>
           </div>
         </div>
-      )
+      );
     } else if (props.message === 2) {
       return (
         <div className={ModeInfoButtonCSS.container}>
@@ -119,18 +119,18 @@ const ModeInfoButton = (props) => {
             </p>
           </div>
         </div>
-      )
+      );
     }
-  }
+  };
 
   const handleMouseOver = (event) => {
     // console.log("Show message")
-    setShowMessage(true)
-  }
+    setShowMessage(true);
+  };
   const handleMouseLeave = () => {
     // console.log("Hide message")
-    setShowMessage(false)
-  }
+    setShowMessage(false);
+  };
 
   const ModeInfoButton = (
     <div className={ModeInfoButtonCSS.InfoMode}>
@@ -153,9 +153,9 @@ const ModeInfoButton = (props) => {
         <div className={ModeInfoButtonCSS.body}>{ModeInfoMessage()}</div>
       )}
     </div>
-  )
+  );
 
-  return ModeInfoButton
-}
+  return ModeInfoButton;
+};
 
-export default ModeInfoButton
+export default ModeInfoButton;

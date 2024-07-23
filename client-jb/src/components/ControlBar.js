@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from 'react'
-import ModeToggle from './ModeToggle'
+import React, { useState, useEffect } from 'react';
+import ModeToggle from './ModeToggle';
 import {
   PlayCircle as PlayIcon,
   PauseCircle as PauseIcon,
@@ -12,13 +12,13 @@ import {
   RestartAlt as ResetIcon,
   Equalizer as StatsIcon,
   Info as InfoIcon,
-} from '@mui/icons-material'
-import IconButton from '@mui/material/IconButton'
-import Tooltip from '@mui/material/Tooltip'
-import ControlBarPopover from './ControlBarPopover'
-import RangeInput from './RangeInput'
-import ControlBarPanel from './ControlBarPanel'
-import StarRating from './StarRating'
+} from '@mui/icons-material';
+import IconButton from '@mui/material/IconButton';
+import Tooltip from '@mui/material/Tooltip';
+import ControlBarPopover from './ControlBarPopover';
+import RangeInput from './RangeInput';
+import ControlBarPanel from './ControlBarPanel';
+import StarRating from './StarRating';
 
 const ControlBar = ({
   onTransposeChange,
@@ -45,14 +45,14 @@ const ControlBar = ({
   practiceMode,
   isMac,
 }) => {
-  const [practiceModeOn, setPracticeModeOn] = useState(true)
+  const [practiceModeOn, setPracticeModeOn] = useState(true);
   const [initialMidiVolume, setInitialMidiVolume] = useState(
     practiceModeOn ? 50 : 0
-  )
+  );
 
-  const initialTranspose = 0
-  const initialBpm = 100
-  const initialMetronomeVolume = 0
+  const initialTranspose = 0;
+  const initialBpm = 100;
+  const initialMetronomeVolume = 0;
 
   const allModeIcons = [
     {
@@ -109,7 +109,7 @@ const ControlBar = ({
       showInPlaybackMode: true,
       showInInteractiveMode: true,
     },
-  ]
+  ];
 
   const practiceModeIcons = [
     {
@@ -141,7 +141,7 @@ const ControlBar = ({
       flag: isPlaying,
       showInPlaybackMode: true,
     },
-  ]
+  ];
 
   const recordModeIcons = [
     {
@@ -149,23 +149,23 @@ const ControlBar = ({
       icon: <RecordIcon className="text-4xl" />,
       toggle: onRecord,
     },
-  ]
+  ];
 
   // Sets the current mode state and passes this state up the parent components
   const handleModeChange = (newMode) => {
-    setPracticeModeOn(newMode)
-    onModeChange(newMode)
-  }
+    setPracticeModeOn(newMode);
+    onModeChange(newMode);
+  };
 
   // Handle resetting MIDI volume based on mode
   useEffect(() => {
-    setInitialMidiVolume(practiceModeOn ? 50 : 0)
-  }, [practiceModeOn])
+    setInitialMidiVolume(practiceModeOn ? 50 : 0);
+  }, [practiceModeOn]);
 
   // Ensure that component practice mode state variable reflects parent component's state
   useEffect(() => {
-    setPracticeModeOn(practiceMode)
-  }, [practiceMode])
+    setPracticeModeOn(practiceMode);
+  }, [practiceMode]);
 
   return (
     <div
@@ -368,7 +368,7 @@ const ControlBar = ({
         </div>
       </div>
     </div>
-  )
-}
+  );
+};
 
-export default ControlBar
+export default ControlBar;

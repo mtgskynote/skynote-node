@@ -1,5 +1,5 @@
-import React from 'react'
-import Violinist_2 from '../assets/images/Violinist-2.jpg'
+import React from 'react';
+import Violinist_2 from '../assets/images/Violinist-2.jpg';
 
 const Violinist2 = () => {
   return (
@@ -10,7 +10,7 @@ const Violinist2 = () => {
         style={{ width: '100%', height: '100%' }}
       />
     </div>
-  )
-}
+  );
+};
 
-export default Violinist2
+export default Violinist2;

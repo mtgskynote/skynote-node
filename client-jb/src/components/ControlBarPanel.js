@@ -1,4 +1,4 @@
-import React from 'react'
+import React from 'react';
 
 const ControlBarPanel = ({ show, children }) => {
   return (
@@ -18,7 +18,7 @@ const ControlBarPanel = ({ show, children }) => {
         </div>
       )}
     </div>
-  )
-}
+  );
+};
 
-export default ControlBarPanel
+export default ControlBarPanel;

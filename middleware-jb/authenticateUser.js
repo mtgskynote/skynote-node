@@ -1,6 +1,6 @@
-import jwt from 'jsonwebtoken'
-import { UnAuthenticatedError } from '../errors/index.js'
-import { logout } from '../controllers/authController.js'
+import jwt from 'jsonwebtoken';
+import { UnAuthenticatedError } from '../errors/index.js';
+import { logout } from '../controllers/authController.js';
 
 /**
  * Middleware function to authenticate user using JWT token.
@@ -10,21 +10,21 @@ import { logout } from '../controllers/authController.js'
  * @throws {UnAuthenticatedError} If authentication fails.
  */
 const authenticateUser = async (req, res, next) => {
-  const authHeader = req.headers.authorization
-  console.log('Authenticating...')
+  const authHeader = req.headers.authorization;
+  console.log('Authenticating...');
   if (!authHeader || !authHeader.startsWith('Bearer')) {
-    throw new UnAuthenticatedError('Authentication invalid')
+    throw new UnAuthenticatedError('Authentication invalid');
   }
-  const token = authHeader.split(' ')[1]
+  const token = authHeader.split(' ')[1];
   try {
-    const payload = jwt.verify(token, process.env.JWT_SECRET)
-    console.log('payload', payload)
-    req.user = { userId: payload.userId }
-    next()
+    const payload = jwt.verify(token, process.env.JWT_SECRET);
+    console.log('payload', payload);
+    req.user = { userId: payload.userId };
+    next();
   } catch (err) {
-    logout(req, res)
-    throw new UnAuthenticatedError('Authentication invalid')
+    logout(req, res);
+    throw new UnAuthenticatedError('Authentication invalid');
   }
-}
+};
 
-export { authenticateUser }
+export { authenticateUser };

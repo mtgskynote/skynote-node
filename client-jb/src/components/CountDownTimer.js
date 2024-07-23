@@ -1,41 +1,41 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect } from 'react';
 
 const CountDownTimer = ({ bpm, mode, onCountDownFinished }) => {
-  const [countDownBeats, setCountDownBeats] = useState(1) // Set the initial countdown time in beats
+  const [countDownBeats, setCountDownBeats] = useState(1); // Set the initial countdown time in beats
 
   useEffect(() => {
-    console.log('original bpm: ', bpm)
+    console.log('original bpm: ', bpm);
 
-    let new_bpm
+    let new_bpm;
 
     if (bpm > 100) {
-      new_bpm = bpm / 2
+      new_bpm = bpm / 2;
     } else {
-      new_bpm = bpm
+      new_bpm = bpm;
     }
 
-    console.log('new bpm: ', new_bpm)
+    console.log('new bpm: ', new_bpm);
 
-    const timePerBeat = (1 / new_bpm) * 60 * 1000 // milliseconds per beat
-    let countdownInterval
+    const timePerBeat = (1 / new_bpm) * 60 * 1000; // milliseconds per beat
+    let countdownInterval;
 
     if (countDownBeats < 5) {
       countdownInterval = setInterval(() => {
-        setCountDownBeats((prevCountDownBeats) => prevCountDownBeats + 1)
-      }, timePerBeat)
+        setCountDownBeats((prevCountDownBeats) => prevCountDownBeats + 1);
+      }, timePerBeat);
     } else {
-      setCountDownBeats('')
+      setCountDownBeats('');
     }
 
     if (countDownBeats === 5) {
-      clearInterval(countdownInterval)
-      onCountDownFinished()
+      clearInterval(countdownInterval);
+      onCountDownFinished();
     }
 
     return () => {
-      clearInterval(countdownInterval)
-    }
-  }, [bpm, countDownBeats, onCountDownFinished])
+      clearInterval(countdownInterval);
+    };
+  }, [bpm, countDownBeats, onCountDownFinished]);
 
   return (
     <div className="fixed top-0 left-0 w-screen h-screen flex items-center justify-center z-50">
@@ -50,7 +50,7 @@ const CountDownTimer = ({ bpm, mode, onCountDownFinished }) => {
         {countDownBeats}
       </div>
     </div>
-  )
-}
+  );
+};
 
-export default CountDownTimer
+export default CountDownTimer;

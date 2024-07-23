@@ -1,19 +1,19 @@
-import Message from '../models/Message.js'
-import { StatusCodes } from 'http-status-codes'
-import { BadRequestError, UnAuthenticatedError } from '../errors/index.js'
-import mongoose from 'mongoose'
+import Message from '../models/Message.js';
+import { StatusCodes } from 'http-status-codes';
+import { BadRequestError, UnAuthenticatedError } from '../errors/index.js';
+import mongoose from 'mongoose';
 
 /* see messageRoutes.js for the routes that use these functions */
 
 const getAllMessages = async (req, res) => {
-  console.log(`server getAllMessages `)
-  const { sender, receiver, limit } = req.query
+  console.log(`server getAllMessages `);
+  const { sender, receiver, limit } = req.query;
 
-  console.log(`sender: ${sender}, receiver: ${receiver}, limit: ${limit}`)
+  console.log(`sender: ${sender}, receiver: ${receiver}, limit: ${limit}`);
 
   // Validation (optional)
   if (!sender || !receiver) {
-    return res.status(400).json({ error: 'Missing participant IDs' })
+    return res.status(400).json({ error: 'Missing participant IDs' });
   }
 
   const pipeline = [
@@ -40,28 +40,28 @@ const getAllMessages = async (req, res) => {
     {
       $limit: parseInt(limit) || 10, // Limit documents per page
     },
-  ]
+  ];
 
   try {
-    const messages = await Message.aggregate(pipeline)
-    res.json({ messages })
+    const messages = await Message.aggregate(pipeline);
+    res.json({ messages });
   } catch (error) {
-    console.error('Error fetching messages:', error)
-    res.status(500).json({ error: 'Internal server error' })
+    console.error('Error fetching messages:', error);
+    res.status(500).json({ error: 'Internal server error' });
   }
-}
+};
 
 const getAllMessages_old = async (req, res) => {
-  const { sender, receiver, limit, skip } = req.query // Optional parameters
+  const { sender, receiver, limit, skip } = req.query; // Optional parameters
 
   try {
     // Create query based on provided filters
-    const query = {}
+    const query = {};
     if (sender) {
-      query.sender = sender
+      query.sender = sender;
     }
     if (receiver) {
-      query.receiver = { $in: [receiver] } // Check if receiver is in the array
+      query.receiver = { $in: [receiver] }; // Check if receiver is in the array
     }
 
     // Add pagination options (optional)
@@ -69,59 +69,59 @@ const getAllMessages_old = async (req, res) => {
       limit: limit || 10, // Default limit
       skip: skip || 0, // Default skip
       sort: { _id: -1 }, // Sort by latest first
-    }
+    };
 
     // Retrieve messages with filtering and pagination
-    const messages = await Message.find(query, null, options)
+    const messages = await Message.find(query, null, options);
 
     // Send response with message details
-    res.status(200).json({ messages })
+    res.status(200).json({ messages });
   } catch (err) {
-    console.error('Error retrieving messages:', err)
-    res.status(500).json({ error: 'Error getting messages' })
+    console.error('Error retrieving messages:', err);
+    res.status(500).json({ error: 'Error getting messages' });
   }
-}
+};
 
 const putMessage = async (req, res) => {
-  console.log(`server putMessage starting`)
-  const { content, sender, receiver } = req.body // Validate and sanitize data
+  console.log(`server putMessage starting`);
+  const { content, sender, receiver } = req.body; // Validate and sanitize data
 
-  console.log(`content: ${content}, sender: ${sender}, receiver: ${receiver} `)
+  console.log(`content: ${content}, sender: ${sender}, receiver: ${receiver} `);
 
   try {
     // ... (message validation logic)
     // Check if receiver is a valid MongoDB ID
-    console.log('check reciever validity')
+    console.log('check reciever validity');
     if (!mongoose.Types.ObjectId.isValid(receiver)) {
-      throw new Error('Invalid receiver ID format')
+      throw new Error('Invalid receiver ID format');
     }
     // ... (rest of the logic)
   } catch (error) {
-    res.status(400).json({ error: error.message }) // Send specific error message
+    res.status(400).json({ error: error.message }); // Send specific error message
   }
 
-  console.log(`server putMessage - about to call new Message`)
+  console.log(`server putMessage - about to call new Message`);
 
   try {
     // Check user authorization and message validity (if applicable)
 
     // Create a new message document
-    const newMessage = new Message({ content, sender, receiver })
-    await newMessage.save()
+    const newMessage = new Message({ content, sender, receiver });
+    await newMessage.save();
 
-    console.log(`server putMessage - return status `)
+    console.log(`server putMessage - return status `);
 
     // Send response with the saved message details
-    res.status(201).json({ newMessage })
+    res.status(201).json({ newMessage });
   } catch (err) {
-    console.error('Error saving message:', err)
-    res.status(500).json({ error: 'Error uploading message' })
+    console.error('Error saving message:', err);
+    res.status(500).json({ error: 'Error uploading message' });
   }
-}
+};
 
 const updateMessageSeen = async (req, res) => {
-  const user1Id = req.body.user1
-  const user2Id = req.body.user2
+  const user1Id = req.body.user1;
+  const user2Id = req.body.user2;
   try {
     let updatedMessage = await Message.updateMany(
       {
@@ -131,17 +131,17 @@ const updateMessageSeen = async (req, res) => {
       {
         $set: { seen: true },
       }
-    )
+    );
 
     if (!updatedMessage) {
-      return res.status(404).json({ error: 'Message not found' })
+      return res.status(404).json({ error: 'Message not found' });
     }
 
-    res.status(200).json(updatedMessage)
+    res.status(200).json(updatedMessage);
   } catch (error) {
-    console.error('Error updating message:', error)
-    res.status(500).json({ error: 'Internal Server Error' })
+    console.error('Error updating message:', error);
+    res.status(500).json({ error: 'Internal Server Error' });
   }
-}
+};
 
-export { putMessage, getAllMessages, updateMessageSeen }
+export { putMessage, getAllMessages, updateMessageSeen };

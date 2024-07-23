@@ -1,14 +1,14 @@
 // ListAllRecordings.js
-import React, { useState, useEffect } from 'react'
-import { useNavigate } from 'react-router-dom'
-import ListAllRecordingsCSS from './ListRecordings.module.css'
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
+import ListAllRecordingsCSS from './ListRecordings.module.css';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
   getAllRecData,
   deleteRecording,
-} from '../utils/studentRecordingMethods.js'
-import { useAppContext } from '../context/appContext'
-import PopUpWindowEdit from './PopUpWindowEdit.js'
+} from '../utils/studentRecordingMethods.js';
+import { useAppContext } from '../context/appContext';
+import PopUpWindowEdit from './PopUpWindowEdit.js';
 
 import {
   faTrash,
@@ -18,22 +18,22 @@ import {
   faBoxArchive,
   faMusic,
   faPenToSquare,
-} from '@fortawesome/free-solid-svg-icons'
+} from '@fortawesome/free-solid-svg-icons';
 
 const ListAllRecordings = () => {
-  const { getCurrentUser } = useAppContext()
-  const [userData, setUserData] = useState(null)
-  const [localData, setLocalData] = useState(null)
-  const [recordingList, setRecordingList] = useState(null)
-  const [recordingNames, setRecordingNames] = useState(null)
-  const [recordingStars, setRecordingStars] = useState(null)
-  const [recordingScores, setRecordingScores] = useState(null)
-  const [recordingDates, setRecordingDates] = useState(null)
-  const [recordingSkills, setRecordingSkills] = useState(null)
-  const [recordingLevels, setRecordingLevels] = useState(null)
-  const [idSelectedEdit, setIdSelectedEdit] = useState(null)
-  const [showPopUpEdit, setShowPopUpEdit] = useState(false)
-  const navigate = useNavigate()
+  const { getCurrentUser } = useAppContext();
+  const [userData, setUserData] = useState(null);
+  const [localData, setLocalData] = useState(null);
+  const [recordingList, setRecordingList] = useState(null);
+  const [recordingNames, setRecordingNames] = useState(null);
+  const [recordingStars, setRecordingStars] = useState(null);
+  const [recordingScores, setRecordingScores] = useState(null);
+  const [recordingDates, setRecordingDates] = useState(null);
+  const [recordingSkills, setRecordingSkills] = useState(null);
+  const [recordingLevels, setRecordingLevels] = useState(null);
+  const [idSelectedEdit, setIdSelectedEdit] = useState(null);
+  const [showPopUpEdit, setShowPopUpEdit] = useState(false);
+  const navigate = useNavigate();
   // Define options for formatting date
   const options = {
     year: 'numeric',
@@ -41,152 +41,152 @@ const ListAllRecordings = () => {
     day: 'numeric',
     hour: '2-digit',
     minute: '2-digit',
-  }
+  };
 
   // Starting --> load recordings from userID and scoreID
   useEffect(() => {
-    const local = JSON.parse(localStorage.getItem('scoreData'))
-    setLocalData(local)
+    const local = JSON.parse(localStorage.getItem('scoreData'));
+    setLocalData(local);
 
     const fetchDataFromAPI = () => {
       if (userData === null) {
         getCurrentUser() // fetchData is already an async function
           .then((result) => {
-            setUserData(result)
+            setUserData(result);
           })
           .catch((error) => {
-            console.log(`getCurrentUser() error: ${error}`)
-          })
+            console.log(`getCurrentUser() error: ${error}`);
+          });
       }
 
       if (userData !== null && recordingList === null) {
         getAllRecData(userData.id)
           .then((result) => {
-            setRecordingList(result)
+            setRecordingList(result);
             setRecordingNames(
               result.map((recording) => recording.recordingName)
-            )
+            );
             setRecordingStars(
               result.map((recording) => recording.recordingStars)
-            )
+            );
             setRecordingDates(
               result.map((recording) => {
                 //Set correct date format
-                const recordingDate = new Date(recording.recordingDate)
-                return recordingDate.toLocaleDateString('es-ES', options)
+                const recordingDate = new Date(recording.recordingDate);
+                return recordingDate.toLocaleDateString('es-ES', options);
               })
-            )
+            );
             setRecordingLevels(
               result.map((recording) => {
                 return local.find((item) => item._id === recording.scoreID)
-                  .level
+                  .level;
               })
-            )
+            );
             setRecordingSkills(
               result.map((recording) => {
                 return local.find((item) => item._id === recording.scoreID)
-                  .skill
+                  .skill;
               })
-            )
+            );
             setRecordingScores(
               result.map((recording) => {
                 return local.find((item) => item._id === recording.scoreID)
-                  .title
+                  .title;
               })
-            )
+            );
           })
           .catch((error) => {
-            console.log(`Cannot get recordings from database: ${error}`)
-          })
+            console.log(`Cannot get recordings from database: ${error}`);
+          });
       }
-    }
+    };
 
-    fetchDataFromAPI()
+    fetchDataFromAPI();
     // eslint-disable-next-line
-  }, [userData, recordingList, getCurrentUser])
+  }, [userData, recordingList, getCurrentUser]);
 
   //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
   // Event handler for going back
   const handleGoBack = () => {
     // Use navigate to go back to the previous page
     //navigate(-1);
-    navigate(`/`)
-  }
+    navigate(`/`);
+  };
 
   // Event handler for click on See
   const handleSeeClick = (index) => {
-    const recording = recordingList[index]
-    const scoreName = recordingScores[index]
-    const scoreXML = localData.find((item) => item.title === scoreName).fname
+    const recording = recordingList[index];
+    const scoreName = recordingScores[index];
+    const scoreXML = localData.find((item) => item.title === scoreName).fname;
     navigate(`/ListRecordings/${scoreXML}`, {
       state: { id: recording.recordingId },
-    })
-  }
+    });
+  };
 
   // Event handler for click on Edit
   const handleEditClick = (action, nameOfFile) => {
     if (action === 'open') {
       const id =
         JSON.parse(recordingList)[recordingNames.indexOf(nameOfFile)]
-          .recordingId
+          .recordingId;
       //Store id to edit so that popupwindow can access it
-      setIdSelectedEdit(id)
+      setIdSelectedEdit(id);
       // Show pop up window component
-      setShowPopUpEdit(true)
+      setShowPopUpEdit(true);
     } else {
       // Dont show pop up window component
-      setShowPopUpEdit(false)
+      setShowPopUpEdit(false);
       //Delete stored id
-      setIdSelectedEdit(null)
+      setIdSelectedEdit(null);
     }
-  }
+  };
 
   // Event handler for click on Trash
   const handleTrashClick = (nameOfFile) => {
     if (recordingNames.indexOf(nameOfFile) !== -1) {
       const idToDelete =
-        recordingList[recordingNames.indexOf(nameOfFile)].recordingId
+        recordingList[recordingNames.indexOf(nameOfFile)].recordingId;
       // Delete recording entry of state arrays
       const auxArrayNames = recordingNames.filter(
         (item, index) => index !== recordingNames.indexOf(nameOfFile)
-      )
+      );
       const auxArrayList = recordingList.filter(
         (item, index) => index !== recordingNames.indexOf(nameOfFile)
-      )
+      );
       const auxRecordingStars = recordingStars.filter(
         (item, index) => index !== recordingNames.indexOf(nameOfFile)
-      )
+      );
       const auxRecordingScores = recordingScores.filter(
         (item, index) => index !== recordingNames.indexOf(nameOfFile)
-      )
+      );
       const auxRecordingDates = recordingDates.filter(
         (item, index) => index !== recordingNames.indexOf(nameOfFile)
-      )
+      );
       const auxRecordingSkills = recordingSkills.filter(
         (item, index) => index !== recordingNames.indexOf(nameOfFile)
-      )
+      );
       const auxRecordingLevels = recordingLevels.filter(
         (item, index) => index !== recordingNames.indexOf(nameOfFile)
-      )
+      );
       // Delete recording from database
       deleteRecording(idToDelete)
         .then(() => {
-          setRecordingNames(auxArrayNames)
-          setRecordingList(auxArrayList)
-          setRecordingStars(auxRecordingStars)
-          setRecordingScores(auxRecordingScores)
-          setRecordingDates(auxRecordingDates)
-          setRecordingSkills(auxRecordingSkills)
-          setRecordingLevels(auxRecordingLevels)
+          setRecordingNames(auxArrayNames);
+          setRecordingList(auxArrayList);
+          setRecordingStars(auxRecordingStars);
+          setRecordingScores(auxRecordingScores);
+          setRecordingDates(auxRecordingDates);
+          setRecordingSkills(auxRecordingSkills);
+          setRecordingLevels(auxRecordingLevels);
         })
         .catch((error) => {
-          console.log(`Cannot delete recordings from database: ${error}`)
-        })
+          console.log(`Cannot delete recordings from database: ${error}`);
+        });
     }
-  }
+  };
 
   if (recordingNames === null) {
-    return <p>Loading...</p>
+    return <p>Loading...</p>;
   }
 
   // Your component logic using the variables
@@ -311,7 +311,7 @@ const ListAllRecordings = () => {
         ''
       )}
     </div>
-  )
-}
+  );
+};
 
-export default ListAllRecordings
+export default ListAllRecordings;

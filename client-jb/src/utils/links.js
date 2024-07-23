@@ -2,11 +2,11 @@ import {
   IoBarChartSharp,
   IoBarcodeOutline,
   IoChatboxOutline,
-} from 'react-icons/io5'
-import { MdQueryStats } from 'react-icons/md'
-import { FaWpforms } from 'react-icons/fa'
-import { ImProfile } from 'react-icons/im'
-import { ImMusic } from 'react-icons/im'
+} from 'react-icons/io5';
+import { MdQueryStats } from 'react-icons/md';
+import { FaWpforms } from 'react-icons/fa';
+import { ImProfile } from 'react-icons/im';
+import { ImMusic } from 'react-icons/im';
 
 const links = [
   { id: 1, text: '   Profile', path: '/profile', icon: <ImProfile /> },
@@ -36,6 +36,6 @@ const links = [
     icon: <IoBarcodeOutline />,
   },
   { id: 7, text: '   API testing', path: '/apitesting', icon: <FaWpforms /> },
-]
+];
 
-export default links
+export default links;

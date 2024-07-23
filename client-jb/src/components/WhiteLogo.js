@@ -1,5 +1,5 @@
-import React from 'react'
-import new_logo_2023 from '../assets/images/new_logo_2023.jpg'
+import React from 'react';
+import new_logo_2023 from '../assets/images/new_logo_2023.jpg';
 
 const WhiteLogo = () => {
   return (
@@ -9,7 +9,7 @@ const WhiteLogo = () => {
       alt="new_logo_2023"
       style={{ width: '35%', height: '300%' }}
     />
-  )
-}
+  );
+};
 
-export default WhiteLogo
+export default WhiteLogo;

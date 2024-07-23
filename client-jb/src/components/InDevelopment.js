@@ -1,5 +1,5 @@
-import React from 'react'
-import img from '../assets/images/pencil_violin.png'
+import React from 'react';
+import img from '../assets/images/pencil_violin.png';
 
 const InDevelopment = () => {
   return (
@@ -25,7 +25,7 @@ const InDevelopment = () => {
         </div>
       </div>
     </div>
-  )
-}
+  );
+};
 
-export default InDevelopment
+export default InDevelopment;

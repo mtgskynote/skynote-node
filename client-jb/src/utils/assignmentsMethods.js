@@ -1,20 +1,20 @@
-import axios from 'axios'
+import axios from 'axios';
 
 async function getAllAssignments(studentId) {
   try {
     // scoreId: "64d0de60d9ac9a34a66b4d45" is for the score "V_001_Cuerdas_Al_Aire_1_Suelta_A"
     const response = await axios.get('/api/v1/assignments/getAllAssignments', {
       params: { studentId: studentId },
-    })
+    });
 
     if (response.status === 200) {
-      return response.data // save results locally
+      return response.data; // save results locally
     } else {
-      console.log('getAllAssignments response.status is not 200!')
-      return []
+      console.log('getAllAssignments response.status is not 200!');
+      return [];
     }
   } catch (error) {
-    console.error('Error on axios getAllAssignments', error)
+    console.error('Error on axios getAllAssignments', error);
   }
 }
 
@@ -23,20 +23,20 @@ async function putAssignment(assignmentObject) {
     const response = await axios.put(
       '/api/v1/assignments/putAssignment',
       assignmentObject
-    )
+    );
     console.log(
       `response from putAssignment was ${JSON.stringify(response.data)}`
-    )
+    );
     if (response.status === 201) {
       /* 201 is the status code for a successful PUT */
-      console.log('putAssignment  returned OK')
-      return response.data
+      console.log('putAssignment  returned OK');
+      return response.data;
     } else {
-      console.log('putAssignment failed!')
-      return null
+      console.log('putAssignment failed!');
+      return null;
     }
   } catch (error) {
-    console.error('Error on axios putAssignment', error)
+    console.error('Error on axios putAssignment', error);
   }
 }
 
@@ -45,15 +45,15 @@ async function deleteAssignment(assignmentId) {
     // console.log(`will try to delete assignmentId ${assignmentId}`)
     const response = await axios.delete(
       `/api/v1/assignments/deleteAssignment/${assignmentId}`
-    )
+    );
 
     if (response.status === 200) {
-      return response.data
+      return response.data;
     } else {
-      console.log('deleteAssignment failed!')
+      console.log('deleteAssignment failed!');
     }
   } catch (error) {
-    console.error('Error on axios deleteAssignment', error)
+    console.error('Error on axios deleteAssignment', error);
   }
 }
 
@@ -63,16 +63,16 @@ async function getLatestAssignment(studentId) {
     const response = await axios.get(
       '/api/v1/assignments/getLatestAssignment',
       { params: { studentId: studentId } }
-    )
+    );
 
     if (response.status === 200) {
-      return response.data // save results locally
+      return response.data; // save results locally
     } else {
-      console.log('getLatestAssignment response.status is not 200!')
-      return []
+      console.log('getLatestAssignment response.status is not 200!');
+      return [];
     }
   } catch (error) {
-    console.error('Error on axios getLatestAssignment', error)
+    console.error('Error on axios getLatestAssignment', error);
   }
 }
 
@@ -86,20 +86,20 @@ async function updateAssignment(assignmentId, studentId, scoreId, recordingId) {
         scoreId: scoreId,
         recordingId: recordingId,
       }
-    )
+    );
     console.log(
       `response from putAssignment was ${JSON.stringify(response.data)}`
-    )
+    );
     if (response.status === 200) {
       /* 200 is the status code everything okay */
-      console.log('updateAssignment  returned OK')
-      return response.data
+      console.log('updateAssignment  returned OK');
+      return response.data;
     } else {
-      console.log('updateAssignment failed!')
-      return null
+      console.log('updateAssignment failed!');
+      return null;
     }
   } catch (error) {
-    console.error('Error on axios updateAssignment', error)
+    console.error('Error on axios updateAssignment', error);
   }
 }
 
@@ -109,4 +109,4 @@ export {
   deleteAssignment,
   getLatestAssignment,
   updateAssignment,
-}
+};

@@ -1,7 +1,7 @@
 ///////////////////////////////////////////
 ////////// THIS FILE IS OBSOLETE //////////
 ///////////////////////////////////////////
-import styled from 'styled-components'
+import styled from 'styled-components';
 
 const Wrapper = styled.section`
   display: grid;
@@ -131,5 +131,5 @@ const Wrapper = styled.section`
     transition: all 0.4s;
     cursor: pointer;
   }
-`
-export default Wrapper
+`;
+export default Wrapper;

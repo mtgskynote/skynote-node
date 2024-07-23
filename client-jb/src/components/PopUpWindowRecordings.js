@@ -1,9 +1,9 @@
-import React, { useState, useEffect } from 'react'
-import PopUpWindowCSS from './PopUpWindow.module.css'
-import StatsRecentCSS from './StatsRecentRecordings.module.css'
-import { getRecData } from '../utils/studentRecordingMethods.js'
-import { updateAssignment } from '../utils/assignmentsMethods.js'
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import React, { useState, useEffect } from 'react';
+import PopUpWindowCSS from './PopUpWindow.module.css';
+import StatsRecentCSS from './StatsRecentRecordings.module.css';
+import { getRecData } from '../utils/studentRecordingMethods.js';
+import { updateAssignment } from '../utils/assignmentsMethods.js';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
   faStar,
   faMusic,
@@ -12,21 +12,21 @@ import {
   faPaperPlane,
   faCheck,
   faXmark,
-} from '@fortawesome/free-solid-svg-icons'
-import ListRecordingsCSS from './ListRecordings.module.css'
+} from '@fortawesome/free-solid-svg-icons';
+import ListRecordingsCSS from './ListRecordings.module.css';
 
 const PopUpWindowRecordings = (props) => {
-  const [userId, setUserId] = useState(null)
-  const [scoreId, setScoreId] = useState(null)
-  const [announcementId, setAnnouncementId] = useState(null)
-  const [scoreData, setScoreData] = useState(null)
-  const [data, setData] = useState(null)
-  const [recordingNames, setRecordingNames] = useState(null)
-  const [recordingIds, setRecordingIds] = useState(null)
-  const [recordingStars, setRecordingStars] = useState(null)
-  const [recordingDates, setRecordingDates] = useState(null)
-  const [checkOption, setCheckOption] = useState(false)
-  const [recordingIndexSubmit, setRecordingIndexSubmit] = useState(false)
+  const [userId, setUserId] = useState(null);
+  const [scoreId, setScoreId] = useState(null);
+  const [announcementId, setAnnouncementId] = useState(null);
+  const [scoreData, setScoreData] = useState(null);
+  const [data, setData] = useState(null);
+  const [recordingNames, setRecordingNames] = useState(null);
+  const [recordingIds, setRecordingIds] = useState(null);
+  const [recordingStars, setRecordingStars] = useState(null);
+  const [recordingDates, setRecordingDates] = useState(null);
+  const [checkOption, setCheckOption] = useState(false);
+  const [recordingIndexSubmit, setRecordingIndexSubmit] = useState(false);
   // const location = useLocation();
 
   // Define options for formatting date
@@ -36,34 +36,34 @@ const PopUpWindowRecordings = (props) => {
     day: 'numeric',
     hour: '2-digit',
     minute: '2-digit',
-  }
+  };
 
   const fetchDataFromAPI = () => {
     getRecData(userId, scoreId)
       .then((result) => {
         //Store everything
-        setRecordingNames(result.map((recording) => recording.recordingName))
-        setRecordingIds(result.map((recording) => recording.recordingId))
-        setRecordingStars(result.map((recording) => recording.recordingStars))
-        setRecordingDates(result.map((recording) => recording.recordingDate))
+        setRecordingNames(result.map((recording) => recording.recordingName));
+        setRecordingIds(result.map((recording) => recording.recordingId));
+        setRecordingStars(result.map((recording) => recording.recordingStars));
+        setRecordingDates(result.map((recording) => recording.recordingDate));
       })
       .catch((error) => {
-        console.log(`Cannot get recordings from database: ${error}`)
+        console.log(`Cannot get recordings from database: ${error}`);
         // Handle errors if necessary
-      })
-  }
+      });
+  };
 
   const handleClose = () => {
-    props.handlerBack('close')
-  }
+    props.handlerBack('close');
+  };
 
   const handleSubmitRecording = (option, index) => {
     if (option === 'check') {
-      setCheckOption(true)
-      setRecordingIndexSubmit(index)
+      setCheckOption(true);
+      setRecordingIndexSubmit(index);
     } else {
-      setCheckOption(false)
-      setRecordingIndexSubmit(null)
+      setCheckOption(false);
+      setRecordingIndexSubmit(null);
       if (option === 'yes') {
         //console.log("submit recording ", recordingNames[recordingIndexSubmit], " with id ", recordingIds[recordingIndexSubmit], " to assignment with id ", announcementId, " for task of score ", scoreId)
         updateAssignment(
@@ -72,24 +72,24 @@ const PopUpWindowRecordings = (props) => {
           scoreId,
           recordingIds[recordingIndexSubmit]
         ).then(() => {
-          window.location.reload()
-        })
+          window.location.reload();
+        });
       } else {
         //console.log("dont submit")
       }
     }
-  }
+  };
 
   //get Scores data
   useEffect(() => {
     if (scoreId !== null) {
       // import local data
-      const local = JSON.parse(localStorage.getItem('scoreData'))
-      const itemFoundLocalStorage = local.find((item) => item._id === scoreId)
+      const local = JSON.parse(localStorage.getItem('scoreData'));
+      const itemFoundLocalStorage = local.find((item) => item._id === scoreId);
       // save in state
-      setScoreData(itemFoundLocalStorage)
+      setScoreData(itemFoundLocalStorage);
     }
-  }, [scoreId])
+  }, [scoreId]);
 
   //When props are not null, store them
   useEffect(() => {
@@ -101,11 +101,11 @@ const PopUpWindowRecordings = (props) => {
       props.announcementId !== null &&
       props.announcementId !== undefined
     ) {
-      setUserId(props.userId)
-      setScoreId(props.scoreId)
-      setAnnouncementId(props.announcementId)
+      setUserId(props.userId);
+      setScoreId(props.scoreId);
+      setAnnouncementId(props.announcementId);
     }
-  }, [props])
+  }, [props]);
 
   //when scores data and userId are available, then fetch recordings
   useEffect(() => {
@@ -117,9 +117,9 @@ const PopUpWindowRecordings = (props) => {
       scoreData !== null &&
       scoreData !== undefined
     ) {
-      fetchDataFromAPI() //get recordings for this user and this score
+      fetchDataFromAPI(); //get recordings for this user and this score
     }
-  }, [userId, scoreId, scoreData])
+  }, [userId, scoreId, scoreData]);
 
   //when all recordings data is loaded
   useEffect(() => {
@@ -130,23 +130,23 @@ const PopUpWindowRecordings = (props) => {
         ids: recordingIds,
         stars: recordingStars,
         dates: recordingDates,
-      }
+      };
 
       // Combine them into the desired format (array of arrays)
-      const data = []
+      const data = [];
       for (let i = 0; i < allEntries.ids.length; i++) {
-        const row = []
-        row.push(allEntries.names[i] || '')
+        const row = [];
+        row.push(allEntries.names[i] || '');
         row.push(
           new Date(allEntries.dates[i]).toLocaleDateString('es-ES', options) ||
             ''
-        )
-        row.push(allEntries.stars[i] || '')
-        data.push(row)
+        );
+        row.push(allEntries.stars[i] || '');
+        data.push(row);
       }
-      setData(data)
+      setData(data);
     }
-  }, [recordingNames])
+  }, [recordingNames]);
 
   return (
     <div className={PopUpWindowCSS.popUpWindowRecordings}>
@@ -243,7 +243,7 @@ const PopUpWindowRecordings = (props) => {
         Close
       </button>
     </div>
-  )
-}
+  );
+};
 
-export default PopUpWindowRecordings
+export default PopUpWindowRecordings;

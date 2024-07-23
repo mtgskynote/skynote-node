@@ -1,8 +1,8 @@
-import React from 'react'
-import logo from '../assets/images/new_logo_2023.jpg'
-import violinImg from '../assets/images/violin/violinDisplay.jpg'
-import { Card, Button } from 'react-bootstrap'
-import { Link } from 'react-router-dom'
+import React from 'react';
+import logo from '../assets/images/new_logo_2023.jpg';
+import violinImg from '../assets/images/violin/violinDisplay.jpg';
+import { Card, Button } from 'react-bootstrap';
+import { Link } from 'react-router-dom';
 
 const ViolinCard = ({ violinImg, subfolder, ButtonText }) => {
   return (
@@ -32,7 +32,7 @@ const ViolinCard = ({ violinImg, subfolder, ButtonText }) => {
         <Card.Text></Card.Text>
       </Card.Body>
     </Card>
-  )
-}
+  );
+};
 
-export default ViolinCard
+export default ViolinCard;

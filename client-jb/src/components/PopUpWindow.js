@@ -1,20 +1,20 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect } from 'react';
 
 const PopUpWindow = ({ children, isOpen }) => {
-  const [isVisible, setIsVisible] = useState(isOpen)
-  const [shouldRender, setShouldRender] = useState(isOpen)
+  const [isVisible, setIsVisible] = useState(isOpen);
+  const [shouldRender, setShouldRender] = useState(isOpen);
 
   useEffect(() => {
-    let timeout
+    let timeout;
     if (isOpen) {
-      setShouldRender(true)
-      timeout = setTimeout(() => setIsVisible(true), 10) // Small delay before setting isVisible to true
+      setShouldRender(true);
+      timeout = setTimeout(() => setIsVisible(true), 10); // Small delay before setting isVisible to true
     } else {
-      setIsVisible(false)
-      timeout = setTimeout(() => setShouldRender(false), 100) // Match this duration with the transition duration
+      setIsVisible(false);
+      timeout = setTimeout(() => setShouldRender(false), 100); // Match this duration with the transition duration
     }
-    return () => clearTimeout(timeout)
-  }, [isOpen])
+    return () => clearTimeout(timeout);
+  }, [isOpen]);
 
   return (
     shouldRender && (
@@ -33,7 +33,7 @@ const PopUpWindow = ({ children, isOpen }) => {
         </div>
       </div>
     )
-  )
-}
+  );
+};
 
-export default PopUpWindow
+export default PopUpWindow;

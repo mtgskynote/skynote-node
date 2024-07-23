@@ -1,5 +1,5 @@
-import React from 'react'
-import Violin_Ipad from '../assets/images/Violin_Ipad.jpg'
+import React from 'react';
+import Violin_Ipad from '../assets/images/Violin_Ipad.jpg';
 const ViolinIpad = ({ height, width }) => {
   return (
     <img
@@ -8,7 +8,7 @@ const ViolinIpad = ({ height, width }) => {
       alt="violinipad"
       style={{ width: '100vw', height: '600px' }}
     />
-  )
-}
+  );
+};
 
-export default ViolinIpad
+export default ViolinIpad;

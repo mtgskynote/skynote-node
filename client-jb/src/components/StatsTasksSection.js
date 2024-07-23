@@ -1,43 +1,43 @@
-import React, { useEffect, useState, useCallback } from 'react'
-import { useNavigate } from 'react-router-dom'
-import { useAppContext } from '../context/appContext'
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import StatsTasksCSS from './StatsTasksSection.module.css'
-import { getLatestAssignment } from '../utils/assignmentsMethods.js'
-import { getProfileData } from '../utils/usersMethods.js'
+import React, { useEffect, useState, useCallback } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { useAppContext } from '../context/appContext';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import StatsTasksCSS from './StatsTasksSection.module.css';
+import { getLatestAssignment } from '../utils/assignmentsMethods.js';
+import { getProfileData } from '../utils/usersMethods.js';
 
 import {
   faFileImport,
   faUser,
   faTriangleExclamation,
-} from '@fortawesome/free-solid-svg-icons'
+} from '@fortawesome/free-solid-svg-icons';
 
 const StatsTasksSection = () => {
-  const navigate = useNavigate()
-  const { getCurrentUser } = useAppContext()
-  const [userData, setUserData] = useState(null)
-  const [assignmentData, setAssignmentData] = useState(null)
-  const [teacherData, setTeacherData] = useState(null)
+  const navigate = useNavigate();
+  const { getCurrentUser } = useAppContext();
+  const [userData, setUserData] = useState(null);
+  const [assignmentData, setAssignmentData] = useState(null);
+  const [teacherData, setTeacherData] = useState(null);
 
   const fetchDataFromAPI = useCallback(() => {
     getCurrentUser() // fetchData is already an async function
       .then((result) => {
-        setUserData(result)
+        setUserData(result);
       })
       .catch((error) => {
-        console.log(`getCurrentUser() error: ${error}`)
+        console.log(`getCurrentUser() error: ${error}`);
         // Handle errors if necessary
-      })
-  }, [setUserData])
+      });
+  }, [setUserData]);
 
   const fetchAssignment = useCallback(
     (userData) => {
       getLatestAssignment(userData.id).then((result) => {
-        setAssignmentData(result[0])
-      })
+        setAssignmentData(result[0]);
+      });
     },
     [setAssignmentData]
-  )
+  );
 
   const fetchTeacherInfo = async (teacherId) => {
     getProfileData(teacherId).then((result) => {
@@ -46,31 +46,31 @@ const StatsTasksSection = () => {
         name: result.user.name,
         lastName: result.user.lastName,
         email: result.user.email,
-      })
-    })
-  }
+      });
+    });
+  };
 
   //get User Data and when it is ready, teacher Data
   useEffect(() => {
     if (userData === null) {
-      fetchDataFromAPI()
+      fetchDataFromAPI();
     } else {
-      const teacherId = userData.teacher
-      fetchTeacherInfo(teacherId)
+      const teacherId = userData.teacher;
+      fetchTeacherInfo(teacherId);
     }
-  }, [userData, fetchDataFromAPI])
+  }, [userData, fetchDataFromAPI]);
 
   //get latest assignment when user and teacher data is loaded
   useEffect(() => {
     if (userData !== null && teacherData !== null) {
-      fetchAssignment(userData)
+      fetchAssignment(userData);
     }
-  }, [userData, teacherData])
+  }, [userData, teacherData]);
 
   // Event handler for click on OPEN
   const handleOpen = () => {
-    navigate(`/assignments/`)
-  }
+    navigate(`/assignments/`);
+  };
 
   // Define options for formatting date
   const options = {
@@ -79,7 +79,7 @@ const StatsTasksSection = () => {
     day: 'numeric',
     hour: '2-digit',
     minute: '2-digit',
-  }
+  };
 
   if (assignmentData !== null) {
     return (
@@ -143,8 +143,8 @@ const StatsTasksSection = () => {
           </div>
         </div>
       </div>
-    )
+    );
   }
-}
+};
 
-export default StatsTasksSection
+export default StatsTasksSection;

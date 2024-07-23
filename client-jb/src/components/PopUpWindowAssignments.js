@@ -1,14 +1,14 @@
-import React, { useEffect, useRef, useState } from 'react'
-import PopUpWindowCSS from './PopUpWindow.module.css'
-import { putAssignment } from '../utils/assignmentsMethods.js'
+import React, { useEffect, useRef, useState } from 'react';
+import PopUpWindowCSS from './PopUpWindow.module.css';
+import { putAssignment } from '../utils/assignmentsMethods.js';
 
 const PopUpWindowAssignments = (props) => {
-  const [fetchedData, setFetchedData] = useState({})
-  const [listOptions, setListOptions] = useState(null)
-  const studentsInputRef = useRef()
-  const messageInputRef = useRef()
-  const dueInputRef = useRef()
-  const tasksInputRef = useRef()
+  const [fetchedData, setFetchedData] = useState({});
+  const [listOptions, setListOptions] = useState(null);
+  const studentsInputRef = useRef();
+  const messageInputRef = useRef();
+  const dueInputRef = useRef();
+  const tasksInputRef = useRef();
 
   // Assuming you have an array of students
   const students = [
@@ -18,25 +18,25 @@ const PopUpWindowAssignments = (props) => {
     { id: '641b001fb6f4609169b11e2b', name: 'Kristen' },
     { id: '640b1a85d101afc9710bd7f3', name: 'Lonce' },
     // Add more students as needed
-  ]
+  ];
 
   const handleClose = () => {
-    props.handlerBack('no_see')
-  }
+    props.handlerBack('no_see');
+  };
 
   const handleCreate = (event) => {
-    console.log('Submitting...')
-    event.preventDefault()
+    console.log('Submitting...');
+    event.preventDefault();
     const studentsInputValue = Array.from(
       studentsInputRef.current.selectedOptions
-    ).map((option) => option.value)
-    const messageInputValue = messageInputRef.current.value
-    const dueInputValue = dueInputRef.current.value + 'T23:59:59.000+00:00'
+    ).map((option) => option.value);
+    const messageInputValue = messageInputRef.current.value;
+    const dueInputValue = dueInputRef.current.value + 'T23:59:59.000+00:00';
     // const tasksInputValue = Array.from(tasksInputRef.current.selectedOptions).map(option => option.value);
     const tasksInputValue = Array.from(
       tasksInputRef.current.selectedOptions
-    ).map((option) => ({ score: option.value }))
-    const postDate = new Date().toISOString()
+    ).map((option) => ({ score: option.value }));
+    const postDate = new Date().toISOString();
 
     //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     //TEACHER ID IS FIXED CAUSE WE CURRENTLY DON'T HAVE TEACHER SPECIFIC ACCOUNTS, PLUS, THIS IS JUST FOR TESTING SO IT NEEDS TO
@@ -48,24 +48,24 @@ const PopUpWindowAssignments = (props) => {
       post: postDate,
       due: dueInputValue,
       tasks: tasksInputValue,
-    }
+    };
     //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     // UNCOMMENT THIS AFTER DEBUGGING
-    putAssignment(assignmentTest)
-    handleClose()
-    console.log('Submited :)')
-  }
+    putAssignment(assignmentTest);
+    handleClose();
+    console.log('Submited :)');
+  };
   useEffect(() => {
-    const data = JSON.parse(localStorage.getItem('scoreData'))
-    const auxArray = []
+    const data = JSON.parse(localStorage.getItem('scoreData'));
+    const auxArray = [];
     data.forEach((score) => {
-      auxArray.push({ title: score.title, level: score.level })
-    })
-    setFetchedData(data)
-    setListOptions(auxArray)
-  }, [])
+      auxArray.push({ title: score.title, level: score.level });
+    });
+    setFetchedData(data);
+    setListOptions(auxArray);
+  }, []);
   if (listOptions === null || students === null) {
-    return <div>Loading...</div>
+    return <div>Loading...</div>;
   } else {
     return (
       <div className={PopUpWindowCSS.popUpWindowAssignments}>
@@ -165,8 +165,8 @@ const PopUpWindowAssignments = (props) => {
           </form>
         </div>
       </div>
-    )
+    );
   }
-}
+};
 
-export default PopUpWindowAssignments
+export default PopUpWindowAssignments;

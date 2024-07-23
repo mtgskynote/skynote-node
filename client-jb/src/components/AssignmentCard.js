@@ -1,7 +1,7 @@
-import React from 'react'
-import { useNavigate } from 'react-router-dom'
-import Card from '@mui/material/Card'
-import CardContent from '@mui/material/CardContent'
+import React from 'react';
+import { useNavigate } from 'react-router-dom';
+import Card from '@mui/material/Card';
+import CardContent from '@mui/material/CardContent';
 
 const AssignmentCard = ({ assignmentId, daysLeft, dueDate, score }) => {
   const dateOptions = {
@@ -10,16 +10,16 @@ const AssignmentCard = ({ assignmentId, daysLeft, dueDate, score }) => {
     month: 'short',
     hour: '2-digit',
     minute: '2-digit',
-  }
-  const navigate = useNavigate()
+  };
+  const navigate = useNavigate();
 
   const handleRecord = () => {
-    navigate(`/all-lessons/${score.fname}`)
-  }
+    navigate(`/all-lessons/${score.fname}`);
+  };
 
   const handleSeeMore = () => {
-    navigate(`/assignments/#${assignmentId}`)
-  }
+    navigate(`/assignments/#${assignmentId}`);
+  };
 
   return (
     <Card
@@ -69,7 +69,7 @@ const AssignmentCard = ({ assignmentId, daysLeft, dueDate, score }) => {
         </div>
       </CardContent>
     </Card>
-  )
-}
+  );
+};
 
-export default AssignmentCard
+export default AssignmentCard;

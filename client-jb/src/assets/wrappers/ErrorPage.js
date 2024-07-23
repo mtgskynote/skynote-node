@@ -1,7 +1,7 @@
 ///////////////////////////////////////////
 ////////// THIS FILE IS OBSOLETE //////////
 ///////////////////////////////////////////
-import styled from 'styled-components'
+import styled from 'styled-components';
 
 const Wrapper = styled.main`
   text-align: center;
@@ -26,6 +26,6 @@ const Wrapper = styled.main`
     text-decoration: underline;
     text-transform: capitalize;
   }
-`
+`;
 
-export default Wrapper
+export default Wrapper;

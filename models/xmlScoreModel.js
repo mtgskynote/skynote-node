@@ -1,4 +1,4 @@
-import mongoose from 'mongoose'
+import mongoose from 'mongoose';
 
 const xmlScoreSchema = new mongoose.Schema({
   fname: {
@@ -10,8 +10,8 @@ const xmlScoreSchema = new mongoose.Schema({
   skill: {
     type: String,
   },
-})
+});
 
-var xmlScores = mongoose.model('scores', xmlScoreSchema)
+var xmlScores = mongoose.model('scores', xmlScoreSchema);
 
-export default xmlScores
+export default xmlScores;

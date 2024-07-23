@@ -1,7 +1,7 @@
-import React from 'react'
-import violinImg from '../assets/images/violin/violinDisplay.jpg'
-import { Card, Button } from 'react-bootstrap'
-import { Link } from 'react-router-dom'
+import React from 'react';
+import violinImg from '../assets/images/violin/violinDisplay.jpg';
+import { Card, Button } from 'react-bootstrap';
+import { Link } from 'react-router-dom';
 
 const violinImgCard = () => {
   return (
@@ -26,7 +26,7 @@ const violinImgCard = () => {
         </Card.Title>
       </Card.Body>
     </Card>
-  )
-}
+  );
+};
 
-export default violinImgCard
+export default violinImgCard;

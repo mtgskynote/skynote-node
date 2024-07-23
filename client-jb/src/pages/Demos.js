@@ -1,9 +1,9 @@
-import React from 'react'
-import ViolinIpad from '../components/violinipad.js'
-import { Link } from 'react-router-dom'
-import 'bootstrap/dist/css/bootstrap.min.css'
-import DemosCSS from './Demos.module.css'
-import WhiteLogo from '../components/WhiteLogo'
+import React from 'react';
+import ViolinIpad from '../components/violinipad.js';
+import { Link } from 'react-router-dom';
+import 'bootstrap/dist/css/bootstrap.min.css';
+import DemosCSS from './Demos.module.css';
+import WhiteLogo from '../components/WhiteLogo';
 
 const Demos = () => {
   return (
@@ -223,7 +223,7 @@ const Demos = () => {
       </div>{' '}
       {/* grid-container 4 */}
     </div>
-  )
-}
+  );
+};
 
-export default Demos
+export default Demos;

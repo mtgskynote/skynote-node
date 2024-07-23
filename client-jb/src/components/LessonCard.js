@@ -1,9 +1,9 @@
-import React, { useState, useEffect, useRef } from 'react'
-import { useNavigate } from 'react-router-dom'
+import React, { useState, useEffect, useRef } from 'react';
+import { useNavigate } from 'react-router-dom';
 import {
   getManyRecordings,
   deleteRecording,
-} from '../utils/studentRecordingMethods'
+} from '../utils/studentRecordingMethods';
 import {
   CardContent,
   Typography,
@@ -11,12 +11,12 @@ import {
   LinearProgress,
   Tooltip,
   IconButton,
-} from '@mui/material'
-import { CloseRounded as CloseRoundedIcon } from '@mui/icons-material'
-import AudioPlayerIcon from './AudioPlayerIcon'
-import StarRating from './StarRating'
-import QueueMusicIcon from '@mui/icons-material/QueueMusic'
-import FavouriteButton from './FavouriteButton'
+} from '@mui/material';
+import { CloseRounded as CloseRoundedIcon } from '@mui/icons-material';
+import AudioPlayerIcon from './AudioPlayerIcon';
+import StarRating from './StarRating';
+import QueueMusicIcon from '@mui/icons-material/QueueMusic';
+import FavouriteButton from './FavouriteButton';
 
 const LessonCard = ({
   title,
@@ -35,171 +35,171 @@ const LessonCard = ({
   textColour,
   refreshData,
 }) => {
-  const navigate = useNavigate()
-  const [allRecordings, setAllRecordings] = useState(recordings)
-  const [openRecordingsModal, setOpenRecordingsModal] = useState(false)
-  const [recordingsAudio, setRecordingsAudio] = useState(null)
-  const [loading, setLoading] = useState(false)
-  const [deletingRecording, setDeletingRecording] = useState(null)
-  const [deletionStatus, setDeletionStatus] = useState(null)
-  const [deletedRecordingIds, setDeletedRecordingIds] = useState([])
-  const [playingAudioId, setPlayingAudioId] = useState(null)
+  const navigate = useNavigate();
+  const [allRecordings, setAllRecordings] = useState(recordings);
+  const [openRecordingsModal, setOpenRecordingsModal] = useState(false);
+  const [recordingsAudio, setRecordingsAudio] = useState(null);
+  const [loading, setLoading] = useState(false);
+  const [deletingRecording, setDeletingRecording] = useState(null);
+  const [deletionStatus, setDeletionStatus] = useState(null);
+  const [deletedRecordingIds, setDeletedRecordingIds] = useState([]);
+  const [playingAudioId, setPlayingAudioId] = useState(null);
 
-  const modalRef = useRef(null)
+  const modalRef = useRef(null);
 
   // set defaults
   const viewRecordings =
-    renderViewRecordings !== false ? renderViewRecordings : false
-  const xSize = width ? width : '290px'
-  const bColour = backgroundColour ? backgroundColour : 'bg-blue-400'
+    renderViewRecordings !== false ? renderViewRecordings : false;
+  const xSize = width ? width : '290px';
+  const bColour = backgroundColour ? backgroundColour : 'bg-blue-400';
   const hoverColour = hoverBackgroundColour
     ? hoverBackgroundColour
-    : 'hover:bg-blue-500'
-  const tColour = textColour ? textColour : 'text-white'
+    : 'hover:bg-blue-500';
+  const tColour = textColour ? textColour : 'text-white';
 
   // Resets the deletionStatus to null after 10 seconds when it changes.
   useEffect(() => {
-    let timer
+    let timer;
     if (deletionStatus) {
       timer = setTimeout(() => {
-        setDeletionStatus(null)
-      }, 10000)
+        setDeletionStatus(null);
+      }, 10000);
     }
     return () => {
-      clearTimeout(timer)
-    }
-  }, [deletionStatus])
+      clearTimeout(timer);
+    };
+  }, [deletionStatus]);
 
   // Adds and removes a mousedown event listener for closing the modal when clicking outside of it.
   useEffect(() => {
-    document.addEventListener('mousedown', handleClickOutsideModal)
+    document.addEventListener('mousedown', handleClickOutsideModal);
     return () => {
-      document.removeEventListener('mousedown', handleClickOutsideModal)
-    }
-  })
+      document.removeEventListener('mousedown', handleClickOutsideModal);
+    };
+  });
 
   // Converts a given date string into a formatted string that follows the "en-UK" locale format.
   const formatDate = (dateString) => {
-    const date = new Date(dateString)
+    const date = new Date(dateString);
     const options = {
       year: 'numeric',
       month: 'short',
       day: '2-digit',
       hour: '2-digit',
       minute: '2-digit',
-    }
-    return date.toLocaleString('en-UK', options)
-  }
+    };
+    return date.toLocaleString('en-UK', options);
+  };
 
   // Handles the click event for viewing the score of the lesson and navigates to the '/all-lessons' route.
   const handleViewScore = (e) => {
-    e.stopPropagation() // Prevents the event from bubbling up to the parent component.
+    e.stopPropagation(); // Prevents the event from bubbling up to the parent component.
 
-    let path = xml
-    const basePath = '/all-lessons/'
+    let path = xml;
+    const basePath = '/all-lessons/';
     if (!xml.startsWith(basePath)) {
-      path = `${basePath}${xml}`
+      path = `${basePath}${xml}`;
     }
 
-    navigate(path, { state: { id } })
-  }
+    navigate(path, { state: { id } });
+  };
 
   // Opens the recordings modal, fetches the audio for all recordings if not already fetched, and updates the state accordingly.
   const handleOpenRecordingsModal = async (e) => {
-    e.stopPropagation() // Prevents the event from bubbling up to the parent component.
+    e.stopPropagation(); // Prevents the event from bubbling up to the parent component.
 
-    setOpenRecordingsModal(true)
-    setLoading(true)
+    setOpenRecordingsModal(true);
+    setLoading(true);
 
     try {
       if (recordingsAudio === null) {
         const recordingIds = allRecordings.map(
           (recording) => recording.recordingId
-        )
-        const recordingAudios = await getManyRecordings(recordingIds)
+        );
+        const recordingAudios = await getManyRecordings(recordingIds);
 
         allRecordings.forEach((recording) => {
           const recordingAudioMatch = recordingAudios.find(
             (recordingAudio) => recordingAudio._id === recording.recordingId
-          )
+          );
           if (recordingAudioMatch) {
-            recording.audio = recordingAudioMatch.audio
+            recording.audio = recordingAudioMatch.audio;
           }
-        })
+        });
 
-        setRecordingsAudio(recordingAudios)
+        setRecordingsAudio(recordingAudios);
       }
     } catch (error) {
-      console.error('Error fetching recordings audio:', error)
+      console.error('Error fetching recordings audio:', error);
     } finally {
-      setLoading(false)
+      setLoading(false);
     }
-  }
+  };
 
   // Closes the recordings modal and resets the state.
   const handleCloseRecordingsModal = () => {
     deletedRecordingIds.forEach((recordingId) => {
-      reloadRecordingsCallback(recordingId)
-    })
+      reloadRecordingsCallback(recordingId);
+    });
 
     // Dispatch the 'stopAllAudio' event
-    const event = new Event('stopAllAudio')
-    window.dispatchEvent(event)
-    setPlayingAudioId(null)
+    const event = new Event('stopAllAudio');
+    window.dispatchEvent(event);
+    setPlayingAudioId(null);
 
-    setAllRecordings(recordings)
-    setDeletedRecordingIds([])
-    setOpenRecordingsModal(false)
-    setLoading(false)
-  }
+    setAllRecordings(recordings);
+    setDeletedRecordingIds([]);
+    setOpenRecordingsModal(false);
+    setLoading(false);
+  };
 
   // Closes the recordings modal when a click is detected outside of it.
   const handleClickOutsideModal = (e) => {
     if (modalRef.current && !modalRef.current.contains(e.target)) {
-      handleCloseRecordingsModal()
+      handleCloseRecordingsModal();
     }
-  }
+  };
 
   // Deletes the recording with the provided recordingId and updates the state accordingly.
   const handleDeleteRecording = async (recordingId) => {
-    setDeletingRecording(recordingId)
+    setDeletingRecording(recordingId);
     try {
-      await deleteRecording(recordingId)
+      await deleteRecording(recordingId);
 
       setRecordingsAudio((recordingsAudio) =>
         recordingsAudio.filter((recording) => recording._id !== recordingId)
-      )
+      );
 
       setAllRecordings((allRecordings) =>
         allRecordings.filter(
           (recording) => recording.recordingId !== recordingId
         )
-      )
+      );
 
-      deletedRecordingIds.push(recordingId)
-      setDeletionStatus('success')
-      console.log(deletionStatus)
+      deletedRecordingIds.push(recordingId);
+      setDeletionStatus('success');
+      console.log(deletionStatus);
     } catch (error) {
-      console.log(`Cannot delete recording from database: ${error}`)
-      setDeletionStatus('failure')
+      console.log(`Cannot delete recording from database: ${error}`);
+      setDeletionStatus('failure');
     } finally {
-      setDeletingRecording(null)
+      setDeletingRecording(null);
     }
-  }
+  };
 
   // Navigates to the ListRecordings route with the provided xml and recordingId.
   const handleViewRecording = async (recordingId, xml) => {
-    navigate(`/ListRecordings/${xml}`, { state: { id: recordingId } })
-  }
+    navigate(`/ListRecordings/${xml}`, { state: { id: recordingId } });
+  };
 
   // Toggles the playing audio ID based on the provided audioId.
   const handleAudioPlay = (audioId) => {
     if (playingAudioId === audioId) {
-      setPlayingAudioId(null) // If the currently playing audio is clicked again, set playingAudioId to null
+      setPlayingAudioId(null); // If the currently playing audio is clicked again, set playingAudioId to null
     } else {
-      setPlayingAudioId(audioId) // Set the new audio as playing
+      setPlayingAudioId(audioId); // Set the new audio as playing
     }
-  }
+  };
 
   return (
     <div>
@@ -301,8 +301,8 @@ const LessonCard = ({
                     <h5 className="font-medium">All Recordings - {title}</h5>
                     <button
                       onClick={(e) => {
-                        e.stopPropagation()
-                        handleCloseRecordingsModal()
+                        e.stopPropagation();
+                        handleCloseRecordingsModal();
                       }}
                       className={`bg-red-500 hover:bg-red-400 ${tColour} focus:outline-none border-none rounded`}
                     >
@@ -350,8 +350,8 @@ const LessonCard = ({
                             <button
                               className="hover:cursor-pointer transition ease-in-out delay-50 text-center text-blue-500 border-solid border-2 border-blue-500 focus:ring-0 focus:outline-none bg-inherit hover:bg-white hover:border-blue-700 hover:text-blue-700 py-1 px-2 rounded-l-none outline-none rounded hover:cursor"
                               onClick={(e) => {
-                                e.stopPropagation()
-                                handleViewRecording(recording.recordingId, xml)
+                                e.stopPropagation();
+                                handleViewRecording(recording.recordingId, xml);
                               }}
                             >
                               View
@@ -359,8 +359,8 @@ const LessonCard = ({
                             <button
                               className="ml-1 hover:cursor-pointer transition ease-in-out delay-50 text-center text-red-500 border-solid border-2 border-red-500 focus:ring-0 focus:outline-none bg-inherit hover:bg-white hover:border-red-700 hover:text-red-700 py-1 px-2 rounded-l-none outline-none rounded hover:cursor"
                               onClick={(e) => {
-                                e.stopPropagation()
-                                handleDeleteRecording(recording.recordingId)
+                                e.stopPropagation();
+                                handleDeleteRecording(recording.recordingId);
                               }}
                             >
                               Delete
@@ -395,7 +395,7 @@ const LessonCard = ({
         </div>
       </div>
     </div>
-  )
-}
+  );
+};
 
-export default LessonCard
+export default LessonCard;

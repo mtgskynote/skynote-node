@@ -1,4 +1,4 @@
-import React from 'react'
+import React from 'react';
 
 const MetronomeSliders = ({
   metroVol,
@@ -31,7 +31,7 @@ const MetronomeSliders = ({
         <span className="slider-text">Metronome BPM: {bpmChange}</span>
       </div>
     </div>
-  )
-}
+  );
+};
 
-export default MetronomeSliders
+export default MetronomeSliders;

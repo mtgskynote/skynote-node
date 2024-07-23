@@ -1,10 +1,10 @@
-import React from 'react'
-import { useNavigate } from 'react-router-dom'
-import Card from 'react-bootstrap/Card'
-import Col from 'react-bootstrap/Col'
-import Row from 'react-bootstrap/Row'
-import XMLParser from 'react-xml-parser'
-import violinImg from '../../assets/images/violin/violinDisplay.jpg'
+import React from 'react';
+import { useNavigate } from 'react-router-dom';
+import Card from 'react-bootstrap/Card';
+import Col from 'react-bootstrap/Col';
+import Row from 'react-bootstrap/Row';
+import XMLParser from 'react-xml-parser';
+import violinImg from '../../assets/images/violin/violinDisplay.jpg';
 
 const files = [
   'Row.xml',
@@ -15,44 +15,44 @@ const files = [
   '3_Cuerdas_Al_Aire_1_(Suelta)_G.xml',
   '4_Cuerdas_Al_Aire_1_(Suelta)_E.xml',
   '5_Cuerdas_Al_Aire_2_(Suelta)_A.xml',
-]
+];
 
-const folderBasePath = '/musicXmlFiles'
+const folderBasePath = '/musicXmlFiles';
 
 const getTitle = async (fileName) => {
   try {
-    const response = await fetch(`${folderBasePath}/${fileName}`)
-    const xmlFileData = await response.text()
+    const response = await fetch(`${folderBasePath}/${fileName}`);
+    const xmlFileData = await response.text();
     const arr = new XMLParser()
       .parseFromString(xmlFileData)
-      .getElementsByTagName('movement-title')
+      .getElementsByTagName('movement-title');
     if (arr && arr.length > 0) {
-      return arr[0].value
+      return arr[0].value;
     } else {
-      return 'movement-title' // write filename here (fileName) if want to display the file name.
+      return 'movement-title'; // write filename here (fileName) if want to display the file name.
     }
   } catch (err) {
-    console.log(err.message)
-    return fileName
+    console.log(err.message);
+    return fileName;
   }
-}
+};
 
 const LevelOne = () => {
-  const navigate = useNavigate()
+  const navigate = useNavigate();
   const navigateToFile = (filename) => {
-    return navigate(`/all-lessons/${filename}`)
-  }
+    return navigate(`/all-lessons/${filename}`);
+  };
 
-  const [titles, setTitles] = React.useState([])
+  const [titles, setTitles] = React.useState([]);
 
   React.useEffect(() => {
     const fetchTitles = async () => {
-      const titlePromises = files.map((name) => getTitle(name))
-      const titles = await Promise.all(titlePromises)
-      setTitles(titles)
-    }
-    fetchTitles()
-  }, [])
+      const titlePromises = files.map((name) => getTitle(name));
+      const titles = await Promise.all(titlePromises);
+      setTitles(titles);
+    };
+    fetchTitles();
+  }, []);
 
   return (
     <Row xs={1} md={4} className="g-4">
@@ -76,7 +76,7 @@ const LevelOne = () => {
         </Col>
       ))}
     </Row>
-  )
-}
+  );
+};
 
-export default LevelOne
+export default LevelOne;

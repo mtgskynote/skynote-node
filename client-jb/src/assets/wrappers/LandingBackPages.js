@@ -1,7 +1,7 @@
 ///////////////////////////////////////////
 ////////// THIS FILE IS OBSOLETE //////////
 ///////////////////////////////////////////
-import styled from 'styled-components'
+import styled from 'styled-components';
 
 const Wrapper = styled.main`
 .site-header{
@@ -905,5 +905,5 @@ p {
   width: 100%; /* Set a width for the container */
 }
 
-`
-export default Wrapper
+`;
+export default Wrapper;
