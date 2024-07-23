@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
+import PropTypes from 'prop-types';
 import { useNavigate } from 'react-router-dom';
 import {
   getManyRecordings,
@@ -396,6 +397,32 @@ const LessonCard = ({
       </div>
     </div>
   );
+};
+
+LessonCard.propTypes = {
+  title: PropTypes.string.isRequired,
+  skill: PropTypes.string.isRequired,
+  level: PropTypes.number.isRequired,
+  stars: PropTypes.number.isRequired,
+  isFavourite: PropTypes.bool.isRequired,
+  xml: PropTypes.string.isRequired,
+  id: PropTypes.string.isRequired,
+  recordings: PropTypes.arrayOf(
+    PropTypes.shape({
+      recordingId: PropTypes.string.isRequired,
+      recordingName: PropTypes.string.isRequired,
+      recordingDate: PropTypes.string.isRequired,
+      stars: PropTypes.number.isRequired,
+      audio: PropTypes.string,
+    })
+  ).isRequired,
+  reloadRecordingsCallback: PropTypes.func.isRequired,
+  renderViewRecordings: PropTypes.bool,
+  width: PropTypes.string,
+  backgroundColour: PropTypes.string,
+  hoverBackgroundColour: PropTypes.string,
+  textColour: PropTypes.string,
+  refreshData: PropTypes.func.isRequired,
 };
 
 export default LessonCard;

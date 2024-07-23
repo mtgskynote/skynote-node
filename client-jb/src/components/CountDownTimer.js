@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import PropTypes from 'prop-types';
 
 const CountDownTimer = ({ bpm, mode, onCountDownFinished }) => {
   const [countDownBeats, setCountDownBeats] = useState(1); // Set the initial countdown time in beats
@@ -51,6 +52,12 @@ const CountDownTimer = ({ bpm, mode, onCountDownFinished }) => {
       </div>
     </div>
   );
+};
+
+CountDownTimer.propTypes = {
+  bpm: PropTypes.number.isRequired,
+  mode: PropTypes.bool.isRequired,
+  onCountDownFinished: PropTypes.func.isRequired,
 };
 
 export default CountDownTimer;

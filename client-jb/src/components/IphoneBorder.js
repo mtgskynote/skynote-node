@@ -1,4 +1,5 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 import iphone_border from '../assets/images/iphone_border.png';
 
 const IphoneBorder = ({ height, width }) => {
@@ -11,6 +12,11 @@ const IphoneBorder = ({ height, width }) => {
       width={width}
     />
   );
+};
+
+IphoneBorder.propTypes = {
+  height: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
+  width: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
 };
 
 export default IphoneBorder;

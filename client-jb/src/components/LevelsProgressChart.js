@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import PropTypes from 'prop-types';
 import Chart from 'chart.js/auto';
 
 const LevelsProgressChart = ({ id, starPercentages }) => {
@@ -82,6 +83,11 @@ const LevelsProgressChart = ({ id, starPercentages }) => {
   }, [starPercentages, labels, id]);
 
   return <canvas id={id} />;
+};
+
+LevelsProgressChart.propTypes = {
+  id: PropTypes.string.isRequired,
+  starPercentages: PropTypes.arrayOf(PropTypes.number).isRequired,
 };
 
 export default LevelsProgressChart;

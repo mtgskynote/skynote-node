@@ -1,4 +1,5 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 import { ResponsiveLine } from '@nivo/line';
 import { useTheme } from '@mui/material';
 import { tokens } from '../theme';
@@ -113,6 +114,25 @@ const LineChart = ({ isDashboard = false }) => {
       ]}
     />
   );
+};
+
+LineChart.propTypes = {
+  data: PropTypes.arrayOf(
+    PropTypes.shape({
+      date: PropTypes.string.isRequired,
+      value: PropTypes.number.isRequired,
+    })
+  ).isRequired,
+  width: PropTypes.number,
+  height: PropTypes.number,
+  margin: PropTypes.shape({
+    top: PropTypes.number,
+    right: PropTypes.number,
+    bottom: PropTypes.number,
+    left: PropTypes.number,
+  }),
+  xLabel: PropTypes.string,
+  yLabel: PropTypes.string,
 };
 
 export default LineChart;

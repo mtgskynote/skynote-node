@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import PropTypes from 'prop-types';
 import axios from 'axios';
 import { useAppContext } from '../context/appContext';
 import Tooltip from '@mui/material/Tooltip';
@@ -63,6 +64,12 @@ const FavouriteButton = ({ songId, initialIsFavourite, refreshData }) => {
       </IconButton>
     </Tooltip>
   );
+};
+
+FavouriteButton.propTypes = {
+  songId: PropTypes.string.isRequired,
+  initialIsFavourite: PropTypes.bool.isRequired,
+  refreshData: PropTypes.func,
 };
 
 export default FavouriteButton;

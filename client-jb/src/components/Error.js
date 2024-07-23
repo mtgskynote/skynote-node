@@ -1,4 +1,5 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 import { Link } from 'react-router-dom';
 import img_404 from '../assets/images/not-found.svg';
 import img_general from '../assets/images/error_violin.png';
@@ -41,6 +42,11 @@ const Error = ({ type = 'general', message = '' }) => {
       </div>
     </div>
   );
+};
+
+Error.propTypes = {
+  type: PropTypes.string,
+  message: PropTypes.string,
 };
 
 export default Error;

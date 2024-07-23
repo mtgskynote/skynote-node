@@ -1,4 +1,5 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 import { Typography, Box, useTheme } from '@mui/material';
 import { tokens } from '../theme';
 
@@ -20,6 +21,11 @@ const Header = ({ title, subtitle }) => {
       </Typography>
     </Box>
   );
+};
+
+Header.propTypes = {
+  title: PropTypes.string.isRequired,
+  subtitle: PropTypes.string,
 };
 
 export default Header;
