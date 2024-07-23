@@ -5,31 +5,31 @@ import {
   SETUP_USER_SUCCESS,
   SETUP_USER_ERROR,
   LOGOUT_USER,
-} from "./actions";
+} from './actions'
 
-import { initialState } from "./appContext";
+import { initialState } from './appContext'
 
 const reducer = (state, action) => {
   if (action.type === DISPLAY_ALERT) {
     return {
       ...state,
       showAlert: true,
-      alertType: "danger",
-      alertText: "Please provide all fields.",
-    };
+      alertType: 'danger',
+      alertText: 'Please provide all fields.',
+    }
   }
 
   if (action.type === CLEAR_ALERT) {
     return {
       ...state,
       showAlert: false,
-      alertType: "",
-      alertText: "",
-    };
+      alertType: '',
+      alertText: '',
+    }
   }
 
   if (action.type === SETUP_USER_BEGIN) {
-    return { ...state, isLoading: true };
+    return { ...state, isLoading: true }
   }
   if (action.type === SETUP_USER_SUCCESS) {
     return {
@@ -40,18 +40,18 @@ const reducer = (state, action) => {
       userLocation: action.payload.location,
       jobLocation: action.payload.location,
       showAlert: true,
-      alertType: "success",
+      alertType: 'success',
       alertText: action.payload.alertText,
-    };
+    }
   }
   if (action.type === SETUP_USER_ERROR) {
     return {
       ...state,
       isLoading: false,
       showAlert: true,
-      alertType: "danger",
+      alertType: 'danger',
       alertText: action.payload.msg,
-    };
+    }
   }
 
   if (action.type === LOGOUT_USER) {
@@ -59,10 +59,10 @@ const reducer = (state, action) => {
       ...initialState,
       user: null,
       token: null,
-      userLocation: "",
-      jobLocation: "",
-    };
+      userLocation: '',
+      jobLocation: '',
+    }
   }
-  throw new Error(`no such action :${action.type}`);
-};
-export default reducer;
+  throw new Error(`no such action :${action.type}`)
+}
+export default reducer
