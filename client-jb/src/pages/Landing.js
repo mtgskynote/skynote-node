@@ -89,8 +89,8 @@ const Landing = () => {
           <p className="text-2xl text-white mb-8 ml-12 mr-12">
             Skynote has been developed as a product of cutting edge research
             focused on music synthesis and analysis. Our systems and processes
-            were designed by fulltime musicians, who on their spare time
-            conduct PhD research at UPF and Royal College of Music.
+            were designed by fulltime musicians, who on their spare time conduct
+            PhD research at UPF and Royal College of Music.
           </p>
           <div className="col-span-1 flex justify-center items-center">
             <button
