@@ -1,6 +1,6 @@
-import React, { useState, useEffect } from 'react'
-import PropTypes from 'prop-types'
-import ModeToggle from './ModeToggle'
+import React, { useState, useEffect } from 'react';
+import PropTypes from 'prop-types';
+import ModeToggle from './ModeToggle';
 import {
   PlayCircle as PlayIcon,
   PauseCircle as PauseIcon,
@@ -405,4 +405,4 @@ ControlBar.propTypes = {
   isMac: PropTypes.bool.isRequired,
 };
 
-export default ControlBar
+export default ControlBar;

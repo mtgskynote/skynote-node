@@ -1,3 +1,4 @@
+import React from 'react';
 import ResearchCSS from './Research.module.css';
 import pub1_img from '../assets/images/publications/pub1_img.png';
 import pub2_img from '../assets/images/publications/pub2_img.png';

@@ -6,8 +6,8 @@ const AudioPlayer = () => {
   const fileInputRef = useRef(null);
 
   const handleFileSelect = () => {
-    const fileInput = fileInputRef.current
-    const file = fileInput.files[0]
+    const fileInput = fileInputRef.current;
+    const file = fileInput.files[0];
 
     if (file) {
       const reader = new FileReader();

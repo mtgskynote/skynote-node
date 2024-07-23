@@ -1,5 +1,5 @@
-import React, { useState, useRef, useEffect } from 'react'
-import PropTypes from 'prop-types'
+import React, { useState, useRef, useEffect } from 'react';
+import PropTypes from 'prop-types';
 
 const ControlBarPopover = ({ children }) => {
   const [isOpen, setIsOpen] = useState(false);
@@ -62,6 +62,6 @@ const ControlBarPopover = ({ children }) => {
 
 ControlBarPopover.propTypes = {
   children: PropTypes.node.isRequired,
-}
+};
 
-export default ControlBarPopover
+export default ControlBarPopover;

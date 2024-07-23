@@ -1,3 +1,4 @@
+import React from 'react';
 import { FaLinkedinIn } from 'react-icons/fa';
 import waddellimg from '../assets/images/team/GeorgeWaddell.jpeg';
 import lonceimg from '../assets/images/team/lonce_cnm_bust_sm2.jpg';
