@@ -1,4 +1,5 @@
 import React from 'react'
+import PropTypes from 'prop-types';
 import { useNavigate } from 'react-router-dom'
 import Card from '@mui/material/Card'
 import CardContent from '@mui/material/CardContent'
@@ -71,5 +72,17 @@ const AssignmentCard = ({ assignmentId, daysLeft, dueDate, score }) => {
     </Card>
   )
 }
+
+AssignmentCard.propTypes = {
+  assignmentId: PropTypes.string.isRequired,
+  daysLeft: PropTypes.number.isRequired,
+  dueDate: PropTypes.instanceOf(Date).isRequired,
+  score: PropTypes.shape({
+    fname: PropTypes.string, // Assuming fname is a string. Adjust based on actual data structure
+    title: PropTypes.string.isRequired,
+    skill: PropTypes.string.isRequired,
+    level: PropTypes.string.isRequired,
+  }).isRequired,
+};
 
 export default AssignmentCard

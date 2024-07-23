@@ -1,4 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react'
+import PropTypes from 'prop-types'
 
 const ControlBarPopover = ({ children }) => {
   const [isOpen, setIsOpen] = useState(false)
@@ -57,6 +58,10 @@ const ControlBarPopover = ({ children }) => {
       </div>
     </div>
   )
+}
+
+ControlBarPopover.propTypes = {
+  children: PropTypes.node.isRequired,
 }
 
 export default ControlBarPopover

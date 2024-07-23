@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react'
+import PropTypes from 'prop-types'
 import ModeToggle from './ModeToggle'
 import {
   PlayCircle as PlayIcon,
@@ -370,5 +371,38 @@ const ControlBar = ({
     </div>
   )
 }
+
+ControlBar.propTypes = {
+  onTransposeChange: PropTypes.func.isRequired,
+  onBpmChange: PropTypes.func.isRequired,
+  onMidiVolumeChange: PropTypes.func.isRequired,
+  onMetronomeVolumeChange: PropTypes.func.isRequired,
+  onModeChange: PropTypes.func,
+  onToggleListen: PropTypes.func,
+  onTogglePlay: PropTypes.func.isRequired,
+  onReset: PropTypes.func.isRequired,
+  onRecord: PropTypes.func,
+  handleViewAllRecordings: PropTypes.func.isRequired,
+  isListening: PropTypes.bool,
+  isPlaying: PropTypes.bool.isRequired,
+  isRecording: PropTypes.bool,
+  isBpmDisabled: PropTypes.bool,
+  playbackMode: PropTypes.bool.isRequired,
+  handleShowPopUpWindow: PropTypes.func.isRequired,
+  handleToggleStats: PropTypes.func,
+  handleToggleInfo: PropTypes.func.isRequired,
+  showStats: PropTypes.bool,
+  showInfo: PropTypes.bool.isRequired,
+  stats: PropTypes.shape({
+    name: PropTypes.string.isRequired,
+    date: PropTypes.string.isRequired,
+    bpm: PropTypes.number.isRequired,
+    stars: PropTypes.number.isRequired,
+    level: PropTypes.number.isRequired,
+    skill: PropTypes.string.isRequired,
+  }),
+  practiceMode: PropTypes.bool.isRequired,
+  isMac: PropTypes.bool.isRequired,
+};
 
 export default ControlBar

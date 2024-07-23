@@ -1,4 +1,5 @@
 import React from 'react'
+import PropTypes from 'prop-types'
 
 const ControlBarPanel = ({ show, children }) => {
   return (
@@ -21,4 +22,9 @@ const ControlBarPanel = ({ show, children }) => {
   )
 }
 
-export default ControlBarPanel
+ControlBarPanel.propTypes = {
+  show: PropTypes.bool.isRequired,
+  children: PropTypes.node,
+}
+
+export default ControlBarPanel;

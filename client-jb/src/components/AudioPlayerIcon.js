@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react'
+import PropTypes from 'prop-types';
 import { IconButton } from '@mui/material'
 import PlayCircleOutlineIcon from '@mui/icons-material/PlayCircleOutline'
 import PauseCircleOutlineIcon from '@mui/icons-material/PauseCircleOutline'
@@ -114,5 +115,15 @@ const AudioPlayerIcon = ({ audio, isPlaying, onPlay }) => {
     </IconButton>
   )
 }
+
+AudioPlayerIcon.propTypes = {
+  // Assuming the props for AudioPlayerIcon, adjust as necessary
+  color: PropTypes.string,
+  size: PropTypes.oneOfType([
+    PropTypes.string,
+    PropTypes.number,
+  ]),
+  onClick: PropTypes.func,
+};
 
 export default AudioPlayerIcon

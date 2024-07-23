@@ -5,7 +5,7 @@ const AudioPlayer = () => {
   const [audioBuffer, setAudioBuffer] = useState(null)
   const fileInputRef = useRef(null)
 
-  const handleFileSelect = (event) => {
+  const handleFileSelect = () => {
     const fileInput = fileInputRef.current
     const file = fileInput.files[0]
 
