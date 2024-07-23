@@ -1,7 +1,6 @@
 import User from '../models/User.js';
 import { StatusCodes } from 'http-status-codes';
 import { BadRequestError, UnAuthenticatedError } from '../errors/index.js';
-import attachCookie from '../utils/attachCookie.js';
 
 // Register is used to register the user
 const register = async (req, res) => {
@@ -59,7 +58,6 @@ const login = async (req, res) => {
       email: user.email,
       role: user.role,
       name: user.name,
-      role: user.role,
       teacher: user.teacher,
       instrument: user.instrument,
     },

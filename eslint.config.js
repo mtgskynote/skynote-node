@@ -11,7 +11,7 @@ export default [
         ecmaFeatures: {
           jsx: true,
         },
-        ecmaVersion: 12,
+        ecmaVersion: 2022,
         sourceType: 'module',
       },
       globals: {

@@ -1,6 +1,4 @@
 import Message from '../models/Message.js';
-import { StatusCodes } from 'http-status-codes';
-import { BadRequestError, UnAuthenticatedError } from '../errors/index.js';
 import mongoose from 'mongoose';
 
 /* see messageRoutes.js for the routes that use these functions */
@@ -48,37 +46,6 @@ const getAllMessages = async (req, res) => {
   } catch (error) {
     console.error('Error fetching messages:', error);
     res.status(500).json({ error: 'Internal server error' });
-  }
-};
-
-const getAllMessages_old = async (req, res) => {
-  const { sender, receiver, limit, skip } = req.query; // Optional parameters
-
-  try {
-    // Create query based on provided filters
-    const query = {};
-    if (sender) {
-      query.sender = sender;
-    }
-    if (receiver) {
-      query.receiver = { $in: [receiver] }; // Check if receiver is in the array
-    }
-
-    // Add pagination options (optional)
-    const options = {
-      limit: limit || 10, // Default limit
-      skip: skip || 0, // Default skip
-      sort: { _id: -1 }, // Sort by latest first
-    };
-
-    // Retrieve messages with filtering and pagination
-    const messages = await Message.find(query, null, options);
-
-    // Send response with message details
-    res.status(200).json({ messages });
-  } catch (err) {
-    console.error('Error retrieving messages:', err);
-    res.status(500).json({ error: 'Error getting messages' });
   }
 };
 

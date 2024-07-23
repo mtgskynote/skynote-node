@@ -1,9 +1,7 @@
 import assignments from '../models/Assignments.js';
 import { StatusCodes } from 'http-status-codes';
-import { BadRequestError, UnAuthenticatedError } from '../errors/index.js';
 
 /* see assignmentRoutes.js for the routes that use these functions */
-
 const getAllAssignments = async (req, res) => {
   var data = [];
   const studentId = req.query.studentId;
