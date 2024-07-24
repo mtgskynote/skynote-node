@@ -1,17 +1,17 @@
-import React, { useEffect, useState } from "react";
-import { Chart as ChartJS, ArcElement, Tooltip, Legend } from "chart.js";
-import { useAppContext } from "../../context/appContext";
-import { getAllRecData } from "../../utils/studentRecordingMethods.js";
-import { getAllAssignments } from "../../utils/assignmentsMethods.js";
+import React, { useEffect, useState } from 'react';
+import { Chart as ChartJS, ArcElement, Tooltip, Legend } from 'chart.js';
+import { useAppContext } from '../../context/appContext';
+import { getAllRecData } from '../../utils/studentRecordingMethods.js';
+import { getAllAssignments } from '../../utils/assignmentsMethods.js';
 import {
   getUserFavourites,
   getRecordingsPastWeek,
-} from "../../utils/usersMethods.js";
-import LessonCard from "../../components/LessonCard.js";
-import RecordingsProgressChart from "../../components/RecordingsProgressChart.js";
-import LevelsProgressChart from "../../components/LevelsProgressChart.js";
-import AssignmentCard from "../../components/AssignmentCard.js";
-import LoadingScreen from "../../components/LoadingScreen.js";
+} from '../../utils/usersMethods.js';
+import LessonCard from '../../components/LessonCard.js';
+import RecordingsProgressChart from '../../components/RecordingsProgressChart.js';
+import LevelsProgressChart from '../../components/LevelsProgressChart.js';
+import AssignmentCard from '../../components/AssignmentCard.js';
+import LoadingScreen from '../../components/LoadingScreen.js';
 
 ChartJS.register(ArcElement, Tooltip, Legend);
 
@@ -32,7 +32,7 @@ const Stats = () => {
   const [recordingSkills, setRecordingSkills] = useState(null);
   const [recordingLevels, setRecordingLevels] = useState(null);
   const [starsPerLevel, setStarsPerLevel] = useState(null);
-  const [achievedStarsPerLevel, setAchievedStarsPerLevel] = useState(null);
+  const [, setAchievedStarsPerLevel] = useState(null);
   const [recentRecordings, setRecentRecordings] = useState(null);
   const [recentScores, setRecentScores] = useState({});
   const [unansweredTasks, setUnansweredTasks] = useState(null);
@@ -42,6 +42,7 @@ const Stats = () => {
   );
   const [starPercentages, setStarPercentages] = useState(null);
   const [favourites, setFavourites] = useState(null);
+  const [storageUpdated, setStorageUpdated] = useState(false);
 
   const getScoreById = (id) => {
     return scoresData.find((score) => score._id === id);
@@ -57,7 +58,7 @@ const Stats = () => {
     setRecordingList(
       JSON.stringify(
         JSON.parse(recordingList).filter(
-          (item, index) => item.recordingId !== idDelete
+          (item) => item.recordingId !== idDelete
         )
       )
     );
@@ -115,9 +116,8 @@ const Stats = () => {
 
         const recordingsPastWeek = await getRecordingsPastWeek(currentUser.id);
         setLastWeekRecordings(recordingsPastWeek);
-        
       } catch (error) {
-        console.log("Error fetching data: ", error);
+        console.log('Error fetching data: ', error);
       }
     };
 
@@ -126,12 +126,24 @@ const Stats = () => {
     }
   }, [userData]);
 
+  useEffect(() => {
+    const handleStorageUpdate = () => {
+      setStorageUpdated((prev) => !prev); // Toggle state to trigger useEffect
+    };
+
+    window.addEventListener('storageUpdated', handleStorageUpdate);
+
+    return () => {
+      window.removeEventListener('storageUpdated', handleStorageUpdate);
+    };
+  }, []);
+
   //get Scores data
   useEffect(() => {
     // import local data
-    const local = JSON.parse(localStorage.getItem("scoreData"));
+    const local = JSON.parse(localStorage.getItem('scoreData'));
     if (local === null) {
-      console.log("No scores data found in local storage");
+      console.log('No scores data found in local storage');
       return;
     }
     // save in state
@@ -149,7 +161,7 @@ const Stats = () => {
       }
     });
     setStarsPerLevel(levelCounts);
-  }, []); // Only once
+  }, [storageUpdated]); // Only once
 
   //get Recordings Data for this user
   useEffect(() => {
@@ -349,6 +361,10 @@ const Stats = () => {
       setIsLoading(false);
     }
   }, [userData, scoresData, recordingList]);
+
+  console.log('USER DATA:', userData);
+  console.log('SCORES DATA:', scoresData);
+  console.log('RECORDING LIST:', recordingList);
 
   if (isLoading) {
     return <LoadingScreen />;

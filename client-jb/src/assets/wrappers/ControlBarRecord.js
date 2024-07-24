@@ -1,15 +1,11 @@
-
-
-
 ///////////////////////////////////////////
 ////////// THIS FILE IS OBSOLETE //////////
 ///////////////////////////////////////////
-import styled from "styled-components";
+import styled from 'styled-components';
 
 const Wrapper = styled.section`
-
-    .myDiv {
-    background-color: #A3CD8F;
+  .myDiv {
+    background-color: #a3cd8f;
     justify-content: center;
     bottom: 20px;
     position: fixed;
@@ -17,47 +13,46 @@ const Wrapper = styled.section`
     transform: translateX(-50%);
     width: fit-content;
     border-radius: 15px;
-    }
+  }
 
-    .controlBtn {
+  .controlBtn {
     color: black;
     margin: 0.3rem 0.2rem;
     border-radius: 20px;
     font-size: 1.2rem;
-    }
+  }
 
-    .controlBtn[title="record/stopRecording"] {
+  .controlBtn[title='record/stopRecording'] {
     color: red;
-    }
+  }
 
-    .dropDownTgl {
-        color: black;
-        margin: 0;
-        border-radius: 20px;
-        background-color: #A3CD8F;
-    }
+  .dropDownTgl {
+    color: black;
+    margin: 0;
+    border-radius: 20px;
+    background-color: #a3cd8f;
+  }
 
-    .play-pause-icon {
-        color: var(--primary-500);
-    }
+  .play-pause-icon {
+    color: var(--primary-500);
+  }
 
-    .slider-container {
-        display: flex;
-        align-items: center;
-        margin-bottom: 10px;
-    }
+  .slider-container {
+    display: flex;
+    align-items: center;
+    margin-bottom: 10px;
+  }
 
-    .slider-label {
+  .slider-label {
     margin-right: 30px;
     font-weight: bold;
-    }
+  }
 
-    .slider-input {
+  .slider-input {
     width: 200px;
-    }
+  }
 
-
-    /* > div  {
+  /* > div  {
         display: "block";
         margin: "0 auto";
         background-color: "#A3CD8F";

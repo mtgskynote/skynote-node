@@ -1,5 +1,6 @@
-import React, { useEffect, useState } from "react";
-import Chart from "chart.js/auto";
+import React, { useEffect, useState } from 'react';
+import PropTypes from 'prop-types';
+import Chart from 'chart.js/auto';
 
 const LevelsProgressChart = ({ id, starPercentages }) => {
   const [labels, setLabels] = useState(null);
@@ -12,25 +13,25 @@ const LevelsProgressChart = ({ id, starPercentages }) => {
   }, [starPercentages]);
 
   useEffect(() => {
-    const ctx = document.getElementById(id).getContext("2d");
+    const ctx = document.getElementById(id).getContext('2d');
 
     const myChart = new Chart(ctx, {
-      type: "bar",
+      type: 'bar',
       data: {
         labels: labels,
         datasets: [
           {
-            label: "Percentage of Stars Collected",
+            label: 'Percentage of Stars Collected',
             data: starPercentages,
-            backgroundColor: "rgba(164, 190, 92, 0.2)",
-            borderColor: "rgba(164, 190, 92, 1)",
+            backgroundColor: 'rgba(164, 190, 92, 0.2)',
+            borderColor: 'rgba(164, 190, 92, 1)',
             borderWidth: 2,
             barPercentage: 0.7,
           },
         ],
       },
       options: {
-        indexAxis: "y",
+        indexAxis: 'y',
         plugins: {
           title: {
             display: false,
@@ -44,31 +45,31 @@ const LevelsProgressChart = ({ id, starPercentages }) => {
             beginAtZero: true,
             min: 0,
             max: 100,
-            type: "linear",
+            type: 'linear',
             grid: {
               display: false,
             },
             ticks: {
               stepSize: 20,
               callback: function (value) {
-                return value + "%";
+                return value + '%';
               },
               font: {
                 size: 15,
-                family: "poppins",
+                family: 'poppins',
                 weight: 500,
               },
             },
           },
           y: {
-            type: "category",
+            type: 'category',
             grid: {
               display: false,
             },
             ticks: {
               font: {
                 size: 15,
-                family: "poppins",
+                family: 'poppins',
                 weight: 500,
               },
             },
@@ -82,6 +83,11 @@ const LevelsProgressChart = ({ id, starPercentages }) => {
   }, [starPercentages, labels, id]);
 
   return <canvas id={id} />;
+};
+
+LevelsProgressChart.propTypes = {
+  id: PropTypes.string.isRequired,
+  starPercentages: PropTypes.arrayOf(PropTypes.number).isRequired,
 };
 
 export default LevelsProgressChart;

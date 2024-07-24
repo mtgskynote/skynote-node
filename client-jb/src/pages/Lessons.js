@@ -1,10 +1,10 @@
-import React, { useState, useEffect } from "react";
-import LevelCard from "../components/LevelCard";
-import { useAppContext } from "../context/appContext";
-import { getUserFavourites } from "../utils/usersMethods.js";
-import { getAllRecData } from "../utils/studentRecordingMethods.js";
-import LoadingScreen from "../components/LoadingScreen.js";
-import InDevelopment from "../components/InDevelopment.js";
+import React, { useState, useEffect } from 'react';
+import LevelCard from '../components/LevelCard';
+import { useAppContext } from '../context/appContext';
+import { getUserFavourites } from '../utils/usersMethods.js';
+import { getAllRecData } from '../utils/studentRecordingMethods.js';
+import LoadingScreen from '../components/LoadingScreen.js';
+import InDevelopment from '../components/InDevelopment.js';
 
 const Lessons = () => {
   const [lessonList, setLessonList] = useState({});
@@ -13,25 +13,25 @@ const Lessons = () => {
   const { getCurrentUser } = useAppContext();
   const [recordingList, setRecordingList] = useState(null);
   const [favourites, setFavourites] = useState(null);
-  const [selectedFilter, setSelectedFilter] = useState("All Lessons");
+  const [selectedFilter, setSelectedFilter] = useState('All Lessons');
   const [isLoading, setIsLoading] = useState(true);
   const [filteredLessons, setFilteredLessons] = useState({});
   const [openSubLevel, setOpenSubLevel] = useState(null);
   const [subLevelCounts, setSubLevelCounts] = useState({});
 
   const filters = [
-    "All Lessons",
-    "Least Recorded",
-    "Almost Perfect!",
-    "My Favourites",
-    "Imported Scores",
+    'All Lessons',
+    'Least Recorded',
+    'Almost Perfect!',
+    'My Favourites',
+    'Imported Scores',
   ];
 
   useEffect(() => {
-    const data = JSON.parse(localStorage.getItem("scoreData"));
+    const data = JSON.parse(localStorage.getItem('scoreData'));
     setLocalScoreData(data);
     if (data === null) {
-      console.log("No scores data found in local storage");
+      console.log('No scores data found in local storage');
       return;
     }
   }, []);
@@ -46,7 +46,7 @@ const Lessons = () => {
         const favs = await getUserFavourites(currentUser.id);
         setFavourites(favs);
       } catch (error) {
-        console.log("Error fetching data: ", error);
+        console.log('Error fetching data: ', error);
       }
     };
 
@@ -61,9 +61,9 @@ const Lessons = () => {
         const { level, skill, _id, fname, title } = item;
 
         const levelNameMapping = {
-          1: "Getting Started",
-          2: "Building Your Repertoire",
-          3: "Imported Scores",
+          1: 'Getting Started',
+          2: 'Building Your Repertoire',
+          3: 'Imported Scores',
         };
         const mappedLevel = levelNameMapping[level] || level;
 
@@ -99,7 +99,7 @@ const Lessons = () => {
 
   useEffect(() => {
     // Apply filters to lesson list based on selected filter
-    if (selectedFilter === "My Favourites") {
+    if (selectedFilter === 'My Favourites') {
       const filtered = {};
       Object.keys(lessonList).forEach((level) => {
         filtered[level] = {};
@@ -110,7 +110,7 @@ const Lessons = () => {
         });
       });
       setFilteredLessons(filtered);
-    } else if (selectedFilter === "Almost Perfect!") {
+    } else if (selectedFilter === 'Almost Perfect!') {
       const filtered = {};
       Object.keys(lessonList).forEach((level) => {
         filtered[level] = {};
@@ -121,9 +121,9 @@ const Lessons = () => {
         });
       });
       setFilteredLessons(filtered);
-    } else if (selectedFilter === "Imported Scores") {
+    } else if (selectedFilter === 'Imported Scores') {
       setFilteredLessons({});
-    } else if (selectedFilter === "Least Recorded") {
+    } else if (selectedFilter === 'Least Recorded') {
       const filtered = {};
       // find maximum recording number
       let maxRecordings = 0;
@@ -241,8 +241,8 @@ const Lessons = () => {
             key={index}
             className={`cursor-pointer font-normal text-sm ${
               selectedFilter === filter
-                ? "text-blue-500"
-                : "text-black opacity-30 hover:text-black hover:opacity-100"
+                ? 'text-blue-500'
+                : 'text-black opacity-30 hover:text-black hover:opacity-100'
             }`}
             onClick={() => handleFilterClick(filter)}
           >

@@ -1,10 +1,7 @@
-
-
-
 ///////////////////////////////////////////
 //// THIS FILE DOESN'T SEEM TO BE USED ////
 ///////////////////////////////////////////
-import styled from 'styled-components'
+import styled from 'styled-components';
 
 const Wrapper = styled.section`
   height: 6rem;
@@ -56,5 +53,5 @@ const Wrapper = styled.section`
     background: var(--primary-500);
     color: var(--white);
   }
-`
-export default Wrapper
+`;
+export default Wrapper;

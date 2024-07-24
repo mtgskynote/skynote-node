@@ -1,18 +1,21 @@
-import React, { useRef, useEffect } from "react";
-const static_xmlns = "http://www.w3.org/2000/svg";
+/* eslint-disable */
+// TODO: Eslint is disabled because this code isn't used
+
+import React, { useRef, useEffect } from 'react';
+const static_xmlns = 'http://www.w3.org/2000/svg';
 
 // ---------  Constants  --------------------------//
 const def_colors = [
-  "IndianRed",
-  "Olive",
-  "Purple",
-  "Aqua",
-  "Green",
-  "Silver",
-  "Yellow",
+  'IndianRed',
+  'Olive',
+  'Purple',
+  'Aqua',
+  'Green',
+  'Silver',
+  'Yellow',
 ];
-const def_labels = ["a", "b", "c", "d", "e", "f", "g"];
-const def_segments = [.1, 1, 0.8, 0.5];
+const def_labels = ['a', 'b', 'c', 'd', 'e', 'f', 'g'];
+const def_segments = [0.1, 1, 0.8, 0.5];
 
 const circleScale = 0.82;
 //=====================================================================================================
@@ -22,45 +25,45 @@ const makePieStructure = function (
   center = { x: 0, y: 0 },
   radius = 100,
   labels = def_labels,
-  m_width = 200,
-  m_height = 200,
+  // m_width = 200,
+  // m_height = 200,
   segments = def_segments
 ) {
   for (let i = 0; i < 3; i++) {
-    const circle = document.createElementNS(static_xmlns, "circle");
-    circle.setAttributeNS(null, "cx", center.x);
-    circle.setAttributeNS(null, "cy", center.y);
-    circle.setAttributeNS(null, "r", (circleScale * (3 - i) * radius) / 3);
-    circle.setAttributeNS(null, "stroke", "black");
+    const circle = document.createElementNS(static_xmlns, 'circle');
+    circle.setAttributeNS(null, 'cx', center.x);
+    circle.setAttributeNS(null, 'cy', center.y);
+    circle.setAttributeNS(null, 'r', (circleScale * (3 - i) * radius) / 3);
+    circle.setAttributeNS(null, 'stroke', 'black');
     //circle1.setAttributeNS(null, "stroke-width", pieViz.strokeWidth);
-    circle.setAttributeNS(null, "fill", "Azure");
+    circle.setAttributeNS(null, 'fill', 'Azure');
     svg.appendChild(circle);
   }
 
   let numRadialLines = segments.length;
   // Create the specified number of radial lines
   for (let i = 0; i < numRadialLines; i++) {
-    const line = document.createElementNS(static_xmlns, "line");
-    line.setAttributeNS(null, "x1", center.x);
-    line.setAttributeNS(null, "y1", center.y);
+    const line = document.createElementNS(static_xmlns, 'line');
+    line.setAttributeNS(null, 'x1', center.x);
+    line.setAttributeNS(null, 'y1', center.y);
     line.setAttributeNS(
       null,
-      "x2",
+      'x2',
       center.x + radius * Math.cos((i * 2 * Math.PI) / numRadialLines)
     );
     line.setAttributeNS(
       null,
-      "y2",
+      'y2',
       center.y + radius * Math.sin((i * 2 * Math.PI) / numRadialLines)
     );
-    line.setAttributeNS(null, "stroke", "black");
+    line.setAttributeNS(null, 'stroke', 'black');
     svg.appendChild(line);
   }
 
   // Create the text labels for the different segments
   for (let i = 0; i < numRadialLines; i++) {
     // Create a new text element
-    var textElement = document.createElementNS(static_xmlns, "text");
+    var textElement = document.createElementNS(static_xmlns, 'text');
 
     // Set the text content
     textElement.textContent = labels[i];
@@ -83,8 +86,8 @@ const makePieStructure = function (
     const centerY = y + textBBox.height / 2;
 
     // Set the location of the text element
-    textElement.setAttribute("x", centerX);
-    textElement.setAttribute("y", centerY);
+    textElement.setAttribute('x', centerX);
+    textElement.setAttribute('y', centerY);
 
     // Add the text element to the SVG container
     svg.appendChild(textElement);
@@ -116,11 +119,13 @@ const PieChart = ({
   radius = 100,
   m_width = 200,
   m_height = 200,
-  segments = def_segments
+  segments = def_segments,
 }) => {
   const svgRef = useRef(null);
 
-  var updateSegments=function(foo){console.log("calling piechart updatesegments")}
+  // var updateSegments = function (foo) {
+  //   console.log('calling piechart updatesegments')
+  // }
 
   var pie = {
     numSegments: segments.length,
@@ -146,10 +151,10 @@ const PieChart = ({
 
     let i = 0;
     segments.forEach((segmentr) => {
-      const arc = document.createElementNS(static_xmlns, "path");
+      const arc = document.createElementNS(static_xmlns, 'path');
       // console.log(`segmentr = ${segmentr}, pie.radius=${pie.radius}, circleScale=${circleScale}`)
       arc.setAttribute(
-        "d",
+        'd',
         circleSegmentPath(
           pie.center,
           segmentr * pie.radius * circleScale,
@@ -157,7 +162,7 @@ const PieChart = ({
           ((i + 1) * 2 * Math.PI) / pie.numSegments
         )
       );
-      arc.setAttribute("fill", def_colors[i]);
+      arc.setAttribute('fill', def_colors[i]);
 
       // Append the arc element to the SVG container
       svgRef.current.appendChild(arc);

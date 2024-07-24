@@ -1,5 +1,6 @@
-import React, { useState, useEffect } from "react";
-import ModeToggle from "./ModeToggle";
+import React, { useState, useEffect } from 'react';
+import PropTypes from 'prop-types';
+import ModeToggle from './ModeToggle';
 import {
   PlayCircle as PlayIcon,
   PauseCircle as PauseIcon,
@@ -12,13 +13,13 @@ import {
   RestartAlt as ResetIcon,
   Equalizer as StatsIcon,
   Info as InfoIcon,
-} from "@mui/icons-material";
-import IconButton from "@mui/material/IconButton";
-import Tooltip from "@mui/material/Tooltip";
-import ControlBarPopover from "./ControlBarPopover";
-import RangeInput from "./RangeInput";
-import ControlBarPanel from "./ControlBarPanel";
-import StarRating from "./StarRating";
+} from '@mui/icons-material';
+import IconButton from '@mui/material/IconButton';
+import Tooltip from '@mui/material/Tooltip';
+import ControlBarPopover from './ControlBarPopover';
+import RangeInput from './RangeInput';
+import ControlBarPanel from './ControlBarPanel';
+import StarRating from './StarRating';
 
 const ControlBar = ({
   onTransposeChange,
@@ -56,9 +57,9 @@ const ControlBar = ({
 
   const allModeIcons = [
     {
-      tooltip: "Transpose",
+      tooltip: 'Transpose',
       icon: <TransposeIcon className="text-4xl" />,
-      labels: ["Transpose"],
+      labels: ['Transpose'],
       mins: [-12],
       maxs: [12],
       initials: [initialTranspose],
@@ -68,9 +69,9 @@ const ControlBar = ({
       showInInteractiveMode: true,
     },
     {
-      tooltip: "Metronome",
+      tooltip: 'Metronome',
       icon: <BpmIcon className="text-4xl" />,
-      labels: playbackMode ? ["Volume"] : ["BPM", "Volume"],
+      labels: playbackMode ? ['Volume'] : ['BPM', 'Volume'],
       mins: playbackMode ? [0] : [30, 0],
       maxs: playbackMode ? [100] : [200, 100],
       initials: playbackMode
@@ -84,9 +85,9 @@ const ControlBar = ({
       showInInteractiveMode: true,
     },
     {
-      tooltip: "MIDI Volume",
+      tooltip: 'MIDI Volume',
       icon: <VolumeIcon className="text-4xl" />,
-      labels: ["Volume"],
+      labels: ['Volume'],
       mins: [0],
       maxs: [100],
       initials: [initialMidiVolume],
@@ -96,14 +97,14 @@ const ControlBar = ({
       showInInteractiveMode: true,
     },
     {
-      tooltip: "Stats",
+      tooltip: 'Stats',
       icon: <StatsIcon className="text-4xl" />,
       toggle: handleToggleStats,
       showInPlaybackMode: true,
       showInInteractiveMode: false,
     },
     {
-      tooltip: "Shortcuts",
+      tooltip: 'Shortcuts',
       icon: <InfoIcon className="text-4xl" />,
       toggle: handleToggleInfo,
       showInPlaybackMode: true,
@@ -113,14 +114,14 @@ const ControlBar = ({
 
   const practiceModeIcons = [
     {
-      tooltip: "Reset",
+      tooltip: 'Reset',
       iconPlay: <ResetIcon className="text-4xl" />,
       iconPause: <ResetIcon className="text-4xl" />,
       toggle: onReset,
       showInPlaybackMode: true,
     },
     {
-      tooltip: isListening ? "Stop Listening" : "Listen",
+      tooltip: isListening ? 'Stop Listening' : 'Listen',
       iconPlay: <ListenIcon className="text-4xl" />,
       iconPause: <ListenPauseIcon className="text-4xl" />,
       toggle: onToggleListen,
@@ -130,11 +131,11 @@ const ControlBar = ({
     {
       tooltip: playbackMode
         ? isPlaying
-          ? "Pause"
-          : "Play"
+          ? 'Pause'
+          : 'Play'
         : isPlaying
-        ? "Stop Practicing"
-        : "Practice",
+        ? 'Stop Practicing'
+        : 'Practice',
       iconPlay: <PlayIcon className="text-4xl" />,
       iconPause: <PauseIcon className="text-4xl" />,
       toggle: onTogglePlay,
@@ -145,7 +146,7 @@ const ControlBar = ({
 
   const recordModeIcons = [
     {
-      tooltip: isRecording ? "Stop Recording" : "Record",
+      tooltip: isRecording ? 'Stop Recording' : 'Record',
       icon: <RecordIcon className="text-4xl" />,
       toggle: onRecord,
     },
@@ -170,7 +171,7 @@ const ControlBar = ({
   return (
     <div
       className={`relative  w-1/2 ${
-        playbackMode ? "lg:w-1/2" : "lg:w-3/5"
+        playbackMode ? 'lg:w-1/2' : 'lg:w-3/5'
       } md:mx-8 md:w-full sm:w-5/6`}
     >
       {playbackMode && (
@@ -193,14 +194,14 @@ const ControlBar = ({
         </ControlBarPanel>
       )}
       <ControlBarPanel show={showInfo} stats={stats}>
-        <div className={`${practiceModeOn ? "pb-2" : "pb-8"}`}>
+        <div className={`${practiceModeOn ? 'pb-2' : 'pb-8'}`}>
           <p className="font-bold text-white text-2xl mb-3">Shortcuts</p>
           <div className="flex justify-between space-x-4">
             <div>
               {(playbackMode || practiceModeOn) && (
                 <div>
                   <span className="text-white font-bold">
-                    {isMac ? "Command" : "Ctrl"} + Shift + R:{" "}
+                    {isMac ? 'Command' : 'Ctrl'} + Shift + R:{' '}
                   </span>
                   <span className="text-white opacity-75">Reset</span>
                 </div>
@@ -210,7 +211,7 @@ const ControlBar = ({
                   {playbackMode ? `S: ` : `M: `}
                 </span>
                 <span className="text-white opacity-75">
-                  {playbackMode ? "Toggle Stats" : "Switch Modes"}
+                  {playbackMode ? 'Toggle Stats' : 'Switch Modes'}
                 </span>
               </div>
             </div>
@@ -225,7 +226,7 @@ const ControlBar = ({
                 <div>
                   <span className="text-white font-bold">P: </span>
                   <span className="text-white opacity-75">
-                    {playbackMode ? "Toggle Playback" : "Toggle Practice"}
+                    {playbackMode ? 'Toggle Playback' : 'Toggle Practice'}
                   </span>
                 </div>
               )}
@@ -247,7 +248,7 @@ const ControlBar = ({
       </ControlBarPanel>
       <div
         className={`px-4 py-3 bg-blue-400 ${
-          showStats ? "rounded-t-none rounded-b-3xl" : "rounded-3xl"
+          showStats ? 'rounded-t-none rounded-b-3xl' : 'rounded-3xl'
         } shadow-md relative z-20 transition-all duration-300 ease-in-out`}
       >
         <div className="flex justify-between items-center h-full">
@@ -284,9 +285,9 @@ const ControlBar = ({
                   <Tooltip title={modeIcon.tooltip} key={index}>
                     <IconButton
                       className={`${
-                        isRecording && modeIcon.tooltip === "Stop Recording"
-                          ? "text-red-500"
-                          : "text-white"
+                        isRecording && modeIcon.tooltip === 'Stop Recording'
+                          ? 'text-red-500'
+                          : 'text-white'
                       }`}
                       onClick={modeIcon.toggle}
                     >
@@ -301,8 +302,8 @@ const ControlBar = ({
                   : modeIcon.showInInteractiveMode
               )
               .map((modeIcon, index) =>
-                modeIcon.tooltip === "Stats" ||
-                modeIcon.tooltip === "Shortcuts" ? (
+                modeIcon.tooltip === 'Stats' ||
+                modeIcon.tooltip === 'Shortcuts' ? (
                   <Tooltip title={modeIcon.tooltip} key={index}>
                     <IconButton
                       className="text-white"
@@ -346,7 +347,7 @@ const ControlBar = ({
               onClick={handleViewAllRecordings}
               className="ml-auto hover:cursor-pointer transition ease-in-out delay-50 text-center text-gray-700 hover:text-gray-900 border-transparent focus:border-transparent focus:ring-0 focus:outline-none bg-slate-50 hover:bg-slate-100 font-extralight py-1 px-2 rounded-l-none outline-none rounded"
             >
-              {playbackMode ? "Go back" : "View All Recordings"}
+              {playbackMode ? 'Go back' : 'View All Recordings'}
             </button>
             {playbackMode && (
               <button
@@ -361,6 +362,39 @@ const ControlBar = ({
       </div>
     </div>
   );
+};
+
+ControlBar.propTypes = {
+  onTransposeChange: PropTypes.func.isRequired,
+  onBpmChange: PropTypes.func.isRequired,
+  onMidiVolumeChange: PropTypes.func.isRequired,
+  onMetronomeVolumeChange: PropTypes.func.isRequired,
+  onModeChange: PropTypes.func,
+  onToggleListen: PropTypes.func,
+  onTogglePlay: PropTypes.func.isRequired,
+  onReset: PropTypes.func.isRequired,
+  onRecord: PropTypes.func,
+  handleViewAllRecordings: PropTypes.func.isRequired,
+  isListening: PropTypes.bool,
+  isPlaying: PropTypes.bool.isRequired,
+  isRecording: PropTypes.bool,
+  isBpmDisabled: PropTypes.bool,
+  playbackMode: PropTypes.bool.isRequired,
+  handleShowPopUpWindow: PropTypes.func.isRequired,
+  handleToggleStats: PropTypes.func,
+  handleToggleInfo: PropTypes.func.isRequired,
+  showStats: PropTypes.bool,
+  showInfo: PropTypes.bool.isRequired,
+  stats: PropTypes.shape({
+    name: PropTypes.string.isRequired,
+    date: PropTypes.string.isRequired,
+    bpm: PropTypes.number.isRequired,
+    stars: PropTypes.number.isRequired,
+    level: PropTypes.number.isRequired,
+    skill: PropTypes.string.isRequired,
+  }),
+  practiceMode: PropTypes.bool.isRequired,
+  isMac: PropTypes.bool.isRequired,
 };
 
 export default ControlBar;

@@ -1,10 +1,11 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect } from 'react';
+import PropTypes from 'prop-types';
 
 const CountDownTimer = ({ bpm, mode, onCountDownFinished }) => {
   const [countDownBeats, setCountDownBeats] = useState(1); // Set the initial countdown time in beats
 
   useEffect(() => {
-    console.log("original bpm: ", bpm);
+    console.log('original bpm: ', bpm);
 
     let new_bpm;
 
@@ -14,7 +15,7 @@ const CountDownTimer = ({ bpm, mode, onCountDownFinished }) => {
       new_bpm = bpm;
     }
 
-    console.log("new bpm: ", new_bpm);
+    console.log('new bpm: ', new_bpm);
 
     const timePerBeat = (1 / new_bpm) * 60 * 1000; // milliseconds per beat
     let countdownInterval;
@@ -24,7 +25,7 @@ const CountDownTimer = ({ bpm, mode, onCountDownFinished }) => {
         setCountDownBeats((prevCountDownBeats) => prevCountDownBeats + 1);
       }, timePerBeat);
     } else {
-      setCountDownBeats("");
+      setCountDownBeats('');
     }
 
     if (countDownBeats === 5) {
@@ -43,14 +44,20 @@ const CountDownTimer = ({ bpm, mode, onCountDownFinished }) => {
         key={countDownBeats}
         className={`${
           mode
-            ? "text-green-500 shadow-green-600"
-            : "text-red-500 shadow-red-600"
+            ? 'text-green-500 shadow-green-600'
+            : 'text-red-500 shadow-red-600'
         } text-9xl text-shadow transition-all duration-500 ease-in-out`}
       >
         {countDownBeats}
       </div>
     </div>
   );
+};
+
+CountDownTimer.propTypes = {
+  bpm: PropTypes.number.isRequired,
+  mode: PropTypes.bool.isRequired,
+  onCountDownFinished: PropTypes.func.isRequired,
 };
 
 export default CountDownTimer;

@@ -1,0 +1,40 @@
+name: front-linter
+
+on:
+  # # Triggers the workflow on push or pull request events on the "main" branch
+  # push:
+  #   branches:
+  #     - 'main'
+  # Triggers the workflow on pull request events targeting the "main" or "release/*" branches
+  pull_request:
+    branches:
+      - '**'
+  # Allows you to run this workflow manually from the Actions tab
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-node@v2
+        with:
+          node-version: '20'
+      - name: Install dependencies
+        run: npm install
+      - name: Run Prettier
+        run: npx prettier --write .
+      - name: Commit changes
+        run: |
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+          git add .
+          git commit -m "Chore: Apply Prettier auto-formatting" || echo "No changes to commit"
+      - name: Pull latest changes with rebase
+        run: git pull --rebase origin ${{ github.head_ref }}
+      - name: Push changes
+        run: git push origin HEAD:${{ github.head_ref }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Run ESLint
+        run: npx eslint .

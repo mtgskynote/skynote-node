@@ -1,13 +1,14 @@
-import React, { useState, useEffect } from "react";
-import RangeSlider from "./RangeSlider";
+import React, { useState, useEffect } from 'react';
+import PropTypes from 'prop-types';
+import RangeSlider from './RangeSlider';
 
 const RangeInput = ({ label, min, max, initial, onValueChange, disabled }) => {
   const [value, setValue] = useState(initial);
 
   // Modify styling if inputs are disabled
   const inputClass = disabled
-    ? "ml-3 shadow-sm appearance-none border rounded w-full py-2 px-2 text-gray-700 leading-tight focus:outline-none focus:shadow-outline w-5/12 bg-gray-300 cursor-not-allowed"
-    : "ml-3 shadow-sm appearance-none border rounded w-full py-2 px-2 text-gray-700 leading-tight focus:outline-none focus:shadow-outline w-5/12";
+    ? 'ml-3 shadow-sm appearance-none border rounded w-full py-2 px-2 text-gray-700 leading-tight focus:outline-none focus:shadow-outline w-5/12 bg-gray-300 cursor-not-allowed'
+    : 'ml-3 shadow-sm appearance-none border rounded w-full py-2 px-2 text-gray-700 leading-tight focus:outline-none focus:shadow-outline w-5/12';
 
   // Updates the value state whenever the inputs change and passes the new value to the parent components
   const handleValueChange = (e) => {
@@ -58,6 +59,15 @@ const RangeInput = ({ label, min, max, initial, onValueChange, disabled }) => {
       />
     </div>
   );
+};
+
+RangeInput.propTypes = {
+  label: PropTypes.string.isRequired,
+  min: PropTypes.number.isRequired,
+  max: PropTypes.number.isRequired,
+  initial: PropTypes.number.isRequired,
+  onValueChange: PropTypes.func,
+  disabled: PropTypes.bool,
 };
 
 export default RangeInput;

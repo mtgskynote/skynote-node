@@ -1,4 +1,5 @@
-import React, { useState, useRef, useEffect } from "react";
+import React, { useState, useRef, useEffect } from 'react';
+import PropTypes from 'prop-types';
 
 const ControlBarPopover = ({ children }) => {
   const [isOpen, setIsOpen] = useState(false);
@@ -18,9 +19,9 @@ const ControlBarPopover = ({ children }) => {
 
   // Adds and removes a mousedown event listener for closing the popover when clicking outside of it
   useEffect(() => {
-    document.addEventListener("mousedown", handleClickOutside);
+    document.addEventListener('mousedown', handleClickOutside);
     return () => {
-      document.removeEventListener("mousedown", handleClickOutside);
+      document.removeEventListener('mousedown', handleClickOutside);
     };
   }, []);
 
@@ -43,7 +44,7 @@ const ControlBarPopover = ({ children }) => {
       {/* Popover content - Set in parent component */}
       <div
         className={`origin-top absolute bottom-full left-1/2 transform translate-x-[-50%] ${
-          isOpen ? "scale-100 opacity-100" : "scale-0 opacity-0"
+          isOpen ? 'scale-100 opacity-100' : 'scale-0 opacity-0'
         } transition ease-in-out duration-200 mt-2 w-72 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5`}
       >
         <div
@@ -57,6 +58,10 @@ const ControlBarPopover = ({ children }) => {
       </div>
     </div>
   );
+};
+
+ControlBarPopover.propTypes = {
+  children: PropTypes.node.isRequired,
 };
 
 export default ControlBarPopover;

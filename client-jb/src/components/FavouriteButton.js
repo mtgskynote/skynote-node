@@ -1,10 +1,11 @@
-import React, { useState } from "react";
-import axios from "axios";
-import { useAppContext } from "../context/appContext";
-import Tooltip from "@mui/material/Tooltip";
-import IconButton from "@mui/material/IconButton";
-import FavoriteIcon from "@mui/icons-material/Favorite";
-import FavoriteBorderIcon from "@mui/icons-material/FavoriteBorder";
+import React, { useState } from 'react';
+import PropTypes from 'prop-types';
+import axios from 'axios';
+import { useAppContext } from '../context/appContext';
+import Tooltip from '@mui/material/Tooltip';
+import IconButton from '@mui/material/IconButton';
+import FavoriteIcon from '@mui/icons-material/Favorite';
+import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder';
 
 const FavouriteButton = ({ songId, initialIsFavourite, refreshData }) => {
   const [isFavourite, setIsFavourite] = useState(initialIsFavourite);
@@ -17,7 +18,7 @@ const FavouriteButton = ({ songId, initialIsFavourite, refreshData }) => {
       if (isFavourite) {
         await axios.delete(`/api/v1/profile/favourite/${userId}/${songId}`, {
           headers: {
-            Authorization: `Bearer ${localStorage.getItem("token")}`,
+            Authorization: `Bearer ${localStorage.getItem('token')}`,
           },
         });
         setIsFavourite(false); // Update state optimistically
@@ -27,7 +28,7 @@ const FavouriteButton = ({ songId, initialIsFavourite, refreshData }) => {
           null,
           {
             headers: {
-              Authorization: `Bearer ${localStorage.getItem("token")}`,
+              Authorization: `Bearer ${localStorage.getItem('token')}`,
             },
           }
         );
@@ -42,12 +43,12 @@ const FavouriteButton = ({ songId, initialIsFavourite, refreshData }) => {
   return (
     <Tooltip
       placement="bottom"
-      title={isFavourite ? "Remove From Favourites" : "Add To Favourites"}
+      title={isFavourite ? 'Remove From Favourites' : 'Add To Favourites'}
       arrow
     >
       <IconButton
         aria-label={
-          isFavourite ? "Remove From Favourites" : "Add To Favourites"
+          isFavourite ? 'Remove From Favourites' : 'Add To Favourites'
         }
         className={`text-rose-300 cursor-pointer`}
         onClick={(e) => {
@@ -63,6 +64,12 @@ const FavouriteButton = ({ songId, initialIsFavourite, refreshData }) => {
       </IconButton>
     </Tooltip>
   );
+};
+
+FavouriteButton.propTypes = {
+  songId: PropTypes.string.isRequired,
+  initialIsFavourite: PropTypes.bool.isRequired,
+  refreshData: PropTypes.func,
 };
 
 export default FavouriteButton;
