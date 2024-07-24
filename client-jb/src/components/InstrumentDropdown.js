@@ -1,14 +1,14 @@
-import React, { useState, useEffect, useRef } from "react";
-import ArrowDropDownIcon from "@mui/icons-material/ArrowDropDown";
-import ArrowDropUpIcon from "@mui/icons-material/ArrowDropUp";
-import { FaMicrophone } from "react-icons/fa";
-import { GiViolin } from "react-icons/gi";
-import { useAppContext } from "../context/appContext";
+import React, { useState, useEffect, useRef } from 'react';
+import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
+import ArrowDropUpIcon from '@mui/icons-material/ArrowDropUp';
+import { FaMicrophone } from 'react-icons/fa';
+import { GiViolin } from 'react-icons/gi';
+import { useAppContext } from '../context/appContext';
 
 const InstrumentDropdown = () => {
   const instruments = [
-    { name: "violin", icon: <GiViolin />, disabled: false },
-    { name: "voice", icon: <FaMicrophone />, disabled: true },
+    { name: 'violin', icon: <GiViolin />, disabled: false },
+    { name: 'voice', icon: <FaMicrophone />, disabled: true },
   ];
 
   const [isOpen, setIsOpen] = useState(false);
@@ -36,16 +36,16 @@ const InstrumentDropdown = () => {
 
   // Add and clean up the event listener for clicks outside the dropdown
   useEffect(() => {
-    document.addEventListener("mousedown", handleClickOutside);
+    document.addEventListener('mousedown', handleClickOutside);
     return () => {
-      document.removeEventListener("mousedown", handleClickOutside);
+      document.removeEventListener('mousedown', handleClickOutside);
     };
   }, []);
 
   // useEffect hook to retrieve the saved instrument from local storage and set it as the selected instrument
   useEffect(() => {
     let savedInstrument = getInstrumentLocalStorage();
-    if (savedInstrument === "undefined" || !savedInstrument) {
+    if (savedInstrument === 'undefined' || !savedInstrument) {
       savedInstrument = instruments[0].name;
       setInstrumentLocalStorage(savedInstrument);
     }
@@ -73,11 +73,11 @@ const InstrumentDropdown = () => {
             <div
               key={index}
               className={`px-4 py-2 ${
-                selectedInstrument === instrument ? "bg-gray-200" : ""
+                selectedInstrument === instrument ? 'bg-gray-200' : ''
               } ${
                 instrument.disabled
-                  ? "text-gray-500 cursor-not-allowed"
-                  : "hover:bg-gray-100 cursor-pointer"
+                  ? 'text-gray-500 cursor-not-allowed'
+                  : 'hover:bg-gray-100 cursor-pointer'
               }`}
               onClick={() => handleSelect(instrument)}
             >

@@ -1,4 +1,4 @@
-import User from "../models/User.js";
+import User from '../models/User.js';
 
 export const updateRecordings = async () => {
   try {
@@ -19,8 +19,8 @@ export const updateRecordings = async () => {
     });
 
     await Promise.all(promises);
-    console.log("Daily recordings update complete");
+    console.log('Daily recordings update complete');
   } catch (error) {
-    console.error("Error updating daily recordings:", error);
+    console.error('Error updating daily recordings:', error);
   }
 };

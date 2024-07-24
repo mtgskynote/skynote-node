@@ -1,15 +1,16 @@
-import React from "react";
-import { useNavigate } from "react-router-dom";
-import Card from "@mui/material/Card";
-import CardContent from "@mui/material/CardContent";
+import React from 'react';
+import PropTypes from 'prop-types';
+import { useNavigate } from 'react-router-dom';
+import Card from '@mui/material/Card';
+import CardContent from '@mui/material/CardContent';
 
 const AssignmentCard = ({ assignmentId, daysLeft, dueDate, score }) => {
   const dateOptions = {
-    weekDay: "short",
-    day: "numeric",
-    month: "short",
-    hour: "2-digit",
-    minute: "2-digit",
+    weekDay: 'short',
+    day: 'numeric',
+    month: 'short',
+    hour: '2-digit',
+    minute: '2-digit',
   };
   const navigate = useNavigate();
 
@@ -31,15 +32,15 @@ const AssignmentCard = ({ assignmentId, daysLeft, dueDate, score }) => {
             <div className="overflow-hidden">
               <div
                 className={`${
-                  daysLeft < 0 ? "bg-red-500" : "bg-orange-500"
+                  daysLeft < 0 ? 'bg-red-500' : 'bg-orange-500'
                 } py-1 px-2 rounded`}
               >
-                {daysLeft < 0 ? "LATE" : "UNSUBMITTED"}
+                {daysLeft < 0 ? 'LATE' : 'UNSUBMITTED'}
               </div>
             </div>
             <div className="overflow-hidden">
               <div className="bg-gray-500 py-1 px-2 rounded">
-                Due {dueDate.toLocaleString("en-UK", dateOptions)}
+                Due {dueDate.toLocaleString('en-UK', dateOptions)}
               </div>
             </div>
           </div>
@@ -70,6 +71,18 @@ const AssignmentCard = ({ assignmentId, daysLeft, dueDate, score }) => {
       </CardContent>
     </Card>
   );
+};
+
+AssignmentCard.propTypes = {
+  assignmentId: PropTypes.string.isRequired,
+  daysLeft: PropTypes.number.isRequired,
+  dueDate: PropTypes.instanceOf(Date).isRequired,
+  score: PropTypes.shape({
+    fname: PropTypes.string, // Assuming fname is a string. Adjust based on actual data structure
+    title: PropTypes.string.isRequired,
+    skill: PropTypes.string.isRequired,
+    level: PropTypes.string.isRequired,
+  }).isRequired,
 };
 
 export default AssignmentCard;

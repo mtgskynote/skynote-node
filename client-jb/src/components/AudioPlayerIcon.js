@@ -1,8 +1,9 @@
-import React, { useState, useEffect, useRef } from "react";
-import { IconButton } from "@mui/material";
-import PlayCircleOutlineIcon from "@mui/icons-material/PlayCircleOutline";
-import PauseCircleOutlineIcon from "@mui/icons-material/PauseCircleOutline";
-import { getAudioContext } from "../context/audioContext";
+import React, { useState, useEffect, useRef } from 'react';
+import PropTypes from 'prop-types';
+import { IconButton } from '@mui/material';
+import PlayCircleOutlineIcon from '@mui/icons-material/PlayCircleOutline';
+import PauseCircleOutlineIcon from '@mui/icons-material/PauseCircleOutline';
+import { getAudioContext } from '../context/audioContext';
 
 const AudioPlayerIcon = ({ audio, isPlaying, onPlay }) => {
   const [internalPlayState, setInternalPlayState] = useState(false);
@@ -13,7 +14,7 @@ const AudioPlayerIcon = ({ audio, isPlaying, onPlay }) => {
   // Play audio using audioContext
   const playAudio = async () => {
     try {
-      if (audioContext.state === "suspended") {
+      if (audioContext.state === 'suspended') {
         await audioContext.resume();
       }
 
@@ -43,7 +44,7 @@ const AudioPlayerIcon = ({ audio, isPlaying, onPlay }) => {
         }
       }
     } catch (error) {
-      console.error("Error playing audio:", error);
+      console.error('Error playing audio:', error);
     }
   };
 
@@ -103,7 +104,7 @@ const AudioPlayerIcon = ({ audio, isPlaying, onPlay }) => {
     <IconButton
       onClick={handleClick}
       className={`hover:text-blue-500 ${
-        internalPlayState ? "text-blue-500" : ""
+        internalPlayState ? 'text-blue-500' : ''
       }`}
     >
       {internalPlayState ? (
@@ -113,6 +114,14 @@ const AudioPlayerIcon = ({ audio, isPlaying, onPlay }) => {
       )}
     </IconButton>
   );
+};
+
+AudioPlayerIcon.propTypes = {
+  audio: PropTypes.shape({
+    data: PropTypes.any.isRequired,
+  }).isRequired,
+  isPlaying: PropTypes.bool.isRequired,
+  onPlay: PropTypes.func,
 };
 
 export default AudioPlayerIcon;

@@ -1,16 +1,19 @@
-import React, { useEffect, useState, useRef } from "react";
-import { useParams, useNavigate, useLocation } from "react-router-dom";
-import { HotKeys } from "react-hotkeys";
-import OpenSheetMusicDisplay from "./OpenSheetMusicDisplay";
-import PopUpWindow from "./PopUpWindow.js";
+/* eslint-disable */
+// TODO: Eslint is disabled because this file will be deleted
+
+import React, { useEffect, useState, useRef } from 'react';
+import { useParams, useNavigate, useLocation } from 'react-router-dom';
+import { HotKeys } from 'react-hotkeys';
+import OpenSheetMusicDisplay from './OpenSheetMusicDisplay';
+import PopUpWindow from './PopUpWindow.js';
 import {
   getRecording,
   deleteRecording,
-} from "../utils/studentRecordingMethods.js";
-import ControlBar from "./ControlBar.js";
-import { getAudioContext } from "../context/audioContext";
+} from '../utils/studentRecordingMethods.js';
+import ControlBar from './ControlBar.js';
+import { getAudioContext } from '../context/audioContext';
 
-const folderBasePath = "/xmlScores/violin";
+const folderBasePath = '/xmlScores/violin';
 
 let currentSource = null; // Must be global so that React redraws don't lose track of the source
 
@@ -50,7 +53,7 @@ const ProgressPlayFileVisual = () => {
   const [repeatsIterator, setRepeatsIterator] = useState(false);
   const [showRepetitionMessage, setShowRepetitionMessage] = useState(false);
   const [repetitionMessage, setRepetitionMessage] = useState(
-    "No stored recordings yet"
+    'No stored recordings yet'
   );
 
   const [cursorFinished, setCursorFinished] = useState(false);
@@ -67,7 +70,7 @@ const ProgressPlayFileVisual = () => {
 
   // Hot keys map and handlers
   const keyMap = {
-    TOGGLE_RESET: `${isMac ? "command" : "ctrl"}+shift+r`,
+    TOGGLE_RESET: `${isMac ? 'command' : 'ctrl'}+shift+r`,
     TOGGLE_PLAY: `p`,
     TOGGLE_STATS: `s`,
     TOGGLE_INFO: `i`,
@@ -95,12 +98,12 @@ const ProgressPlayFileVisual = () => {
   const location = useLocation();
   const navigate = useNavigate();
   const options = {
-    weekday: "long",
-    year: "numeric",
-    month: "long",
-    day: "numeric",
-    hour: "2-digit",
-    minute: "2-digit",
+    weekday: 'long',
+    year: 'numeric',
+    month: 'long',
+    day: 'numeric',
+    hour: '2-digit',
+    minute: '2-digit',
   };
   const newUrl = window.location.href;
 
@@ -109,7 +112,7 @@ const ProgressPlayFileVisual = () => {
   useEffect(() => {
     getRecording(recordingID).then((recordingJSON) => {
       // Get score info
-      const scoreInfo = JSON.parse(localStorage.getItem("scoreData")).find(
+      const scoreInfo = JSON.parse(localStorage.getItem('scoreData')).find(
         (item) => item.fname === params.files
       );
 
@@ -118,7 +121,7 @@ const ProgressPlayFileVisual = () => {
       setMetaData({
         name: recordingJSON.recordingName,
         stars: recordingJSON.info.stars,
-        date: recordingDate.toLocaleDateString("en-UK", options),
+        date: recordingDate.toLocaleDateString('en-UK', options),
         skill: scoreInfo.skill,
         level: scoreInfo.level,
         score: scoreInfo.title,
@@ -158,10 +161,10 @@ const ProgressPlayFileVisual = () => {
   // Define recording stop when cursor finishes callback function
   const handleReceiveRepetitionInfo = (showingRep, totalRep) => {
     if (totalRep === 0) {
-      setRepetitionMessage("No recordings yet");
+      setRepetitionMessage('No recordings yet');
     } else {
       const message_aux =
-        "Seeing " + (showingRep + 1) + " of " + (totalRep + 1);
+        'Seeing ' + (showingRep + 1) + ' of ' + (totalRep + 1);
       setRepetitionMessage(message_aux);
     }
   };
@@ -170,7 +173,7 @@ const ProgressPlayFileVisual = () => {
   const playAudio = async () => {
     try {
       // Check if audioContext is suspended. If so, resume it.
-      if (audioContext.state === "suspended") {
+      if (audioContext.state === 'suspended') {
         await audioContext.resume();
       }
 
@@ -185,7 +188,7 @@ const ProgressPlayFileVisual = () => {
       startTimeRef.current = audioContext.currentTime - pauseTimeRef.current;
       setIsPlaying(true);
     } catch (error) {
-      console.error("Error playing audio:", error);
+      console.error('Error playing audio:', error);
     }
   };
 
@@ -283,9 +286,9 @@ const ProgressPlayFileVisual = () => {
   const isMacOs = async () => {
     if (navigator.userAgentData) {
       const uaData = await navigator.userAgentData.getHighEntropyValues([
-        "platform",
+        'platform',
       ]);
-      return uaData.platform === "macOS";
+      return uaData.platform === 'macOS';
     } else {
       return /mac/i.test(navigator.userAgent);
     }
@@ -367,7 +370,7 @@ const ProgressPlayFileVisual = () => {
             cursorActivity={handleFinishedCursorOSMDCallback}
             cursorJumpsBack={handleJumpedCursorOSMDCallback}
             mode={true} // Passed as true to indicate that we are not in a type of record mode
-            visual={"yes"}
+            visual={'yes'}
             visualJSON={json}
           />
           <div className="absolute top-0 left-0 w-full h-full bg-transparent z-20 pointer-events-auto"></div>
@@ -400,7 +403,7 @@ const ProgressPlayFileVisual = () => {
         <PopUpWindow isOpen={showDeleteRecordingPopUp}>
           <div>
             <p className="text-xl font-extrabold text-gray-800 mb-1">
-              Are you sure you want to delete{" "}
+              Are you sure you want to delete{' '}
               <span className="capitalize">{metaData.name}</span>?
             </p>
             <p className="text-gray-600 mb-4">

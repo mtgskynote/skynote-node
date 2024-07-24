@@ -1,8 +1,8 @@
 // Navbar.js
-import React, { useState, useEffect } from "react";
-import { NavLink } from "react-router-dom";
-import { useAppContext } from "../context/appContext";
-import { getMessages } from "../utils/messagesMethods.js";
+import React, { useState, useEffect } from 'react';
+import { NavLink } from 'react-router-dom';
+import { useAppContext } from '../context/appContext';
+import { getMessages } from '../utils/messagesMethods.js';
 import {
   AppBar,
   Toolbar,
@@ -11,17 +11,17 @@ import {
   MenuItem,
   Badge,
   Tooltip,
-} from "@mui/material";
-import ClickAwayListener from "@mui/material/ClickAwayListener";
+} from '@mui/material';
+import ClickAwayListener from '@mui/material/ClickAwayListener';
 import {
   AccountCircle,
   Notifications,
   Settings,
   Menu as MenuIcon,
   MenuOpen as MenuOpenIcon,
-} from "@mui/icons-material";
-import { useMediaQuery } from "@material-ui/core";
-import InstrumentDropdown from "./InstrumentDropdown.js";
+} from '@mui/icons-material';
+import { useMediaQuery } from '@material-ui/core';
+import InstrumentDropdown from './InstrumentDropdown.js';
 
 function Navbar() {
   // State variables
@@ -36,7 +36,7 @@ function Navbar() {
 
   // App context and media query hook
   const { logoutUser, getCurrentUser } = useAppContext();
-  const isLargeScreen = useMediaQuery("(min-width: 1024px)");
+  const isLargeScreen = useMediaQuery('(min-width: 1024px)');
 
   // Function to fetch user data from API
   const fetchDataFromAPI = () => {
@@ -121,15 +121,15 @@ function Navbar() {
 
   // Navigation items
   const navItems = [
-    ["Dashboard", "/"],
-    ["Lessons", "/lessons"],
-    ["Assignments", "/assignments"],
+    ['Dashboard', '/'],
+    ['Lessons', '/lessons'],
+    ['Assignments', '/assignments'],
     // ["Imported Scores", "/imported-scores"],
   ];
 
   const navItemsMobile = [
-    ["Sound Visualization", "/TimbreVisualization"],
-    ["My Profile", "/profile"],
+    ['Sound Visualization', '/TimbreVisualization'],
+    ['My Profile', '/profile'],
   ];
 
   // Navbar component with navigation and user options
@@ -156,9 +156,9 @@ function Navbar() {
                 to={url}
                 className={({ isActive }) =>
                   [
-                    "text-slate-50 no-underline transition-all duration-300 hover:text-3xl whitespace-nowrap",
-                    isActive ? "font-bold text-3xl" : "font-normal text-2xl",
-                  ].join(" ")
+                    'text-slate-50 no-underline transition-all duration-300 hover:text-3xl whitespace-nowrap',
+                    isActive ? 'font-bold text-3xl' : 'font-normal text-2xl',
+                  ].join(' ')
                 }
               >
                 {title}
@@ -174,7 +174,7 @@ function Navbar() {
             <div className="relative">
               <Tooltip
                 placement="bottom"
-                title={!notificationsOpen && "Notifications"}
+                title={!notificationsOpen && 'Notifications'}
                 arrow
               >
                 <IconButton
@@ -192,8 +192,8 @@ function Navbar() {
               <div
                 className={`z-50 absolute right-0 w-96 bg-white shadow-md rounded-sm p-4 overflow-y-auto max-h-screen-75 transition-opacity duration-300 ${
                   notificationsOpen
-                    ? "opacity-100"
-                    : "opacity-0 pointer-events-none"
+                    ? 'opacity-100'
+                    : 'opacity-0 pointer-events-none'
                 }`}
               >
                 {/* Render unread messages */}

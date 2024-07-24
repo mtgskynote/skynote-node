@@ -14,13 +14,13 @@ USAGE:
   The array argument to audioStreamer.init are strings naming the Meyda features you want. 
 */
 
-import { makeCrepeScriptNode } from "./pitch/crepeScriptNode.js";
-import Meyda from "meyda"; //https://meyda.js.org
+import { makeCrepeScriptNode } from './pitch/crepeScriptNode.js';
+import Meyda from 'meyda'; //https://meyda.js.org
 import {
   getAudioContext,
   suspendAudioContext,
   resumeAudioContext,
-} from "../context/audioContext";
+} from '../context/audioContext';
 
 const meyda_buff_fft_length = 1024; // fft length and buf size are the same for Meyda
 
@@ -46,12 +46,12 @@ var makeAudioStreamer = function (
     analyzerCb: analysisCb,
 
     dismantleAudioNodes: function () {
-      console.log("DiSMANTLING audio nodes");
+      console.log('DiSMANTLING audio nodes');
       // Stop all tracks on the audio source
       if (mediaStream) {
         mediaStream.getTracks().forEach((track) => track.stop());
         mediaStream = null;
-        console.log("MediaStream tracks stopped");
+        console.log('MediaStream tracks stopped');
       }
 
       sourceNode && sourceNode.disconnect();
@@ -61,7 +61,7 @@ var makeAudioStreamer = function (
     },
 
     init: async function (recordMode, meydaFeatures = []) {
-      console.log("meydaFeatures ", meydaFeatures);
+      console.log('meydaFeatures ', meydaFeatures);
 
       mediaStream = await navigator.mediaDevices.getUserMedia({
         audio: {
@@ -102,8 +102,8 @@ var makeAudioStreamer = function (
       resumeAudioContext();
       sourceNode = audioContext.createMediaStreamSource(mediaStream);
 
-      if (typeof Meyda === "undefined") {
-        console.log("Meyda could not be found! Have you included it?");
+      if (typeof Meyda === 'undefined') {
+        console.log('Meyda could not be found! Have you included it?');
       } else {
         const analyzer = Meyda.createMeydaAnalyzer({
           audioContext: audioContext,
@@ -131,7 +131,7 @@ var makeAudioStreamer = function (
       // In most platforms where the sample rate is 44.1 kHz or 48 kHz, this will be 4096, giving 10-12 updates/sec.
       const minBufferSize = (audioContext.sampleRate / 16000) * 1024;
       for (var bufferSize = 4; bufferSize < minBufferSize; bufferSize *= 2);
-      console.log("CREPE Buffer size = " + bufferSize);
+      console.log('CREPE Buffer size = ' + bufferSize);
       // console.log(
       //   `Setting up a crepescriptnode with pitchcallback  ${pitchCallback}`
       // );
@@ -155,9 +155,9 @@ var makeAudioStreamer = function (
     },
 
     close: function () {
-      console.log("audiochunks", audioChunks);
+      console.log('audiochunks', audioChunks);
       if (mediaRecorder) {
-        console.log("mediaRecorder.state is ", mediaRecorder.state);
+        console.log('mediaRecorder.state is ', mediaRecorder.state);
         mediaRecorder.stop();
       }
 
@@ -176,9 +176,9 @@ var makeAudioStreamer = function (
       //audioContext.suspend();
     },
     save_or_not: async function (answer) {
-      if (answer === "save") {
+      if (answer === 'save') {
         //This creates an audioBlob
-        const audioBlob = new Blob(audioChunks, { type: "audio/mpeg" });
+        const audioBlob = new Blob(audioChunks, { type: 'audio/mpeg' });
         // Transform audioBlob to audioArray
         try {
           // Convert Blob to ArrayBuffer using await
@@ -189,7 +189,7 @@ var makeAudioStreamer = function (
           suspendAudioContext();
           return arrayBuffer;
         } catch (error) {
-          console.error("Error converting Blob to ArrayBuffer:", error);
+          console.error('Error converting Blob to ArrayBuffer:', error);
           // Clean
           audioChunks = [];
           //audioContext.suspend();

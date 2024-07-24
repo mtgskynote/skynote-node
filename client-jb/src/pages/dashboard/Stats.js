@@ -1,17 +1,17 @@
-import React, { useEffect, useState } from "react";
-import { Chart as ChartJS, ArcElement, Tooltip, Legend } from "chart.js";
-import { useAppContext } from "../../context/appContext";
-import { getAllRecData } from "../../utils/studentRecordingMethods.js";
-import { getAllAssignments } from "../../utils/assignmentsMethods.js";
+import React, { useEffect, useState } from 'react';
+import { Chart as ChartJS, ArcElement, Tooltip, Legend } from 'chart.js';
+import { useAppContext } from '../../context/appContext';
+import { getAllRecData } from '../../utils/studentRecordingMethods.js';
+import { getAllAssignments } from '../../utils/assignmentsMethods.js';
 import {
   getUserFavourites,
   getRecordingsPastWeek,
-} from "../../utils/usersMethods.js";
-import LessonCard from "../../components/LessonCard.js";
-import RecordingsProgressChart from "../../components/RecordingsProgressChart.js";
-import LevelsProgressChart from "../../components/LevelsProgressChart.js";
-import AssignmentCard from "../../components/AssignmentCard.js";
-import LoadingScreen from "../../components/LoadingScreen.js";
+} from '../../utils/usersMethods.js';
+import LessonCard from '../../components/LessonCard.js';
+import RecordingsProgressChart from '../../components/RecordingsProgressChart.js';
+import LevelsProgressChart from '../../components/LevelsProgressChart.js';
+import AssignmentCard from '../../components/AssignmentCard.js';
+import LoadingScreen from '../../components/LoadingScreen.js';
 
 ChartJS.register(ArcElement, Tooltip, Legend);
 
@@ -32,7 +32,7 @@ const Stats = () => {
   const [recordingSkills, setRecordingSkills] = useState(null);
   const [recordingLevels, setRecordingLevels] = useState(null);
   const [starsPerLevel, setStarsPerLevel] = useState(null);
-  const [achievedStarsPerLevel, setAchievedStarsPerLevel] = useState(null);
+  const [, setAchievedStarsPerLevel] = useState(null);
   const [recentRecordings, setRecentRecordings] = useState(null);
   const [recentScores, setRecentScores] = useState({});
   const [unansweredTasks, setUnansweredTasks] = useState(null);
@@ -58,7 +58,7 @@ const Stats = () => {
     setRecordingList(
       JSON.stringify(
         JSON.parse(recordingList).filter(
-          (item, index) => item.recordingId !== idDelete
+          (item) => item.recordingId !== idDelete
         )
       )
     );
@@ -117,7 +117,7 @@ const Stats = () => {
         const recordingsPastWeek = await getRecordingsPastWeek(currentUser.id);
         setLastWeekRecordings(recordingsPastWeek);
       } catch (error) {
-        console.log("Error fetching data: ", error);
+        console.log('Error fetching data: ', error);
       }
     };
 
@@ -141,9 +141,9 @@ const Stats = () => {
   //get Scores data
   useEffect(() => {
     // import local data
-    const local = JSON.parse(localStorage.getItem("scoreData"));
+    const local = JSON.parse(localStorage.getItem('scoreData'));
     if (local === null) {
-      console.log("No scores data found in local storage");
+      console.log('No scores data found in local storage');
       return;
     }
     // save in state

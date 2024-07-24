@@ -2,7 +2,9 @@
 let audioContext;
 
 function createAudioContext() {
-  return new (window.AudioContext || window.webkitAudioContext)({ latencyHint: 'interactive' });
+  return new (window.AudioContext || window.webkitAudioContext)({
+    latencyHint: 'interactive',
+  });
 }
 
 export function getAudioContext() {
@@ -37,7 +39,9 @@ async function startMicrophone() {
     return microphoneStream;
   }
   try {
-    microphoneStream = await navigator.mediaDevices.getUserMedia({ audio: true });
+    microphoneStream = await navigator.mediaDevices.getUserMedia({
+      audio: true,
+    });
     console.log('Microphone started');
     return microphoneStream;
   } catch (err) {
@@ -48,7 +52,7 @@ async function startMicrophone() {
 
 function stopMicrophone() {
   if (microphoneStream) {
-    microphoneStream.getTracks().forEach(track => track.stop());
+    microphoneStream.getTracks().forEach((track) => track.stop());
     microphoneStream = null;
     console.log('Microphone stopped');
   }

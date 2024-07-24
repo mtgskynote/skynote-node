@@ -1,178 +1,174 @@
-
 /*CSS for Save/Delete PopupWindow*/
 .popUpWindowSave {
-    position: fixed;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    width: 400px;
-    max-width: 80%;
-    background: white;
-    border: 2px solid #A3CD8F;
-    border-radius: 8px;
-    box-shadow: 0 0 20px rgba(0, 0, 0, 0.2);
-    z-index: 1000;
-    text-align: center; /* Center text within the container */
-  }
-  
-  .contentSave {
-    padding: 20px;
-  }
-  
-  /* Style the buttons */
-  .buttonSave {
-    margin: 10px 5px;
-    padding: 10px 20px;
-    cursor: pointer;
-    background-color: #A3CD8F;
-    color: white;
-    border: none;
-    border-radius: 4px;
-    font-size: 14px;
-  }
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 400px;
+  max-width: 80%;
+  background: white;
+  border: 2px solid #a3cd8f;
+  border-radius: 8px;
+  box-shadow: 0 0 20px rgba(0, 0, 0, 0.2);
+  z-index: 1000;
+  text-align: center; /* Center text within the container */
+}
 
-  /*CSS for Delete Yes/No PopupWindow*/
-  .popUpWindowDelete {
-    position: fixed;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    width: 400px;
-    max-width: 80%;
-    background: white;
-    border: 2px solid #DDE172;
-    border-radius: 8px;
-    box-shadow: 0 0 20px rgba(0, 0, 0, 0.2);
-    z-index: 1000;
-    text-align: center; /* Center text within the container */
-  }
-  
-  .contentDelete {
-    padding: 20px;
-  }
+.contentSave {
+  padding: 20px;
+}
 
-  .buttonDelete {
-    margin: 10px 5px;
-    padding: 10px 20px;
-    cursor: pointer;
-    background-color: #DDE172;
-    color: white;
-    border: none;
-    border-radius: 4px;
-    font-size: 14px;
-  }
-  
+/* Style the buttons */
+.buttonSave {
+  margin: 10px 5px;
+  padding: 10px 20px;
+  cursor: pointer;
+  background-color: #a3cd8f;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  font-size: 14px;
+}
 
+/*CSS for Delete Yes/No PopupWindow*/
+.popUpWindowDelete {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 400px;
+  max-width: 80%;
+  background: white;
+  border: 2px solid #dde172;
+  border-radius: 8px;
+  box-shadow: 0 0 20px rgba(0, 0, 0, 0.2);
+  z-index: 1000;
+  text-align: center; /* Center text within the container */
+}
 
-  /*Common for all*/
-  button:hover {
-    background-color: #a2a2a2;
-  }
+.contentDelete {
+  padding: 20px;
+}
 
-  /*CSS for Showing Grades of assignments PopupWindow*/
+.buttonDelete {
+  margin: 10px 5px;
+  padding: 10px 20px;
+  cursor: pointer;
+  background-color: #dde172;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  font-size: 14px;
+}
 
-  .popUpWindowGrades {
-    position: fixed;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    width: 50%;
-    background: white;
-    border: 2px solid #4f72a1;
-    border-radius: 8px;
-    box-shadow: 0 0 20px #8e9093;
-    z-index: 1000;
-    text-align: center; /* Center text within the container */
-  }
-  .contentGrades {
-    padding: 20px;
-  }
-  .buttonCloseGrades {
-    margin: 20px 5px;
-    padding: 10px 20px;
-    cursor: pointer;
-    background-color: #4f72a1;
-    color: white;
-    border: none;
-    border-radius: 4px;
-    font-size: 14px;
-  }
-  .titleGrades{
-    font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
-    padding: 10px;
-  }
-  .gradeGrades{
-    font-size:x-large;
-    font-weight: bolder;
-    padding: 10px;
-  }
-  .commentGrades{
-    font-weight: lighter;
-    font-style: oblique;
-    background-color: #e8ebee;
-    box-shadow: 0 0 20px rgba(187, 187, 187, 0.2);
-    padding: 10px;
+/*Common for all*/
+button:hover {
+  background-color: #a2a2a2;
+}
 
-  border-radius: 10px;  }
+/*CSS for Showing Grades of assignments PopupWindow*/
 
-  /*CSS for showing recordings of a score to choose to submit PopupWindow*/
+.popUpWindowGrades {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 50%;
+  background: white;
+  border: 2px solid #4f72a1;
+  border-radius: 8px;
+  box-shadow: 0 0 20px #8e9093;
+  z-index: 1000;
+  text-align: center; /* Center text within the container */
+}
+.contentGrades {
+  padding: 20px;
+}
+.buttonCloseGrades {
+  margin: 20px 5px;
+  padding: 10px 20px;
+  cursor: pointer;
+  background-color: #4f72a1;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  font-size: 14px;
+}
+.titleGrades {
+  font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
+  padding: 10px;
+}
+.gradeGrades {
+  font-size: x-large;
+  font-weight: bolder;
+  padding: 10px;
+}
+.commentGrades {
+  font-weight: lighter;
+  font-style: oblique;
+  background-color: #e8ebee;
+  box-shadow: 0 0 20px rgba(187, 187, 187, 0.2);
+  padding: 10px;
 
-  .popUpWindowRecordings {
-    position: fixed;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    width: 85%;
-    background: white;
-    border: 2px solid #4f72a1;
-    border-radius: 8px;
-    box-shadow: 0 0 20px #8e9093;
-    z-index: 1000;
-    text-align: center; /* Center text within the container */
-    padding: 20px;
-  }
+  border-radius: 10px;
+}
 
-  .iconGroup{
+/*CSS for showing recordings of a score to choose to submit PopupWindow*/
 
-    display:flex;
-    background-color: rgb(241, 241, 241);
-    flex-direction: row;
-    justify-content: space-around;
-    border-radius: 10px;
-    padding: 5px 0px;
-    margin: 10px 0px
-  }
-  .icon{
-    font-size:22px;
-    color:#b3b3b3;
-    margin:0px 11px;
-  }
-  .assurance{
-    margin:20px;
-    padding: 20px;
-    
-    box-shadow: 0 0 20px #c72424;
-    border-radius: 20px;
-    font-weight: bolder;
+.popUpWindowRecordings {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 85%;
+  background: white;
+  border: 2px solid #4f72a1;
+  border-radius: 8px;
+  box-shadow: 0 0 20px #8e9093;
+  z-index: 1000;
+  text-align: center; /* Center text within the container */
+  padding: 20px;
+}
 
-    }
+.iconGroup {
+  display: flex;
+  background-color: rgb(241, 241, 241);
+  flex-direction: row;
+  justify-content: space-around;
+  border-radius: 10px;
+  padding: 5px 0px;
+  margin: 10px 0px;
+}
+.icon {
+  font-size: 22px;
+  color: #b3b3b3;
+  margin: 0px 11px;
+}
+.assurance {
+  margin: 20px;
+  padding: 20px;
 
-    .yesIcon{
-      font-size:25px;
-      color:rgb(11, 120, 82);
-      margin:0px 11px;
-      font-weight: bolder;
-    }
-    .noIcon{
-      font-size:25px;
-      color:#c72424;
-      margin:0px 11px;
-      font-weight: bolder;
-    }
+  box-shadow: 0 0 20px #c72424;
+  border-radius: 20px;
+  font-weight: bolder;
+}
 
- /*CSS for showing PopupWindow to edit recording name*/
+.yesIcon {
+  font-size: 25px;
+  color: rgb(11, 120, 82);
+  margin: 0px 11px;
+  font-weight: bolder;
+}
+.noIcon {
+  font-size: 25px;
+  color: #c72424;
+  margin: 0px 11px;
+  font-weight: bolder;
+}
 
- .popUpWindowEdit {
+/*CSS for showing PopupWindow to edit recording name*/
+
+.popUpWindowEdit {
   position: fixed;
   top: 50%;
   left: 50%;
@@ -202,18 +198,18 @@
   font-size: 14px;
 }
 
-.textEdit{
+.textEdit {
   width: 100%;
-  resize:none;
-overflow-x: scroll;
-text-align: left;
-text-overflow: clip;
-padding: 10px;
-box-sizing: border-box;
-border-radius: 20px ;
-border: 1px solid #caddfb;
+  resize: none;
+  overflow-x: scroll;
+  text-align: left;
+  text-overflow: clip;
+  padding: 10px;
+  box-sizing: border-box;
+  border-radius: 20px;
+  border: 1px solid #caddfb;
 }
-.warning{
+.warning {
   font-size: small;
   color: #c72424;
   font-style: oblique;
@@ -247,7 +243,7 @@ border: 1px solid #caddfb;
   display: flex;
   text-align: left;
 }
-.itemAssignments{
+.itemAssignments {
   width: 300px;
   max-width: 100%;
   height: 700px;
@@ -257,7 +253,7 @@ border: 1px solid #caddfb;
   /* margin: 20px; */
   overflow-y: auto;
 }
-.inputElementAssignments{
+.inputElementAssignments {
   padding: 10px 10px 10px;
 }
 .buttonAssignments {
@@ -271,54 +267,55 @@ border: 1px solid #caddfb;
   font-size: 14px;
   white-space: nowrap;
 }
-.titleAssignments{
+.titleAssignments {
   padding: 20px 40px 20px;
   font-size: 20px;
   font-family: 'Poppins', sans-serif;
   font-weight: bold;
   /* padding: 10px; */
 }
-.form{
+.form {
   width: 300px;
   max-width: 100%;
   height: 700px;
   max-height: 100%;
   max-height: 100%;
 }
-.formlabel{
+.formlabel {
   /* font-size: larger; */
   color: #4f72a1;
 }
-.inputTextAssignments{
+.inputTextAssignments {
   width: 260px;
   max-width: 100%;
   /* height: 20px; */
   background-color: #eeeeee;
   text-align: justify;
-  text-overflow:clip;
-  border:#a2a2a2 1px solid;
+  text-overflow: clip;
+  border: #a2a2a2 1px solid;
   border-radius: 15px;
   padding: 10px 10px 10px;
   resize: none;
 }
-.gradeAssignments{
-  font-size:x-large;
+.gradeAssignments {
+  font-size: x-large;
   font-weight: bolder;
   padding: 10px;
 }
-.buttonGroupAssignments{
+.buttonGroupAssignments {
   display: flex;
   text-align: center;
-  padding:10px 10px 5px;
+  padding: 10px 10px 5px;
 }
 
-.commentAssignments{
+.commentAssignments {
   font-weight: lighter;
   font-style: oblique;
   background-color: #e8ebee;
   box-shadow: 0 0 20px rgba(187, 187, 187, 0.2);
   padding: 10px;
-  border-radius: 10px;  }
+  border-radius: 10px;
+}
 
 /*CSS for grading assignments PopupWindow*/
 
@@ -338,7 +335,7 @@ border: 1px solid #caddfb;
   z-index: 1000;
   text-align: center; /* Center text within the container */
 }
-.titleGrading{
+.titleGrading {
   padding: 20px 40px 20px;
   font-size: 20px;
   font-family: 'Poppins', sans-serif;

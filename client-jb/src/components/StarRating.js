@@ -1,6 +1,7 @@
-import React from "react";
-import StarRateRoundedIcon from "@mui/icons-material/StarRateRounded";
-import StarBorderRoundedIcon from "@mui/icons-material/StarBorderRounded";
+import React from 'react';
+import PropTypes from 'prop-types';
+import StarRateRoundedIcon from '@mui/icons-material/StarRateRounded';
+import StarBorderRoundedIcon from '@mui/icons-material/StarBorderRounded';
 
 const StarRating = ({ stars, size }) => {
   const renderStars = () => {
@@ -11,7 +12,7 @@ const StarRating = ({ stars, size }) => {
       filledStars.push(
         <StarRateRoundedIcon
           key={i}
-          className={`text-yellow-300 ${size ? size : "text-4xl"}`}
+          className={`text-yellow-300 ${size ? size : 'text-4xl'}`}
         />
       );
     }
@@ -20,7 +21,7 @@ const StarRating = ({ stars, size }) => {
       emptyStars.push(
         <StarBorderRoundedIcon
           key={i}
-          className={`text-yellow-300 ${size ? size : "text-4xl"}`}
+          className={`text-yellow-300 ${size ? size : 'text-4xl'}`}
         />
       );
     }
@@ -34,6 +35,11 @@ const StarRating = ({ stars, size }) => {
   };
 
   return <div className="flex items-center">{renderStars()}</div>;
+};
+
+StarRating.propTypes = {
+  stars: PropTypes.number.isRequired,
+  size: PropTypes.string,
 };
 
 export default StarRating;

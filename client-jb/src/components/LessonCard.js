@@ -1,9 +1,10 @@
-import React, { useState, useEffect, useRef } from "react";
-import { useNavigate } from "react-router-dom";
+import React, { useState, useEffect, useRef } from 'react';
+import PropTypes from 'prop-types';
+import { useNavigate } from 'react-router-dom';
 import {
   getManyRecordings,
   deleteRecording,
-} from "../utils/studentRecordingMethods";
+} from '../utils/studentRecordingMethods';
 import {
   CardContent,
   Typography,
@@ -11,12 +12,12 @@ import {
   LinearProgress,
   Tooltip,
   IconButton,
-} from "@mui/material";
-import { CloseRounded as CloseRoundedIcon } from "@mui/icons-material";
-import AudioPlayerIcon from "./AudioPlayerIcon";
-import StarRating from "./StarRating";
-import QueueMusicIcon from "@mui/icons-material/QueueMusic";
-import FavouriteButton from "./FavouriteButton";
+} from '@mui/material';
+import { CloseRounded as CloseRoundedIcon } from '@mui/icons-material';
+import AudioPlayerIcon from './AudioPlayerIcon';
+import StarRating from './StarRating';
+import QueueMusicIcon from '@mui/icons-material/QueueMusic';
+import FavouriteButton from './FavouriteButton';
 
 const LessonCard = ({
   title,
@@ -50,12 +51,12 @@ const LessonCard = ({
   // set defaults
   const viewRecordings =
     renderViewRecordings !== false ? renderViewRecordings : false;
-  const xSize = width ? width : "290px";
-  const bColour = backgroundColour ? backgroundColour : "bg-blue-400";
+  const xSize = width ? width : '290px';
+  const bColour = backgroundColour ? backgroundColour : 'bg-blue-400';
   const hoverColour = hoverBackgroundColour
     ? hoverBackgroundColour
-    : "hover:bg-blue-500";
-  const tColour = textColour ? textColour : "text-white";
+    : 'hover:bg-blue-500';
+  const tColour = textColour ? textColour : 'text-white';
 
   // Resets the deletionStatus to null after 10 seconds when it changes.
   useEffect(() => {
@@ -72,9 +73,9 @@ const LessonCard = ({
 
   // Adds and removes a mousedown event listener for closing the modal when clicking outside of it.
   useEffect(() => {
-    document.addEventListener("mousedown", handleClickOutsideModal);
+    document.addEventListener('mousedown', handleClickOutsideModal);
     return () => {
-      document.removeEventListener("mousedown", handleClickOutsideModal);
+      document.removeEventListener('mousedown', handleClickOutsideModal);
     };
   });
 
@@ -82,13 +83,13 @@ const LessonCard = ({
   const formatDate = (dateString) => {
     const date = new Date(dateString);
     const options = {
-      year: "numeric",
-      month: "short",
-      day: "2-digit",
-      hour: "2-digit",
-      minute: "2-digit",
+      year: 'numeric',
+      month: 'short',
+      day: '2-digit',
+      hour: '2-digit',
+      minute: '2-digit',
     };
-    return date.toLocaleString("en-UK", options);
+    return date.toLocaleString('en-UK', options);
   };
 
   // Handles the click event for viewing the score of the lesson and navigates to the '/all-lessons' route.
@@ -96,7 +97,7 @@ const LessonCard = ({
     e.stopPropagation(); // Prevents the event from bubbling up to the parent component.
 
     let path = xml;
-    const basePath = "/all-lessons/";
+    const basePath = '/all-lessons/';
     if (!xml.startsWith(basePath)) {
       path = `${basePath}${xml}`;
     }
@@ -130,7 +131,7 @@ const LessonCard = ({
         setRecordingsAudio(recordingAudios);
       }
     } catch (error) {
-      console.error("Error fetching recordings audio:", error);
+      console.error('Error fetching recordings audio:', error);
     } finally {
       setLoading(false);
     }
@@ -143,7 +144,7 @@ const LessonCard = ({
     });
 
     // Dispatch the 'stopAllAudio' event
-    const event = new Event("stopAllAudio");
+    const event = new Event('stopAllAudio');
     window.dispatchEvent(event);
     setPlayingAudioId(null);
 
@@ -177,11 +178,11 @@ const LessonCard = ({
       );
 
       deletedRecordingIds.push(recordingId);
-      setDeletionStatus("success");
+      setDeletionStatus('success');
       console.log(deletionStatus);
     } catch (error) {
       console.log(`Cannot delete recording from database: ${error}`);
-      setDeletionStatus("failure");
+      setDeletionStatus('failure');
     } finally {
       setDeletingRecording(null);
     }
@@ -206,7 +207,7 @@ const LessonCard = ({
       <div className="flex">
         <div
           className={`relative transition ease-in-out delay-50 rounded overflow-hidden shadow-md hover:shadow-lg ${bColour} ${hoverColour} hover:cursor-pointer mb-3`}
-          style={{ width: xSize, aspectRatio: "3 / 2" }}
+          style={{ width: xSize, aspectRatio: '3 / 2' }}
           onClick={handleViewScore}
           id={id}
         >
@@ -245,11 +246,11 @@ const LessonCard = ({
             <div className="absolute inset-x-0 bottom-0 w-full p-3 flex align-text-bottom">
               <StarRating
                 stars={stars}
-                size={"sm:text-3xl md:text-3xl lg:text-3xl xl:text-4xl"}
+                size={'sm:text-3xl md:text-3xl lg:text-3xl xl:text-4xl'}
               />
               <div
                 className={
-                  viewRecordings ? "grid grid-cols-2 ml-auto" : "ml-auto"
+                  viewRecordings ? 'grid grid-cols-2 ml-auto' : 'ml-auto'
                 }
               >
                 {viewRecordings ? (
@@ -279,14 +280,14 @@ const LessonCard = ({
       {/* Modal */}
       <div
         className={`cursor-default fixed inset-0 z-50 flex items-center justify-center bg-gray-800 bg-opacity-75 transition-opacity duration-300 ${
-          openRecordingsModal ? "opacity-100" : "opacity-0 pointer-events-none"
+          openRecordingsModal ? 'opacity-100' : 'opacity-0 pointer-events-none'
         }`}
         onClick={handleCloseRecordingsModal}
       >
         <div
           ref={modalRef}
           className={`bg-white p-8 rounded shadow-md transition-transform duration-300 transform ${
-            openRecordingsModal ? "scale-100" : "scale-95"
+            openRecordingsModal ? 'scale-100' : 'scale-95'
           }`}
           onClick={(e) => e.stopPropagation()}
         >
@@ -379,14 +380,14 @@ const LessonCard = ({
                 {deletionStatus && (
                   <div
                     className={`transition-opacity duration-500 ${
-                      deletionStatus === "success"
-                        ? "bg-green-200 text-green-700"
-                        : "bg-red-200 text-red-700"
+                      deletionStatus === 'success'
+                        ? 'bg-green-200 text-green-700'
+                        : 'bg-red-200 text-red-700'
                     } p-2 rounded-md mt-2`}
                   >
-                    {deletionStatus === "success"
-                      ? "Recording successfully deleted."
-                      : "Failed to delete recording."}
+                    {deletionStatus === 'success'
+                      ? 'Recording successfully deleted.'
+                      : 'Failed to delete recording.'}
                   </div>
                 )}
               </div>
@@ -396,6 +397,32 @@ const LessonCard = ({
       </div>
     </div>
   );
+};
+
+LessonCard.propTypes = {
+  title: PropTypes.string.isRequired,
+  skill: PropTypes.string.isRequired,
+  level: PropTypes.number.isRequired,
+  stars: PropTypes.number.isRequired,
+  isFavourite: PropTypes.bool.isRequired,
+  xml: PropTypes.string.isRequired,
+  id: PropTypes.string.isRequired,
+  recordings: PropTypes.arrayOf(
+    PropTypes.shape({
+      recordingId: PropTypes.string.isRequired,
+      recordingName: PropTypes.string.isRequired,
+      recordingDate: PropTypes.string.isRequired,
+      stars: PropTypes.number.isRequired,
+      audio: PropTypes.string,
+    })
+  ).isRequired,
+  reloadRecordingsCallback: PropTypes.func.isRequired,
+  renderViewRecordings: PropTypes.bool,
+  width: PropTypes.string,
+  backgroundColour: PropTypes.string,
+  hoverBackgroundColour: PropTypes.string,
+  textColour: PropTypes.string,
+  refreshData: PropTypes.func.isRequired,
 };
 
 export default LessonCard;

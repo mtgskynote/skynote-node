@@ -1,5 +1,6 @@
-import Violin_Ipad from "../assets/images/Violin_Ipad.jpg";
-const ViolinIpad = ({ height, width }) => {
+import React from 'react';
+import Violin_Ipad from '../assets/images/Violin_Ipad.jpg';
+const ViolinIpad = () => {
   return (
     <img
       src={Violin_Ipad}

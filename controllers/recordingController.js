@@ -1,6 +1,5 @@
-import student_recordings from "../models/StudentRecordings.js";
-import { StatusCodes } from "http-status-codes";
-import { BadRequestError, UnAuthenticatedError } from "../errors/index.js";
+import student_recordings from '../models/StudentRecordings.js';
+import { StatusCodes } from 'http-status-codes';
 
 /* see recordingRoutes.js for the routes that use these functions */
 
@@ -95,10 +94,10 @@ const getManyRecordings = async (req, res) => {
 
     res.status(StatusCodes.OK).json(recordingAudios); // Send the array of documents as JSON response
   } catch (error) {
-    console.error("Error fetching recordings:", error);
+    console.error('Error fetching recordings:', error);
     res
       .status(StatusCodes.INTERNAL_SERVER_ERROR)
-      .json({ error: "Internal server error" });
+      .json({ error: 'Internal server error' });
   }
 };
 
@@ -140,8 +139,8 @@ const patchViewPermissions = async (req, res) => {
     console.log(`     req.body.sharing = ${req.body.sharing}`);
 
     // Validate sharing if necessary
-    if (typeof sharing !== "boolean") {
-      return res.status(400).send("viewPermissions must be a boolean value");
+    if (typeof sharing !== 'boolean') {
+      return res.status(400).send('viewPermissions must be a boolean value');
     }
 
     // Find the recording by ID and update the sharing field
@@ -153,7 +152,7 @@ const patchViewPermissions = async (req, res) => {
     );
 
     if (!updatedRecording) {
-      return res.status(404).send("student_recordings not found");
+      return res.status(404).send('student_recordings not found');
     }
 
     res.sendStatus(200);
@@ -175,12 +174,12 @@ const deleteRecording = async (req, res) => {
     const result = await student_recordings.findByIdAndDelete(recordingId);
 
     if (!result) {
-      return res.status(404).send("Could not delete, document not found");
+      return res.status(404).send('Could not delete, document not found');
     }
 
-    res.status(200).send("Document successfully deleted");
+    res.status(200).send('Document successfully deleted');
   } catch (error) {
-    res.status(500).send("Server error in deleteRecording function");
+    res.status(500).send('Server error in deleteRecording function');
   }
 };
 
@@ -198,12 +197,12 @@ const editRecording = async (req, res) => {
       { recordingName: recordingName }
     );
     if (!updatedRecording) {
-      return res.status(404).json({ error: "Recording not found" });
+      return res.status(404).json({ error: 'Recording not found' });
     }
     res.status(200).json(updatedRecording);
   } catch (error) {
-    console.error("Error updating recording:", error);
-    res.status(500).json({ error: "Internal Server Error" });
+    console.error('Error updating recording:', error);
+    res.status(500).json({ error: 'Internal Server Error' });
   }
 };
 

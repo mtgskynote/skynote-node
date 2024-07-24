@@ -1,15 +1,15 @@
-import React, { useRef, useEffect } from "react";
-import PieChart from "./pieChart";
-import { makeAudioStreamer } from "./audioStreamer.js";
-import Queue from "../utils/QueueWithMaxLength";
-import PitchTuner from "./pitchTuner";
+import React, { useRef, useEffect } from 'react';
+import PieChart from './pieChart';
+import { makeAudioStreamer } from './audioStreamer.js';
+import Queue from '../utils/QueueWithMaxLength';
+import PitchTuner from './pitchTuner';
 
 // Labes for pieChart starting at [0,1] and going around clockwise
 const labels = [
-  "Pitch",
-  "Dynamic Stability", // based on rms
-  "Spectral Centroid",
-  "Spectral Flux",
+  'Pitch',
+  'Dynamic Stability', // based on rms
+  'Spectral Centroid',
+  'Spectral Flux',
 ];
 
 const freq2midipitch = (freq) => {
@@ -22,7 +22,6 @@ const TimbreVisualization = () => {
   console.log(`STARTING Timbre Visualization, about to create audio streamer.`);
   const pieChartRef = useRef(null);
   const pitchTunerRef = useRef(null);
-
 
   //---- Send array of values to pieChart for drawing segments
   function setSegments(sarray) {
@@ -95,7 +94,7 @@ const TimbreVisualization = () => {
 
   // Start the streaming audio and request your callbacks
   audioStreamer = makeAudioStreamer(pitchCallback, null, aCb);
-  audioStreamer.init(false, ["rms", "spectralCentroid", "spectralFlux"]); //LIST ONLY MEYDA FEATURES  !!!!!
+  audioStreamer.init(false, ['rms', 'spectralCentroid', 'spectralFlux']); //LIST ONLY MEYDA FEATURES  !!!!!
 
   useEffect(() => {
     return () => {
@@ -106,17 +105,17 @@ const TimbreVisualization = () => {
   return (
     <div
       style={{
-        textAlign: "center",
-        margin: "auto",
+        textAlign: 'center',
+        margin: 'auto',
       }}
       className="pt-8"
     >
       <h2> Sound Quality </h2>
       <div
         style={{
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "center",
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
         }}
       >
         <PieChart
@@ -132,8 +131,8 @@ const TimbreVisualization = () => {
 
       <div
         style={{
-          textAlign: "center",
-          margin: "auto",
+          textAlign: 'center',
+          margin: 'auto',
         }}
       >
         <h2> Pitch </h2>

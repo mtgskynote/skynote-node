@@ -1,20 +1,21 @@
-import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import React, { useState } from 'react';
+import PropTypes from 'prop-types';
+import { useNavigate } from 'react-router-dom';
 import {
   deleteRecording,
   editRecording,
-} from "../utils/studentRecordingMethods";
+} from '../utils/studentRecordingMethods';
 import {
   CardContent,
   Typography,
   Tooltip,
   IconButton,
   CircularProgress,
-} from "@mui/material";
-import DeleteIcon from "@mui/icons-material/Delete";
-import EditIcon from "@mui/icons-material/Edit";
-import StarRating from "./StarRating";
-import PopUpWindow from "./PopUpWindow";
+} from '@mui/material';
+import DeleteIcon from '@mui/icons-material/Delete';
+import EditIcon from '@mui/icons-material/Edit';
+import StarRating from './StarRating';
+import PopUpWindow from './PopUpWindow';
 
 const RecordingCard = ({
   recordingName,
@@ -40,12 +41,12 @@ const RecordingCard = ({
   const navigate = useNavigate();
 
   // Set defaults
-  const xSize = width ? width : "290px";
-  const bColour = backgroundColour ? backgroundColour : "bg-blue-400";
+  const xSize = width ? width : '290px';
+  const bColour = backgroundColour ? backgroundColour : 'bg-blue-400';
   const hoverColour = hoverBackgroundColour
     ? hoverBackgroundColour
-    : "hover:bg-blue-500";
-  const tColour = textColour ? textColour : "text-white";
+    : 'hover:bg-blue-500';
+  const tColour = textColour ? textColour : 'text-white';
 
   // Navigate to the ListRecordings route with the provided xml and recordingId
   const handleViewRecording = async () => {
@@ -73,7 +74,7 @@ const RecordingCard = ({
 
   // Update recording name in the database
   const handleUpdateRecordingName = () => {
-    if (newRecordingName !== "" && newRecordingName !== recordingName) {
+    if (newRecordingName !== '' && newRecordingName !== recordingName) {
       setShowEditWarning(false);
       setShowEditLoading(true);
       editRecording(recordingId, newRecordingName).then(() => {
@@ -121,7 +122,7 @@ const RecordingCard = ({
       <div className="flex">
         <div
           className={`relative transition ease-in-out delay-50 rounded overflow-hidden shadow-md hover:shadow-lg ${bColour} ${hoverColour} hover:cursor-pointer mb-3`}
-          style={{ width: xSize, aspectRatio: "3 / 2" }}
+          style={{ width: xSize, aspectRatio: '3 / 2' }}
           onClick={handleViewRecording}
         >
           <CardContent>
@@ -158,7 +159,7 @@ const RecordingCard = ({
             <div className="absolute inset-x-0 bottom-0 w-full p-3 flex align-text-bottom">
               <StarRating
                 stars={stars}
-                size={"sm:text-3xl md:text-3xl lg:text-3xl xl:text-4xl"}
+                size={'sm:text-3xl md:text-3xl lg:text-3xl xl:text-4xl'}
               />
               <div className="grid grid-cols-2 ml-auto">
                 <Tooltip placement="bottom" title="Edit" arrow>
@@ -197,7 +198,7 @@ const RecordingCard = ({
               <CircularProgress />
             </div>
           )}
-          <div className={`mb-4 ${showEditLoading ? "opacity-50" : ""}`}>
+          <div className={`mb-4 ${showEditLoading ? 'opacity-50' : ''}`}>
             <label className="block text-gray-700 mb-2" htmlFor="recordingName">
               Edit recording name:
             </label>
@@ -242,7 +243,7 @@ const RecordingCard = ({
               <CircularProgress />
             </div>
           )}
-          <div className={`${showDeleteLoading ? "opacity-50" : ""}`}>
+          <div className={`${showDeleteLoading ? 'opacity-50' : ''}`}>
             {showDeleteWarning && (
               <div className="bg-red-100 text-red-700 text-sm py-1 px-2 mb-4 rounded-lg flex justify-center items-center transition duration-300 ease-in-out">
                 <p className="m-0">Could not delete {recordingName}.</p>
@@ -275,6 +276,21 @@ const RecordingCard = ({
       </PopUpWindow>
     </div>
   );
+};
+
+RecordingCard.propTypes = {
+  recordingName: PropTypes.string.isRequired,
+  skill: PropTypes.string.isRequired,
+  stars: PropTypes.number.isRequired,
+  xml: PropTypes.string.isRequired,
+  recordingId: PropTypes.string.isRequired,
+  recordingDate: PropTypes.string.isRequired,
+  onDeleteRecording: PropTypes.func.isRequired,
+  width: PropTypes.string,
+  backgroundColour: PropTypes.string,
+  hoverBackgroundColour: PropTypes.string,
+  textColour: PropTypes.string,
+  onEditRecording: PropTypes.func.isRequired,
 };
 
 export default RecordingCard;

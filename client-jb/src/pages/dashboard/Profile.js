@@ -1,9 +1,9 @@
-import React, { useState, useEffect } from "react";
-import { useAppContext } from "../../context/appContext";
-import axios from "axios";
-import LoadingScreen from "../../components/LoadingScreen";
-import Error from "../../components/Error";
-import AlertNew from "../../components/AlertNew";
+import React, { useState, useEffect } from 'react';
+import { useAppContext } from '../../context/appContext';
+import axios from 'axios';
+import LoadingScreen from '../../components/LoadingScreen';
+import Error from '../../components/Error';
+import AlertNew from '../../components/AlertNew';
 
 const Profile = () => {
   const { getCurrentUser } = useAppContext();
@@ -13,14 +13,14 @@ const Profile = () => {
   const [isLoading, setIsLoading] = useState(null);
   const [isPageLoading, setIsPageLoading] = useState(true);
   const [changePassword, setChangePassword] = useState(false);
-  const [newPassword, setNewPassword] = useState("");
-  const [confirmPassword, setConfirmPassword] = useState("");
-  const [alertText, setAlertText] = useState("");
-  const [alertType, setAlertType] = useState("");
+  const [newPassword, setNewPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
+  const [alertText, setAlertText] = useState('');
+  const [alertType, setAlertType] = useState('');
   const [showAlert, setShowAlert] = useState(false);
 
   const errorMessages = {
-    profileDataError: "No data available.",
+    profileDataError: 'No data available.',
   };
 
   useEffect(() => {
@@ -31,12 +31,12 @@ const Profile = () => {
     const fetchDataFromAPI = async () => {
       try {
         const result = await getCurrentUser();
-        const response = await axios.get("/api/v1/auth/getProfileData", {
+        const response = await axios.get('/api/v1/auth/getProfileData', {
           params: {
             userId: result.id,
           },
           headers: {
-            Authorization: `Bearer ${localStorage.getItem("token")}`,
+            Authorization: `Bearer ${localStorage.getItem('token')}`,
           },
         });
 
@@ -44,12 +44,12 @@ const Profile = () => {
           setFormData(response.data.user);
           setInitialFormData(response.data.user);
         } else {
-          console.error("Error fetching profile data:", response.statusText);
-          showAlertMessage("Error fetching profile data", "error");
+          console.error('Error fetching profile data:', response.statusText);
+          showAlertMessage('Error fetching profile data', 'error');
         }
       } catch (error) {
-        console.error("Network error:", error);
-        showAlertMessage("Network error", "error");
+        console.error('Network error:', error);
+        showAlertMessage('Network error', 'error');
         setFormData(initialFormData);
       }
     };
@@ -66,7 +66,7 @@ const Profile = () => {
     // After 2 seconds, hide the alert
     setTimeout(() => {
       setShowAlert(false);
-      setAlertText("");
+      setAlertText('');
     }, 2000);
   };
 
@@ -84,68 +84,68 @@ const Profile = () => {
     const updateProfileData = async () => {
       try {
         const profileResponse = await axios.post(
-          "/api/v1/profile/updateProfileData",
+          '/api/v1/profile/updateProfileData',
           updatedFormData,
           {
             headers: {
-              authorization: `Bearer ${localStorage.getItem("token")}`,
-              "Content-Type": "application/json",
+              authorization: `Bearer ${localStorage.getItem('token')}`,
+              'Content-Type': 'application/json',
             },
           }
         );
 
         if (profileResponse.status === 200) {
           setIsEditing(false);
-          console.log("Profile updated successfully!", profileResponse.data);
-          showAlertMessage("Profile updated successfully!", "success");
+          console.log('Profile updated successfully!', profileResponse.data);
+          showAlertMessage('Profile updated successfully!', 'success');
         } else {
-          console.error("Error updating profile:", profileResponse.statusText);
-          showAlertMessage("Error updating profile", "error");
+          console.error('Error updating profile:', profileResponse.statusText);
+          showAlertMessage('Error updating profile', 'error');
           setFormData(initialFormData);
         }
       } catch (error) {
-        console.error("Network error:", error);
-        showAlertMessage("Network error", "error");
+        console.error('Network error:', error);
+        showAlertMessage('Network error', 'error');
         setFormData(initialFormData);
       }
     };
 
     const updatePassword = async () => {
       if (newPassword !== confirmPassword) {
-        console.log("not the same");
-        showAlertMessage("New passwords do not match", "error");
+        console.log('not the same');
+        showAlertMessage('New passwords do not match', 'error');
         setIsEditing(true);
         return;
       }
 
       try {
-        console.log("trying to update password");
+        console.log('trying to update password');
         const passwordResponse = await axios.post(
-          "/api/v1/profile/changePassword",
+          '/api/v1/profile/changePassword',
           { newPassword: newPassword },
           {
             headers: {
-              authorization: `Bearer ${localStorage.getItem("token")}`,
-              "Content-Type": "application/json",
+              authorization: `Bearer ${localStorage.getItem('token')}`,
+              'Content-Type': 'application/json',
             },
           }
         );
 
         if (passwordResponse.status === 200) {
           setIsEditing(false);
-          console.log("Password updated successfully!");
-          showAlertMessage("Password updated successfully!", "success");
+          console.log('Password updated successfully!');
+          showAlertMessage('Password updated successfully!', 'success');
         } else {
           console.error(
-            "Error updating password:",
+            'Error updating password:',
             passwordResponse.statusText
           );
-          showAlertMessage("Error updating password", "error");
+          showAlertMessage('Error updating password', 'error');
           setFormData(initialFormData);
         }
       } catch (error) {
-        console.error("Network error:", error);
-        showAlertMessage("Network error", "error");
+        console.error('Network error:', error);
+        showAlertMessage('Network error', 'error');
         setFormData(initialFormData);
       }
     };
@@ -206,7 +206,7 @@ const Profile = () => {
                 id="firstName"
                 type="text"
                 name="name"
-                value={formData.name === "firstName" ? "" : formData.name || ""}
+                value={formData.name === 'firstName' ? '' : formData.name || ''}
                 onChange={handleChange}
                 className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                 required
@@ -225,9 +225,9 @@ const Profile = () => {
                 type="text"
                 name="lastName"
                 value={
-                  formData.lastName === "lastName"
-                    ? ""
-                    : formData.lastName || ""
+                  formData.lastName === 'lastName'
+                    ? ''
+                    : formData.lastName || ''
                 }
                 onChange={handleChange}
                 className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
@@ -247,7 +247,7 @@ const Profile = () => {
               id="email"
               type="email"
               name="email"
-              value={formData.email || ""}
+              value={formData.email || ''}
               onChange={handleChange}
               className="bg-gray-50 mb-3 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
               required
@@ -268,7 +268,7 @@ const Profile = () => {
                     id="password"
                     type="password"
                     name="password"
-                    value={"*********"}
+                    value={'*********'}
                     className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                     disabled
                   />
@@ -276,16 +276,16 @@ const Profile = () => {
                     type="button"
                     className={`ml-4 ${
                       changePassword
-                        ? "bg-red-200 hover:bg-red-300 text-red-700"
-                        : "bg-blue-300 hover:bg-blue-400 text-blue-700"
+                        ? 'bg-red-200 hover:bg-red-300 text-red-700'
+                        : 'bg-blue-300 hover:bg-blue-400 text-blue-700'
                     } text-sm border-none font-small rounded-lg px-2 py-1.5`}
                     onClick={() => {
                       setChangePassword(!changePassword);
-                      setNewPassword("");
-                      setConfirmPassword("");
+                      setNewPassword('');
+                      setConfirmPassword('');
                     }}
                   >
-                    {changePassword ? "Cancel" : "Change"}
+                    {changePassword ? 'Cancel' : 'Change'}
                   </button>
                 </div>
               </div>
@@ -336,9 +336,9 @@ const Profile = () => {
               <div className="flex items-center">
                 <div
                   className={`h-4 w-4 rounded-full ${
-                    formData.instrument === "violin"
-                      ? "bg-green-300"
-                      : "bg-gray-300"
+                    formData.instrument === 'violin'
+                      ? 'bg-green-300'
+                      : 'bg-gray-300'
                   }`}
                 ></div>
                 <span className="ml-2 font-small text-sm">Violin</span>
@@ -346,9 +346,9 @@ const Profile = () => {
               <div className="flex items-center">
                 <div
                   className={`h-4 w-4 rounded-full ${
-                    formData.instrument === "voice"
-                      ? "bg-green-300"
-                      : "bg-gray-300"
+                    formData.instrument === 'voice'
+                      ? 'bg-green-300'
+                      : 'bg-gray-300'
                   }`}
                 ></div>
                 <span className="ml-2 font-small text-sm">Voice</span>
@@ -369,8 +369,8 @@ const Profile = () => {
                 onClick={() => {
                   setIsEditing(false);
                   setChangePassword(false); // Hide password fields when cancel is clicked
-                  setNewPassword("");
-                  setConfirmPassword("");
+                  setNewPassword('');
+                  setConfirmPassword('');
                   setFormData(initialFormData);
                 }}
               >
