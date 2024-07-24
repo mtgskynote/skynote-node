@@ -165,7 +165,7 @@ const ControlBar = ({
 
   // Ensure that component practice mode state variable reflects parent component's state
   useEffect(() => {
-    setPracticeModeOn(practiceMode);
+    setPracticeModeOn(practiceMode)
   }, [practiceMode]);
 
   return (
