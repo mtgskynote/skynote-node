@@ -14,7 +14,7 @@ const RangeInput = ({ label, min, max, initial, onValueChange, disabled }) => {
   const handleValueChange = (e) => {
     let newValue = e.target.value;
 
-    if (newValue !== "" && (Number(newValue) < min || Number(newValue) > max)) {
+    if (newValue !== '' && (Number(newValue) < min || Number(newValue) > max)) {
       if (Number(newValue) < min) {
         newValue = min;
       } else if (Number(newValue) > max) {
