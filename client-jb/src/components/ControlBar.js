@@ -160,7 +160,7 @@ const ControlBar = ({
 
   // Handle resetting MIDI volume based on mode
   useEffect(() => {
-    setInitialMidiVolume(practiceModeOn ? 50 : 0)
+    setInitialMidiVolume(practiceModeOn ? 50 : 0);
   }, [practiceModeOn]);
 
   // Ensure that component practice mode state variable reflects parent component's state
