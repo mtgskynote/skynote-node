@@ -8,6 +8,7 @@ import {
   LinearTimingSource,
   BasicAudioPlayer,
   IAudioMetronomePlayer,
+  TransposeCalculator,
 } from 'opensheetmusicdisplay';
 
 import LineChart from './LineChartOSMD';
@@ -131,7 +132,6 @@ const generateNoteIDsAssociation = (osmd) => {
         let note = stave.staffEntries[note_index];
         let noteID = note.graphicalVoiceEntries[0].notes[0].getSVGId();
         const ourID = 'noteId_' + String(stave_index) + String(note_index);
-        console.log(ourID);
         IDdictionary[noteID] = ourID; //dict[auto-ID]=our-ID
         IDInverseDictionary[ourID] = noteID; // the inverse dict[our_ID]=auto-ID
       }
@@ -327,7 +327,10 @@ class OpenSheetMusicDisplay extends Component {
 
     //define the osmd features to be included
     this.osmd.load(this.props.file).then(() => {
+      this.osmd.TransposeCalculator = new TransposeCalculator();
       if (this.osmd.Sheet) {
+        this.osmd.Sheet.Transpose = this.props.transpose;
+        this.osmd.updateGraphic();
         this.osmd.render();
         this.osmd.cursor.CursorOptions.color = '#4ade80';
         this.osmd.render();
@@ -393,6 +396,14 @@ class OpenSheetMusicDisplay extends Component {
     }
   }
   //#endregion
+
+  updateTranspose(newTranspose) {
+    if (newTranspose !== undefined && newTranspose) {
+      this.osmd.Sheet.Transpose = parseInt(newTranspose);
+      this.osmd.updateGraphic();
+      if (this.osmd.IsReadyToRender()) this.osmd.render();
+    }
+  }
 
   //function to check cursor change
   //#region CURSOR CHANGE
@@ -519,7 +530,10 @@ class OpenSheetMusicDisplay extends Component {
       var notePitch;
       if (this.osmd.cursor.NotesUnderCursor()[0].Pitch !== undefined) {
         //note
-        notePitch = this.osmd.cursor.NotesUnderCursor()[0].Pitch.frequency;
+        notePitch =
+          this.osmd.cursor.NotesUnderCursor()[0].TransposedPitch !== undefined
+            ? this.osmd.cursor.NotesUnderCursor()[0].TransposedPitch.frequency
+            : this.osmd.cursor.NotesUnderCursor()[0].Pitch.frequency;
         //Check if pitch was matched or not, only if confidence of newPitchdata is >=0.5
         if (lastPitchConfidenceData >= 0.5) {
           if (
@@ -845,6 +859,10 @@ class OpenSheetMusicDisplay extends Component {
 
     if (this.props.bpm !== prevProps.bpm) {
       this.updateBpm(this.props.bpm);
+    }
+
+    if (this.props.transpose !== prevProps.transpose) {
+      this.updateTranspose(this.props.transpose);
     }
 
     // for zoom changes

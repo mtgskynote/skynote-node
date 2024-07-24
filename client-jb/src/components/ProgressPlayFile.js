@@ -668,6 +668,7 @@ const ProgressPlayFile = () => {
             dataToDownload={handleGetJsonCallback}
             canDownload={canDownload}
             visual={'no'}
+            transpose={transpose}
           />
           {(isRecording || isPlaying) && (
             <div className="absolute top-0 left-0 w-full h-full bg-transparent z-20 pointer-events-auto"></div>
