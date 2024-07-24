@@ -1,58 +1,119 @@
-import React, { useState, useRef, useEffect } from "react";
+import React, { useRef, useEffect, useCallback } from "react";
+import usePitchState from "../hooks/usePitchState";
+import useCursorState from "../hooks/useCursorState";
+import useInstanceVariables from "../hooks/useInstanceVariables";
+import {
+  PlaybackManager,
+  LinearTimingSource,
+  IAudioMetronomePlayer,
+  BasicAudioPlayer,
+} from "your-audio-library";
 
 const OpenSheetMusicDisplay = (props) => {
-  // State variables
-  const [pitchColor, setPitchColor] = useState([]);
-  const [pitchData, setPitchData] = useState([]);
-  const [pitchConfidenceData, setPitchConfidenceData] = useState([]);
-  const [pitchPositionX, setPitchPositionX] = useState([]);
-  const [pitchPositionY, setPitchPositionY] = useState([]);
-  const [recordedNoteIndex, setRecordedNoteIndex] = useState([]);
-  const [repetitionNumber, setRepetitionNumber] = useState([]);
-  const [recordedNoteIDs, setRecordedNoteIDs] = useState([]);
-  const [recordedNoteNEWIDs, setRecordedNoteNEWIDs] = useState([]);
-  const [colorNotes, setColorNotes] = useState([]);
-  const [initialCursorTop, setInitialCursorTop] = useState(0);
-  const [initialCursorLeft, setInitialCursorLeft] = useState(0);
-  const [currentGNoteinScorePitch, setCurrentGNoteinScorePitch] =
-    useState(null);
+  const pitchState = usePitchState();
+  const cursorState = useCursorState();
+  const instanceVariables = useInstanceVariables(props);
 
-  // References
   const divRef = useRef(null);
+  const playbackManagerRef = useRef(null);
+  const selectionEndReachedRef = useRef(false);
+  const calculatePunctuationRef = useRef(false);
 
-  // Instance variables
-  const osmd = useRef(undefined);
-  const cursorInterval = useRef(null);
-  const previousTimestamp = useRef(null);
-  const notePositionX = useRef(null);
-  const notePositionY = useRef(null);
-  const noteColor = useRef(null);
-  const index = useRef(null);
-  const spacing = useRef(4);
-  const countGoodNotes = useRef(0);
-  const countBadNotes = useRef(0);
-  const coords = useRef([0, 0]);
-  const color = useRef("black");
-  const zoom = useRef(props.zoom);
-  const drawPitch = useRef(props.drawPitch);
-  const totalReps = useRef(0);
-  const showingRep = useRef(0);
-  const selectionEndReached = useRef(false);
-  const calculatePunctuation = useRef(false);
-
-  useEffect(() => {
-    // Any side-effects or subscriptions go here
-    // Cleanup function if necessary
-
-    return () => {
-      // Clean up any subscriptions or intervals
-      if (cursorInterval.current) {
-        clearInterval(cursorInterval.current);
+  const setupListeners = (
+    props,
+    playbackManager,
+    selectionEndReachedRef,
+    calculatePunctuationRef
+  ) => {
+    const handleSelectionEndReached = (o) => {
+      console.log("end");
+      selectionEndReachedRef.current = true;
+      if (props.startPitchTrack) {
+        calculatePunctuationRef.current = true;
       }
     };
-  }, []);
 
-  // Add other functions and event handlers here
+    const myListener = {
+      selectionEndReached: handleSelectionEndReached,
+      resetOccurred: () => {},
+      cursorPositionChanged: (timestamp, data) => {},
+      pauseOccurred: () => {
+        console.log("pause");
+      },
+      notesPlaybackEventOccurred: () => {},
+    };
+
+    playbackManager.addListener(myListener);
+  };
+
+  const initializePlaybackManager = (
+    osmd,
+    playbackManager,
+    timingSource,
+    props
+  ) => {
+    timingSource.reset();
+    timingSource.pause();
+    timingSource.Settings = osmd.Sheet.playbackSettings;
+    playbackManager.initialize(osmd.Sheet.musicPartManager);
+    playbackManager.addListener(osmd.cursor);
+    playbackManager.reset();
+    osmd.PlaybackManager = playbackManager;
+
+    for (const instrument of playbackManager.InstrumentIdMapping.values()) {
+      instrument.Volume = props.recordVol;
+    }
+  };
+
+  const playbackOsmd = useCallback(
+    (osmd) => {
+      const timingSource = new LinearTimingSource();
+      playbackManagerRef.current = new PlaybackManager(
+        timingSource,
+        IAudioMetronomePlayer,
+        new BasicAudioPlayer(),
+        undefined
+      );
+
+      setupListeners(
+        props,
+        playbackManagerRef.current,
+        selectionEndReachedRef,
+        calculatePunctuationRef
+      );
+
+      playbackManagerRef.current.DoPlayback = true;
+      playbackManagerRef.current.DoPreCount = false;
+      playbackManagerRef.current.PreCountMeasures = 1;
+
+      const initialize = () => {
+        initializePlaybackManager(
+          osmd,
+          playbackManagerRef.current,
+          timingSource,
+          props
+        );
+      };
+
+      return { initialize };
+    },
+    [props]
+  );
+
+  useEffect(() => {
+    if (instanceVariables.osmd.current) {
+      const { initialize } = playbackOsmd(instanceVariables.osmd.current);
+      initialize();
+    }
+  }, [instanceVariables.osmd, playbackOsmd]);
+
+  useEffect(() => {
+    return () => {
+      if (instanceVariables.cursorInterval.current) {
+        clearInterval(instanceVariables.cursorInterval.current);
+      }
+    };
+  }, [instanceVariables.cursorInterval]);
 
   return <div ref={divRef}>{/* Render the component UI here */}</div>;
 };
