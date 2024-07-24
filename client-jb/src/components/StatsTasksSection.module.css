@@ -1,79 +1,78 @@
-.container{
-    width:100%;
+.container {
+  width: 100%;
 }
-.tableBox{
+.tableBox {
   height: fit-content;
   overflow-y: scroll;
-  border:#e5e5e5 solid 1px;
+  border: #e5e5e5 solid 1px;
   border-radius: 20px;
   background-color: white;
   margin: 20px 40px;
 }
 
-.title{
-    font-weight: bold;
+.title {
+  font-weight: bold;
 }
-.openButton{
-    background-color: #c9c9c9;
-    border-radius: 10px;
-    size: 30px;
-    padding: 6px
+.openButton {
+  background-color: #c9c9c9;
+  border-radius: 10px;
+  size: 30px;
+  padding: 6px;
 }
-.openIcon{
-    background-color: transparent;
-}
-
-.header{
-    background-color: #88a2cf;
-    padding: 10px 50px;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
+.openIcon {
+  background-color: transparent;
 }
 
-.announcementBody{
-    padding: 10px 50px;
-}
-.teacher{
-    display: flex;
-    width: fit-content;
-    padding: 10px;
-    border-radius: 8px;
-    align-items: center;
-}
-.userIcon{
-    border-radius: 50%;
-    border: #c9c9c9 2px solid;
-    padding: 10px;
-    margin: 0 5px 0 5px;
-    color: #717171;
+.header {
+  background-color: #88a2cf;
+  padding: 10px 50px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
 }
 
-.message{
-    font-style: oblique;
-    background-color: #f3f3f3;
-    border-radius: 10px;
-    padding: 12px 30px;
-    
+.announcementBody {
+  padding: 10px 50px;
 }
-.list{
-    list-style-type: circle;
+.teacher {
+  display: flex;
+  width: fit-content;
+  padding: 10px;
+  border-radius: 8px;
+  align-items: center;
 }
-.note{
-    font-weight: bolder;
-    text-align: center;
-    display: flex;
-    justify-content:center;
-    margin: 10px;
+.userIcon {
+  border-radius: 50%;
+  border: #c9c9c9 2px solid;
+  padding: 10px;
+  margin: 0 5px 0 5px;
+  color: #717171;
 }
 
-.text{
-    padding:0px 10px;
+.message {
+  font-style: oblique;
+  background-color: #f3f3f3;
+  border-radius: 10px;
+  padding: 12px 30px;
 }
-.iconbutton{
-    border:none;
-    background-color: transparent;
+.list {
+  list-style-type: circle;
 }
-  .exclamationIcon{
-    color:rgb(230, 37, 37)
-  }
+.note {
+  font-weight: bolder;
+  text-align: center;
+  display: flex;
+  justify-content: center;
+  margin: 10px;
+}
+
+.text {
+  padding: 0px 10px;
+}
+.iconbutton {
+  border: none;
+  background-color: transparent;
+}
+.exclamationIcon {
+  color: rgb(230, 37, 37);
+}

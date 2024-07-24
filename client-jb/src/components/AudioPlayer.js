@@ -1,11 +1,11 @@
-import React, { useState, useRef } from "react";
-import { getAudioContext, suspendAudioContext, resumeAudioContext } from '../context/audioContext';
+import React, { useState, useRef } from 'react';
+import { getAudioContext } from '../context/audioContext';
 
 const AudioPlayer = () => {
   const [audioBuffer, setAudioBuffer] = useState(null);
   const fileInputRef = useRef(null);
 
-  const handleFileSelect = (event) => {
+  const handleFileSelect = () => {
     const fileInput = fileInputRef.current;
     const file = fileInput.files[0];
 
@@ -13,7 +13,7 @@ const AudioPlayer = () => {
       const reader = new FileReader();
 
       reader.onload = function (importedFile) {
-        if (file.name.endsWith(".mp3")) {
+        if (file.name.endsWith('.mp3')) {
           // Handle audio file
           const audioContext = getAudioContext();
           audioContext.decodeAudioData(
@@ -22,13 +22,13 @@ const AudioPlayer = () => {
               setAudioBuffer(buffer);
             }
           );
-        } else if (file.name.endsWith(".json")) {
+        } else if (file.name.endsWith('.json')) {
           // Handle JSON file
-          console.log("holaaa", file);
+          console.log('holaaa', file);
           const uint8Array = new Uint8Array(importedFile.target.result);
           const jsonString = new TextDecoder().decode(uint8Array);
           const jsonContent = JSON.parse(jsonString);
-          console.log("JSON Content:", jsonContent);
+          console.log('JSON Content:', jsonContent);
         }
       };
 

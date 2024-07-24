@@ -1,10 +1,10 @@
 // ListRecordings.js
-import React, { useState, useEffect } from "react";
-import { useLocation, useNavigate } from "react-router-dom";
-import { getRecData } from "../utils/studentRecordingMethods.js";
-import { useAppContext } from "../context/appContext";
-import LoadingScreen from "./LoadingScreen.js";
-import RecordingCard from "./RecordingCard.js";
+import React, { useState, useEffect } from 'react';
+import { useLocation, useNavigate } from 'react-router-dom';
+import { getRecData } from '../utils/studentRecordingMethods.js';
+import { useAppContext } from '../context/appContext';
+import LoadingScreen from './LoadingScreen.js';
+import RecordingCard from './RecordingCard.js';
 
 const ListRecordings = () => {
   const { getCurrentUser } = useAppContext();
@@ -23,21 +23,21 @@ const ListRecordings = () => {
 
   // Define options for formatting date
   const options = {
-    year: "numeric",
-    month: "numeric",
-    day: "numeric",
-    hour: "2-digit",
-    minute: "2-digit",
+    year: 'numeric',
+    month: 'numeric',
+    day: 'numeric',
+    hour: '2-digit',
+    minute: '2-digit',
   };
 
   // Access the passed variables from the location object
-  const score = location.state?.score || "DefaultSong";
-  const song = location.state?.song || "DefaultSong1";
+  const score = location.state?.score || 'DefaultSong';
+  const song = location.state?.song || 'DefaultSong1';
 
   // Load recordings from userID and scoreID
   useEffect(() => {
     const itemFoundLocalStorage = JSON.parse(
-      localStorage.getItem("scoreData")
+      localStorage.getItem('scoreData')
     ).find((item) => item.fname === score);
     const scoreID = itemFoundLocalStorage._id;
     setScoreLevel(itemFoundLocalStorage.level);
@@ -48,8 +48,9 @@ const ListRecordings = () => {
         getCurrentUser() // fetchData is already an async function
           .then((result) => {
             setUserData(result);
-          }).catch((error) => {
-            console.log(`getCurrentUser() error: ${error}`)
+          })
+          .catch((error) => {
+            console.log(`getCurrentUser() error: ${error}`);
           });
       }
       if (userData !== null) {
@@ -67,7 +68,7 @@ const ListRecordings = () => {
               result.map((recording) => {
                 // Set correct date format
                 const recordingDate = new Date(recording.recordingDate);
-                return recordingDate.toLocaleDateString("en-UK", options);
+                return recordingDate.toLocaleDateString('en-UK', options);
               })
             );
           })

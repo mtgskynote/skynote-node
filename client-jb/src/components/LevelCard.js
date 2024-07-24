@@ -1,5 +1,6 @@
-import React from "react";
-import SubLevelCard from "./SubLevelCard";
+import React from 'react';
+import PropTypes from 'prop-types';
+import SubLevelCard from './SubLevelCard';
 
 const LevelCard = ({
   levelName,
@@ -65,6 +66,17 @@ const LevelCard = ({
       </div>
     </div>
   );
+};
+
+LevelCard.propTypes = {
+  levelName: PropTypes.string.isRequired,
+  levelNumber: PropTypes.number.isRequired,
+  levelLessons: PropTypes.objectOf(PropTypes.array).isRequired,
+  refreshData: PropTypes.func.isRequired,
+  subLevelIsOpen: PropTypes.bool.isRequired,
+  handleSubLevelClick: PropTypes.func.isRequired,
+  openSubLevel: PropTypes.number,
+  baseSubLevelIndex: PropTypes.number.isRequired,
 };
 
 export default LevelCard;

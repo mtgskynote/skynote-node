@@ -1,5 +1,7 @@
-import { useAppContext } from "../context/appContext";
-import { Navigate } from "react-router-dom";
+import React from 'react';
+import PropTypes from 'prop-types';
+import { useAppContext } from '../context/appContext';
+import { Navigate } from 'react-router-dom';
 
 const ProtectedRoute = ({ children }) => {
   const { user } = useAppContext();
@@ -8,4 +10,9 @@ const ProtectedRoute = ({ children }) => {
   }
   return children;
 };
+
+ProtectedRoute.propTypes = {
+  children: PropTypes.node.isRequired,
+};
+
 export default ProtectedRoute;

@@ -1,24 +1,25 @@
-import { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
-import { Logo, Alert } from "../components";
-import { useAppContext } from "../context/appContext";
+import React from 'react';
+import { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { Logo, Alert } from '../components';
+import { useAppContext } from '../context/appContext';
 
 // default initial state of form
 const initialState = {
-  name: "",
-  email: "",
-  password: "",
-  role: "student",
-  instrument: "violin",
+  name: '',
+  email: '',
+  password: '',
+  role: 'student',
+  instrument: 'violin',
   isMember: true,
 };
 // available roles to choose from when registering
 const roles = [
-  { value: "student", label: "Student" },
-  { value: "teacher", label: "Teacher" },
+  { value: 'student', label: 'Student' },
+  { value: 'teacher', label: 'Teacher' },
 ];
 // available instruments to choose from when registering
-const instruments = [{ value: "violin", label: "Violin" }];
+const instruments = [{ value: 'violin', label: 'Violin' }];
 
 function Register() {
   const [formData, setFormData] = useState(initialState);
@@ -54,14 +55,14 @@ function Register() {
     if (isMember) {
       setupUser({
         currentUser,
-        endPoint: "login",
-        alertText: "Login Successful! Redirecting...",
+        endPoint: 'login',
+        alertText: 'Login Successful! Redirecting...',
       });
     } else {
       setupUser({
         currentUser,
-        endPoint: "register",
-        alertText: "User Created! Redirecting...",
+        endPoint: 'register',
+        alertText: 'User Created! Redirecting...',
       });
     }
   };
@@ -70,7 +71,7 @@ function Register() {
   useEffect(() => {
     if (user) {
       setTimeout(() => {
-        navigate("/");
+        navigate('/');
       }, 3000);
     }
   }, [user, navigate]);
@@ -202,14 +203,14 @@ function Register() {
               className="w-full md:w-auto bg-blue-500 text-white py-2 px-4 rounded-lg hover:bg-blue-600 outline-none border-none focus:outline-none focus:ring-2 focus:ring-blue-400"
               type="submit"
             >
-              {formData.isMember ? "Login" : "Register"}
+              {formData.isMember ? 'Login' : 'Register'}
             </button>
 
             <p
               className="inline-block align-baseline font-bold text-sm text-blue-500 hover:text-blue-800 cursor-pointer"
               onClick={toggleMember}
             >
-              {formData.isMember ? "Not a member?" : "Back to login"}
+              {formData.isMember ? 'Not a member?' : 'Back to login'}
             </p>
           </div>
         </form>

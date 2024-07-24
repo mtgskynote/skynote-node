@@ -1,22 +1,23 @@
-// opensheetmusicdisplay.jsimports
-// necessary imports
-import React, { Component } from "react";
-import { OpenSheetMusicDisplay as OSMD } from "opensheetmusicdisplay"; //RepetitionInstruction
+/* eslint-disable */
+// TODO: Eslint is disabled because the OSMD component is being refactored
+
+import React, { Component } from 'react';
+import { OpenSheetMusicDisplay as OSMD } from 'opensheetmusicdisplay'; //RepetitionInstruction
 import {
   PlaybackManager,
   LinearTimingSource,
   BasicAudioPlayer,
   IAudioMetronomePlayer,
-} from "opensheetmusicdisplay";
+} from 'opensheetmusicdisplay';
 
-import LineChart from "./LineChartOSMD";
+import LineChart from './LineChartOSMD';
 import {
   Chart as Chartjs,
   LineElement,
   CategoryScale, // x axis
   LinearScale, // y axis
   PointElement,
-} from "chart.js";
+} from 'chart.js';
 
 Chartjs.register(LineElement, CategoryScale, LinearScale, PointElement);
 
@@ -26,8 +27,8 @@ Chartjs.register(LineElement, CategoryScale, LinearScale, PointElement);
 let isScrolling;
 let scrolled = false;
 window.addEventListener(
-  "scroll",
-  function (event) {
+  'scroll',
+  function () {
     // Clear our timeout throughout the scroll
     window.clearTimeout(isScrolling);
 
@@ -129,7 +130,7 @@ const generateNoteIDsAssociation = (osmd) => {
       ) {
         let note = stave.staffEntries[note_index];
         let noteID = note.graphicalVoiceEntries[0].notes[0].getSVGId();
-        const ourID = "noteId_" + String(stave_index) + String(note_index);
+        const ourID = 'noteId_' + String(stave_index) + String(note_index);
         console.log(ourID);
         IDdictionary[noteID] = ourID; //dict[auto-ID]=our-ID
         IDInverseDictionary[ourID] = noteID; // the inverse dict[our_ID]=auto-ID
@@ -148,7 +149,7 @@ const renderPitchLineZoom = (osmd, state, prevZoom, showingRep) => {
   let copy_pitchPositionY = state.pitchPositionY.slice();
   for (let stave_index = 0; stave_index < staves.length; stave_index++) {
     let stave = staves[stave_index][0];
-    const staveLines = document.getElementsByClassName("vf-stave")[stave_index];
+    const staveLines = document.getElementsByClassName('vf-stave')[stave_index];
     const upperLineStave = staveLines.children[0].getBoundingClientRect().top; //upper line
     const middleLineStave = staveLines.children[2].getBoundingClientRect().top; //middle line
     const lowerLineStave = staveLines.children[4].getBoundingClientRect().top; //lower line
@@ -244,7 +245,7 @@ class OpenSheetMusicDisplay extends Component {
     this.countGoodNotes = 0;
     this.countBadNotes = 0;
     this.coords = [0, 0];
-    this.color = "black";
+    this.color = 'black';
     this.zoom = props.zoom;
     this.drawPitch = props.drawPitch;
     this.totalReps = 0;
@@ -265,8 +266,8 @@ class OpenSheetMusicDisplay extends Component {
       new BasicAudioPlayer(),
       undefined
     );
-    const handleSelectionEndReached = (o) => {
-      console.log("end");
+    const handleSelectionEndReached = () => {
+      console.log('end');
       // Update the flag when the event occurs
       this.selectionEndReached = true;
       if (this.props.startPitchTrack) {
@@ -276,12 +277,12 @@ class OpenSheetMusicDisplay extends Component {
     };
     var myListener = {
       selectionEndReached: handleSelectionEndReached,
-      resetOccurred: function (o) {},
+      resetOccurred: function () {},
       cursorPositionChanged: function (timestamp, data) {},
-      pauseOccurred: function (o) {
-        console.log("pause");
+      pauseOccurred: function () {
+        console.log('pause');
       },
-      notesPlaybackEventOccurred: function (o) {},
+      notesPlaybackEventOccurred: function () {},
     };
     this.playbackManager.addListener(myListener);
 
@@ -328,7 +329,7 @@ class OpenSheetMusicDisplay extends Component {
     this.osmd.load(this.props.file).then(() => {
       if (this.osmd.Sheet) {
         this.osmd.render();
-        this.osmd.cursor.CursorOptions.color = "#4ade80";
+        this.osmd.cursor.CursorOptions.color = '#4ade80';
         this.osmd.render();
         const cursor = this.osmd.cursor;
         this.props.cursorRef.current = cursor;
@@ -347,8 +348,8 @@ class OpenSheetMusicDisplay extends Component {
 
       //when we come in visual mode, in the setup we set the cursor color to yellow
       this.cursorInterval = setInterval(this.checkCursorChange, 200);
-      if (this.props.visual === "yes") {
-        this.osmd.cursor.CursorOptions.color = "#dde172";
+      if (this.props.visual === 'yes') {
+        this.osmd.cursor.CursorOptions.color = '#dde172';
         this.osmd.render();
       }
       //save dictionary of IDs associations
@@ -371,7 +372,7 @@ class OpenSheetMusicDisplay extends Component {
 
     clearInterval(this.cursorInterval);
     // clearInterval(this.cursorInterval);
-    window.removeEventListener("resize", this.resize);
+    window.removeEventListener('resize', this.resize);
   }
   //#endregion
 
@@ -408,7 +409,7 @@ class OpenSheetMusicDisplay extends Component {
     //In visual mode, check if cursor finishes to update showingRep
     if (
       this.previousTimestamp !== null &&
-      this.props.visual === "yes" &&
+      this.props.visual === 'yes' &&
       this.previousTimestamp > cursorCurrent &&
       this.playbackManager.isPlaying
     ) {
@@ -511,8 +512,8 @@ class OpenSheetMusicDisplay extends Component {
         ];
 
       //Prepare colors
-      const colorPitchMatched = "#00FF00"; //green
-      const colorPitchNotMatched = "#FF0000"; //red
+      const colorPitchMatched = '#00FF00'; //green
+      const colorPitchNotMatched = '#FF0000'; //red
 
       //Current Note/Silence under cursor
       var notePitch;
@@ -593,7 +594,7 @@ class OpenSheetMusicDisplay extends Component {
         //Reset for next note checking
         this.countBadNotes = 0;
         this.countGoodNotes = 0;
-        this.noteColor = "#000000";
+        this.noteColor = '#000000';
       }
       //Update new vales for future comparisons
       this.setState({ currentGNoteinScorePitch: gNote });
@@ -607,30 +608,30 @@ class OpenSheetMusicDisplay extends Component {
   //This function changes the color of the notes back to black whenever there's a repetition
   //that's either done by OSMD or the user(clicking the repetition button) :)
   resetNotesColor = () => {
-    const colorBlack = "#000000"; // black color
+    const colorBlack = '#000000'; // black color
 
     // Get the SVG container element
     var svgContainer = this.osmd.container;
 
     // Select all SVG elements within the container
-    var svgElements = svgContainer.getElementsByTagName("svg");
+    var svgElements = svgContainer.getElementsByTagName('svg');
 
     // Iterate through each SVG element
     for (var i = 0; i < svgElements.length; i++) {
       var svgElement = svgElements[i];
 
       // Select all elements with class "vf-notehead" within the SVG element
-      var noteheads = svgElement.getElementsByClassName("vf-notehead");
+      var noteheads = svgElement.getElementsByClassName('vf-notehead');
 
       // Iterate through all the notehead elements
       for (var j = 0; j < noteheads.length; j++) {
         let notehead = noteheads[j];
 
         // Select the inner <path> element
-        let path = notehead.querySelector("path");
+        let path = notehead.querySelector('path');
 
         // Set the fill attribute to black
-        path.setAttribute("style", "fill: " + colorBlack + " !important");
+        path.setAttribute('style', 'fill: ' + colorBlack + ' !important');
       }
     }
   };
@@ -641,16 +642,16 @@ class OpenSheetMusicDisplay extends Component {
     if (this.props.mode !== prevProps.mode) {
       if (this.props.mode) {
         //practice mode
-        this.osmd.cursor.CursorOptions.color = "#4ade80";
+        this.osmd.cursor.CursorOptions.color = '#4ade80';
         this.osmd.render();
       } else {
         //record mode
-        this.osmd.cursor.CursorOptions.color = "#f87171";
+        this.osmd.cursor.CursorOptions.color = '#f87171';
         this.osmd.render();
       }
     }
 
-    const container = document.getElementById("osmdSvgPage1");
+    const container = document.getElementById('osmdSvgPage1');
     if (container) {
       this.coords = [
         container.getBoundingClientRect().width,
@@ -702,7 +703,7 @@ class OpenSheetMusicDisplay extends Component {
         const colors = aux
           .map((innerArray) => innerArray.map((subArray) => subArray[1]))
           .flat();
-        const n_green = colors.filter((color) => color === "#00FF00").length;
+        const n_green = colors.filter((color) => color === '#00FF00').length;
         const n_total = colors.length;
         const proportion = n_green / n_total;
         if (proportion >= 0.8) {
@@ -770,7 +771,7 @@ class OpenSheetMusicDisplay extends Component {
         for (let stave_index = 0; stave_index < staves.length; stave_index++) {
           let stave = staves[stave_index][0];
           const staveLines =
-            document.getElementsByClassName("vf-stave")[stave_index];
+            document.getElementsByClassName('vf-stave')[stave_index];
           const upperLineStave =
             staveLines.children[0].getBoundingClientRect().top; //upper line
           const middleLineStave =
@@ -942,13 +943,13 @@ class OpenSheetMusicDisplay extends Component {
         ) {
           //
           //Color turns white/invisible when pitch is out of bounds or pitch confidence is below 0.5
-          this.color = "#FFFFFF"; //"#FFFFFF"
+          this.color = '#FFFFFF'; //"#FFFFFF"
         } else {
-          this.color = "#000000";
+          this.color = '#000000';
         }
 
         const staveLines =
-          document.getElementsByClassName("vf-stave")[
+          document.getElementsByClassName('vf-stave')[
             this.osmd.cursor.Iterator.currentMeasureIndex
           ];
         const upperLineStave =
@@ -1030,7 +1031,7 @@ class OpenSheetMusicDisplay extends Component {
       prevProps.isResetButtonPressed !== this.props.isResetButtonPressed &&
       this.props.isResetButtonPressed
     ) {
-      if (this.props.visual === "no") {
+      if (this.props.visual === 'no') {
         this.setState({ colorNotes: [] });
         this.setState({ recordedNoteIDs: [] });
         this.setState({ recordedNoteNEWIDs: [] });
@@ -1112,8 +1113,8 @@ class OpenSheetMusicDisplay extends Component {
 
     //FIXME "Styling" should probably not be done in here
     const lineChartStyle = {
-      position: "absolute",
-      pointerEvents: "none",
+      position: 'absolute',
+      pointerEvents: 'none',
     };
 
     return (

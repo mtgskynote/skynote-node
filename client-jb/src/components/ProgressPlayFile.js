@@ -1,26 +1,29 @@
-import React, { useEffect, useState, useRef, useCallback } from "react";
-import { HotKeys } from "react-hotkeys";
-import { useParams, useNavigate } from "react-router-dom";
-import OpenSheetMusicDisplay from "./OpenSheetMusicDisplay";
-import ControlBar from "./ControlBar.js";
-import { makeAudioStreamer } from "./audioStreamer.js";
-import CountDownTimer from "./CountDownTimer.js";
-import Queue from "../utils/QueueWithMaxLength";
-import PopUpWindow from "./PopUpWindow.js";
-import XMLParser from "react-xml-parser";
-import { putRecording } from "../utils/studentRecordingMethods.js";
-import { updateRecordingsPastWeek } from "../utils/usersMethods.js";
-import { Buffer } from "buffer";
-import { useAppContext } from "../context/appContext";
+/* eslint-disable */
+// TODO: Eslint is disabled because this file is still in development
+
+import React, { useEffect, useState, useRef, useCallback } from 'react';
+import { HotKeys } from 'react-hotkeys';
+import { useParams, useNavigate } from 'react-router-dom';
+import OpenSheetMusicDisplay from './OpenSheetMusicDisplay';
+import ControlBar from './ControlBar.js';
+import { makeAudioStreamer } from './audioStreamer.js';
+import CountDownTimer from './CountDownTimer.js';
+import Queue from '../utils/QueueWithMaxLength';
+import PopUpWindow from './PopUpWindow.js';
+import XMLParser from 'react-xml-parser';
+import { putRecording } from '../utils/studentRecordingMethods.js';
+import { updateRecordingsPastWeek } from '../utils/usersMethods.js';
+import { Buffer } from 'buffer';
+import { useAppContext } from '../context/appContext';
 import {
   startMicrophone,
   stopMicrophone,
   isMicrophoneActive,
-} from "../context/audioContext";
+} from '../context/audioContext';
 // @ts-ignore
 window.Buffer = Buffer;
 
-const folderBasePath = "/xmlScores/violin";
+const folderBasePath = '/xmlScores/violin';
 
 const ProgressPlayFile = () => {
   const { getCurrentUser } = useAppContext();
@@ -40,7 +43,7 @@ const ProgressPlayFile = () => {
   const [audioReady, setAudioReady] = useState(false);
 
   // File name of recording that will be saved in the DB
-  const [fileName, setFileName] = useState("");
+  const [fileName, setFileName] = useState('');
 
   //Parameters that will be sent to OSMD
   const [metronomeVolume, setMetronomeVolume] = useState(0);
@@ -78,7 +81,7 @@ const ProgressPlayFile = () => {
   const [repeatsIterator, setRepeatsIterator] = useState(false);
   const [showRepetitionMessage, setShowRepetitionMessage] = useState(false);
   const [repetitionMessage, setRepetitionMessage] = useState(
-    "No stored recordings yet"
+    'No stored recordings yet'
   );
 
   const [cursorFinished, setCursorFinished] = useState(false);
@@ -100,7 +103,7 @@ const ProgressPlayFile = () => {
     TOGGLE_LISTEN: `l`,
     TOGGLE_PLAY: `p`,
     TOGGLE_RECORD: `r`,
-    TOGGLE_RESET: `${isMac ? "command" : "ctrl"}+shift+r`,
+    TOGGLE_RESET: `${isMac ? 'command' : 'ctrl'}+shift+r`,
     TOGGLE_MODE: `m`,
     TOGGLE_INFO: `i`,
   };
@@ -144,7 +147,7 @@ const ProgressPlayFile = () => {
   };
 
   const navigate = useNavigate();
-  const scoreID = JSON.parse(localStorage.getItem("scoreData")).find(
+  const scoreID = JSON.parse(localStorage.getItem('scoreData')).find(
     (item) => item.fname === params.files
   )._id;
 
@@ -207,7 +210,7 @@ const ProgressPlayFile = () => {
       await putRecording(jsonComplete);
       await updateRecordingsPastWeek(userData.id);
     } catch (error) {
-      console.error("Error handling download:", error);
+      console.error('Error handling download:', error);
     }
   }
 
@@ -221,10 +224,10 @@ const ProgressPlayFile = () => {
   // Keep track of repetition that user is currently seeing --> WILL BE INTEGRATED IN THE FUTURE
   const handleReceiveRepetitionInfo = (showingRep, totalRep) => {
     if (totalRep === 0) {
-      setRepetitionMessage("No recordings yet");
+      setRepetitionMessage('No recordings yet');
     } else {
       const message_aux =
-        "Seeing " + (showingRep + 1) + " of " + (totalRep + 1);
+        'Seeing ' + (showingRep + 1) + ' of ' + (totalRep + 1);
       setRepetitionMessage(message_aux);
     }
   };
@@ -265,12 +268,12 @@ const ProgressPlayFile = () => {
         const movementTitle = Array.from(
           new XMLParser()
             .parseFromString(xmlFileData)
-            .getElementsByTagName("movement-title")
+            .getElementsByTagName('movement-title')
         );
         if (movementTitle.length > 0) {
           setScoreTitle(movementTitle[0].value);
         } else {
-          setScoreTitle("untitledScore");
+          setScoreTitle('untitledScore');
         }
       } catch (error) {
         console.log(error.message);
@@ -284,11 +287,11 @@ const ProgressPlayFile = () => {
     if (!isMicrophoneActive()) {
       startMicrophone()
         .then(() => {
-          console.log("Microphone started");
+          console.log('Microphone started');
         })
         .catch((error) => {
-          console.error("Failed to get microphone access:", error);
-          alert("Please allow microphone access to use this feature");
+          console.error('Failed to get microphone access:', error);
+          alert('Please allow microphone access to use this feature');
           setCanRecord(false);
           window.location.reload();
         });
@@ -306,13 +309,13 @@ const ProgressPlayFile = () => {
   useEffect(() => {
     if (audioReady) {
       audioStreamer
-        .save_or_not("save")
+        .save_or_not('save')
         .then((dataToDownload) => {
           const buffer = new Buffer.from(dataToDownload);
           handleDownload(buffer); // send data to downloading function
         })
         .catch((error) => {
-          console.error("Error:", error);
+          console.error('Error:', error);
         });
     }
   }, [audioReady]);
@@ -422,9 +425,9 @@ const ProgressPlayFile = () => {
   const handleViewAllRecordings = () => {
     const score = `${params.files}`;
     const song = `${scoreTitle}`;
-    const typeList = "single-song";
+    const typeList = 'single-song';
 
-    navigate("/ListRecordings", { state: { score, song, typeList } });
+    navigate('/ListRecordings', { state: { score, song, typeList } });
   };
 
   // Save a recording that was just made to the user's profile
@@ -443,7 +446,7 @@ const ProgressPlayFile = () => {
   const handleDeleteRecording = () => {
     setShowSaveRecordingPopUp(false);
 
-    audioStreamer.save_or_not("delete");
+    audioStreamer.save_or_not('delete');
     setPitch([]);
     setConfidence([]);
 
@@ -465,9 +468,9 @@ const ProgressPlayFile = () => {
   const isMacOs = async () => {
     if (navigator.userAgentData) {
       const uaData = await navigator.userAgentData.getHighEntropyValues([
-        "platform",
+        'platform',
       ]);
-      return uaData.platform === "macOS";
+      return uaData.platform === 'macOS';
     } else {
       return /mac/i.test(navigator.userAgent);
     }
@@ -579,9 +582,9 @@ const ProgressPlayFile = () => {
 
       // Start recording with audio streamer
       audioStreamer.init(!practiceMode, [
-        "rms",
-        "spectralCentroid",
-        "spectralFlux",
+        'rms',
+        'spectralCentroid',
+        'spectralFlux',
       ]);
 
       // Play MIDI audio playback
@@ -617,19 +620,19 @@ const ProgressPlayFile = () => {
     const handleBeforeUnload = (event) => {
       // Ensure recording is not saved and audioStreamer is properly cleaned up
       if (isRecording) {
-        audioStreamer.save_or_not("delete");
+        audioStreamer.save_or_not('delete');
         stopRecordingAudio(playbackRef.current);
       }
       // Cancel the event as stated by the standard
       event.preventDefault();
       // Chrome requires returnValue to be set
-      event.returnValue = "";
+      event.returnValue = '';
     };
 
-    window.addEventListener("beforeunload", handleBeforeUnload);
+    window.addEventListener('beforeunload', handleBeforeUnload);
 
     return () => {
-      window.removeEventListener("beforeunload", handleBeforeUnload);
+      window.removeEventListener('beforeunload', handleBeforeUnload);
       if (isMicrophoneActive()) {
         stopMicrophone();
       }
@@ -664,7 +667,7 @@ const ProgressPlayFile = () => {
             mode={practiceMode}
             dataToDownload={handleGetJsonCallback}
             canDownload={canDownload}
-            visual={"no"}
+            visual={'no'}
           />
           {(isRecording || isPlaying) && (
             <div className="absolute top-0 left-0 w-full h-full bg-transparent z-20 pointer-events-auto"></div>

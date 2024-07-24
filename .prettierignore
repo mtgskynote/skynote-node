@@ -1,0 +1,38 @@
+# Ignore version control directories
+**/.git
+**/.svn
+**/.hg
+
+# Ignore dependencies
+**/node_modules
+
+# Ignore build artifacts
+build
+coverage
+
+# Ignore HTML files
+**/*.html
+
+# Ignore YAML files
+**/*.yml
+**/*.yaml
+
+# Ignore GitHub workflows
+.github/workflows
+
+# Ignore Python virtual environment directories
+**/.venv
+**/venv
+
+# Ignore configuration files
+**/*.conf
+**/*.config
+**/*.ini
+
+# Ignore log files
+**/*.log
+
+# Ignore temporary files
+**/*.tmp
+**/*.temp
+**/*.swp

@@ -1,6 +1,6 @@
-import User from "../models/User.js";
-import { StatusCodes } from "http-status-codes";
-import { BadRequestError, UnAuthenticatedError } from "../errors/index.js";
+import User from '../models/User.js';
+import { StatusCodes } from 'http-status-codes';
+import { BadRequestError, UnAuthenticatedError } from '../errors/index.js';
 
 // Register is used to register the user
 const register = async (req, res) => {
@@ -11,11 +11,11 @@ const register = async (req, res) => {
   );
 
   if (!name || !email || !role || !password || !instrument) {
-    throw new BadRequestError("Please provide all fields.");
+    throw new BadRequestError('please provide all fields.');
   }
   const userAlreadyExists = await User.findOne({ email });
   if (userAlreadyExists) {
-    throw new BadRequestError("Email already in use.");
+    throw new BadRequestError('Email already in use.');
   }
 
   const user = await User.create({ name, email, role, password, instrument });
@@ -39,16 +39,16 @@ const register = async (req, res) => {
 const login = async (req, res) => {
   const { email, password } = req.body;
   if (!email || !password) {
-    throw new BadRequestError("Please provide all fields.");
+    throw new BadRequestError('Please provide all fields.');
   }
-  const user = await User.findOne({ email }).select("+password");
-  // console.log("user.name", user.name);
+  const user = await User.findOne({ email }).select('+password');
+  console.log('user.name', user.name);
   if (!user) {
-    throw new UnAuthenticatedError("Invalid email or password.");
+    throw new UnAuthenticatedError('Invalid email or password.');
   }
   const isPasswordCorrect = await user.comparePassword(password);
   if (!isPasswordCorrect) {
-    throw new UnAuthenticatedError("Invalid email or password.");
+    throw new UnAuthenticatedError('Invalid email or password.');
   }
   const token = user.createJWT();
   user.password = undefined;
@@ -58,7 +58,6 @@ const login = async (req, res) => {
       email: user.email,
       role: user.role,
       name: user.name,
-      role: user.role,
       teacher: user.teacher,
       instrument: user.instrument,
     },
@@ -68,10 +67,10 @@ const login = async (req, res) => {
 
 // Update user is used to update the user's email and name
 const updateUser = async (req, res) => {
-  console.log("req.body", req.body);
+  console.log('req.body', req.body);
   const { email, name } = req.body;
   if (!email || !name) {
-    throw new BadRequestError("Please provide all fields.");
+    throw new BadRequestError('Please provide all fields.');
   }
   const user = await User.findOne({ _id: req.user.userId });
   user.email = email;
@@ -96,11 +95,11 @@ const getProfileData = async (req, res) => {
 
 // Logout the user
 const logout = async (_, res) => {
-  res.cookie("token", "logout", {
+  res.cookie('token', 'logout', {
     httpOnly: true,
     expires: new Date(Date.now() + 1000),
   });
-  res.status(StatusCodes.OK).json({ msg: "user logged out!" });
+  res.status(StatusCodes.OK).json({ msg: 'user logged out!' });
 };
 
 export { register, login, updateUser, getProfileData, logout };

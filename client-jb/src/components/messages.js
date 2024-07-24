@@ -1,17 +1,18 @@
-import React, { useEffect, useState, useRef } from "react";
-import AssignmentsCSS from "./Assignments.module.css";
+import React, { useEffect, useState, useRef } from 'react';
+import PropTypes from 'prop-types';
+import AssignmentsCSS from './Assignments.module.css';
 import {
   getMessages,
   putMessage,
   updateMessageSeen,
-} from "../utils/messagesMethods.js";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+} from '../utils/messagesMethods.js';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
   faUser,
   faPaperPlane,
   faCheck,
   faArrowRotateLeft,
-} from "@fortawesome/free-solid-svg-icons";
+} from '@fortawesome/free-solid-svg-icons';
 
 const Messages = (props) => {
   const [user, setUser] = useState(null);
@@ -21,11 +22,11 @@ const Messages = (props) => {
   const chatInputRef = useRef();
 
   const options = {
-    year: "numeric",
-    month: "numeric",
-    day: "numeric",
-    hour: "2-digit",
-    minute: "2-digit",
+    year: 'numeric',
+    month: 'numeric',
+    day: 'numeric',
+    hour: '2-digit',
+    minute: '2-digit',
   };
 
   const fetchChat = () => {
@@ -42,7 +43,7 @@ const Messages = (props) => {
               message: message.content,
               student: true,
               date: new Date(message.timestamp).toLocaleDateString(
-                "es-ES",
+                'es-ES',
                 options
               ),
               teacher: message.teacher,
@@ -55,7 +56,7 @@ const Messages = (props) => {
               message: message.content,
               student: false,
               date: new Date(message.timestamp).toLocaleDateString(
-                "es-ES",
+                'es-ES',
                 options
               ),
               teacher: message.teacher,
@@ -80,7 +81,7 @@ const Messages = (props) => {
   const handleSend = () => {
     // Update database
     const chatInputValue = chatInputRef.current.value;
-    if (chatInputValue !== "") {
+    if (chatInputValue !== '') {
       //Put message on DB
       putMessage(chatInputValue, user.id, teacher.id).then((message) => {
         //To not reload the page, add this message to userChat in state directly
@@ -89,7 +90,7 @@ const Messages = (props) => {
           message: message.content,
           student: true,
           date: new Date(message.timestamp).toLocaleDateString(
-            "es-ES",
+            'es-ES',
             options
           ),
           teacher: message.teacher,
@@ -100,7 +101,7 @@ const Messages = (props) => {
         //Update chat
         setUserChat(currentChat.reverse());
         //Clear input chat box
-        chatInputRef.current.value = "";
+        chatInputRef.current.value = '';
       });
     } else {
       // Nothing, no message is sent
@@ -112,7 +113,7 @@ const Messages = (props) => {
   };
 
   const handleKey = (event) => {
-    if (event.key === "Enter") {
+    if (event.key === 'Enter') {
       handleSend();
     }
   };
@@ -141,7 +142,7 @@ const Messages = (props) => {
         <div>
           <div className={AssignmentsCSS.chatHeader}>
             <div className={AssignmentsCSS.teacher}>
-              Your conversation with {teacher.name}{" "}
+              Your conversation with {teacher.name}{' '}
               <FontAwesomeIcon
                 icon={faUser}
                 className={AssignmentsCSS.userIcon}
@@ -150,7 +151,7 @@ const Messages = (props) => {
           </div>
           <div className={AssignmentsCSS.chat}>
             {userChat !== null ? (
-              Object.values(userChat).map((message, index) => {
+              Object.values(userChat).map((message) => {
                 return message.student ? (
                   <div className={AssignmentsCSS.chatItemStudent}>
                     {message.message}
@@ -162,7 +163,7 @@ const Messages = (props) => {
                           className={AssignmentsCSS.seenIcon}
                         />
                       ) : (
-                        ""
+                        ''
                       )}
                     </div>
                   </div>
@@ -189,7 +190,7 @@ const Messages = (props) => {
                 <FontAwesomeIcon
                   icon={faArrowRotateLeft}
                   className={AssignmentsCSS.sendIcon}
-                />{" "}
+                />{' '}
               </button>
               <button
                 title="send"
@@ -199,7 +200,7 @@ const Messages = (props) => {
                 <FontAwesomeIcon
                   icon={faPaperPlane}
                   className={AssignmentsCSS.sendIcon}
-                />{" "}
+                />{' '}
               </button>
             </div>
             <textarea
@@ -213,10 +214,21 @@ const Messages = (props) => {
           </div>
         </div>
       ) : (
-        ""
+        ''
       )}
     </div>
   );
+};
+
+Messages.propTypes = {
+  user: PropTypes.shape({
+    id: PropTypes.number.isRequired,
+    name: PropTypes.string.isRequired,
+  }),
+  teacher: PropTypes.shape({
+    id: PropTypes.number.isRequired,
+    name: PropTypes.string.isRequired,
+  }),
 };
 
 export default Messages;

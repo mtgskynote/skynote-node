@@ -5,17 +5,17 @@ import {
   SETUP_USER_SUCCESS,
   SETUP_USER_ERROR,
   LOGOUT_USER,
-} from "./actions";
+} from './actions';
 
-import { initialState } from "./appContext";
+import { initialState } from './appContext';
 
 const reducer = (state, action) => {
   if (action.type === DISPLAY_ALERT) {
     return {
       ...state,
       showAlert: true,
-      alertType: "danger",
-      alertText: "Please provide all fields.",
+      alertType: 'danger',
+      alertText: 'Please provide all fields.',
     };
   }
 
@@ -23,8 +23,8 @@ const reducer = (state, action) => {
     return {
       ...state,
       showAlert: false,
-      alertType: "",
-      alertText: "",
+      alertType: '',
+      alertText: '',
     };
   }
 
@@ -40,7 +40,7 @@ const reducer = (state, action) => {
       userLocation: action.payload.location,
       jobLocation: action.payload.location,
       showAlert: true,
-      alertType: "success",
+      alertType: 'success',
       alertText: action.payload.alertText,
     };
   }
@@ -49,7 +49,7 @@ const reducer = (state, action) => {
       ...state,
       isLoading: false,
       showAlert: true,
-      alertType: "danger",
+      alertType: 'danger',
       alertText: action.payload.msg,
     };
   }
@@ -59,8 +59,8 @@ const reducer = (state, action) => {
       ...initialState,
       user: null,
       token: null,
-      userLocation: "",
-      jobLocation: "",
+      userLocation: '',
+      jobLocation: '',
     };
   }
   throw new Error(`no such action :${action.type}`);

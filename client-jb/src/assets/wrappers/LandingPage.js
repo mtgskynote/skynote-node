@@ -1,7 +1,7 @@
 ///////////////////////////////////////////
 ////////// THIS FILE IS OBSOLETE //////////
 ///////////////////////////////////////////
-import styled from 'styled-components'
+import styled from 'styled-components';
 
 const Wrapper = styled.main` 
 
@@ -395,5 +395,5 @@ a{
 
 
   
-`
-export default Wrapper
+`;
+export default Wrapper;

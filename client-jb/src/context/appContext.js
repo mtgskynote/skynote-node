@@ -1,4 +1,5 @@
-import React, { useReducer, useContext } from "react";
+import React, { useReducer, useContext } from 'react';
+import PropTypes from 'prop-types';
 
 import {
   DISPLAY_ALERT,
@@ -7,28 +8,28 @@ import {
   SETUP_USER_SUCCESS,
   SETUP_USER_ERROR,
   LOGOUT_USER,
-} from "./actions";
+} from './actions';
 
-import reducer from "./reducer";
-import axios from "axios";
-import XMLParser from "react-xml-parser";
+import reducer from './reducer';
+import axios from 'axios';
+import XMLParser from 'react-xml-parser';
 
 // Get user, token, and userLocation from local storage
-const user = localStorage.getItem("user");
-const token = localStorage.getItem("token");
-const userLocation = localStorage.getItem("location");
-const instrument = localStorage.getItem("instrument");
+const user = localStorage.getItem('user');
+const token = localStorage.getItem('token');
+const userLocation = localStorage.getItem('location');
+const instrument = localStorage.getItem('instrument');
 
 // Set initial state
 const initialState = {
   isLoading: false,
   showAlert: false,
-  alertText: "",
-  alertType: "",
+  alertText: '',
+  alertType: '',
   user: user ? JSON.parse(user) : null,
   token: token,
-  userLocation: userLocation || "",
-  jobLocation: userLocation || "",
+  userLocation: userLocation || '',
+  jobLocation: userLocation || '',
   instrument: instrument ? instrument : null,
 };
 
@@ -63,18 +64,18 @@ const AppProvider = ({ children }) => {
 
   // Add user, token, and location to local storage
   const addUserToLocalStorage = (user, token, location) => {
-    localStorage.setItem("user", JSON.stringify(user));
-    localStorage.setItem("token", token);
-    localStorage.setItem("location", location);
+    localStorage.setItem('user', JSON.stringify(user));
+    localStorage.setItem('token', token);
+    localStorage.setItem('location', location);
   };
 
   // Remove user, token, and location from local storage
   const removeUserFromLocalStorage = () => {
-    localStorage.removeItem("user");
-    localStorage.removeItem("token");
-    localStorage.removeItem("location");
-    localStorage.removeItem("scoreData"); // This is technically not User data, but it's simpler if I leave it here cause we have to get rid of it anyways :)
-    localStorage.removeItem("instrument"); // This information is part of User data but exists separately as well for easy transitioning between selected instrument states
+    localStorage.removeItem('user');
+    localStorage.removeItem('token');
+    localStorage.removeItem('location');
+    localStorage.removeItem('scoreData'); // This is technically not User data, but it's simpler if I leave it here cause we have to get rid of it anyways :)
+    localStorage.removeItem('instrument'); // This information is part of User data but exists separately as well for easy transitioning between selected instrument states
   };
 
   // Set up user with current user, endpoint, and alert text
@@ -126,70 +127,70 @@ const AppProvider = ({ children }) => {
 
   // Set new current instrument for a user in local storage
   const setInstrumentLocalStorage = (instrument) => {
-    localStorage.setItem("instrument", instrument);
+    localStorage.setItem('instrument', instrument);
   };
 
   // functions for getting the names of the scores from the database
 
   const getAllLevels = async (level) => {
     try {
-      const response = await axios.post("/api/v1/scores/levels", {
+      const response = await axios.post('/api/v1/scores/levels', {
         level: level,
       });
       return response.data;
     } catch (error) {
-      console.error("Error fetching file names:", error);
+      console.error('Error fetching file names:', error);
     }
   };
 
   const getAllSkills = async (level) => {
     try {
-      const response = await axios.post("/api/v1/scores/skills", {
+      const response = await axios.post('/api/v1/scores/skills', {
         level: level,
       });
       return response.data;
     } catch (error) {
-      console.error("Error fetching file names:", error);
+      console.error('Error fetching file names:', error);
     }
   };
 
   const getAllNames = async (level, skill) => {
     try {
-      const response = await axios.post("/api/v1/scores/names", {
+      const response = await axios.post('/api/v1/scores/names', {
         level: level,
         skill: skill,
       });
       return response.data;
     } catch (error) {
-      console.error("Error fetching file names:", error);
+      console.error('Error fetching file names:', error);
     }
   };
 
   //Lonce`s
   const getAllScoreData = async () => {
     try {
-      const response = await axios.get("/api/v1/scores/getAllScoreData", {});
-      console.log("======================   names returned :"); //, response.data);
+      const response = await axios.get('/api/v1/scores/getAllScoreData', {});
+      console.log('======================   names returned :'); //, response.data);
       return response.data;
     } catch (error) {
-      console.error("Error fetching file names:", error);
+      console.error('Error fetching file names:', error);
     }
   };
 
   //OUR
   const getAllScoreData2 = async () => {
     try {
-      const response = await axios.get("/api/v1/scores/getAllScoreData2", {});
+      const response = await axios.get('/api/v1/scores/getAllScoreData2', {});
       var tempScoreData = response.data;
       console.log(tempScoreData);
       for (let file of tempScoreData) {
         let scoreName = await getTitle(file.fname);
         tempScoreData.find((obj) => obj.fname === file.fname).title = scoreName;
       }
-      localStorage.setItem("scoreData", JSON.stringify(tempScoreData));
+      localStorage.setItem('scoreData', JSON.stringify(tempScoreData));
       return tempScoreData;
     } catch (error) {
-      console.error("Error fetching file names:", error);
+      console.error('Error fetching file names:', error);
     }
   };
 
@@ -200,7 +201,7 @@ const AppProvider = ({ children }) => {
       const movementTitle = Array.from(
         new XMLParser()
           .parseFromString(xmlFileData)
-          .getElementsByTagName("movement-title")
+          .getElementsByTagName('movement-title')
       );
       if (movementTitle.length > 0) {
         return movementTitle[0].value;
@@ -234,6 +235,10 @@ const AppProvider = ({ children }) => {
       {children}
     </AppContext.Provider>
   );
+};
+
+AppProvider.propTypes = {
+  children: PropTypes.node.isRequired,
 };
 
 // Create custom hook to use AppContext

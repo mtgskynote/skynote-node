@@ -1,10 +1,10 @@
-import React, { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
-import { useAppContext } from "../context/appContext";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import AssignmentsCSS from "./Assignments.module.css";
-import { getAllAssignments } from "../utils/assignmentsMethods.js";
-import { getProfileData } from "../utils/usersMethods.js";
+import React, { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { useAppContext } from '../context/appContext';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import AssignmentsCSS from './Assignments.module.css';
+import { getAllAssignments } from '../utils/assignmentsMethods.js';
+import { getProfileData } from '../utils/usersMethods.js';
 import {
   faFileImport,
   faUser,
@@ -15,14 +15,14 @@ import {
   faBoxArchive,
   faRecordVinyl,
   faBookBookmark,
-} from "@fortawesome/free-solid-svg-icons";
-import PopUpWindowGrades from "./PopUpWindowGrades";
-import PopUpWindowRecordings from "./PopUpWindowRecordings.js";
-import Messages from "./messages.js";
-import LoadingScreen from "./LoadingScreen.js";
-import Error from "./Error.js";
+} from '@fortawesome/free-solid-svg-icons';
+import PopUpWindowGrades from './PopUpWindowGrades';
+import PopUpWindowRecordings from './PopUpWindowRecordings.js';
+import Messages from './messages.js';
+import LoadingScreen from './LoadingScreen.js';
+import Error from './Error.js';
 
-const Assignments = (props) => {
+const Assignments = () => {
   const navigate = useNavigate();
   const { getCurrentUser } = useAppContext();
 
@@ -41,11 +41,11 @@ const Assignments = (props) => {
   const [assignmentsError, setAssignmentsError] = useState(false);
 
   const options = {
-    year: "numeric",
-    month: "numeric",
-    day: "numeric",
-    hour: "2-digit",
-    minute: "2-digit",
+    year: 'numeric',
+    month: 'numeric',
+    day: 'numeric',
+    hour: '2-digit',
+    minute: '2-digit',
   };
 
   const errorMessages = {
@@ -72,7 +72,7 @@ const Assignments = (props) => {
   };
 
   const handleSeeGrades = (option, comment, grade) => {
-    if (option === "see") {
+    if (option === 'see') {
       setPopUpWindowGrade(true);
       setTaskComment(comment);
       setTaskGrade(grade);
@@ -84,7 +84,7 @@ const Assignments = (props) => {
   };
 
   const handleSelectRecording = (option, scoreId, announcementId) => {
-    if (option === "open") {
+    if (option === 'open') {
       setPopUpWindowRecordings(true);
       setSelectedScore(scoreId);
       setSelectedAnnouncement(announcementId);
@@ -106,11 +106,11 @@ const Assignments = (props) => {
           email: result.user.email,
         });
       } else {
-        console.error("Invalid teacher data received:", result);
+        console.error('Invalid teacher data received:', result);
         setTeacherDataError(true);
       }
     } catch (error) {
-      console.error("Error getting teacher profile data:", error);
+      console.error('Error getting teacher profile data:', error);
       setTeacherDataError(true);
     }
   };
@@ -131,7 +131,7 @@ const Assignments = (props) => {
   //get Scores data
   useEffect(() => {
     // import local data
-    const local = JSON.parse(localStorage.getItem("scoreData"));
+    const local = JSON.parse(localStorage.getItem('scoreData'));
     // save in state
     setScoresData(local);
   }, []); // Only once
@@ -139,16 +139,18 @@ const Assignments = (props) => {
   useEffect(() => {
     if (userData !== null && scoresData !== null && teacherData !== null) {
       // Assignments
-      getAllAssignments(userData.id).then((result) => {
-        if (result.length !== 0) {
-          setUserAnnouncements(result.reverse());
-        } else {
+      getAllAssignments(userData.id)
+        .then((result) => {
+          if (result.length !== 0) {
+            setUserAnnouncements(result.reverse());
+          } else {
+            setAssignmentsError(true);
+          }
+        })
+        .catch((error) => {
           setAssignmentsError(true);
-        }
-      }).catch((error) => {
-        setAssignmentsError(true);
-        console.error("Error fetching assignments:", error);
-      });
+          console.error('Error fetching assignments:', error);
+        });
     }
   }, [userData, scoresData, teacherData]);
 
@@ -164,7 +166,7 @@ const Assignments = (props) => {
 
         window.scroll({
           top: y,
-          behavior: "smooth",
+          behavior: 'smooth',
         });
       }
     }
@@ -177,7 +179,13 @@ const Assignments = (props) => {
     if (teacherDataError || assignmentsError) {
       setIsLoading(false);
     }
-  }, [userData, teacherDataError, userAnnouncements, teacherData, assignmentsError]);
+  }, [
+    userData,
+    teacherDataError,
+    userAnnouncements,
+    teacherData,
+    assignmentsError,
+  ]);
 
   if (isLoading) {
     return <LoadingScreen />;
@@ -202,27 +210,27 @@ const Assignments = (props) => {
                   <div>
                     <div className={AssignmentsCSS.header}>
                       <div>
-                        Posted on:{" "}
+                        Posted on:{' '}
                         {new Date(announcement.postDate).toLocaleDateString(
-                          "es-ES",
+                          'es-ES',
                           options
                         )}
                       </div>
                       <div>
-                        Due on:{" "}
+                        Due on:{' '}
                         {new Date(announcement.dueDate).toLocaleDateString(
-                          "es-ES",
+                          'es-ES',
                           options
                         )}
                       </div>
                     </div>
                     <div className={AssignmentsCSS.announcementBody}>
                       <div className={AssignmentsCSS.teacher}>
-                        {teacherData.name}{" "}
+                        {teacherData.name}{' '}
                         <FontAwesomeIcon
                           icon={faUser}
                           className={AssignmentsCSS.userIcon}
-                        />{" "}
+                        />{' '}
                         said...
                       </div>
                       <div className={AssignmentsCSS.message}>
@@ -245,7 +253,7 @@ const Assignments = (props) => {
                             />
                           </div>
                         ) : (
-                          ""
+                          ''
                         )}
                         <div className={AssignmentsCSS.taskGroup}>
                           {announcement.tasks.map((task, index) => {
@@ -292,7 +300,9 @@ const Assignments = (props) => {
                                       <div className={AssignmentsCSS.cursive}>
                                         Status: Submitted
                                       </div>
-                                      <div className={AssignmentsCSS.buttonGroup}>
+                                      <div
+                                        className={AssignmentsCSS.buttonGroup}
+                                      >
                                         <FontAwesomeIcon
                                           title="Go to recording assigned to this submission"
                                           icon={faEye}
@@ -310,7 +320,7 @@ const Assignments = (props) => {
                                           className={AssignmentsCSS.simpleIcon}
                                           onClick={() =>
                                             handleSeeGrades(
-                                              "see",
+                                              'see',
                                               task.answer.comment,
                                               task.answer.grade
                                             )
@@ -319,11 +329,15 @@ const Assignments = (props) => {
                                       </div>
                                     </div>
                                   ) : (
-                                    <div className={AssignmentsCSS.notSubmitted}>
+                                    <div
+                                      className={AssignmentsCSS.notSubmitted}
+                                    >
                                       <div className={AssignmentsCSS.cursive}>
                                         Status: Not submitted
                                       </div>
-                                      <div className={AssignmentsCSS.buttonGroup}>
+                                      <div
+                                        className={AssignmentsCSS.buttonGroup}
+                                      >
                                         <FontAwesomeIcon
                                           title="Record for this submission"
                                           icon={faRecordVinyl}
@@ -338,7 +352,7 @@ const Assignments = (props) => {
                                           className={AssignmentsCSS.simpleIcon}
                                           onClick={() =>
                                             handleSelectRecording(
-                                              "open",
+                                              'open',
                                               task.score,
                                               announcement._id
                                             )
@@ -387,7 +401,6 @@ const Assignments = (props) => {
       )}
     </>
   );
-
-}  
+};
 
 export default Assignments;

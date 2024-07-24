@@ -1,6 +1,7 @@
-import React, { useState, useEffect } from "react";
-import ModeIcon from "@mui/icons-material/Mode";
-import MicIcon from "@mui/icons-material/Mic";
+import React, { useState, useEffect } from 'react';
+import PropTypes from 'prop-types';
+import ModeIcon from '@mui/icons-material/Mode';
+import MicIcon from '@mui/icons-material/Mic';
 
 const ModeToggle = ({ onModeChange, practiceMode }) => {
   const [practiceModeOn, setPracticeModeOn] = useState(true);
@@ -23,14 +24,19 @@ const ModeToggle = ({ onModeChange, practiceMode }) => {
       <div
         className={`w-12 h-12 relative rounded-full transition duration-500 transform p-1 text-white flex items-center justify-center ${
           practiceModeOn
-            ? "bg-green-500 -translate-x-2"
-            : "bg-red-500 translate-x-7"
+            ? 'bg-green-500 -translate-x-2'
+            : 'bg-red-500 translate-x-7'
         }`}
       >
         {practiceModeOn ? <ModeIcon /> : <MicIcon />}
       </div>
     </button>
   );
+};
+
+ModeToggle.propTypes = {
+  onModeChange: PropTypes.func.isRequired,
+  practiceMode: PropTypes.bool.isRequired,
 };
 
 export default ModeToggle;
