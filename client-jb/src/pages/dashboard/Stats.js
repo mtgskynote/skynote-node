@@ -42,6 +42,7 @@ const Stats = () => {
   );
   const [starPercentages, setStarPercentages] = useState(null);
   const [favourites, setFavourites] = useState(null);
+  const [storageUpdated, setStorageUpdated] = useState(false);
 
   const getScoreById = (id) => {
     return scoresData.find((score) => score._id === id);
@@ -125,6 +126,18 @@ const Stats = () => {
     }
   }, [userData]);
 
+  useEffect(() => {
+    const handleStorageUpdate = () => {
+      setStorageUpdated((prev) => !prev); // Toggle state to trigger useEffect
+    };
+
+    window.addEventListener('storageUpdated', handleStorageUpdate);
+
+    return () => {
+      window.removeEventListener('storageUpdated', handleStorageUpdate);
+    };
+  }, []);
+
   //get Scores data
   useEffect(() => {
     // import local data
@@ -148,7 +161,7 @@ const Stats = () => {
       }
     });
     setStarsPerLevel(levelCounts);
-  }, []); // Only once
+  }, [storageUpdated]); // Only once
 
   //get Recordings Data for this user
   useEffect(() => {
@@ -348,6 +361,10 @@ const Stats = () => {
       setIsLoading(false);
     }
   }, [userData, scoresData, recordingList]);
+
+  console.log('USER DATA:', userData);
+  console.log('SCORES DATA:', scoresData);
+  console.log('RECORDING LIST:', recordingList);
 
   if (isLoading) {
     return <LoadingScreen />;
