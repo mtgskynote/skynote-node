@@ -101,7 +101,7 @@ const AppProvider = ({ children }) => {
       addUserToLocalStorage(user, token, location); // why are we doing this?
       setInstrumentLocalStorage(user.instrument);
       getAllScoreData2();
-      window.dispatchEvent(new Event("storageUpdated"));
+      window.dispatchEvent(new Event('storageUpdated'));
     } catch (error) {
       dispatch({
         type: SETUP_USER_ERROR,

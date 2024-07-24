@@ -131,10 +131,10 @@ const Stats = () => {
       setStorageUpdated((prev) => !prev); // Toggle state to trigger useEffect
     };
 
-    window.addEventListener("storageUpdated", handleStorageUpdate);
+    window.addEventListener('storageUpdated', handleStorageUpdate);
 
     return () => {
-      window.removeEventListener("storageUpdated", handleStorageUpdate);
+      window.removeEventListener('storageUpdated', handleStorageUpdate);
     };
   }, []);
 
@@ -362,9 +362,9 @@ const Stats = () => {
     }
   }, [userData, scoresData, recordingList]);
 
-  console.log("USER DATA:", userData);
-  console.log("SCORES DATA:", scoresData);
-  console.log("RECORDING LIST:", recordingList);
+  console.log('USER DATA:', userData);
+  console.log('SCORES DATA:', scoresData);
+  console.log('RECORDING LIST:', recordingList);
 
   if (isLoading) {
     return <LoadingScreen />;
