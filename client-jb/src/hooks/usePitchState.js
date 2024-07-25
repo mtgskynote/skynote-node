@@ -10,6 +10,9 @@ export const usePitchState = () => {
   const [repetitionNumber, setRepetitionNumber] = useState([]);
   const [recordedNoteIDs, setRecordedNoteIDs] = useState([]);
   const [recordedNoteNEWIDs, setRecordedNoteNEWIDs] = useState([]);
+  const [colorNotes, setColorNotes] = useState([]);
+  const [currentGNoteinScorePitch, setCurrentGNoteinScorePitch] =
+    useState(null);
 
   return {
     pitchColor,
@@ -30,5 +33,9 @@ export const usePitchState = () => {
     setRecordedNoteIDs,
     recordedNoteNEWIDs,
     setRecordedNoteNEWIDs,
+    colorNotes,
+    setColorNotes,
+    currentGNoteinScorePitch,
+    setCurrentGNoteinScorePitch,
   };
 };

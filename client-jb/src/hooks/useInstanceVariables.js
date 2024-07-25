@@ -19,6 +19,7 @@ const useInstanceVariables = (props) => {
   const showingRep = useRef(0);
   const selectionEndReached = useRef(false);
   const calculatePunctuation = useRef(false);
+  const playbackManager = useRef(null);
 
   return {
     osmd,

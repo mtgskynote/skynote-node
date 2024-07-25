@@ -11,8 +11,6 @@ const useCursorState = () => {
     setInitialCursorTop,
     initialCursorLeft,
     setInitialCursorLeft,
-    currentGNoteinScorePitch,
-    setCurrentGNoteinScorePitch,
   };
 };
 
