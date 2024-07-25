@@ -4,6 +4,8 @@ import {
   updateProfileData,
   addFavourite,
   removeFavourite,
+  uploadXMLFile,
+  removeXMLFile,
   updateRecordingsPastWeek,
 } from '../controllers/profileController.js';
 import { authenticateUser } from '../middleware-jb/authenticateUser.js';
@@ -24,6 +26,10 @@ router
   .route('/favourite/:userId/:songId')
   .post(authenticateUser, addFavourite)
   .delete(authenticateUser, removeFavourite);
+router
+  .route('/uploads/:userId/')
+  .post(authenticateUser, uploadXMLFile)
+  .delete(authenticateUser, removeXMLFile);
 router
   .route('/recordingsPastWeek/:userId')
   .post(authenticateUser, updateRecordingsPastWeek);

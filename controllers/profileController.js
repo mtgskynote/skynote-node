@@ -1,4 +1,5 @@
 import User from '../models/User.js';
+import xmlScores from '../models/xmlScoreModel.js';
 import { StatusCodes } from 'http-status-codes';
 import { BadRequestError, NotFoundError } from '../errors/index.js';
 import mongoose from 'mongoose';
@@ -127,6 +128,90 @@ const removeFavourite = async (req, res) => {
   }
 };
 
+const uploadXMLFile = async (req, res) => {
+  try {
+    const { userId } = req.params;
+    const { skill } = req.body; // Extract skill from request body
+    const file = req.file; // Get the file from the request
+
+    console.log(`Adding XML file upload: userId=${userId}`);
+
+    if (!file) {
+      return res
+        .status(StatusCodes.BAD_REQUEST)
+        .json({ message: 'No file uploaded.' });
+    }
+
+    const user = await User.findById(userId);
+
+    if (!user) {
+      return res
+        .status(StatusCodes.NOT_FOUND)
+        .json({ message: 'User not found' });
+    }
+
+    // Create a new XML score object
+    const newScore = new xmlScores({
+      fname: file.originalname,
+      level: 0, // Fixed level value for uploaded scores
+      skill: skill || '', // Use provided skill or empty string
+    });
+
+    // Push the new score into the uploadedScores array
+    user.uploadedScores.push(newScore);
+
+    // Save the updated user document
+    await user.save();
+
+    res.status(StatusCodes.OK).json(user);
+  } catch (error) {
+    console.error('Error uploading XML file to database:', error);
+    res
+      .status(StatusCodes.INTERNAL_SERVER_ERROR)
+      .json({ message: error.message });
+  }
+};
+
+const removeXMLFile = async (req, res) => {
+  try {
+    const { userId, songId } = req.params;
+
+    console.log(`Removing XML file upload: userId=${userId}, songId=${songId}`);
+
+    const user = await User.findById(userId);
+
+    if (!user) {
+      return res
+        .status(StatusCodes.NOT_FOUND)
+        .json({ message: 'User not found' });
+    }
+
+    // Find the index of the score to remove
+    const scoreIndex = user.uploadedScores.findIndex(
+      (score) => score._id.toString() === songId
+    );
+
+    if (scoreIndex === -1) {
+      return res
+        .status(StatusCodes.NOT_FOUND)
+        .json({ message: 'Score not found' });
+    }
+
+    // Remove the score from the uploadedScores array
+    user.uploadedScores.splice(scoreIndex, 1);
+
+    // Save the updated user document
+    await user.save();
+
+    res.status(StatusCodes.OK).json(user);
+  } catch (error) {
+    console.error('Error removing XML file from user:', error);
+    res
+      .status(StatusCodes.INTERNAL_SERVER_ERROR)
+      .json({ message: error.message });
+  }
+};
+
 // Endpoint handler to update recordingsPastWeek
 const updateRecordingsPastWeek = async (req, res) => {
   const userId = req.params.userId;
@@ -167,5 +252,7 @@ export {
   updateProfileData,
   addFavourite,
   removeFavourite,
+  uploadXMLFile,
+  removeXMLFile,
   updateRecordingsPastWeek,
 };
