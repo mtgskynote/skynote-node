@@ -156,6 +156,7 @@ const updateRecordingsPastWeek = async (req, res) => {
       `Error updating recordings for user with ID ${userId}:`,
       error
     );
+    return 0;
     return res
       .status(500)
       .json({ error: `Internal Server Error: ${error.message}` });
