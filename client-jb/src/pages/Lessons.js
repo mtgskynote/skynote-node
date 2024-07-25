@@ -4,7 +4,7 @@ import { useAppContext } from '../context/appContext';
 import { getUserFavourites } from '../utils/usersMethods.js';
 import { getAllRecData } from '../utils/studentRecordingMethods.js';
 import LoadingScreen from '../components/LoadingScreen.js';
-import InDevelopment from '../components/InDevelopment.js';
+import ImportedScores from '../components/ImportedScores.js';
 
 const Lessons = () => {
   const [lessonList, setLessonList] = useState({});
@@ -63,7 +63,7 @@ const Lessons = () => {
         const levelNameMapping = {
           1: 'Getting Started',
           2: 'Building Your Repertoire',
-          3: 'Imported Scores',
+          0: 'Imported Scores',
         };
         const mappedLevel = levelNameMapping[level] || level;
 
@@ -266,7 +266,7 @@ const Lessons = () => {
           />
         ))
       ) : (
-        <InDevelopment />
+        <ImportedScores />
       )}
     </div>
   );
