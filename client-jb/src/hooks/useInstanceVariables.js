@@ -40,6 +40,7 @@ const useInstanceVariables = (props) => {
     showingRep,
     selectionEndReached,
     calculatePunctuation,
+    playbackManager,
   };
 };
 

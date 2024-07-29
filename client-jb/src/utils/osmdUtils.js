@@ -65,4 +65,22 @@ const midi2StaffGaps = (playedNoteMidi) => {
   return result;
 };
 
-export { freq2midipitch, midi2StaffGaps };
+// INSERT COMMENT
+const resetNotesColor = (osmd) => {
+  const colorBlack = "#000000";
+  let svgContainer = osmd.container;
+  let svgElements = svgContainer.getElementsByTagName("svg");
+
+  // Iterate through each note
+  for (var i = 0; i < svgElements.length; i++) {
+    let svgElement = svgElements[i];
+    let noteheads = svgElement.getElementsByClassName("vf-notehead");
+    for (let j = 0; j < noteheads.length; j++) {
+      let notehead = noteheads[j];
+      let path = notehead.querySelector("path");
+      path.setAttribute("style", "fill: " + colorBlack + " !important");
+    }
+  }
+};
+
+export { freq2midipitch, midi2StaffGaps, resetNotesColor };

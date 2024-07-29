@@ -8,7 +8,6 @@ import {
   BasicAudioPlayer,
   IAudioMetronomePlayer,
 } from "opensheetmusicdisplay";
-
 import LineChart from "./LineChartOSMD";
 import {
   Chart as Chartjs,

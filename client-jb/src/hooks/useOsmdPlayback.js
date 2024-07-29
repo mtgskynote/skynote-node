@@ -1,4 +1,4 @@
-import { useCallback, useRef } from "react";
+import { useCallback } from "react";
 import {
   PlaybackManager,
   LinearTimingSource,
@@ -6,26 +6,31 @@ import {
   BasicAudioPlayer,
 } from "opensheetmusicdisplay";
 import useInstanceVariables from "../hooks/useInstanceVariables";
+import { usePitchState } from "./usePitchState";
 
 const useOsmdPlayback = (props) => {
-  const selectionEndReachedRef = useRef(false);
-  const calculatePunctuationRef = useRef(false);
+  const instanceVariables = useInstanceVariables(props);
+  const pitchState = usePitchState();
 
   return useCallback(
     (osmd) => {
       const timingSource = new LinearTimingSource();
-      const playbackManager = new PlaybackManager(
+      instanceVariables.playbackManager.current = new PlaybackManager(
         timingSource,
         IAudioMetronomePlayer,
         new BasicAudioPlayer(),
         undefined
       );
 
+      const playbackManager = instanceVariables.playbackManager.current;
+
       const handleSelectionEndReached = () => {
-        console.log("end");
-        selectionEndReachedRef.current = true;
+        // Update the flag when the event occurs
+        props.cursorActivity(true);
+        instanceVariables.previousTimestamp.current = null;
         if (props.startPitchTrack) {
-          calculatePunctuationRef.current = true;
+          // Set flag to calculate stars based on recording accuracy
+          instanceVariables.calculatePunctuation.current = true;
         }
       };
 
@@ -52,6 +57,7 @@ const useOsmdPlayback = (props) => {
         playbackManager.addListener(osmd.cursor);
         playbackManager.reset();
         osmd.PlaybackManager = playbackManager;
+        instanceVariables.playbackManager.current = playbackManager;
 
         for (const instrument of playbackManager.InstrumentIdMapping.values()) {
           instrument.Volume = props.recordVol;

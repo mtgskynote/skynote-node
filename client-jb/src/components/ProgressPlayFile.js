@@ -1,7 +1,7 @@
 import React, { useEffect, useState, useRef, useCallback } from "react";
 import { HotKeys } from "react-hotkeys";
 import { useParams, useNavigate } from "react-router-dom";
-import OpenSheetMusicDisplay from "./OpenSheetMusicDisplay";
+import OpenSheetMusicDisplay from "./OpenSheetMusicDisplayFunctional";
 import ControlBar from "./ControlBar.js";
 import { makeAudioStreamer } from "./audioStreamer.js";
 import CountDownTimer from "./CountDownTimer.js";
