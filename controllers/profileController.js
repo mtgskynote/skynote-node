@@ -129,12 +129,19 @@ const removeFavourite = async (req, res) => {
 };
 
 const uploadXMLFile = async (req, res) => {
-  try {
-    const { userId } = req.params;
-    const { skill } = req.body; // Extract skill from request body
-    const file = req.file; // Get the file from the request
+  console.log('uploadXMLFile');
+  const { userId } = req.params;
+  const file = req.file; // Get the file from req.file, not req.params
 
-    console.log(`Adding XML file upload: userId=${userId}`);
+  // Validate userId
+  if (!mongoose.Types.ObjectId.isValid(userId)) {
+    return res
+      .status(StatusCodes.BAD_REQUEST)
+      .json({ error: 'Invalid userId format' });
+  }
+
+  try {
+    console.log(`Uploading XML file: userId=${userId}`);
 
     if (!file) {
       return res
@@ -143,72 +150,86 @@ const uploadXMLFile = async (req, res) => {
     }
 
     const user = await User.findById(userId);
-
     if (!user) {
       return res
         .status(StatusCodes.NOT_FOUND)
         .json({ message: 'User not found' });
     }
 
-    // Create a new XML score object
-    const newScore = new xmlScores({
-      fname: file.originalname,
-      level: 0, // Fixed level value for uploaded scores
-      skill: skill || '', // Use provided skill or empty string
-    });
-
-    // Push the new score into the uploadedScores array
-    user.uploadedScores.push(newScore);
+    // Push the new file path into the uploadedScores array
+    user.uploadedScores.push({ filePath: file.path }); // Store the file path, not the file object
 
     // Save the updated user document
     await user.save();
 
-    res.status(StatusCodes.OK).json(user);
+    res
+      .status(StatusCodes.OK)
+      .json({ message: 'File uploaded successfully', filePath: file.path });
   } catch (error) {
     console.error('Error uploading XML file to database:', error);
     res
       .status(StatusCodes.INTERNAL_SERVER_ERROR)
-      .json({ message: error.message });
+      .json({ message: 'Internal server error', error: error.message });
   }
 };
 
 const removeXMLFile = async (req, res) => {
   try {
-    const { userId, songId } = req.params;
+    const { userId } = req.params;
+    const { filePath } = req.body; // Expect filePath in the request body
 
-    console.log(`Removing XML file upload: userId=${userId}, songId=${songId}`);
+    console.log(
+      `Removing XML file upload: userId=${userId}, filePath=${filePath}`
+    );
 
+    // Validate userId
+    if (!mongoose.Types.ObjectId.isValid(userId)) {
+      return res
+        .status(StatusCodes.BAD_REQUEST)
+        .json({ error: 'Invalid userId format' });
+    }
+
+    // Find the user
     const user = await User.findById(userId);
-
     if (!user) {
       return res
         .status(StatusCodes.NOT_FOUND)
         .json({ message: 'User not found' });
     }
 
-    // Find the index of the score to remove
+    // Find the index of the file to remove
     const scoreIndex = user.uploadedScores.findIndex(
-      (score) => score._id.toString() === songId
+      (score) => score.filePath === filePath
     );
 
     if (scoreIndex === -1) {
       return res
         .status(StatusCodes.NOT_FOUND)
-        .json({ message: 'Score not found' });
+        .json({ message: 'File not found' });
     }
 
-    // Remove the score from the uploadedScores array
+    // Remove the file path from the user's record
     user.uploadedScores.splice(scoreIndex, 1);
 
     // Save the updated user document
     await user.save();
 
-    res.status(StatusCodes.OK).json(user);
+    // Remove the file from the filesystem
+    fs.unlink(path.resolve(filePath), (err) => {
+      if (err) {
+        console.error('Error removing file from filesystem:', err);
+        return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
+          message: 'Error removing file from filesystem',
+          error: err.message,
+        });
+      }
+      res.status(StatusCodes.OK).json({ message: 'File removed successfully' });
+    });
   } catch (error) {
     console.error('Error removing XML file from user:', error);
     res
       .status(StatusCodes.INTERNAL_SERVER_ERROR)
-      .json({ message: error.message });
+      .json({ message: 'Internal server error', error: error.message });
   }
 };
 
