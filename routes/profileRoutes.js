@@ -9,11 +9,10 @@ import {
   updateRecordingsPastWeek,
 } from '../controllers/profileController.js';
 import { authenticateUser } from '../middleware-jb/authenticateUser.js';
-
+import upload from '../multerConfig.js';
 import bodyParser from 'body-parser';
 // Middleware setup for parsing form data
 const formParser = bodyParser.urlencoded({ extended: false });
-
 const router = express.Router();
 
 router
@@ -27,9 +26,9 @@ router
   .post(authenticateUser, addFavourite)
   .delete(authenticateUser, removeFavourite);
 router
-  .route('/uploads/:userId/')
-  .post(authenticateUser, uploadXMLFile)
-  .delete(authenticateUser, removeXMLFile);
+  .route('/uploadXML/:userId')
+  .post(authenticateUser, upload.single('file'), uploadXMLFile);
+router.route('/removeXMLFile/:userId').post(authenticateUser, removeXMLFile);
 router
   .route('/recordingsPastWeek/:userId')
   .post(authenticateUser, updateRecordingsPastWeek);

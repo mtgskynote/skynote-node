@@ -76,7 +76,7 @@ LevelCard.propTypes = {
   subLevelIsOpen: PropTypes.bool.isRequired,
   handleSubLevelClick: PropTypes.func.isRequired,
   openSubLevel: PropTypes.number,
-  baseSubLevelIndex: PropTypes.number.isRequired,
+  baseSubLevelIndex: PropTypes.number,
 };
 
 export default LevelCard;
