@@ -9,7 +9,6 @@ import {
   midi2StaffGaps,
 } from "../utils/osmdUtils";
 import useRenderPitchLineZoom from "../hooks/useRenderPitchLineZoom";
-import useCheckCursorChange from "../hooks/useCheckCursorChange";
 import LineChart from "./LineChartOSMD";
 
 const OpenSheetMusicDisplay = (props) => {
@@ -31,8 +30,6 @@ const OpenSheetMusicDisplay = (props) => {
     setIsLoaded
   );
   const { renderPitchLineZoom } = useRenderPitchLineZoom();
-
-  useCheckCursorChange(props, instanceVariables, pitchState, resetNotesColor);
 
   // Define default line chart style
   const lineChartStyle = {
@@ -121,7 +118,8 @@ const OpenSheetMusicDisplay = (props) => {
   useEffect(() => {
     if (props.canDownload) {
       let numStars;
-      const colorNotes = usePitchState.colorNotes.slice();
+      const colorNotes = pitchState.colorNotes.slice();
+      console.log("COLOR NOTES:", colorNotes);
       if (instanceVariables.calculatePunctuation.current === true) {
         // Calculate num stars achieved when recording is done
         const colors = colorNotes
@@ -145,14 +143,14 @@ const OpenSheetMusicDisplay = (props) => {
       }
 
       const dataToSave = {
-        pitchTrackPoints: usePitchState.pitchData,
-        pitchX: usePitchState.pitchPositionX,
-        pitchY: usePitchState.pitchPositionY,
-        pitchPointColor: usePitchState.pitchColor,
-        repetitionNumber: usePitchState.repetitionNumber,
-        noteNEWIDs: usePitchState.recordedNoteNEWIDs,
-        noteIndex: usePitchState.recordedNoteIndex,
-        noteColors: usePitchState.colorNotes,
+        pitchTrackPoints: pitchState.pitchData,
+        pitchX: pitchState.pitchPositionX,
+        pitchY: pitchState.pitchPositionY,
+        pitchPointColor: pitchState.pitchColor,
+        repetitionNumber: pitchState.repetitionNumber,
+        noteNEWIDs: pitchState.recordedNoteNEWIDs,
+        noteIndex: pitchState.recordedNoteIndex,
+        noteColors: pitchState.colorNotes,
         bpm: props.bpm,
         stars: numStars,
       };
@@ -180,7 +178,7 @@ const OpenSheetMusicDisplay = (props) => {
       const AUXrecordedNoteIds = json.noteNEWIDs.map(
         (newID) => osmd.IDInvDict[newID]
       );
-      usePitchState.setRecordedNoteIDs(AUXrecordedNoteIds);
+      pitchState.setRecordedNoteIDs(AUXrecordedNoteIds);
 
       // Update color of notes and XY positions of pitch track line points
       let copy_pitchPositionX = json.pitchX.slice();
@@ -395,12 +393,14 @@ const OpenSheetMusicDisplay = (props) => {
     const osmd = instanceVariables.osmd.current;
     if (props.startPitchTrack && osmd) {
       const lastXPitchIndex = pitchState.pitchPositionX.length - 1;
+      console.log(pitchState.pitchPositionX);
 
       // Add index to X coordinates to advance X-axis pitch tracker when new pitch arrives
       if (
         instanceVariables.notePositionX.current ===
         pitchState.pitchPositionX[lastXPitchIndex]
       ) {
+        console.log("TRACKING PITCH");
         instanceVariables.index.current =
           instanceVariables.index.current + instanceVariables.spacing.current;
       } else {

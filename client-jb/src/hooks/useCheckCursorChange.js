@@ -2,13 +2,13 @@ import { useEffect, useRef } from "react";
 import { freq2midipitch } from "../utils/osmdUtils";
 
 const useCheckCursorChange = (
+  osmdInstance,
   props,
   instanceVariables,
   pitchState,
   resetNotesColor
 ) => {
   const previousTimestamp = useRef(instanceVariables.previousTimestamp.current);
-  const osmdInstance = instanceVariables.osmd.current;
 
   useEffect(() => {
     if (!osmdInstance) return;
