@@ -83,7 +83,7 @@ const UserSchema = new mongoose.Schema({
       },
     },
   ],
-  uploadedScores: [
+  importedScores: [
     {
       filePath: {
         type: String,

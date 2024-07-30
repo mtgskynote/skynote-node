@@ -1,29 +1,21 @@
 import React, { useState, useRef } from 'react';
 import axios from 'axios';
+import PropTypes from 'prop-types';
 import { useAppContext } from '../context/appContext';
 import UploadIcon from '@mui/icons-material/CloudUpload';
 
-const MAX_FILE_SIZE = 16 * 1024 * 1024; // 16MB in bytes
-
-const XmlFileUploader = () => {
+const XmlFileUploader = ({ refreshData }) => {
   const [file, setFile] = useState(null);
-  const [fileContent, setFileContent] = useState('');
   const [uploadProgress, setUploadProgress] = useState(0);
-  const [uploadError, setUploadError] = useState(null); // State to track upload errors
+  const [uploadError, setUploadError] = useState(null);
   const fileInputRef = useRef();
   const { getCurrentUser } = useAppContext();
 
   const handleFileChange = (event) => {
     const selectedFile = event.target.files[0];
     if (selectedFile) {
-      if (selectedFile.size > MAX_FILE_SIZE) {
-        setUploadError('File size exceeds the 16MB limit.');
-        setFile(null);
-      } else {
-        setFile(selectedFile);
-        setUploadError(null); // Clear any previous error
-        readFileContent(selectedFile);
-      }
+      setFile(selectedFile);
+      setUploadError(null);
     }
   };
 
@@ -31,27 +23,13 @@ const XmlFileUploader = () => {
     event.preventDefault();
     const droppedFile = event.dataTransfer.files[0];
     if (droppedFile) {
-      if (droppedFile.size > MAX_FILE_SIZE) {
-        setUploadError('File size exceeds the 16MB limit.');
-        setFile(null);
-      } else {
-        setFile(droppedFile);
-        setUploadError(null); // Clear any previous error
-        readFileContent(droppedFile);
-      }
+      setFile(droppedFile);
+      setUploadError(null);
     }
   };
 
   const handleDragOver = (event) => {
     event.preventDefault();
-  };
-
-  const readFileContent = (file) => {
-    const reader = new FileReader();
-    reader.onload = (e) => {
-      setFileContent(e.target.result);
-    };
-    reader.readAsText(file);
   };
 
   const handleClick = () => {
@@ -62,7 +40,6 @@ const XmlFileUploader = () => {
 
   const handleUpload = async () => {
     try {
-      // Fetch current user to get user ID
       const result = await getCurrentUser();
       const userId = result.id;
 
@@ -79,29 +56,34 @@ const XmlFileUploader = () => {
       const formData = new FormData();
       formData.append('file', file);
 
-      setUploadError(null); // Reset any previous error
-
-      const response = await axios.post(`/uploadXML/${userId}`, formData, {
-        headers: {
-          'Content-Type': 'multipart/form-data',
-        },
-        onUploadProgress: (progressEvent) => {
-          const progress = Math.round(
-            (progressEvent.loaded * 100) / progressEvent.total
-          );
-          setUploadProgress(progress);
-        },
-      });
+      setUploadError(null);
+      const response = await axios.post(
+        `/api/v1/profile/uploadXML/${userId}`,
+        formData,
+        {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem('token')}`,
+            'Content-Type': 'multipart/form-data',
+          },
+          onUploadProgress: (progressEvent) => {
+            const progress = Math.round(
+              (progressEvent.loaded * 100) / progressEvent.total
+            );
+            setUploadProgress(progress);
+          },
+        }
+      );
 
       console.log('File uploaded successfully:', response.data);
       alert('File uploaded successfully!');
 
       setFile(null);
       setUploadProgress(0);
+      if (refreshData) refreshData();
     } catch (error) {
       console.error('Error uploading file:', error);
       setUploadError('Error uploading file.');
-      setUploadProgress(0); // Reset upload progress on error
+      setUploadProgress(0);
     }
   };
 
@@ -162,6 +144,10 @@ const XmlFileUploader = () => {
       </div>
     </div>
   );
+};
+
+XmlFileUploader.propTypes = {
+  refreshData: PropTypes.func,
 };
 
 export default XmlFileUploader;

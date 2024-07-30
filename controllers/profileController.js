@@ -156,10 +156,8 @@ const uploadXMLFile = async (req, res) => {
         .json({ message: 'User not found' });
     }
 
-    // Push the new file path into the uploadedScores array
-    user.uploadedScores.push({ filePath: file.path }); // Store the file path, not the file object
-
-    // Save the updated user document
+    // Store the file path, not the file object
+    user.importedScores.push({ filePath: file.path });
     await user.save();
 
     res
@@ -198,7 +196,7 @@ const removeXMLFile = async (req, res) => {
     }
 
     // Find the index of the file to remove
-    const scoreIndex = user.uploadedScores.findIndex(
+    const scoreIndex = user.importedScores.findIndex(
       (score) => score.filePath === filePath
     );
 
@@ -209,7 +207,7 @@ const removeXMLFile = async (req, res) => {
     }
 
     // Remove the file path from the user's record
-    user.uploadedScores.splice(scoreIndex, 1);
+    user.importedScores.splice(scoreIndex, 1);
 
     // Save the updated user document
     await user.save();
