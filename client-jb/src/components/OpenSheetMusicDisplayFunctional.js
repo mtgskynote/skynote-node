@@ -9,6 +9,7 @@ import {
   midi2StaffGaps,
 } from "../utils/osmdUtils";
 import useRenderPitchLineZoom from "../hooks/useRenderPitchLineZoom";
+import useCheckCursorChange from "../hooks/useCheckCursorChange";
 import LineChart from "./LineChartOSMD";
 
 const OpenSheetMusicDisplay = (props) => {
@@ -30,6 +31,8 @@ const OpenSheetMusicDisplay = (props) => {
     setIsLoaded
   );
   const { renderPitchLineZoom } = useRenderPitchLineZoom();
+
+  useCheckCursorChange(props, instanceVariables, pitchState, resetNotesColor);
 
   // Define default line chart style
   const lineChartStyle = {
