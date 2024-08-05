@@ -9,6 +9,7 @@ import {
   BasicAudioPlayer,
   IAudioMetronomePlayer,
   TransposeCalculator,
+  Cursor,
 } from 'opensheetmusicdisplay';
 
 import LineChart from './LineChartOSMD';
@@ -326,40 +327,50 @@ class OpenSheetMusicDisplay extends Component {
     this.osmd = new OSMD(this.divRef.current, options);
 
     //define the osmd features to be included
-    this.osmd.load(this.props.file).then(() => {
-      this.osmd.TransposeCalculator = new TransposeCalculator();
-      if (this.osmd.Sheet) {
-        this.osmd.Sheet.Transpose = this.props.transpose;
-        this.osmd.updateGraphic();
-        this.osmd.render();
-        this.osmd.cursor.CursorOptions.color = '#4ade80';
-        this.osmd.render();
-        const cursor = this.osmd.cursor;
-        this.props.cursorRef.current = cursor;
-        cursor.show();
-        this.setState({
-          initialCursorTop: cursor.cursorElement.style.top,
-          initialCursorLeft: cursor.cursorElement.style.left,
-        });
-      }
+    this.osmd
+      .load(this.props.file)
+      .then(() => {
+        this.osmd.TransposeCalculator = new TransposeCalculator();
+        if (this.osmd.Sheet) {
+          this.osmd.Sheet.Transpose = this.props.transpose;
+          this.osmd.updateGraphic();
+          const cursor = new Cursor(this.divRef.current, this.osmd, {
+            color: '#4ade80',
+            follow: 'true',
+            type: 0,
+            alpha: 0.5,
+          });
+          this.osmd.cursors = [cursor];
+          this.props.cursorRef.current = this.osmd.cursor;
+          this.setState({
+            initialCursorTop: this.osmd.cursor.cursorElement.style.top,
+            initialCursorLeft: this.osmd.cursor.cursorElement.style.left,
+          });
+          this.osmd.render();
+          console.log('KSBFWKWCSJ');
+          this.osmd.cursor.show();
+        }
 
-      this.osmd.zoom = this.props.zoom;
-      this.playbackControl = this.playbackOsmd(this.osmd);
-      this.playbackControl.initialize();
+        this.osmd.zoom = this.props.zoom;
+        this.playbackControl = this.playbackOsmd(this.osmd);
+        this.playbackControl.initialize();
 
-      this.props.playbackRef.current = this.playbackManager;
+        this.props.playbackRef.current = this.playbackManager;
 
-      //when we come in visual mode, in the setup we set the cursor color to yellow
-      this.cursorInterval = setInterval(this.checkCursorChange, 200);
-      if (this.props.visual === 'yes') {
-        this.osmd.cursor.CursorOptions.color = '#dde172';
-        this.osmd.render();
-      }
-      //save dictionary of IDs associations
-      [this.osmd.IDdict, this.osmd.IDInvDict] = generateNoteIDsAssociation(
-        this.osmd
-      );
-    });
+        //when we come in visual mode, in the setup we set the cursor color to yellow
+        this.cursorInterval = setInterval(this.checkCursorChange, 200);
+        if (this.props.visual === 'yes') {
+          this.osmd.cursor.CursorOptions.color = '#dde172';
+          this.osmd.render();
+        }
+        //save dictionary of IDs associations
+        [this.osmd.IDdict, this.osmd.IDInvDict] = generateNoteIDsAssociation(
+          this.osmd
+        );
+      })
+      .catch((error) => {
+        console.error('Error loading or rendering the MusicXML file:', error);
+      });
   }
 
   componentWillUnmount() {
@@ -762,6 +773,8 @@ class OpenSheetMusicDisplay extends Component {
     //#region CHANGES IN VALUES
     if (this.props.visualJSON !== prevProps.visualJSON) {
       const json = this.props.visualJSON;
+      console.log(json);
+      console.log(this.osmd);
       //update values:
       this.setState({ colorNotes: json.noteColors });
       this.setState({ recordedNoteNEWIDs: json.noteNEWIDs });
@@ -1120,6 +1133,7 @@ class OpenSheetMusicDisplay extends Component {
 
   componentDidMount() {
     this.setupOsmd();
+    console.log('Mounted OSMD');
 
     // Add a listener for cursor change events
   }
