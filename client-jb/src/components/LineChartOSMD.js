@@ -7,7 +7,9 @@ const LineChart = (props) => {
 
   useEffect(() => {
     const canvas = canvasRef.current;
-    ctxRef.current = canvas.getContext("2d");
+    if (canvas) {
+      ctxRef.current = canvas.getContext("2d");
+    }
   }, []);
 
   const drawLine = useCallback(() => {
@@ -33,13 +35,14 @@ const LineChart = (props) => {
         props.showingRep === props.repetitionNumber[i] &&
         props.pitchColor[i] !== "#FFFFFF"
       ) {
-        var x = props.pitchDataPosX[i] + props.pitchIndex[i] - rect.left;
-        var y = props.pitchDataPosY[i] - rect.top;
+        // let x = props.pitchDataPosX[i] + props.pitchIndex[i] - rect.left;
+        let x = props.pitchDataPosX[i] - rect.left;
+        let y = props.pitchDataPosY[i] - rect.top;
 
         if (props.pitchColor[i - 1] === "#FFFFFF") {
           ctx.moveTo(x, y);
         } else {
-          var distance = Math.abs(
+          let distance = Math.abs(
             x -
               (props.pitchDataPosX[i - 1] + props.pitchIndex[i - 1] - rect.left)
           );
@@ -63,7 +66,9 @@ const LineChart = (props) => {
   ]);
 
   useEffect(() => {
-    drawLine();
+    if (ctxRef.current) {
+      drawLine();
+    }
   }, [drawLine]);
 
   return (
