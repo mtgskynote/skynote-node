@@ -1,7 +1,7 @@
 import React, { useEffect, useState, useRef } from "react";
 import { useParams, useNavigate, useLocation } from "react-router-dom";
 import { HotKeys } from "react-hotkeys";
-import OpenSheetMusicDisplay from "./OpenSheetMusicDisplay";
+import OpenSheetMusicDisplay from "./OpenSheetMusicDisplayFunctional";
 import PopUpWindow from "./PopUpWindow.js";
 import {
   getRecording,
@@ -9,6 +9,7 @@ import {
 } from "../utils/studentRecordingMethods.js";
 import ControlBar from "./ControlBar.js";
 import { getAudioContext } from "../context/audioContext";
+import LoadingScreen from "./LoadingScreen.js";
 
 const folderBasePath = "/xmlScores/violin";
 
@@ -56,7 +57,7 @@ const ProgressPlayFileVisual = () => {
   const [cursorFinished, setCursorFinished] = useState(false);
   const [cursorJumped, setCursorJumped] = useState(false);
 
-  const [json, setJson] = useState([]);
+  const [json, setJson] = useState(null);
   const [metaData, setMetaData] = useState({
     name: null,
     stars: null,
@@ -107,29 +108,33 @@ const ProgressPlayFileVisual = () => {
   const recordingID = location.state?.id;
 
   useEffect(() => {
-    getRecording(recordingID).then((recordingJSON) => {
-      // Get score info
-      const scoreInfo = JSON.parse(localStorage.getItem("scoreData")).find(
-        (item) => item.fname === params.files
-      );
+    const loadRecording = async () => {
+      try {
+        const recordingJSON = await getRecording(recordingID);
 
-      // Set MetaData
-      const recordingDate = new Date(recordingJSON.date);
-      setMetaData({
-        name: recordingJSON.recordingName,
-        stars: recordingJSON.info.stars,
-        date: recordingDate.toLocaleDateString("en-UK", options),
-        skill: scoreInfo.skill,
-        level: scoreInfo.level,
-        score: scoreInfo.title,
-        bpm: recordingJSON.info.bpm,
-      });
-      // Save json.info (recording data, pitch, colors...) to send to OSMD
-      setJson(recordingJSON.info);
-      // Save audio
-      setBpm(recordingJSON.info.bpm);
-      setSongFile(recordingJSON.audio);
-    });
+        const scoreData = JSON.parse(localStorage.getItem("scoreData"));
+
+        const scoreInfo = scoreData.find((item) => item.fname === params.files);
+
+        const recordingDate = new Date(recordingJSON.date);
+        setMetaData({
+          name: recordingJSON.recordingName,
+          stars: recordingJSON.info.stars,
+          date: recordingDate.toLocaleDateString("en-UK", options),
+          skill: scoreInfo.skill,
+          level: scoreInfo.level,
+          score: scoreInfo.title,
+          bpm: recordingJSON.info.bpm,
+        });
+        setJson(recordingJSON.info); // Set json state
+        setBpm(recordingJSON.info.bpm);
+        setSongFile(recordingJSON.audio);
+      } catch (error) {
+        console.error("Error loading recording:", error);
+      }
+    };
+
+    loadRecording();
   }, [recordingID]);
 
   // Set reset flag as false when resetting is complete
@@ -341,6 +346,10 @@ const ProgressPlayFileVisual = () => {
 
     checkIsMacOs();
   }, []);
+
+  useEffect(() => {
+    console.log("progress json:", json);
+  }, [json]);
 
   return (
     <HotKeys keyMap={keyMap} handlers={handlers}>

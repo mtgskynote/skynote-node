@@ -365,11 +365,15 @@ const OpenSheetMusicDisplay = (props) => {
     }
   }, [props.canDownload]);
 
+  useEffect(() => {
+    console.log(props.visualJSON);
+  }, [props.visualJSON]);
+
   // Update all values for a recorded score (when viewing in playback mode)
   useEffect(() => {
     const osmd = instanceVariables.osmd.current;
     const json = props.visualJSON;
-    if (props.visualJSON && osmd) {
+    if (props.visualJSON) {
       pitchState.setColorNotes(json.noteColors);
       pitchState.setRecordedNoteNEWIDs(json.noteNEWIDs);
       pitchState.setRecordedNoteIndex(json.noteIndex);
@@ -378,6 +382,8 @@ const OpenSheetMusicDisplay = (props) => {
       pitchState.setRepetitionNumber(json.repetitionNumber);
       instanceVariables.showingRep.current = 0;
       instanceVariables.totalReps.current = Math.max(...json.repetitionNumber);
+
+      console.log(pitchState);
 
       // Generate autoIds from our IDs
       const AUXrecordedNoteIds = json.noteNEWIDs.map(
