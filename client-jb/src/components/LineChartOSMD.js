@@ -36,23 +36,30 @@ const LineChart = (props) => {
         props.pitchColor[i] !== '#FFFFFF'
       ) {
         // get coordinates (x,y)
-        var x = props.pitchDataPosX[i] + props.pitchIndex[i] - rect.left;
-        var y = props.pitchDataPosY[i] - rect.top;
+        let x = props.pitchDataPosX[i] + props.pitchIndex[i] - rect.left;
+        let y = props.pitchDataPosY[i] - rect.top;
 
         // if previous pitch input was "invalid", force the jump
         if (props.pitchColor[i - 1] === '#FFFFFF') {
           ctx.moveTo(x, y);
+          console.log('invalid pitch');
         } else {
           //calculate distance
-          var distance = Math.abs(
+          let distance = Math.abs(
             x -
               (props.pitchDataPosX[i - 1] + props.pitchIndex[i - 1] - rect.left)
           );
+          console.log('distance:', distance);
+          console.log('distance threshold:', distanceThreshold);
+          console.log('RECT WIDTH', rect.width);
+          console.log('PROP WIDTH', props.width);
           // check distance from previous pitch (note change=bigger distance normally)
           if (distance > distanceThreshold) {
             ctx.moveTo(x, y); // force jump
+            console.log('outside distance threshold');
           } else {
             ctx.lineTo(x, y); // continue line
+            console.log('drawing pitch!!');
           }
         }
       }
@@ -76,7 +83,7 @@ LineChart.propTypes = {
   pitchColor: PropTypes.arrayOf(PropTypes.string).isRequired,
   repetitionNumber: PropTypes.arrayOf(PropTypes.number).isRequired,
   showingRep: PropTypes.number.isRequired,
-  zoom: PropTypes.number.isRequired,
+  zoom: PropTypes.number,
   width: PropTypes.number.isRequired,
   height: PropTypes.number.isRequired,
 };

@@ -380,7 +380,7 @@ ControlBar.propTypes = {
   isRecording: PropTypes.bool,
   isBpmDisabled: PropTypes.bool,
   playbackMode: PropTypes.bool.isRequired,
-  handleShowPopUpWindow: PropTypes.func.isRequired,
+  handleShowPopUpWindow: PropTypes.func,
   handleToggleStats: PropTypes.func,
   handleToggleInfo: PropTypes.func.isRequired,
   showStats: PropTypes.bool,

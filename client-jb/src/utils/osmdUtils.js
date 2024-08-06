@@ -165,3 +165,170 @@ export {
   generateNoteIDsAssociation,
   renderPitchLineZoom,
 };
+
+//   const checkCursorChange = () => {
+//     const cursorCurrent =
+//       osmd.current.cursor.Iterator.currentTimeStamp.RealValue;
+
+//     if (
+//       previousTimestamp.current !== null &&
+//       props.visual === 'yes' &&
+//       previousTimestamp.current > cursorCurrent &&
+//       playbackManager.current.isPlaying
+//     ) {
+//       if (showingRep < totalReps) {
+//         showingRep.current = showingRep + 1;
+//       } else {
+//         showingRep.current = 0;
+//       }
+//       props.showRepeatsInfo(showingRep.current, totalReps.current);
+
+//       const staves = osmd.current.graphic.measureList;
+//       for (let stave_index = 0; stave_index < staves.length; stave_index++) {
+//         let stave = staves[stave_index][0];
+//         for (
+//           let note_index = 0;
+//           note_index < stave.staffEntries.length;
+//           note_index++
+//         ) {
+//           let note = stave.staffEntries[note_index];
+//           let noteID = note.graphicalVoiceEntries[0].notes[0].getSVGId();
+//           let noteNEWID = osmd.current.IDdict[noteID];
+//           const colorsArray = [...colorNotes];
+//           const index = colorsArray.findIndex(
+//             (item) => item[0][0] === noteNEWID && item[0][2] === showingRep
+//           );
+//           if (index !== -1) {
+//             const svgElement =
+//               note.graphicalVoiceEntries[0].notes[0].getSVGGElement();
+//             svgElement.children[0].children[0].children[0].style.fill =
+//               colorsArray[index][0][1]; // notehead
+//             if (
+//               svgElement &&
+//               svgElement.children[0] &&
+//               svgElement.children[0].children[0] &&
+//               svgElement.children[0].children[1]
+//             ) {
+//               svgElement.children[0].children[0].children[0].style.fill =
+//                 colorsArray[index][0][1]; // notehead
+//               svgElement.children[0].children[1].children[0].style.fill =
+//                 colorsArray[index][0][1]; // notehead
+//             }
+//           }
+//         }
+//       }
+//       props.cursorJumpsBack();
+//     }
+
+//     if (props.startPitchTrack) {
+//       if (previousTimestamp.current > cursorCurrent) {
+//         totalReps.current = totalReps + 1;
+//         showingRep.current = totalReps;
+//         resetNotesColor();
+//       }
+
+//       const gNote = osmd.current.cursor.GNotesUnderCursor()[0];
+//       const svgElement = gNote.getSVGGElement();
+
+//       if (
+//         svgElement &&
+//         svgElement.children[0] &&
+//         svgElement.children[0].children[0] &&
+//         svgElement.children[0].children[1]
+//       ) {
+//         const notePos =
+//           svgElement.children[0].children[1].children[0].getBoundingClientRect();
+//         notePositionX.current = notePos.x;
+//         notePositionY.current = notePos.y;
+//       } else {
+//         const notePos =
+//           svgElement.children[0].children[0].children[0].getBoundingClientRect();
+//         notePositionX.current = notePos.x;
+//         notePositionY.current = notePos.y;
+//       }
+
+//       const lastPitchData = pitchData[pitchData.length - 1];
+//       const lastPitchConfidenceData =
+//         pitchConfidenceData[pitchConfidenceData.length - 1];
+
+//       const colorPitchMatched = '#00FF00'; //green
+//       const colorPitchNotMatched = '#FF0000'; //red
+
+//       let notePitch;
+//       if (osmd.current.cursor.NotesUnderCursor()[0].Pitch !== undefined) {
+//         console.log(
+//           'tranposed pitch',
+//           osmd.current.cursor.NotesUnderCursor()[0].TransposedPitch
+//         );
+//         notePitch =
+//           osmd.current.cursor.NotesUnderCursor()[0].TransposedPitch !==
+//           undefined
+//             ? osmd.current.cursor.NotesUnderCursor()[0].TransposedPitch
+//                 .frequency
+//             : osmd.current.cursor.NotesUnderCursor()[0].Pitch.frequency;
+//         if (lastPitchConfidenceData >= 0.5) {
+//           if (
+//             lastPitchData !== undefined &&
+//             Math.abs(
+//               freq2midipitch(lastPitchData) - freq2midipitch(notePitch)
+//             ) <= 0.25 // 0.25 MIDI error margin
+//           ) {
+//             countGoodNotes.current = countGoodNotes.current + 1;
+//           } else {
+//             countBadNotes.current = countBadNotes.current + 1;
+//           }
+//         }
+//       } else {
+//         notePitch = 0;
+//         if (lastPitchConfidenceData <= 0.5) {
+//           countGoodNotes.current = countGoodNotes.current + 1;
+//         } else {
+//           countBadNotes.current = countBadNotes.current + 1;
+//         }
+//       }
+
+//       const total = countBadNotes.current + countGoodNotes.current;
+//       if (total !== 0 && countGoodNotes.current >= Math.ceil(total * 0.5)) {
+//         noteColor.current = colorPitchMatched;
+//       } else if (total !== 0 && countGoodNotes < Math.ceil(total * 0.5)) {
+//         noteColor.current = colorPitchNotMatched;
+//       }
+
+//       if (currentGNoteinScorePitch) {
+//         const noteID = osmd.current.IDdict[currentGNoteinScorePitch.getSVGId()];
+//         const colorsArray = [...colorNotes];
+//         const index = colorsArray.findIndex(
+//           (item) => item[0][0] === noteID && item[0][2] === totalReps
+//         );
+//         if (index !== -1) {
+//           colorsArray[index][0][1] = noteColor.current;
+//         } else {
+//           colorsArray.push([[noteID, noteColor.current, totalReps.current]]);
+//         }
+//         setColorNotes(colorsArray);
+
+//         svgElement.children[0].children[0].children[0].style.fill =
+//           noteColor.current; // notehead
+//         if (
+//           svgElement &&
+//           svgElement.children[0] &&
+//           svgElement.children[0].children[0] &&
+//           svgElement.children[0].children[1]
+//         ) {
+//           svgElement.children[0].children[0].children[0].style.fill =
+//             noteColor.current; // notehead
+//           svgElement.children[0].children[1].children[0].style.fill =
+//             noteColor.current; // notehead
+//         }
+//       }
+
+//       if (gNote !== currentGNoteinScorePitch) {
+//         countBadNotes.current = 0;
+//         countGoodNotes.current = 0;
+//         noteColor.current = '#000000';
+//       }
+//       setCurrentGNoteinScorePitch(gNote);
+//     }
+
+//     previousTimestamp.current = cursorCurrent;
+//   };

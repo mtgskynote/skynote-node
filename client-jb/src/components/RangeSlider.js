@@ -39,7 +39,10 @@ const RangeSlider = ({ min, max, initial, onValueChange, disabled }) => {
 RangeSlider.propTypes = {
   min: PropTypes.number.isRequired,
   max: PropTypes.number.isRequired,
-  initial: PropTypes.number.isRequired,
+  initial: PropTypes.oneOfType([
+    PropTypes.string.isRequired,
+    PropTypes.number.isRequired,
+  ]).isRequired,
   onValueChange: PropTypes.func.isRequired,
   disabled: PropTypes.bool,
 };
