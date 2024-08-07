@@ -42,24 +42,17 @@ const LineChart = (props) => {
         // if previous pitch input was "invalid", force the jump
         if (props.pitchColor[i - 1] === '#FFFFFF') {
           ctx.moveTo(x, y);
-          console.log('invalid pitch');
         } else {
           //calculate distance
           let distance = Math.abs(
             x -
               (props.pitchDataPosX[i - 1] + props.pitchIndex[i - 1] - rect.left)
           );
-          console.log('distance:', distance);
-          console.log('distance threshold:', distanceThreshold);
-          console.log('RECT WIDTH', rect.width);
-          console.log('PROP WIDTH', props.width);
           // check distance from previous pitch (note change=bigger distance normally)
           if (distance > distanceThreshold) {
             ctx.moveTo(x, y); // force jump
-            console.log('outside distance threshold');
           } else {
             ctx.lineTo(x, y); // continue line
-            console.log('drawing pitch!!');
           }
         }
       }
