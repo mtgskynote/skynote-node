@@ -648,12 +648,25 @@ const OpenSheetMusicDisplay = (props) => {
             });
             // COLOR INDEX IS -1??
             if (colorIndex !== -1) {
+              console.log('color index: ' + colorIndex);
               // Note has a color assigned --> color notehead
               // This is for all the notes except the quarter and whole notes
               const svgElement =
                 note.graphicalVoiceEntries[0].notes[0].getSVGGElement();
-              svgElement.children[0].children[0].children[0].style.fill =
-                colorsArray[colorIndex][0][1]; // notehead
+              console.log(
+                'svg element has fill attribute:',
+                svgElement.children[0].children[0].children[0].hasAttribute(
+                  'fill'
+                )
+              );
+              svgElement.children[0].children[0].children[0].setAttribute(
+                'fill',
+                colorsArray[colorIndex][0][1]
+              );
+              console.log('color:', colorsArray[colorIndex][0][1]);
+              // const serializer = new XMLSerializer();
+              // const xmlString = serializer.serializeToString(svgElement);
+              // console.log('svg element: ' + xmlString);
               if (
                 svgElement &&
                 svgElement.children[0] &&
@@ -661,11 +674,20 @@ const OpenSheetMusicDisplay = (props) => {
                 svgElement.children[0].children[1]
               ) {
                 // This is for all the quarter and whole notes
-                svgElement.children[0].children[0].children[0].style.fill =
-                  colorsArray[colorIndex][0][1]; // notehead
-                svgElement.children[0].children[1].children[0].style.fill =
-                  colorsArray[colorIndex][0][1]; // notehead
+                console.log('WHOLE/QUARTER NOTE');
+                svgElement.children[0].children[0].children[0].setAttribute(
+                  'fill',
+                  colorsArray[colorIndex][0][1]
+                );
+                svgElement.children[0].children[1].children[0].setAttribute(
+                  'fill',
+                  colorsArray[colorIndex][0][1]
+                );
               }
+              const parent = svgElement.parentNode;
+              const nextSibling = svgElement.nextSibling;
+              parent.removeChild(svgElement);
+              parent.insertBefore(svgElement, nextSibling);
             }
 
             // Check for pitch tracking line
@@ -692,7 +714,7 @@ const OpenSheetMusicDisplay = (props) => {
       setPitchPositionX(copy_pitchPositionX);
       setPitchPositionY(copy_pitchPositionY);
     }
-  }, [props.visualJSON, osmd.current]);
+  }, [props.visualJSON]);
 
   useEffect(() => {
     if (osmd.current.PlaybackManager) {
