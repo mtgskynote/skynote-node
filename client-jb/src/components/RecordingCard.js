@@ -280,7 +280,7 @@ const RecordingCard = ({
 
 RecordingCard.propTypes = {
   recordingName: PropTypes.string.isRequired,
-  skill: PropTypes.string.isRequired,
+  skill: PropTypes.string,
   stars: PropTypes.number.isRequired,
   xml: PropTypes.string.isRequired,
   recordingId: PropTypes.string.isRequired,

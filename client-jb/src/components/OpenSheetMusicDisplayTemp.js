@@ -26,7 +26,6 @@ import {
 Chartjs.register(LineElement, CategoryScale, LinearScale, PointElement);
 
 const OpenSheetMusicDisplay = (props) => {
-  console.log('tracking pitch?', props.startPitchTrack);
   const [pitchColor, setPitchColor] = useState([]);
   const [pitchData, setPitchData] = useState([]);
   const [pitchConfidenceData, setPitchConfidenceData] = useState([]);
@@ -62,30 +61,56 @@ const OpenSheetMusicDisplay = (props) => {
   const totalReps = useRef(0);
   const showingRep = useRef(0);
   const isScrollingRef = useRef(null); // Ref for timeout ID
+  const cursorInterval = useRef(null);
+  const visualRef = useRef(props.visual);
+  const startPitchTrackRef = useRef(props.startPitchTrack);
+  const pitchDataRef = useRef(pitchData);
+  const pitchConfidenceDataRef = useRef(pitchConfidenceData);
+  const colorNotesRef = useRef(colorNotes);
+  const currentGNoteinScorePitchRef = useRef(currentGNoteinScorePitch);
 
   const lineChartStyle = {
     position: 'absolute',
     pointerEvents: 'none',
   };
 
+  const setAllNotesColor = (osmd, color) => {
+    const measures = osmd.graphic.measureList;
+    measures.forEach((measureArray) => {
+      measureArray.forEach((measure) => {
+        measure.staffEntries.forEach((staffEntry) => {
+          staffEntry.graphicalVoiceEntries.forEach((voiceEntry) => {
+            voiceEntry.notes.forEach((note) => {
+              note.NoteheadColor = color;
+            });
+          });
+        });
+      });
+    });
+  };
+
+  //   const resetNotesColor = () => {
+  //     setAllNotesColor(osmd.current, '#000000');
+  //   };
+
   const resetNotesColor = () => {
     const colorBlack = '#000000'; // black color
 
     // Get the SVG container element
-    var svgContainer = osmd.current.container;
+    const svgContainer = osmd.current.container;
 
     // Select all SVG elements within the container
-    var svgElements = svgContainer.getElementsByTagName('svg');
+    const svgElements = svgContainer.getElementsByTagName('svg');
 
     // Iterate through each SVG element
-    for (var i = 0; i < svgElements.length; i++) {
-      var svgElement = svgElements[i];
+    for (let i = 0; i < svgElements.length; i++) {
+      const svgElement = svgElements[i];
 
       // Select all elements with class "vf-notehead" within the SVG element
-      var noteheads = svgElement.getElementsByClassName('vf-notehead');
+      const noteheads = svgElement.getElementsByClassName('vf-notehead');
 
       // Iterate through all the notehead elements
-      for (var j = 0; j < noteheads.length; j++) {
+      for (let j = 0; j < noteheads.length; j++) {
         let notehead = noteheads[j];
 
         // Select the inner <path> element
@@ -109,7 +134,7 @@ const OpenSheetMusicDisplay = (props) => {
     const handleSelectionEndReached = (o) => {
       console.log('end');
       setSelectionEndReached(true);
-      if (props.startPitchTrack) {
+      if (!props.practiceMode) {
         setCalculatePunctuation(true);
       }
     };
@@ -219,199 +244,209 @@ const OpenSheetMusicDisplay = (props) => {
       osmd.current.Sheet.Transpose = parseInt(newTranspose);
       osmd.current.updateGraphic();
       if (osmd.current.IsReadyToRender()) osmd.current.render();
+      if (osmd.current.graphic)
+        [osmd.current.IDdict, osmd.current.IDInvDict] =
+          generateNoteIDsAssociation(osmd.current);
     }
   };
 
-  useEffect(() => {
-    const intervalId = setInterval(() => {
-      if (osmd.current?.cursor) {
-        const cursorCurrent =
-          osmd.current.cursor.Iterator.currentTimeStamp.RealValue;
+  const handleCursorUpdate = () => {
+    if (osmd.current?.cursor) {
+      const cursorCurrent =
+        osmd.current.cursor.Iterator.currentTimeStamp.RealValue;
+      if (
+        previousTimestamp.current !== null &&
+        visualRef.current === 'yes' &&
+        previousTimestamp.current > cursorCurrent &&
+        playbackManager.current.isPlaying
+      ) {
+        if (showingRep.current < totalReps.current) {
+          showingRep.current = showingRep.current + 1;
+        } else {
+          showingRep.current = 0;
+        }
+        props.showRepeatsInfo(showingRep.current, totalReps.current);
 
-        if (
-          previousTimestamp.current !== null &&
-          props.visual === 'yes' &&
-          previousTimestamp.current > cursorCurrent &&
-          playbackManager.current.isPlaying
-        ) {
-          if (showingRep.current < totalReps.current) {
-            showingRep.current = showingRep.current + 1;
-          } else {
-            showingRep.current = 0;
-          }
-          props.showRepeatsInfo(showingRep.current, totalReps.current);
-
-          const staves = osmd.current.graphic.measureList;
+        const staves = osmd.current.graphic.measureList;
+        for (let stave_index = 0; stave_index < staves.length; stave_index++) {
+          let stave = staves[stave_index][0];
           for (
-            let stave_index = 0;
-            stave_index < staves.length;
-            stave_index++
+            let note_index = 0;
+            note_index < stave.staffEntries.length;
+            note_index++
           ) {
-            let stave = staves[stave_index][0];
-            for (
-              let note_index = 0;
-              note_index < stave.staffEntries.length;
-              note_index++
-            ) {
-              let note = stave.staffEntries[note_index];
-              let noteID = note.graphicalVoiceEntries[0].notes[0].getSVGId();
-              let noteNEWID = osmd.current.IDdict[noteID];
-              const colorsArray = [...colorNotes];
-              const colorIndex = colorsArray.findIndex(
-                (item) =>
-                  item[0][0] === noteNEWID && item[0][2] === showingRep.current
-              );
-              if (colorIndex !== -1) {
-                const svgElement =
-                  note.graphicalVoiceEntries[0].notes[0].getSVGGElement();
+            let note = stave.staffEntries[note_index];
+            let noteID = note.graphicalVoiceEntries[0].notes[0].getSVGId();
+            let noteNEWID = osmd.current.IDdict[noteID];
+            const colorsArray = [...colorNotesRef.current];
+            const colorIndex = colorsArray.findIndex(
+              (item) =>
+                item[0][0] === noteNEWID && item[0][2] === showingRep.current
+            );
+            if (colorIndex !== -1) {
+              const svgElement =
+                note.graphicalVoiceEntries[0].notes[0].getSVGGElement();
+              svgElement.children[0].children[0].children[0].style.fill =
+                colorsArray[colorIndex][0][1]; // notehead
+              if (
+                svgElement &&
+                svgElement.children[0] &&
+                svgElement.children[0].children[0] &&
+                svgElement.children[0].children[1]
+              ) {
                 svgElement.children[0].children[0].children[0].style.fill =
                   colorsArray[colorIndex][0][1]; // notehead
-                if (
-                  svgElement &&
-                  svgElement.children[0] &&
-                  svgElement.children[0].children[0] &&
-                  svgElement.children[0].children[1]
-                ) {
-                  svgElement.children[0].children[0].children[0].style.fill =
-                    colorsArray[colorIndex][0][1]; // notehead
-                  svgElement.children[0].children[1].children[0].style.fill =
-                    colorsArray[colorIndex][0][1]; // notehead
-                }
+                svgElement.children[0].children[1].children[0].style.fill =
+                  colorsArray[colorIndex][0][1]; // notehead
               }
             }
           }
-          props.cursorJumpsBack();
+        }
+        props.cursorJumpsBack();
+      }
+      if (startPitchTrackRef.current) {
+        if (previousTimestamp.current > cursorCurrent) {
+          totalReps.current = totalReps.current + 1;
+          showingRep.current = totalReps.current;
+          resetNotesColor();
         }
 
-        if (props.startPitchTrack) {
-          if (previousTimestamp.current > cursorCurrent) {
-            totalReps.current = totalReps.current + 1;
-            showingRep.current = totalReps.current;
-            resetNotesColor();
+        const gNote = osmd.current.cursor.GNotesUnderCursor()[0];
+        const svgElement = gNote.getSVGGElement();
+
+        if (
+          svgElement &&
+          svgElement.children[0] &&
+          svgElement.children[0].children[0] &&
+          svgElement.children[0].children[1]
+        ) {
+          const notePos =
+            svgElement.children[0].children[1].children[0].getBoundingClientRect();
+          notePositionX.current = notePos.x;
+          notePositionY.current = notePos.y;
+        } else {
+          const notePos =
+            svgElement.children[0].children[0].children[0].getBoundingClientRect();
+          notePositionX.current = notePos.x;
+          notePositionY.current = notePos.y;
+        }
+
+        const lastPitchData =
+          pitchDataRef.current[pitchDataRef.current.length - 1];
+        const lastPitchConfidenceData =
+          pitchConfidenceDataRef.current[
+            pitchConfidenceDataRef.current.length - 1
+          ];
+
+        const colorPitchMatched = '#00FF00'; //green
+        const colorPitchNotMatched = '#FF0000'; //red
+
+        let notePitch;
+        if (
+          osmd.current.cursor.NotesUnderCursor()[0].Pitch !== undefined ||
+          osmd.current.cursor.NotesUnderCursor()[0].TransposedPitch !==
+            undefined
+        ) {
+          notePitch =
+            osmd.current.cursor.NotesUnderCursor()[0].TransposedPitch !==
+            undefined
+              ? osmd.current.cursor.NotesUnderCursor()[0].TransposedPitch
+                  .frequency
+              : osmd.current.cursor.NotesUnderCursor()[0].Pitch.frequency;
+          if (lastPitchConfidenceData >= 0.5) {
+            if (
+              lastPitchData !== undefined &&
+              Math.abs(
+                freq2midipitch(lastPitchData) - freq2midipitch(notePitch)
+              ) <= 0.25 // 0.25 MIDI error margin
+            ) {
+              countGoodNotes.current = countGoodNotes.current + 1;
+            } else {
+              countBadNotes.current = countBadNotes.current + 1;
+            }
           }
+        } else {
+          notePitch = 0;
+          if (lastPitchConfidenceData <= 0.5) {
+            countGoodNotes.current = countGoodNotes.current + 1;
+          } else {
+            countBadNotes.current = countBadNotes.current + 1;
+          }
+        }
 
-          const gNote = osmd.current.cursor.GNotesUnderCursor()[0];
-          const svgElement = gNote.getSVGGElement();
+        const total = countBadNotes.current + countGoodNotes.current;
+        if (total !== 0 && countGoodNotes.current >= Math.ceil(total * 0.5)) {
+          noteColor.current = colorPitchMatched;
+        } else if (
+          total !== 0 &&
+          countGoodNotes.current < Math.ceil(total * 0.5)
+        ) {
+          noteColor.current = colorPitchNotMatched;
+        }
 
+        if (currentGNoteinScorePitchRef.current) {
+          const noteID =
+            osmd.current.IDdict[currentGNoteinScorePitchRef.current.getSVGId()];
+          const colorsArray = [...colorNotesRef.current];
+          const colorIndex = colorsArray.findIndex(
+            (item) => item[0][0] === noteID && item[0][2] === totalReps.current
+          );
+          if (colorIndex !== -1) {
+            colorsArray[colorIndex][0][1] = noteColor.current;
+          } else {
+            colorsArray.push([[noteID, noteColor.current, totalReps.current]]);
+          }
+          setColorNotes(colorsArray);
+          colorNotesRef.current = colorsArray;
+
+          svgElement.children[0].children[0].children[0].style.fill =
+            noteColor.current; // notehead
           if (
             svgElement &&
             svgElement.children[0] &&
             svgElement.children[0].children[0] &&
             svgElement.children[0].children[1]
           ) {
-            const notePos =
-              svgElement.children[0].children[1].children[0].getBoundingClientRect();
-            notePositionX.current = notePos.x;
-            notePositionY.current = notePos.y;
-          } else {
-            const notePos =
-              svgElement.children[0].children[0].children[0].getBoundingClientRect();
-            notePositionX.current = notePos.x;
-            notePositionY.current = notePos.y;
-          }
-
-          const lastPitchData = pitchData[pitchData.length - 1];
-          const lastPitchConfidenceData =
-            pitchConfidenceData[pitchConfidenceData.length - 1];
-
-          const colorPitchMatched = '#00FF00'; //green
-          const colorPitchNotMatched = '#FF0000'; //red
-
-          let notePitch;
-          if (osmd.current.cursor.NotesUnderCursor()[0].Pitch !== undefined) {
-            console.log(
-              'tranposed pitch',
-              osmd.current.cursor.NotesUnderCursor()[0].TransposedPitch
-            );
-            notePitch =
-              osmd.current.cursor.NotesUnderCursor()[0].TransposedPitch !==
-              undefined
-                ? osmd.current.cursor.NotesUnderCursor()[0].TransposedPitch
-                    .frequency
-                : osmd.current.cursor.NotesUnderCursor()[0].Pitch.frequency;
-            if (lastPitchConfidenceData >= 0.5) {
-              if (
-                lastPitchData !== undefined &&
-                Math.abs(
-                  freq2midipitch(lastPitchData) - freq2midipitch(notePitch)
-                ) <= 0.25 // 0.25 MIDI error margin
-              ) {
-                countGoodNotes.current = countGoodNotes.current + 1;
-              } else {
-                countBadNotes.current = countBadNotes.current + 1;
-              }
-            }
-          } else {
-            notePitch = 0;
-            if (lastPitchConfidenceData <= 0.5) {
-              countGoodNotes.current = countGoodNotes.current + 1;
-            } else {
-              countBadNotes.current = countBadNotes.current + 1;
-            }
-          }
-
-          const total = countBadNotes.current + countGoodNotes.current;
-          if (total !== 0 && countGoodNotes.current >= Math.ceil(total * 0.5)) {
-            noteColor.current = colorPitchMatched;
-          } else if (
-            total !== 0 &&
-            countGoodNotes.current < Math.ceil(total * 0.5)
-          ) {
-            noteColor.current = colorPitchNotMatched;
-          }
-
-          if (currentGNoteinScorePitch) {
-            const noteID =
-              osmd.current.IDdict[currentGNoteinScorePitch.getSVGId()];
-            const colorsArray = [...colorNotes];
-            const colorIndex = colorsArray.findIndex(
-              (item) =>
-                item[0][0] === noteID && item[0][2] === totalReps.current
-            );
-            if (colorIndex !== -1) {
-              colorsArray[colorIndex][0][1] = noteColor.current;
-            } else {
-              colorsArray.push([
-                [noteID, noteColor.current, totalReps.current],
-              ]);
-            }
-            setColorNotes(colorsArray);
-
             svgElement.children[0].children[0].children[0].style.fill =
               noteColor.current; // notehead
-            if (
-              svgElement &&
-              svgElement.children[0] &&
-              svgElement.children[0].children[0] &&
-              svgElement.children[0].children[1]
-            ) {
-              svgElement.children[0].children[0].children[0].style.fill =
-                noteColor.current; // notehead
-              svgElement.children[0].children[1].children[0].style.fill =
-                noteColor.current; // notehead
-            }
+            svgElement.children[0].children[1].children[0].style.fill =
+              noteColor.current; // notehead
           }
-
-          if (gNote !== currentGNoteinScorePitch) {
-            countBadNotes.current = 0;
-            countGoodNotes.current = 0;
-            noteColor.current = '#000000';
-          }
-          setCurrentGNoteinScorePitch(gNote);
         }
-        previousTimestamp.current = cursorCurrent;
-      }
-    }, 100); // Adjust the interval time as needed
 
-    return () => clearInterval(intervalId);
-  }, [
-    previousTimestamp.current,
-    //   osmd.current,
-    props.visual,
-    playbackManager.current,
-    props.startPitchTrack,
-    pitchData,
-  ]);
+        if (gNote !== currentGNoteinScorePitchRef.current) {
+          countBadNotes.current = 0;
+          countGoodNotes.current = 0;
+          noteColor.current = '#000000';
+        }
+        setCurrentGNoteinScorePitch(gNote);
+        currentGNoteinScorePitchRef.current = gNote;
+      }
+      previousTimestamp.current = cursorCurrent;
+    }
+  };
+
+  useEffect(() => {
+    visualRef.current = props.visual;
+    startPitchTrackRef.current = props.startPitchTrack;
+  }, [props.visual, props.startPitchTrack]);
+
+  useEffect(() => {
+    if (props.startPitchTrack || props.visual === 'yes') {
+      cursorInterval.current = setInterval(handleCursorUpdate, 100); // Adjust the interval time as needed
+    } else {
+      if (cursorInterval.current) {
+        clearInterval(cursorInterval.current);
+        cursorInterval.current = null;
+      }
+    }
+
+    return () => {
+      if (cursorInterval.current) {
+        clearInterval(cursorInterval.current);
+      }
+    };
+  }, [props.startPitchTrack, props.visual]);
 
   useEffect(() => {
     if (selectionEndReached) {
@@ -460,11 +495,12 @@ const OpenSheetMusicDisplay = (props) => {
         }
         playbackManagerRef.pause();
       }
+      clearInterval(cursorInterval.current);
     };
   }, []);
 
   useEffect(() => {
-    if (osmd.current.cursor) {
+    if (osmd.current.cursor && props.visual === 'no') {
       if (props.mode) {
         // practice mode
         osmd.current.cursor.CursorOptions.color = '#4ade80';
@@ -474,7 +510,7 @@ const OpenSheetMusicDisplay = (props) => {
       }
       osmd.current.render();
     }
-  }, [props.mode, osmd.current]);
+  }, [props.mode]);
 
   useEffect(() => {
     if (scrolled) {
@@ -503,44 +539,34 @@ const OpenSheetMusicDisplay = (props) => {
   }, [scrolled, osmd.current]);
 
   useEffect(() => {
-    setupOsmd();
-  }, [props.drawTitle]);
-
-  useEffect(() => {
-    osmd.current.load(props.file).then(() => osmd.current.render());
-  }, [props.file]);
-
-  useEffect(() => {
     if (props.canDownload) {
-      let n_stars;
+      let numStars;
       if (calculatePunctuation) {
-        // If recording is complete
-        // Calculate punctuation and amount of stars
+        // If recording is complete, calculate punctuation and amount of stars
         const aux = colorNotes.slice();
         const colors = aux
           .map((innerArray) => innerArray.map((subArray) => subArray[1]))
           .flat();
-        const n_green = colors.filter((color) => color === '#00FF00').length;
-        const n_total = colors.length;
-        const proportion = n_green / n_total;
+        const numGreen = colors.filter((color) => color === '#00FF00').length;
+        const numTotal = colors.length;
+        const proportion = numGreen / numTotal;
         if (proportion >= 0.8) {
-          n_stars = 3;
+          numStars = 3;
         } else if (proportion >= 0.6 && proportion < 0.8) {
-          n_stars = 2;
+          numStars = 2;
         } else if (proportion >= 0.3 && proportion < 0.6) {
-          n_stars = 1;
+          numStars = 1;
         } else {
-          n_stars = 0;
+          numStars = 0;
         }
 
         setCalculatePunctuation(false);
       } else {
-        // If recording is only a part of the score
-        // No punctuation
-        n_stars = 0;
+        // If recording is only a part of the score, set 0 stars
+        numStars = 0;
       }
 
-      // Save data
+      console.log('note colors:', colorNotes);
       const dataToSave = {
         pitchTrackPoints: pitchData,
         pitchX: pitchPositionX,
@@ -551,13 +577,14 @@ const OpenSheetMusicDisplay = (props) => {
         noteIndex: recordedNoteIndex,
         noteColors: colorNotes,
         bpm: props.bpm,
-        stars: n_stars,
+        stars: numStars,
+        transpose: props.transpose,
       };
 
       const jsonString = JSON.stringify(dataToSave);
       props.dataToDownload(jsonString);
     }
-  }, [props.canDownload]);
+  }, [props.canDownload, calculatePunctuation]);
 
   useEffect(() => {
     if (props.visualJSON) {
@@ -565,6 +592,8 @@ const OpenSheetMusicDisplay = (props) => {
 
       // Update values
       setColorNotes(json.noteColors);
+      console.log('note colors:', json.noteColors);
+      colorNotesRef.current = json.noteColors;
       setRecordedNoteNEWIDs(json.noteNEWIDs);
       setRecordedNoteIndex(json.noteIndex);
       setPitchData(json.pitchTrackPoints);
@@ -612,10 +641,12 @@ const OpenSheetMusicDisplay = (props) => {
 
             // Check for notehead color
             const colorsArray = json.noteColors.slice();
-            const colorIndex = colorsArray.findIndex(
-              (item) =>
+            const colorIndex = colorsArray.findIndex((item) => {
+              return (
                 item[0][0] === noteNEWID && item[0][2] === showingRep.current
-            );
+              );
+            });
+            // COLOR INDEX IS -1??
             if (colorIndex !== -1) {
               // Note has a color assigned --> color notehead
               // This is for all the notes except the quarter and whole notes
@@ -661,7 +692,7 @@ const OpenSheetMusicDisplay = (props) => {
       setPitchPositionX(copy_pitchPositionX);
       setPitchPositionY(copy_pitchPositionY);
     }
-  }, [props.visualJSON]);
+  }, [props.visualJSON, osmd.current]);
 
   useEffect(() => {
     if (osmd.current.PlaybackManager) {
@@ -779,8 +810,13 @@ const OpenSheetMusicDisplay = (props) => {
       const midiToStaffStep = midi2StaffGaps(newPitchMIDI); // where to locate the played note in the staff with respect to B4(middle line)
       if (
         midiToStaffStep === 0 ||
-        props.pitchConfidence[props.pitchConfidence.length - 1] < 0.5
+        props.pitchConfidence[props.pitchConfidence.length - 1] < 0.5 // pitch confidence is becoming weirdly low on the 2nd or third time pitch tracking is done...why??
       ) {
+        console.log('MIDI to staff step:', midiToStaffStep);
+        console.log(
+          'pitch confidence:',
+          props.pitchConfidence[props.pitchConfidence.length - 1]
+        );
         // Color turns white/invisible when pitch is out of bounds or pitch confidence is below 0.5
         color.current = '#FFFFFF';
       } else {
@@ -816,11 +852,19 @@ const OpenSheetMusicDisplay = (props) => {
           ...pitchData,
           parseFloat(props.pitch[props.pitch.length - 1]),
         ]);
+        pitchDataRef.current = [
+          ...pitchData,
+          parseFloat(props.pitch[props.pitch.length - 1]),
+        ];
         // Add pitch confidence data
         setPitchConfidenceData([
           ...pitchConfidenceData,
           props.pitchConfidence[props.pitchConfidence.length - 1],
         ]);
+        pitchConfidenceDataRef.current = [
+          ...pitchConfidenceData,
+          props.pitchConfidence[props.pitchConfidence.length - 1],
+        ];
         // Add X position to array
         setPitchPositionX([...pitchPositionX, notePositionX.current]);
         // Add Y position to array
@@ -844,17 +888,21 @@ const OpenSheetMusicDisplay = (props) => {
 
   useEffect(() => {
     if (props.isResetButtonPressed) {
+      resetNotesColor();
       if (props.visual === 'no') {
         setColorNotes([]);
+        colorNotesRef.current = [];
         setRecordedNoteIDs([]);
         setRecordedNoteNEWIDs([]);
         setRecordedNoteIndex([]);
         setPitchData([]);
+        pitchDataRef.current = [];
+        setPitchConfidenceData([]);
+        pitchConfidenceDataRef.current = [];
         setPitchPositionX([]);
         setPitchPositionY([]);
         setPitchColor([]);
         setRepetitionNumber([]);
-        resetNotesColor();
         showingRep.current = 0;
         totalReps.current = 0;
         previousTimestamp.current = 0;

@@ -4,7 +4,7 @@
 import React, { useEffect, useState, useRef } from 'react';
 import { useParams, useNavigate, useLocation } from 'react-router-dom';
 import { HotKeys } from 'react-hotkeys';
-import OpenSheetMusicDisplay from './OpenSheetMusicDisplay';
+import OpenSheetMusicDisplay from './OpenSheetMusicDisplayTemp';
 import PopUpWindow from './PopUpWindow.js';
 import {
   getRecording,
@@ -58,8 +58,9 @@ const ProgressPlayFileVisual = () => {
 
   const [cursorFinished, setCursorFinished] = useState(false);
   const [cursorJumped, setCursorJumped] = useState(false);
+  const [recordingId, setRecordingId] = useState(null);
 
-  const [json, setJson] = useState([]);
+  const [json, setJson] = useState(null);
   const [metaData, setMetaData] = useState({
     name: null,
     stars: null,
@@ -107,33 +108,43 @@ const ProgressPlayFileVisual = () => {
   };
   const newUrl = window.location.href;
 
-  const recordingID = location.state?.id;
+  useEffect(() => {
+    setRecordingId(location.state?.id);
+  }, []);
 
   useEffect(() => {
-    getRecording(recordingID).then((recordingJSON) => {
-      // Get score info
-      const scoreInfo = JSON.parse(localStorage.getItem('scoreData')).find(
-        (item) => item.fname === params.files
-      );
+    if (recordingId) {
+      getRecording(recordingId).then((recordingJSON) => {
+        // Get score info
+        const scoreInfo = JSON.parse(localStorage.getItem('scoreData')).find(
+          (item) => item.fname === params.files
+        );
 
-      // Set MetaData
-      const recordingDate = new Date(recordingJSON.date);
-      setMetaData({
-        name: recordingJSON.recordingName,
-        stars: recordingJSON.info.stars,
-        date: recordingDate.toLocaleDateString('en-UK', options),
-        skill: scoreInfo.skill,
-        level: scoreInfo.level,
-        score: scoreInfo.title,
-        bpm: recordingJSON.info.bpm,
+        // Set MetaData
+        const recordingDate = new Date(recordingJSON.date);
+        setMetaData({
+          name: recordingJSON.recordingName,
+          stars: recordingJSON.info.stars,
+          date: recordingDate.toLocaleDateString('en-UK', options),
+          skill: scoreInfo.skill,
+          level: scoreInfo.level,
+          score: scoreInfo.title,
+          bpm: recordingJSON.info.bpm,
+          transpose: recordingJSON.info.transpose
+            ? recordingJSON.info.transpose
+            : 0,
+        });
+        // Save json.info (recording data, pitch, colors...) to send to OSMD
+        setJson(recordingJSON.info);
+        // Save audio
+        setTranspose(
+          recordingJSON.info.transpose ? recordingJSON.info.transpose : 0
+        );
+        setBpm(recordingJSON.info.bpm);
+        setSongFile(recordingJSON.audio);
       });
-      // Save json.info (recording data, pitch, colors...) to send to OSMD
-      setJson(recordingJSON.info);
-      // Save audio
-      setBpm(recordingJSON.info.bpm);
-      setSongFile(recordingJSON.audio);
-    });
-  }, [recordingID]);
+    }
+  }, [recordingId]);
 
   // Set reset flag as false when resetting is complete
   const onResetDone = () => {
@@ -263,7 +274,7 @@ const ProgressPlayFileVisual = () => {
   // Handle deleting a recording from the database
   const handleDeleteRecording = () => {
     setShowDeleteRecordingPopUp(false);
-    deleteRecording(recordingID)
+    deleteRecording(recordingId)
       .then(() => {
         navigate(-1);
       })
@@ -356,6 +367,7 @@ const ProgressPlayFileVisual = () => {
             playbackRef={playbackRef}
             metroVol={metronomeVolume / 100}
             bpm={bpm}
+            transpose={transpose}
             zoom={zoom}
             followCursor={true}
             pitch={pitch}

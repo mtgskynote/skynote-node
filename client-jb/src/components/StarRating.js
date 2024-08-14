@@ -38,7 +38,7 @@ const StarRating = ({ stars, size }) => {
 };
 
 StarRating.propTypes = {
-  stars: PropTypes.number.isRequired,
+  stars: PropTypes.number,
   size: PropTypes.string,
 };
 

@@ -59,7 +59,13 @@ const LineChart = (props) => {
     }
 
     ctx.stroke();
-  }, [props.pitchData, props.zoom, props.showingRep]);
+  }, [
+    props.pitchData,
+    props.zoom,
+    props.showingRep,
+    props.pitchDataPosX,
+    props.pitchDataPosY,
+  ]);
 
   return (
     <div ref={containerRef}>
@@ -69,7 +75,9 @@ const LineChart = (props) => {
 };
 
 LineChart.propTypes = {
-  pitchData: PropTypes.arrayOf(PropTypes.number).isRequired,
+  pitchData: PropTypes.arrayOf(
+    PropTypes.oneOfType([PropTypes.number, PropTypes.string])
+  ).isRequired,
   pitchDataPosX: PropTypes.arrayOf(PropTypes.number).isRequired,
   pitchDataPosY: PropTypes.arrayOf(PropTypes.number).isRequired,
   pitchIndex: PropTypes.arrayOf(PropTypes.number).isRequired,
