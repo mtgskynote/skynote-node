@@ -23,6 +23,8 @@ const makePieStructure = function (
   labels = def_labels,
   segments = def_segments
 ) {
+  
+
   for (let i = 0; i < 3; i++) {
     const circle = document.createElementNS(static_xmlns, 'circle');
     circle.setAttributeNS(null, 'cx', center.x);
@@ -34,6 +36,7 @@ const makePieStructure = function (
   }
 
   let numRadialLines = segments.length;
+  
   // Create the specified number of radial lines
   for (let i = 0; i < numRadialLines; i++) {
     const line = document.createElementNS(static_xmlns, 'line');
@@ -109,9 +112,12 @@ const PieChart = React.forwardRef(
     const svgRef = useRef(null);
     const [segments, setSegments] = useState([0, 0, 0, 0]);
 
+    
+
     const updateData = (updatedData) => {
       // Perform the update logic here
       setSegments(updatedData);
+
     };
 
     React.useImperativeHandle(ref, () => ({
@@ -129,13 +135,16 @@ const PieChart = React.forwardRef(
         svgRef.current.removeChild(svgRef.current.lastChild);
       }
 
+
+      // LW: segments is good
+
       makePieStructure(
         svgRef.current,
         pie.center,
         pie.radius,
         labels,
-        m_width,
-        m_height,
+        //m_width,
+        //m_height,
         segments
       );
 
