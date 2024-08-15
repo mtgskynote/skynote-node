@@ -6,6 +6,7 @@ import { useParams, useNavigate, useLocation } from 'react-router-dom';
 import { HotKeys } from 'react-hotkeys';
 import OpenSheetMusicDisplay from './OpenSheetMusicDisplayTemp';
 import PopUpWindow from './PopUpWindow.js';
+import LoadingScreen from './LoadingScreen.js';
 import {
   getRecording,
   deleteRecording,
@@ -68,6 +69,7 @@ const ProgressPlayFileVisual = () => {
   });
 
   const [isMac, setIsMac] = useState(false);
+  const [loading, setLoading] = useState(true);
 
   // Hot keys map and handlers
   const keyMap = {
@@ -142,6 +144,7 @@ const ProgressPlayFileVisual = () => {
         );
         setBpm(recordingJSON.info.bpm);
         setSongFile(recordingJSON.audio);
+        setLoading(false);
       });
     }
   }, [recordingId]);
@@ -360,31 +363,36 @@ const ProgressPlayFileVisual = () => {
     <HotKeys keyMap={keyMap} handlers={handlers}>
       <div className="flex flex-col min-h-screen justify-between">
         <div className="relative">
-          <OpenSheetMusicDisplay
-            file={`${folderBasePath}/${params.files}.xml`}
-            autoResize={true}
-            cursorRef={cursorRef}
-            playbackRef={playbackRef}
-            metroVol={metronomeVolume / 100}
-            bpm={bpm}
-            transpose={transpose}
-            zoom={zoom}
-            followCursor={true}
-            pitch={pitch}
-            pitchConfidence={confidence}
-            startPitchTrack={startPitchTrack}
-            showPitchTrack={showPitchTrack}
-            recordVol={midiVolume}
-            isResetButtonPressed={isResetButtonPressed}
-            repeatsIterator={repeatsIterator}
-            showRepeatsInfo={handleReceiveRepetitionInfo}
-            onResetDone={onResetDone}
-            cursorActivity={handleFinishedCursorOSMDCallback}
-            cursorJumpsBack={handleJumpedCursorOSMDCallback}
-            mode={true} // Passed as true to indicate that we are not in a type of record mode
-            visual={'yes'}
-            visualJSON={json}
-          />
+          {loading ? (
+            <LoadingScreen />
+          ) : (
+            <OpenSheetMusicDisplay
+              file={`${folderBasePath}/${params.files}.xml`}
+              autoResize={true}
+              cursorRef={cursorRef}
+              playbackRef={playbackRef}
+              metroVol={metronomeVolume / 100}
+              bpm={bpm}
+              transpose={transpose}
+              zoom={zoom}
+              followCursor={true}
+              pitch={pitch}
+              pitchConfidence={confidence}
+              startPitchTrack={startPitchTrack}
+              showPitchTrack={showPitchTrack}
+              recordVol={midiVolume}
+              isResetButtonPressed={isResetButtonPressed}
+              repeatsIterator={repeatsIterator}
+              showRepeatsInfo={handleReceiveRepetitionInfo}
+              onResetDone={onResetDone}
+              cursorActivity={handleFinishedCursorOSMDCallback}
+              cursorJumpsBack={handleJumpedCursorOSMDCallback}
+              mode={true} // Passed as true to indicate that we are not in a type of record mode
+              visual={'yes'}
+              visualJSON={json}
+            />
+          )}
+
           <div className="absolute top-0 left-0 w-full h-full bg-transparent z-20 pointer-events-auto"></div>
         </div>
 
