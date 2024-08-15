@@ -121,11 +121,11 @@ const TimbreVisualization = () => {
         <PieChart
           ref={pieChartRef}
           id="piechart"
-          m_width={440}
-          m_height={440}
+          m_width={445}
+          m_height={445}
           radius={180}
-          //          segments={segments}
           labels={labels}
+          //segments={segments}
         />
       </div>
 
