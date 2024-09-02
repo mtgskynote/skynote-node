@@ -87,18 +87,20 @@ const ListRecordings = () => {
   };
 
   // Update state variables after deleting recording
-  const handleDeleteRecording = (recordingName) => {
-    const index = recordingNames.indexOf(recordingName);
+  const handleDeleteRecording = (recordingId) => {
+    const index = recordingIds.indexOf(recordingId);
     if (index !== -1) {
       const newRecordingNames = recordingNames.filter((_, i) => i !== index);
       const newRecordingList = recordingList.filter((_, i) => i !== index);
       const newRecordingDates = recordingDates.filter((_, i) => i !== index);
       const newRecordingIds = recordingIds.filter((_, i) => i !== index);
+      const newRecordingStars = recordingStars.filter((_, i) => i !== index);
 
       setRecordingNames(newRecordingNames);
       setRecordingList(newRecordingList);
       setRecordingDates(newRecordingDates);
       setRecordingIds(newRecordingIds);
+      setRecordingStars(newRecordingStars);
     }
   };
 

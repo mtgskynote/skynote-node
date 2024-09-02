@@ -106,7 +106,7 @@ const RecordingCard = ({
     setShowDeleteLoading(true);
     deleteRecording(recordingId)
       .then(() => {
-        onDeleteRecording(recordingName);
+        onDeleteRecording(recordingId);
         setShowDeletePopUpWindow(false);
         setShowDeleteLoading(false);
       })
