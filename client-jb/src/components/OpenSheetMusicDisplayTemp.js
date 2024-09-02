@@ -1,3 +1,6 @@
+/* eslint-disable */
+// TODO: Eslint is disabled because the OSMD component is being refactored
+
 import React, { useState, useRef, useEffect } from 'react';
 import { OpenSheetMusicDisplay as OSMD } from 'opensheetmusicdisplay'; //RepetitionInstruction
 import {

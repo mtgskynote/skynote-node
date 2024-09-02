@@ -394,6 +394,7 @@ ControlBar.propTypes = {
     stars: PropTypes.number,
     level: PropTypes.number,
     skill: PropTypes.string,
+    transpose: PropTypes.number,
   }),
   practiceMode: PropTypes.bool.isRequired,
   isMac: PropTypes.bool.isRequired,
