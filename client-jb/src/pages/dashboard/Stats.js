@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { Chart as ChartJS, ArcElement, Tooltip, Legend } from 'chart.js';
+import { useNavigate } from 'react-router-dom';
 import { useAppContext } from '../../context/appContext';
 import { getAllRecData } from '../../utils/studentRecordingMethods.js';
 import { getAllAssignments } from '../../utils/assignmentsMethods.js';
@@ -17,6 +18,7 @@ ChartJS.register(ArcElement, Tooltip, Legend);
 
 const Stats = () => {
   const { getCurrentUser } = useAppContext();
+  const navigate = useNavigate();
 
   const [isLoading, setIsLoading] = useState(true);
   const [userData, setUserData] = useState(null);
@@ -103,6 +105,10 @@ const Stats = () => {
       )
     );
     //this will trigger the reloading of the useEffect in charge of sending data to child components
+  };
+
+  const handleViewAllRecordings = () => {
+    navigate('/all-recordings');
   };
 
   useEffect(() => {
@@ -362,10 +368,6 @@ const Stats = () => {
     }
   }, [userData, scoresData, recordingList]);
 
-  console.log('USER DATA:', userData);
-  console.log('SCORES DATA:', scoresData);
-  console.log('RECORDING LIST:', recordingList);
-
   if (isLoading) {
     return <LoadingScreen />;
   }
@@ -397,8 +399,16 @@ const Stats = () => {
       </div>
       <div className="w-4/6 h-full">
         <div className="pt-6">
-          <h4 className="font-medium my-6">Continue Recording</h4>
-          <div className="relative overflow-x-auto whitespace-no-wrap no-scrollbar">
+          <div className="flex items-center justify-between">
+            <h4 className="font-medium my-6">Continue Recording</h4>
+            <button
+              onClick={handleViewAllRecordings}
+              className="ml-auto mr-8 hover:cursor-pointer transition ease-in-out delay-50 text-center text-white text-sm border-transparent focus:border-transparent focus:ring-0 focus:outline-none bg-blue-600 hover:bg-blue-700 font-extralight py-1 px-2 rounded-l-none outline-none rounded"
+            >
+              View All Recordings
+            </button>
+          </div>
+          <div className="relative overflow-x-auto whitespace-no-wrap no-scrollbar mr-8">
             <div className="inline-flex items-start space-x-8 mr-8">
               {Object.keys(recentScores).map((title, index) => {
                 const lesson = recentScores[title];
@@ -432,7 +442,7 @@ const Stats = () => {
               {unansweredTasks}
             </div>
           </div>
-          <div className="overflow-x-auto whitespace-no-wrap no-scrollbar">
+          <div className="relative overflow-x-auto whitespace-no-wrap no-scrollbar mr-8">
             <div className="inline-flex items-start space-x-8 mr-8">
               {dueTasksContent.map((task, index) => {
                 return (
