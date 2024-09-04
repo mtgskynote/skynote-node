@@ -1,39 +1,15 @@
-// ListAllRecordings.js
 import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
-import ListAllRecordingsCSS from './ListRecordings.module.css';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import {
-  getAllRecData,
-  deleteRecording,
-} from '../utils/studentRecordingMethods.js';
+import { getAllRecData } from '../utils/studentRecordingMethods.js';
 import { useAppContext } from '../context/appContext';
-import PopUpWindowEdit from './PopUpWindowEdit.js';
-
-import {
-  faTrash,
-  faEye,
-  faStar,
-  faPencilSquare,
-  faBoxArchive,
-  faMusic,
-  faPenToSquare,
-} from '@fortawesome/free-solid-svg-icons';
+import RecordingCard from './RecordingCard.js';
+import LoadingScreen from './LoadingScreen.js';
 
 const ListAllRecordings = () => {
   const { getCurrentUser } = useAppContext();
   const [userData, setUserData] = useState(null);
   const [localData, setLocalData] = useState(null);
-  const [recordingList, setRecordingList] = useState(null);
-  const [recordingNames, setRecordingNames] = useState(null);
-  const [recordingStars, setRecordingStars] = useState(null);
-  const [recordingScores, setRecordingScores] = useState(null);
-  const [recordingDates, setRecordingDates] = useState(null);
-  const [recordingSkills, setRecordingSkills] = useState(null);
-  const [recordingLevels, setRecordingLevels] = useState(null);
-  const [idSelectedEdit, setIdSelectedEdit] = useState(null);
-  const [showPopUpEdit, setShowPopUpEdit] = useState(false);
-  const navigate = useNavigate();
+  const [recordingsByScore, setRecordingsByScore] = useState(null);
+
   // Define options for formatting date
   const options = {
     year: 'numeric',
@@ -43,14 +19,15 @@ const ListAllRecordings = () => {
     minute: '2-digit',
   };
 
-  // Starting --> load recordings from userID and scoreID
+  // Load recordings from userID and scoreID
   useEffect(() => {
     const local = JSON.parse(localStorage.getItem('scoreData'));
     setLocalData(local);
+    const scoreTitles = local.map((item) => item.title);
 
     const fetchDataFromAPI = () => {
       if (userData === null) {
-        getCurrentUser() // fetchData is already an async function
+        getCurrentUser()
           .then((result) => {
             setUserData(result);
           })
@@ -59,41 +36,35 @@ const ListAllRecordings = () => {
           });
       }
 
-      if (userData !== null && recordingList === null) {
+      if (
+        userData !== null &&
+        recordingsByScore === null &&
+        scoreTitles !== null
+      ) {
         getAllRecData(userData.id)
           .then((result) => {
-            setRecordingList(result);
-            setRecordingNames(
-              result.map((recording) => recording.recordingName)
+            const recordings = {};
+            result.forEach((recording) => {
+              const scoreId = local.find(
+                (item) => item._id === recording.scoreID
+              );
+              if (scoreId) {
+                const scoreTitle = scoreId.title;
+                if (!(scoreTitle in recordings)) {
+                  recordings[scoreTitle] = [];
+                }
+                recordings[scoreTitle].push(recording);
+              }
+            });
+
+            const filteredScoreTitles = scoreTitles.filter(
+              (title) => title in recordings
             );
-            setRecordingStars(
-              result.map((recording) => recording.recordingStars)
-            );
-            setRecordingDates(
-              result.map((recording) => {
-                //Set correct date format
-                const recordingDate = new Date(recording.recordingDate);
-                return recordingDate.toLocaleDateString('es-ES', options);
-              })
-            );
-            setRecordingLevels(
-              result.map((recording) => {
-                return local.find((item) => item._id === recording.scoreID)
-                  .level;
-              })
-            );
-            setRecordingSkills(
-              result.map((recording) => {
-                return local.find((item) => item._id === recording.scoreID)
-                  .skill;
-              })
-            );
-            setRecordingScores(
-              result.map((recording) => {
-                return local.find((item) => item._id === recording.scoreID)
-                  .title;
-              })
-            );
+            const orderedRecordings = {};
+            filteredScoreTitles.forEach((title) => {
+              orderedRecordings[title] = recordings[title];
+            });
+            setRecordingsByScore(orderedRecordings);
           })
           .catch((error) => {
             console.log(`Cannot get recordings from database: ${error}`);
@@ -103,213 +74,107 @@ const ListAllRecordings = () => {
 
     fetchDataFromAPI();
     // eslint-disable-next-line
-  }, [userData, recordingList, getCurrentUser]);
+  }, [userData, recordingsByScore, getCurrentUser]);
 
-  //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-  // Event handler for going back
-  const handleGoBack = () => {
-    // Use navigate to go back to the previous page
-    //navigate(-1);
-    navigate(`/`);
+  const findScoreTitleByRecordingName = (object, recordingName) => {
+    for (let scoreTitle in object) {
+      let recordings = object[scoreTitle];
+      for (let recording of recordings) {
+        if (recording.recordingName === recordingName) {
+          return scoreTitle;
+        }
+      }
+    }
+    return null;
   };
 
-  // Event handler for click on See
-  const handleSeeClick = (index) => {
-    const recording = recordingList[index];
-    const scoreName = recordingScores[index];
-    const scoreXML = localData.find((item) => item.title === scoreName).fname;
-    navigate(`/ListRecordings/${scoreXML}`, {
-      state: { id: recording.recordingId },
+  const handleEditRecording = (recordingName, newRecordingName) => {
+    const scoreTitle = findScoreTitleByRecordingName(
+      recordingsByScore,
+      recordingName
+    );
+    const newRecordings = JSON.parse(JSON.stringify(recordingsByScore));
+
+    newRecordings[scoreTitle] = newRecordings[scoreTitle].map((recording) => {
+      if (recording.recordingName === recordingName) {
+        return {
+          ...recording,
+          recordingName: newRecordingName,
+        };
+      }
+      return recording;
     });
+    setRecordingsByScore(newRecordings);
   };
 
-  // Event handler for click on Edit
-  const handleEditClick = (action, nameOfFile) => {
-    if (action === 'open') {
-      const id =
-        JSON.parse(recordingList)[recordingNames.indexOf(nameOfFile)]
-          .recordingId;
-      //Store id to edit so that popupwindow can access it
-      setIdSelectedEdit(id);
-      // Show pop up window component
-      setShowPopUpEdit(true);
-    } else {
-      // Dont show pop up window component
-      setShowPopUpEdit(false);
-      //Delete stored id
-      setIdSelectedEdit(null);
+  const handleDeleteRecording = (recordingId) => {
+    const newRecordings = JSON.parse(JSON.stringify(recordingsByScore));
+
+    for (let scoreTitle in newRecordings) {
+      newRecordings[scoreTitle] = newRecordings[scoreTitle].filter(
+        (recording) => recording.recordingId !== recordingId
+      );
     }
+
+    setRecordingsByScore(newRecordings);
   };
 
-  // Event handler for click on Trash
-  const handleTrashClick = (nameOfFile) => {
-    if (recordingNames.indexOf(nameOfFile) !== -1) {
-      const idToDelete =
-        recordingList[recordingNames.indexOf(nameOfFile)].recordingId;
-      // Delete recording entry of state arrays
-      const auxArrayNames = recordingNames.filter(
-        (item, index) => index !== recordingNames.indexOf(nameOfFile)
-      );
-      const auxArrayList = recordingList.filter(
-        (item, index) => index !== recordingNames.indexOf(nameOfFile)
-      );
-      const auxRecordingStars = recordingStars.filter(
-        (item, index) => index !== recordingNames.indexOf(nameOfFile)
-      );
-      const auxRecordingScores = recordingScores.filter(
-        (item, index) => index !== recordingNames.indexOf(nameOfFile)
-      );
-      const auxRecordingDates = recordingDates.filter(
-        (item, index) => index !== recordingNames.indexOf(nameOfFile)
-      );
-      const auxRecordingSkills = recordingSkills.filter(
-        (item, index) => index !== recordingNames.indexOf(nameOfFile)
-      );
-      const auxRecordingLevels = recordingLevels.filter(
-        (item, index) => index !== recordingNames.indexOf(nameOfFile)
-      );
-      // Delete recording from database
-      deleteRecording(idToDelete)
-        .then(() => {
-          setRecordingNames(auxArrayNames);
-          setRecordingList(auxArrayList);
-          setRecordingStars(auxRecordingStars);
-          setRecordingScores(auxRecordingScores);
-          setRecordingDates(auxRecordingDates);
-          setRecordingSkills(auxRecordingSkills);
-          setRecordingLevels(auxRecordingLevels);
-        })
-        .catch((error) => {
-          console.log(`Cannot delete recordings from database: ${error}`);
-        });
-    }
-  };
-
-  if (recordingNames === null) {
-    return <p>Loading...</p>;
+  if (recordingsByScore === null) {
+    return <LoadingScreen />;
   }
 
   // Your component logic using the variables
   return (
-    <div className={ListAllRecordingsCSS.container}>
-      <div>
-        <h2>All recordings...</h2>
+    <div className="container mx-auto px-4 py-8">
+      <div className="flex justify-center items-start">
+        <h2 className="text-center">All Recordings</h2>
       </div>
-
-      {/* List of songs */}
-      {recordingNames.length !== 0 ? (
-        <div className={ListAllRecordingsCSS.songlist2}>
-          {recordingNames.map((nameOfFile, index) => (
-            //Each element/recording
-            <div className={ListAllRecordingsCSS.songelement2} key={index}>
-              <li key={index}>
-                <div className={ListAllRecordingsCSS.recTitle}>
-                  <h5>
-                    {nameOfFile}{' '}
-                    <FontAwesomeIcon
-                      icon={faPenToSquare}
-                      className={ListAllRecordingsCSS.iconModify}
-                      onClick={() => handleEditClick('open', nameOfFile)}
-                    />{' '}
-                  </h5>
-                </div>
-                <div className={ListAllRecordingsCSS.starsGroup}>
-                  <FontAwesomeIcon
-                    icon={faStar}
-                    className={
-                      recordingStars[index] >= 1
-                        ? ListAllRecordingsCSS.completeStar
-                        : ListAllRecordingsCSS.incompleteStar
-                    }
-                  />
-                  <FontAwesomeIcon
-                    icon={faStar}
-                    className={
-                      recordingStars[index] >= 2
-                        ? ListAllRecordingsCSS.completeStar
-                        : ListAllRecordingsCSS.incompleteStar
-                    }
-                  />
-                  <FontAwesomeIcon
-                    icon={faStar}
-                    className={
-                      recordingStars[index] >= 3
-                        ? ListAllRecordingsCSS.completeStar
-                        : ListAllRecordingsCSS.incompleteStar
-                    }
-                  />
-                </div>
-                <div className={ListAllRecordingsCSS.textGroup}>
-                  <div>
-                    <h6>
-                      <FontAwesomeIcon
-                        icon={faMusic}
-                        className={ListAllRecordingsCSS.auxIcon}
-                      />
-                      {recordingScores[index]}
-                    </h6>
-                  </div>
-                  <div>
-                    <h6>
-                      <FontAwesomeIcon
-                        icon={faPencilSquare}
-                        className={ListAllRecordingsCSS.auxIcon}
-                      />
-                      {recordingSkills[index]}
-                    </h6>
-                  </div>
-                  <div>
-                    <h6>
-                      <FontAwesomeIcon
-                        icon={faBoxArchive}
-                        className={ListAllRecordingsCSS.auxIcon}
-                      />
-                      Level {recordingLevels[index]}
-                    </h6>
-                  </div>
+      {Object.keys(recordingsByScore).map((scoreTitle, index) => {
+        const scoreObject = localData.find((item) => item.title === scoreTitle);
+        const recordings = recordingsByScore[scoreTitle];
+        return (
+          <div key={index}>
+            <div>
+              <div className="flex items-center justify-between mt-12">
+                {/* Left side: Title */}
+                <div className="text-2xl font-bold capitalize">
+                  {scoreTitle}
                 </div>
 
-                <div className={ListAllRecordingsCSS.dateTime}>
-                  <i>{recordingDates[index]}</i>
+                {/* Right side: Skill and Level */}
+                <div className="text-lg text-gray-600 text-right">
+                  <div>{scoreObject.skill}</div>
+                  <div>Level {scoreObject.level}</div>
                 </div>
-                <div className={ListAllRecordingsCSS.buttonGroup}>
-                  <button
-                    className={ListAllRecordingsCSS.iconbutton}
-                    onClick={() => handleSeeClick(index)}
-                  >
-                    <FontAwesomeIcon icon={faEye} />
-                  </button>
-                  <button
-                    className={ListAllRecordingsCSS.iconbutton}
-                    onClick={() => handleTrashClick(nameOfFile, index)}
-                  >
-                    <FontAwesomeIcon icon={faTrash} />
-                  </button>
-                </div>
-              </li>
+              </div>
+              <hr className="h-0.5 border-t-0 bg-gray-700 mb-10" />
             </div>
-          ))}
-        </div>
-      ) : (
-        <div> No recordings yet</div>
-      )}
-
-      {/* Button to go back */}
-      <button
-        className={ListAllRecordingsCSS.backbutton}
-        onClick={handleGoBack}
-      >
-        Back
-      </button>
-
-      {showPopUpEdit ? (
-        <PopUpWindowEdit
-          idEdit={idSelectedEdit}
-          handlerBack={handleEditClick}
-        />
-      ) : (
-        ''
-      )}
+            <div className="relative overflow-x-auto whitespace-no-wrap no-scrollbar">
+              <div className="inline-flex items-start space-x-8 mr-8">
+                {recordings.map((recording, index) => {
+                  let recordingDate = new Date(recording.recordingDate);
+                  recordingDate = recordingDate.toLocaleDateString(
+                    'en-UK',
+                    options
+                  );
+                  return (
+                    <RecordingCard
+                      key={index}
+                      recordingName={recording.recordingName}
+                      stars={recording.recordingStars}
+                      recordingDate={recordingDate}
+                      recordingId={recording.recordingId}
+                      xml={scoreObject.fname}
+                      onEditRecording={handleEditRecording}
+                      onDeleteRecording={handleDeleteRecording}
+                    />
+                  );
+                })}
+              </div>
+            </div>
+          </div>
+        );
+      })}
     </div>
   );
 };

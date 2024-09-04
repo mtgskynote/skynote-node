@@ -123,7 +123,7 @@ function App() {
                   path="ListRecordings/:files"
                   element={<ProgressPlayFileVisual mode="visual" />}
                 />
-                <Route path="myrecordings" element={<ListAllRecordings />} />
+                <Route path="all-recordings" element={<ListAllRecordings />} />
               </Route>
 
               <Route path="/AudioPlayer" element={<AudioPlayer />} />
