@@ -2,6 +2,21 @@ import React, { useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
 import Chart from 'chart.js/auto';
 
+/**
+ * The LevelsProgressChart component displays a horizontal bar chart showing the percentage of stars collected for each level.
+ *
+ * Props:
+ * - id (string): The unique identifier for the canvas element.
+ * - starPercentages (array of numbers): The percentages of stars collected for each level.
+ *
+ * The component:
+ * - Uses useState to manage the labels for the chart.
+ * - Uses useEffect to generate labels based on starPercentages and update the chart.
+ *
+ * The chart:
+ * - Displays levels on the y-axis and percentages on the x-axis.
+ * - Hides grid lines and the legend for a cleaner look.
+ */
 const LevelsProgressChart = ({ id, starPercentages }) => {
   const [labels, setLabels] = useState(null);
 

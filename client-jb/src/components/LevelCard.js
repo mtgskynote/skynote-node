@@ -2,6 +2,24 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import SubLevelCard from './SubLevelCard';
 
+/**
+ * The LevelCard component displays a card for a specific level, including its sub-levels and lessons.
+ *
+ * Props:
+ * - levelName (string): The name of the level.
+ * - levelNumber (number): The number of the level.
+ * - levelLessons (object): An object containing arrays of lessons for each skill.
+ * - refreshData (function): Callback to refresh data.
+ * - subLevelIsOpen (boolean): Indicates if a sub-level is open.
+ * - handleSubLevelClick (function): Callback to handle sub-level click events.
+ * - openSubLevel (number): The index of the currently open sub-level.
+ * - baseSubLevelIndex (number): The base index for sub-levels.
+ *
+ * The component:
+ * - Counts the total stars for each sub-level using the countStars function.
+ * - Maps over the levelLessons object to render SubLevelCard components for each skill.
+ * - Passes various props to SubLevelCard, including calculated unique index, sub-level name, total stars, and lesson data.
+ */
 const LevelCard = ({
   levelName,
   levelNumber,

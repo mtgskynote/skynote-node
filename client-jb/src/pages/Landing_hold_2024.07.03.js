@@ -124,7 +124,10 @@ const Landing = () => {
         <div>
           <div className={LandingCSS.backgroundImageContainer}>
             <div className={LandingCSS.backgroundImage}>
-              <BackgroundImage imgClassName={LandingCSS.backgroundImage} />
+              <BackgroundImage
+                imgClassName={LandingCSS.backgroundImage}
+                alt="minimal cartoon woman with headphones on looking at a plant"
+              />
 
               <div className={LandingCSS.backgroundImageOverlay}>
                 <h2>Enhance Your Musical Abilities With SkyNote</h2>

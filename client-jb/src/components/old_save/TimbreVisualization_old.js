@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import PieChart from './pieChart';
 //import { useControlBar } from "./controlbar";
-import { makeAudioStreamer } from './audioStreamer.js';
+import { makeAudioStreamer } from '../utils/audioStreamer.js';
 import Queue from '../utils/QueueWithMaxLength';
 
 // const randInt = function (min, max) {

@@ -1,6 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import { timer } from './SessionTimer';
 
+/**
+ * The SessionTimerDisplay component displays the elapsed session time in hours:minutes:seconds format.
+ *
+ * State:
+ * - time (number): The elapsed time in seconds.
+ */
 const SessionTimerDisplay = () => {
   const [time, setTime] = useState(timer.elapsedTime);
 
@@ -34,7 +40,6 @@ const SessionTimerDisplay = () => {
       <div>Time: {formatTime()}</div>
     </div>
   );
-  //return <div>Timer: {time}</div>;
 };
 
 export default SessionTimerDisplay;

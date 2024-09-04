@@ -18,9 +18,43 @@ import IconButton from '@mui/material/IconButton';
 import Tooltip from '@mui/material/Tooltip';
 import ControlBarPopover from './ControlBarPopover';
 import RangeInput from './RangeInput';
-import ControlBarPanel from './ControlBarPanel';
-import StarRating from './StarRating';
+import ControlBarStatsPanel from './ControlBarStatsPanel';
+import ControlBarShortcutsPanel from './ControlBarShortcutsPanel';
 
+/**
+ * The ControlBar component displays a control bar with various interactive elements to manage
+ * different playback states for the ProgressPlayFile components.
+ *
+ * Props:
+ * - onTransposeChange (function): Callback for transpose changes.
+ * - onBpmChange (function): Callback for BPM changes.
+ * - onMidiVolumeChange (function): Callback for MIDI volume changes.
+ * - onMetronomeVolumeChange (function): Callback for metronome volume changes.
+ * - onModeChange (function): Callback for mode changes.
+ * - onToggleListen (function): Callback to toggle listening mode.
+ * - onTogglePlay (function): Callback to toggle play mode.
+ * - onReset (function): Callback to reset settings.
+ * - onRecord (function): Callback to start/stop recording.
+ * - handleViewAllRecordings (function): Callback to view all recordings.
+ * - isListening (boolean): Indicates if listening is active.
+ * - isPlaying (boolean): Indicates if playing is active.
+ * - isRecording (boolean): Indicates if recording is active.
+ * - isBpmDisabled (boolean): Indicates if BPM control is disabled.
+ * - playbackMode (boolean): Indicates if playback mode is active.
+ * - handleShowPopUpWindow (function): Callback to show a popup window.
+ * - handleToggleStats (function): Callback to toggle stats display.
+ * - handleToggleInfo (function): Callback to toggle info (shortcuts) display.
+ * - showStats (boolean): Indicates if stats panel is shown.
+ * - showInfo (boolean): Indicates if info (shortcuts) panel is shown.
+ * - stats (object): Statistical data to display on the stats panel.
+ * - practiceMode (boolean): Indicates if practice mode is active (if practice mode is inactive, record mode is active).
+ * - isMac (boolean): Indicates if the user is on a Mac.
+ *
+ * The component:
+ * - Manages state for mode and OSMD values.
+ * - Defines icons and tooltips for various controls.
+ * - Renders control buttons and panels based on the current mode.
+ */
 const ControlBar = ({
   onTransposeChange,
   onBpmChange,
@@ -175,79 +209,14 @@ const ControlBar = ({
       } md:mx-8 md:w-full sm:w-5/6`}
     >
       {playbackMode && (
-        <ControlBarPanel show={showStats} stats={stats}>
-          <div className="flex justify-between">
-            <div>
-              <p className="text-white font-bold text-2xl mb-0">{stats.name}</p>
-              <p className="text-white opacity-75 mb-3">
-                {stats.date} | {stats.bpm} BPM |{' '}
-                {stats.transpose > 0 ? '+' : ''}
-                {stats.transpose} Transpose
-              </p>
-              <StarRating size="text-3xl" stars={stats.stars} />
-            </div>
-            <div>
-              <p className="text-white font-bold text-xl mb-0 text-right">
-                Level {stats.level}
-              </p>
-              <p className="text-white opacity-75">{stats.skill}</p>
-            </div>
-          </div>
-        </ControlBarPanel>
+        <ControlBarStatsPanel showStats={showStats} stats={stats} />
       )}
-      <ControlBarPanel show={showInfo} stats={stats}>
-        <div className={`${practiceModeOn ? 'pb-2' : 'pb-8'}`}>
-          <p className="font-bold text-white text-2xl mb-3">Shortcuts</p>
-          <div className="flex justify-between space-x-4">
-            <div>
-              {(playbackMode || practiceModeOn) && (
-                <div>
-                  <span className="text-white font-bold">
-                    {isMac ? 'Command' : 'Ctrl'} + Shift + R:{' '}
-                  </span>
-                  <span className="text-white opacity-75">Reset</span>
-                </div>
-              )}
-              <div>
-                <span className="text-white font-bold">
-                  {playbackMode ? `S: ` : `M: `}
-                </span>
-                <span className="text-white opacity-75">
-                  {playbackMode ? 'Toggle Stats' : 'Switch Modes'}
-                </span>
-              </div>
-            </div>
-            <div>
-              {!playbackMode && practiceModeOn && (
-                <div>
-                  <span className="text-white font-bold">L: </span>
-                  <span className="text-white opacity-75">Toggle Listen</span>
-                </div>
-              )}
-              {practiceModeOn && (
-                <div>
-                  <span className="text-white font-bold">P: </span>
-                  <span className="text-white opacity-75">
-                    {playbackMode ? 'Toggle Playback' : 'Toggle Practice'}
-                  </span>
-                </div>
-              )}
-              {!playbackMode && !practiceModeOn && (
-                <div>
-                  <span className="text-white font-bold">R: </span>
-                  <span className="text-white opacity-75">Toggle Record</span>
-                </div>
-              )}
-            </div>
-            <div>
-              <div>
-                <span className="text-white font-bold">I: </span>
-                <span className="text-white opacity-75">View Shortcuts</span>
-              </div>
-            </div>
-          </div>
-        </div>
-      </ControlBarPanel>
+      <ControlBarShortcutsPanel
+        showInfo={showInfo}
+        playbackMode={playbackMode}
+        practiceModeOn={practiceModeOn}
+        isMac={isMac}
+      />
       <div
         className={`px-4 py-3 bg-blue-400 ${
           showStats ? 'rounded-t-none rounded-b-3xl' : 'rounded-3xl'

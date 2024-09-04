@@ -7,7 +7,7 @@ import {
   getAllRecData,
   deleteRecording,
 } from '../utils/studentRecordingMethods.js';
-import { useAppContext } from '../context/appContext';
+import { useAppContext } from '../context/appContext.js';
 import PopUpWindowEdit from './PopUpWindowEdit.js';
 
 import {

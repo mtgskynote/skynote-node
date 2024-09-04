@@ -2,12 +2,12 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import violinBKG from '../assets/images/violinBKG.jpeg';
 
-const ViolinBKG = ({ height, width }) => {
+const ViolinBackgroundImage = ({ height, width }) => {
   return (
     <img
       src={violinBKG}
       className="violinBKGgo"
-      alt="violin-background"
+      alt="Violin background"
       height={height}
       width={width}
     />
@@ -19,4 +19,4 @@ ViolinBKG.propTypes = {
   width: PropTypes.string,
 };
 
-export default ViolinBKG;
+export default ViolinBackgroundImage;

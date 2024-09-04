@@ -3,6 +3,17 @@ import PropTypes from 'prop-types';
 import { Typography, Box, useTheme } from '@mui/material';
 import { tokens } from '../theme';
 
+/**
+ * The Header component displays a header with a title and an optional subtitle.
+ *
+ * Props:
+ * - title (string): The main title text. This prop is required.
+ * - subtitle (string): The subtitle text. This prop is optional.
+ *
+ * The component:
+ * - Uses MUI's useTheme hook to access the current theme.
+ * - Uses a custom tokens function to get color values based on the theme mode.
+ */
 const Header = ({ title, subtitle }) => {
   const theme = useTheme();
   const colors = tokens(theme.palette.mode);

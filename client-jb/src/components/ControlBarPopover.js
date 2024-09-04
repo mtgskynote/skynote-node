@@ -1,6 +1,21 @@
 import React, { useState, useRef, useEffect } from 'react';
 import PropTypes from 'prop-types';
 
+/**
+ * The ControlBarPopover component displays a popover with customizable content.
+ *
+ * Props:
+ * - children (node): The trigger (for example, a button) and content elements for the popover.
+ *
+ * The component:
+ * - Manages the popover's open/close state.
+ * - Toggles the popover visibility when the trigger is clicked.
+ * - Closes the popover when clicking outside of it.
+ * - Uses useRef to reference the popover element.
+ * - Uses useEffect to add/remove event listeners for outside clicks.
+ *
+ * The popover content is displayed with a transition effect and is positioned relative to the trigger.
+ */
 const ControlBarPopover = ({ children }) => {
   const [isOpen, setIsOpen] = useState(false);
   const popoverRef = useRef(null);

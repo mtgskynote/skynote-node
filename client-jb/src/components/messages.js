@@ -14,6 +14,28 @@ import {
   faArrowRotateLeft,
 } from '@fortawesome/free-solid-svg-icons';
 
+/**
+ * The Messages component displays a chat interface between a user and a teacher.
+ *
+ * Props:
+ * - user (object): The current user, containing id and name.
+ * - teacher (object): The teacher, containing id and name.
+ *
+ * State:
+ * - user (object|null): The current user.
+ * - teacher (object|null): The current teacher.
+ * - userChat (object|null): The chat messages between the user and teacher.
+ * - aux (number): Auxiliary state to trigger re-renders.
+ *
+ * Refs:
+ * - chatInputRef (object): Reference to the chat input textarea.
+ *
+ * The component:
+ * - Fetches chat messages and updates message seen status on initial render and when user/teacher changes.
+ * - Handles sending messages, updating the chat state, and clearing the input field.
+ * - Provides a button to reload chat messages.
+ * - Listens for the Enter key to send messages.
+ */
 const Messages = (props) => {
   const [user, setUser] = useState(null);
   const [teacher, setTeacher] = useState(null);

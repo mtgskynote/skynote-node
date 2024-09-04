@@ -5,6 +5,20 @@ import { FaMicrophone } from 'react-icons/fa';
 import { GiViolin } from 'react-icons/gi';
 import { useAppContext } from '../context/appContext';
 
+/**
+ * The InstrumentDropdown component provides a dropdown menu for selecting an instrument.
+ *
+ * State:
+ * - isOpen (boolean): Controls the visibility of the dropdown menu.
+ * - selectedInstrument (object): The currently selected instrument.
+ *
+ * The component:
+ * - Initializes with a list of instruments, each with a name, icon, and disabled status.
+ * - Toggles the dropdown menu visibility when the button is clicked.
+ * - Updates the selected instrument and saves it to local storage when an instrument is selected.
+ * - Closes the dropdown menu when a click is detected outside of it.
+ * - Retrieves the saved instrument from local storage on initial render and sets it as the selected instrument.
+ */
 const InstrumentDropdown = () => {
   const instruments = [
     { name: 'violin', icon: <GiViolin />, disabled: false },

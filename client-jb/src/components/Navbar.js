@@ -13,26 +13,35 @@ import {
   Tooltip,
 } from '@mui/material';
 import ClickAwayListener from '@mui/material/ClickAwayListener';
-import {
-  AccountCircle,
-  Notifications,
-  Settings,
-  Menu as MenuIcon,
-  MenuOpen as MenuOpenIcon,
-} from '@mui/icons-material';
+import { AccountCircle, Notifications, Settings } from '@mui/icons-material';
 import { useMediaQuery } from '@material-ui/core';
 import InstrumentDropdown from './InstrumentDropdown.js';
+import MobileNavToggle from './MobileNavToggle.js';
+import MobileNavMenu from './MobileNavMenu.js';
 
-function Navbar() {
-  // State variables
-  const [userData, setUserData] = useState(null); // User data retrieved from API
-  const [unreadMessagesCount, setUnreadMessagesCount] = useState(0); // Number of unread messages
-  const [unreadMessagesContent, setUnreadMessagesContent] = useState([]); // Content of unread messages
-  const [notificationsOpen, setNotificationsOpen] = useState(false); // Whether notifications are open
-  const [profileAnchorEl, setProfileAnchorEl] = useState(null); // Anchor element for profile menu
-  const [settingsAnchorEl, setSettingsAnchorEl] = useState(null); // Anchor element for settings menu
-  const [mobileAnchorEl, setMobileAnchorEl] = useState(null); // Anchor element for mobile menu
-  const [mobileNavOpen, setMobileNavOpen] = useState(false); // Whether mobile navigation is open
+/**
+ * The Navbar component provides a navigation bar with user options and notifications.
+ *
+ * Navigation Items:
+ * - navItems: Array of main navigation items for desktop.
+ * - navItemsMobile: Array of additional navigation items for mobile.
+ *
+ * The component:
+ * - Renders an AppBar with a Toolbar containing navigation links, notifications, settings, and profile options.
+ * - Uses InstrumentDropdown for instrument selection.
+ * - Displays notifications with unread messages count and content.
+ * - Provides links to view all messages and navigate to different pages.
+ * - Uses MobileNavToggle and MobileNavMenu for mobile navigation.
+ */
+const Navbar = () => {
+  const [userData, setUserData] = useState(null);
+  const [unreadMessagesCount, setUnreadMessagesCount] = useState(0);
+  const [unreadMessagesContent, setUnreadMessagesContent] = useState([]);
+  const [notificationsOpen, setNotificationsOpen] = useState(false);
+  const [profileAnchorEl, setProfileAnchorEl] = useState(null);
+  const [settingsAnchorEl, setSettingsAnchorEl] = useState(null);
+  const [mobileAnchorEl, setMobileAnchorEl] = useState(null);
+  const [mobileNavOpen, setMobileNavOpen] = useState(false);
 
   // App context and media query hook
   const { logoutUser, getCurrentUser } = useAppContext();
@@ -136,13 +145,8 @@ function Navbar() {
   return (
     <AppBar position="fixed">
       <Toolbar className="justify-between">
-        {/* Greeting section */}
+        {/* Select instrument dropdown */}
         <div className="flex items-center">
-          {/* <h5 className="text-slate-50 font-light">
-            Hello{" "}
-            <span className="font-black">{userData ? userData.name : ""}</span>
-            {"!"}
-          </h5> */}
           <InstrumentDropdown />
         </div>
 
@@ -273,50 +277,23 @@ function Navbar() {
         </div>
 
         {/* Mobile navigation - toggle button */}
-        {mobileNavOpen ? (
-          <IconButton
-            start="edge"
-            aria-label="mobile-menu-open"
-            className="text-slate-50 lg:hidden block ease-in-out"
-            onClick={handleNavIcon}
-          >
-            <MenuOpenIcon />
-          </IconButton>
-        ) : (
-          <IconButton
-            start="edge"
-            aria-label="mobile-menu-closed"
-            className="text-slate-50 lg:hidden block"
-            onClick={handleNavIcon}
-          >
-            <MenuIcon />
-          </IconButton>
-        )}
+        <MobileNavToggle
+          mobileNavOpen={mobileNavOpen}
+          handleNavIcon={handleNavIcon}
+        />
         {/* Mobile navigation - menu */}
-        <Menu
-          anchorEl={isLargeScreen ? null : mobileAnchorEl}
-          open={mobileNavOpen}
-          onClose={handleMobileClose}
-        >
-          {/* Render navigation links for mobile */}
-          {navItems.concat(navItemsMobile).map(([title, url], index) => {
-            return (
-              <MenuItem
-                onClick={handleMobileClose}
-                component={NavLink}
-                to={url}
-                key={index}
-              >
-                {title}
-              </MenuItem>
-            );
-          })}
-          {/* Logout option */}
-          <MenuItem onClick={logoutUser}>Logout</MenuItem>
-        </Menu>
+        <MobileNavMenu
+          isLargeScreen={isLargeScreen}
+          mobileAnchorEl={mobileAnchorEl}
+          mobileNavOpen={mobileNavOpen}
+          handleMobileClose={handleMobileClose}
+          navItems={navItems}
+          navItemsMobile={navItemsMobile}
+          logoutUser={logoutUser}
+        />
       </Toolbar>
     </AppBar>
   );
-}
+};
 
 export default Navbar;

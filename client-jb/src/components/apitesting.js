@@ -2,13 +2,33 @@ import React, { useState, useEffect } from 'react';
 import { useAppContext } from '../context/appContext.js';
 import axios from 'axios';
 import { timer } from './SessionTimer.js';
-import PopUpWindowAssignments from './PopUpWindowAssignments';
-import PopUpWindowGrading from './PopUpWindowGrading';
+import PopUpWindowAssignments from './PopUpWindowAssignments.js';
+import PopUpWindowGrading from './PopUpWindowGrading.js';
 
-const Apitesting = () => {
+/**
+ * The ApiTesting component provides a UI for testing various API interactions.
+ *
+ * State:
+ * - data (object|null): Stores user data fetched from the API.
+ * - popUpWindowAssignment (boolean): Controls the visibility of the assignment creation popup.
+ * - popUpWindowGrading (boolean): Controls the visibility of the assignment grading popup.
+ *
+ * The component:
+ * - Toggles a timer using the toggleTimer function.
+ * - Fetches user data on initial render using useEffect.
+ * - Handles assignment creation and grading with createTask and gradeTask functions.
+ * - Sends messages using the postMessage function.
+ * - Retrieves messages using the getMessages function.
+ */
+const ApiTesting = () => {
   const [data, setData] = useState(null);
+  const [popUpWindowAssignment, setPopUpWindowAssignment] = useState(false);
+  const [popUpWindowGrading, setPopUpWindowGrading] = useState(false);
 
-  const toggletimer = () => {
+  const { getCurrentUser } = useAppContext();
+
+  // Handle timer start and stop events
+  const toggleTimer = () => {
     if (timer.isRunning) {
       timer.pause();
     } else {
@@ -16,30 +36,23 @@ const Apitesting = () => {
     }
   };
 
-  const { getCurrentUser } = useAppContext();
-
-  // First we get the user info into "data" when the page loads so it can be used for sending/receiving messages.
+  // Fetch user data on first page load to use for sending and receiving messages
   useEffect(() => {
     const fetchDataFromAPI = () => {
-      console.log(`in fetchDataFromAPI, about to call getCurrentUser()`);
-      getCurrentUser() // fetchData is already an async function
+      console.log(`in fetchDataFromAPI, about to call getCurrentUser`);
+      getCurrentUser()
         .then((result) => {
-          console.log(
-            `getCurrentUser() has returned this result: ${JSON.stringify(
-              result
-            )}`
-          );
+          console.log(`getCurrentUser result: ${JSON.stringify(result)}`);
           setData(result);
         })
         .catch((error) => {
-          console.log(`getCurrentUser() error: ${error}`);
-          // Handle errors if necessary
+          console.log(`getCurrentUser error: ${error}`);
         });
     };
     fetchDataFromAPI();
   }, []);
-  //===========================================================================
-  const [popUpWindowAssignment, setPopUpWindowAssignment] = useState(false);
+
+  // Handle assignment creation
   const createTask = (option) => {
     if (option === 'see') {
       setPopUpWindowAssignment(true);
@@ -47,7 +60,8 @@ const Apitesting = () => {
       setPopUpWindowAssignment(false);
     }
   };
-  const [popUpWindowGrading, setPopUpWindowGrading] = useState(false);
+
+  // Handle assignment grading
   const gradeTask = (option) => {
     if (option === 'see') {
       setPopUpWindowGrading(true);
@@ -56,19 +70,18 @@ const Apitesting = () => {
     }
   };
 
-  //===========================================================================
-
+  // Handle sending messages
   const postMessage = async (
     content = 'Message sent from the postMessage button'
   ) => {
     try {
-      console.log(`postMessage from client, userId: ${data.id} `);
+      console.log(`post message from client, userId: ${data.id} `);
       const response = await axios.put('/api/v1/messages/putMessage', {
-        content: content, //content
-        sender: data.id, //sender
-        receiver: '5d34c59c098c00453a233bf3', // receiver Teacher Stella Bella's id
+        content: content,
+        sender: data.id,
+        receiver: '5d34c59c098c00453a233bf3', // ID for teacher Stella Bella
       });
-      console.log(`postMessage response: ${JSON.stringify(response)}`);
+      console.log(`post message response: ${JSON.stringify(response)}`);
     } catch (error) {
       if (error.response && error.response.status === 400) {
         console.log('Validation error:', error.response.data.error);
@@ -76,6 +89,7 @@ const Apitesting = () => {
     }
   };
 
+  // Handle getting messages
   async function getMessages(limit = 12) {
     try {
       var url = new URL(
@@ -103,17 +117,14 @@ const Apitesting = () => {
     }
   }
 
-  //===========================================================================
-
-  /*------------ Return the component! ----------*/
   return (
     <div>
       <div>
-        <h1>Skynote Profile</h1>
+        <h1>Skynote Profile - Testing</h1>
         <div>
           <div>
             <div>
-              <button onClick={toggletimer}>toggletimer</button>
+              <button onClick={toggleTimer}>Toggle Timer</button>
             </div>
             <div>
               <button onClick={() => createTask('see')}>Create task</button>
@@ -133,11 +144,11 @@ const Apitesting = () => {
             </div>
             <div>
               <button onClick={() => postMessage('Your message here')}>
-                postMessage
+                Post Message
               </button>
             </div>
             <div>
-              <button onClick={getMessages}>getMessages</button>
+              <button onClick={getMessages}>Get Messages</button>
             </div>
           </div>
         </div>
@@ -146,4 +157,4 @@ const Apitesting = () => {
   );
 };
 
-export default Apitesting;
+export default ApiTesting;

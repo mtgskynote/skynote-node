@@ -1,6 +1,21 @@
 import React, { useState, useRef } from 'react';
 import { getAudioContext } from '../context/audioContext';
 
+/**
+ * The AudioPlayer component allows users to select and play audio files.
+ *
+ * State:
+ * - audioBuffer (AudioBuffer|null): The decoded audio data.
+ *
+ * Refs:
+ * - fileInputRef (object): Reference to the file input element.
+ *
+ * The component:
+ * - Handles file selection and reads the file using FileReader.
+ * - Decodes audio data if the selected file is an MP3.
+ * - Parses and logs JSON content if the selected file is a JSON.
+ * - Plays the decoded audio using the Web Audio API.
+ */
 const AudioPlayer = () => {
   const [audioBuffer, setAudioBuffer] = useState(null);
   const fileInputRef = useRef(null);

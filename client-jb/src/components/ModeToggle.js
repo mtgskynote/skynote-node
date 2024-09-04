@@ -3,6 +3,22 @@ import PropTypes from 'prop-types';
 import ModeIcon from '@mui/icons-material/Mode';
 import MicIcon from '@mui/icons-material/Mic';
 
+/**
+ * The ModeToggle component provides a button to toggle between practice mode and another mode.
+ *
+ * Props:
+ * - onModeChange (function): Callback function to handle mode changes.
+ * - practiceMode (boolean): Initial state indicating if practice mode is active.
+ *
+ * State:
+ * - practiceModeOn (boolean): Indicates if practice mode is currently active.
+ *
+ * The component:
+ * - Uses useState to manage the practice mode state.
+ * - Uses useEffect to update the practice mode state when the practiceMode prop changes.
+ * - Toggles the mode and calls onModeChange with the new mode when the button is clicked.
+ * - Displays a button with a sliding effect and changes its color and icon based on the mode.
+ */
 const ModeToggle = ({ onModeChange, practiceMode }) => {
   const [practiceModeOn, setPracticeModeOn] = useState(true);
 

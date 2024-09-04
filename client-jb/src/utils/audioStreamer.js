@@ -14,13 +14,13 @@ USAGE:
   The array argument to audioStreamer.init are strings naming the Meyda features you want. 
 */
 
-import { makeCrepeScriptNode } from './pitch/crepeScriptNode.js';
+import { makeCrepeScriptNode } from '../components/pitch/crepeScriptNode.js';
 import Meyda from 'meyda'; //https://meyda.js.org
 import {
   getAudioContext,
   suspendAudioContext,
   resumeAudioContext,
-} from '../context/audioContext';
+} from '../context/audioContext.js';
 
 const meyda_buff_fft_length = 1024; // fft length and buf size are the same for Meyda
 

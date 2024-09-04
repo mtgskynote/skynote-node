@@ -6,7 +6,7 @@ import { HotKeys } from 'react-hotkeys';
 import { useParams, useNavigate } from 'react-router-dom';
 import OpenSheetMusicDisplay from './OpenSheetMusicDisplayTemp';
 import ControlBar from './ControlBar.js';
-import { makeAudioStreamer } from './audioStreamer.js';
+import { makeAudioStreamer } from '../utils/audioStreamer.js';
 import CountDownTimer from './CountDownTimer.js';
 import Queue from '../utils/QueueWithMaxLength';
 import PopUpWindow from './PopUpWindow.js';

@@ -1,6 +1,6 @@
 import React from 'react';
 import PieChart from './pieChart';
-import { makeAudioStreamer } from './audioStreamer.js';
+import { makeAudioStreamer } from '../utils/audioStreamer.js';
 import Queue from '../utils/QueueWithMaxLength';
 
 const labels = ['pitch', 'rms', 'energy', 'spectralCentroid'];

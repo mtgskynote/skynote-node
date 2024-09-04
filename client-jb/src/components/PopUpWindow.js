@@ -1,6 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
 
+/**
+ * The PopUpWindow component displays a modal window with a fade-in and scale-in effect.
+ *
+ * Props:
+ * - children (node): The content to display inside the modal.
+ * - isOpen (boolean): Controls the visibility of the modal.
+ */
 const PopUpWindow = ({ children, isOpen }) => {
   const [isVisible, setIsVisible] = useState(isOpen);
   const [shouldRender, setShouldRender] = useState(isOpen);

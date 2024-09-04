@@ -5,20 +5,37 @@ import {
   getManyRecordings,
   deleteRecording,
 } from '../utils/studentRecordingMethods';
-import {
-  CardContent,
-  Typography,
-  CircularProgress,
-  LinearProgress,
-  Tooltip,
-  IconButton,
-} from '@mui/material';
-import { CloseRounded as CloseRoundedIcon } from '@mui/icons-material';
-import AudioPlayerIcon from './AudioPlayerIcon';
+import { CardContent, Typography, Tooltip, IconButton } from '@mui/material';
 import StarRating from './StarRating';
 import QueueMusicIcon from '@mui/icons-material/QueueMusic';
 import FavouriteButton from './FavouriteButton';
+import LessonCardRecordingsModal from './LessonCardRecordingsModal';
 
+/**
+ * The LessonCard component displays information about a score and provides various interactive features.
+ *
+ * Props:
+ * - title (string): The title of the lesson.
+ * - skill (string): The skill level required for the lesson.
+ * - level (string): The level of the lesson.
+ * - stars (number): The star rating of the lesson.
+ * - isFavourite (boolean): Indicates if the lesson is marked as a favourite.
+ * - xml (string): The XML path for the lesson.
+ * - id (string): The unique identifier for the lesson.
+ * - recordings (array): List of recordings associated with the lesson.
+ * - reloadRecordingsCallback (function): Callback to reload recordings.
+ * - renderViewRecordings (boolean): Determines if the view recordings button should be rendered.
+ * - width (string): The width of the lesson card.
+ * - backgroundColour (string): The background color of the lesson card.
+ * - hoverBackgroundColour (string): The background color of the lesson card on hover.
+ * - textColour (string): The text color of the lesson card.
+ * - refreshData (function): Callback to refresh data.
+ *
+ * The component:
+ * - Provides functions to handle viewing scores, opening/closing the recordings modal, deleting recordings, viewing recordings, and toggling audio playback.
+ * - Renders the lesson card with title, skill, level, star rating, and buttons for viewing recordings and marking as favourite.
+ * - Displays a modal with recordings when the view recordings button is clicked.
+ */
 const LessonCard = ({
   title,
   skill,
@@ -78,19 +95,6 @@ const LessonCard = ({
       document.removeEventListener('mousedown', handleClickOutsideModal);
     };
   });
-
-  // Converts a given date string into a formatted string that follows the "en-UK" locale format.
-  const formatDate = (dateString) => {
-    const date = new Date(dateString);
-    const options = {
-      year: 'numeric',
-      month: 'short',
-      day: '2-digit',
-      hour: '2-digit',
-      minute: '2-digit',
-    };
-    return date.toLocaleString('en-UK', options);
-  };
 
   // Handles the click event for viewing the score of the lesson and navigates to the '/all-lessons' route.
   const handleViewScore = (e) => {
@@ -278,123 +282,22 @@ const LessonCard = ({
       </div>
 
       {/* Modal */}
-      <div
-        className={`cursor-default fixed inset-0 z-50 flex items-center justify-center bg-gray-800 bg-opacity-75 transition-opacity duration-300 ${
-          openRecordingsModal ? 'opacity-100' : 'opacity-0 pointer-events-none'
-        }`}
-        onClick={handleCloseRecordingsModal}
-      >
-        <div
-          ref={modalRef}
-          className={`bg-white p-8 rounded shadow-md transition-transform duration-300 transform ${
-            openRecordingsModal ? 'scale-100' : 'scale-95'
-          }`}
-          onClick={(e) => e.stopPropagation()}
-        >
-          {loading ? ( // Display loading indicator if loading
-            <CircularProgress />
-          ) : (
-            <div>
-              {/* Display modal content if recordingsAudio is loaded */}
-              {recordingsAudio ? (
-                <div>
-                  <div className="flex justify-between items-center mb-2">
-                    <h5 className="font-medium">All Recordings - {title}</h5>
-                    <button
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        handleCloseRecordingsModal();
-                      }}
-                      className={`bg-red-500 hover:bg-red-400 ${tColour} focus:outline-none border-none rounded`}
-                    >
-                      <CloseRoundedIcon className="rounded text-2xl" />
-                    </button>
-                  </div>
-                  {/* Render table with recordings and recordingsAudio data */}
-                  <table className="table-auto w-full border-solid border border-2">
-                    <thead>
-                      <tr className="border-solid border border-2 border-blue-400">
-                        <th className="text-white bg-blue-500 border-none px-4 py-2">
-                          Recording Name
-                        </th>
-                        <th className="text-white bg-blue-500 border-none px-4 py-2">
-                          Recording Date
-                        </th>
-                        <th className="text-white bg-blue-500 border-none px-4 py-2">
-                          Stars Achieved
-                        </th>
-                        <th className="text-white bg-blue-500 border-none px-4 py-2"></th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {allRecordings.map((recording, index) => (
-                        <tr key={index} className="odd:bg-gray-100">
-                          <td className="border-none px-4 py-2 text-left">
-                            {recording.recordingName}
-                            <AudioPlayerIcon
-                              audio={recording.audio}
-                              isPlaying={
-                                playingAudioId === recording.recordingId
-                              }
-                              onPlay={() =>
-                                handleAudioPlay(recording.recordingId)
-                              }
-                            />
-                          </td>
-                          <td className="border-none px-4 py-2 text-left">
-                            {formatDate(recording.recordingDate)}
-                          </td>
-                          <td className="border-none px-4 py-2 text-left">
-                            <StarRating stars={recording.stars} />
-                          </td>
-                          <td className="border-none px-4 py-2 text-left">
-                            <button
-                              className="hover:cursor-pointer transition ease-in-out delay-50 text-center text-blue-500 border-solid border-2 border-blue-500 focus:ring-0 focus:outline-none bg-inherit hover:bg-white hover:border-blue-700 hover:text-blue-700 py-1 px-2 rounded-l-none outline-none rounded hover:cursor"
-                              onClick={(e) => {
-                                e.stopPropagation();
-                                handleViewRecording(recording.recordingId, xml);
-                              }}
-                            >
-                              View
-                            </button>
-                            <button
-                              className="ml-1 hover:cursor-pointer transition ease-in-out delay-50 text-center text-red-500 border-solid border-2 border-red-500 focus:ring-0 focus:outline-none bg-inherit hover:bg-white hover:border-red-700 hover:text-red-700 py-1 px-2 rounded-l-none outline-none rounded hover:cursor"
-                              onClick={(e) => {
-                                e.stopPropagation();
-                                handleDeleteRecording(recording.recordingId);
-                              }}
-                            >
-                              Delete
-                            </button>
-                          </td>
-                        </tr>
-                      ))}
-                    </tbody>
-                  </table>
-                </div>
-              ) : (
-                <div className="w-full">No recordings available.</div>
-              )}
-              <div className="mt-2">
-                {deletingRecording && <LinearProgress />}
-                {deletionStatus && (
-                  <div
-                    className={`transition-opacity duration-500 ${
-                      deletionStatus === 'success'
-                        ? 'bg-green-200 text-green-700'
-                        : 'bg-red-200 text-red-700'
-                    } p-2 rounded-md mt-2`}
-                  >
-                    {deletionStatus === 'success'
-                      ? 'Recording successfully deleted.'
-                      : 'Failed to delete recording.'}
-                  </div>
-                )}
-              </div>
-            </div>
-          )}
-        </div>
-      </div>
+      <LessonCardRecordingsModal
+        ref={modalRef}
+        open={openRecordingsModal}
+        title={title}
+        allRecordings={allRecordings}
+        recordingsAudio={recordingsAudio}
+        loading={loading}
+        deletionStatus={deletionStatus}
+        deletingRecording={deletingRecording}
+        playingAudioId={playingAudioId}
+        handleCloseRecordingsModal={handleCloseRecordingsModal}
+        handleDeleteRecording={handleDeleteRecording}
+        handleViewRecording={handleViewRecording}
+        handleAudioPlay={handleAudioPlay}
+        xml={xml}
+      />
     </div>
   );
 };

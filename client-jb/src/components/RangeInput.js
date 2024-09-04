@@ -2,6 +2,24 @@ import React, { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
 import RangeSlider from './RangeSlider';
 
+/**
+ * The RangeInput component provides a labeled input field with a range slider for selecting a numeric value.
+ *
+ * Props:
+ * - label (string): The label text for the input field.
+ * - min (number): The minimum value for the input and slider.
+ * - max (number): The maximum value for the input and slider.
+ * - initial (number): The initial value for the input and slider.
+ * - onValueChange (function): Callback function to handle value changes.
+ * - disabled (boolean): Indicates if the input and slider are disabled.
+ *
+ * The component:
+ * - Uses useState to manage the current value.
+ * - Uses useEffect to update the value when the initial prop changes.
+ * - Handles value changes with input validation to ensure it stays within the min and max range.
+ * - Modifies the input field's styling based on the disabled prop.
+ * - Renders a label, a RangeSlider component, and a number input field.
+ */
 const RangeInput = ({ label, min, max, initial, onValueChange, disabled }) => {
   const [value, setValue] = useState(initial);
 

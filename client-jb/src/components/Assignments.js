@@ -18,7 +18,7 @@ import {
 } from '@fortawesome/free-solid-svg-icons';
 import PopUpWindowGrades from './PopUpWindowGrades';
 import PopUpWindowRecordings from './PopUpWindowRecordings.js';
-import Messages from './messages.js';
+import Messages from './Messages.js';
 import LoadingScreen from './LoadingScreen.js';
 import Error from './Error.js';
 

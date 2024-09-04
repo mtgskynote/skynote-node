@@ -1,12 +1,26 @@
 import React, { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
 
+/**
+ * The CountDownTimer component displays a countdown timer in beats.
+ *
+ * Props:
+ * - bpm (number): Beats per minute.
+ * - mode (boolean): Determines the color and shadow of the countdown text.
+ * - onCountDownFinished (function): Callback when the countdown finishes.
+ *
+ * State:
+ * - countDownBeats (number): Current beat count of the countdown.
+ *
+ * The component:
+ * - Calculates the time per beat based on bpm.
+ * - Sets an interval to increment countDownBeats every beat.
+ * - Calls onCountDownFinished when countDownBeats reaches 5 (there are only 4 beats in a countdown).
+ */
 const CountDownTimer = ({ bpm, mode, onCountDownFinished }) => {
-  const [countDownBeats, setCountDownBeats] = useState(1); // Set the initial countdown time in beats
+  const [countDownBeats, setCountDownBeats] = useState(1);
 
   useEffect(() => {
-    console.log('original bpm: ', bpm);
-
     let new_bpm;
 
     if (bpm > 100) {
@@ -14,8 +28,6 @@ const CountDownTimer = ({ bpm, mode, onCountDownFinished }) => {
     } else {
       new_bpm = bpm;
     }
-
-    console.log('new bpm: ', new_bpm);
 
     const timePerBeat = (1 / new_bpm) * 60 * 1000; // milliseconds per beat
     let countdownInterval;

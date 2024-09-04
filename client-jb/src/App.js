@@ -25,10 +25,10 @@ import ErrorBoundary from './components/ErrorBoundary';
 import TimbreVisualization from './components/TimbreVisualization';
 import ListRecordings from './components/ListRecordings';
 import AudioPlayer from './components/AudioPlayer';
-import ListAllRecordings from './components/ListAllRecodings';
+import ListAllRecordings from './components/ListAllRecordings';
 import Assignments from './components/Assignments';
 
-import Apitesting from './components/apitesting';
+import ApiTesting from './components/ApiTesting';
 import Error from './components/Error';
 
 function App() {
@@ -103,7 +103,7 @@ function App() {
               >
                 <Route index element={<Stats />} />
                 <Route path="profile" element={<Profile />} />
-                <Route path="apitesting" element={<Apitesting />} />
+                <Route path="api-testing" element={<ApiTesting />} />
                 <Route path="lessons" element={<Lessons />} />
                 {/* <Route path="imported-scores" element={<ImportedScores />} /> */}
                 <Route

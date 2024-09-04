@@ -12,7 +12,7 @@ import pub9_img from '../assets/images/Violinist-2.jpg';
 
 import pub9 from '../assets/papers/SkyNote_CSEDU2023.pdf';
 
-import MusicTech from '../components/MusicTech.js';
+import MusicTech from '../components/MusicTechImage.js';
 import WhiteLogo from '../components/WhiteLogo';
 import { Link } from 'react-router-dom';
 import 'bootstrap/dist/css/bootstrap.min.css';

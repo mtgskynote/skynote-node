@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
-import AnyMessageCSS from './AnyMessage.module.css';
+import MessageCSS from './Message.module.css';
 
 const Message = (props) => {
   const [message, setMessage] = useState('false');
@@ -10,7 +10,7 @@ const Message = (props) => {
   }, [props]);
 
   const Message = (
-    <div className={AnyMessageCSS.simpleMessage}>
+    <div className={MessageCSS.simpleMessage}>
       <p>{message}</p>
     </div>
   );

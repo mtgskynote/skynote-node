@@ -7,6 +7,19 @@ import IconButton from '@mui/material/IconButton';
 import FavoriteIcon from '@mui/icons-material/Favorite';
 import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder';
 
+/**
+ * The FavouriteButton component allows users to toggle a song as a favourite.
+ *
+ * Props:
+ * - songId (string): The unique identifier for the song.
+ * - initialIsFavourite (boolean): Initial state indicating if the song is a favourite.
+ * - refreshData (function): Optional callback to refresh data after toggling.
+ *
+ * The component:
+ * - Sends a POST or DELETE request to the server to update the favourite status.
+ * - Optimistically updates the favourite state on success.
+ * - Displays a tooltip and an icon button that toggles between favourite and non-favourite states.
+ */
 const FavouriteButton = ({ songId, initialIsFavourite, refreshData }) => {
   const [isFavourite, setIsFavourite] = useState(initialIsFavourite);
   const { getCurrentUser } = useAppContext();

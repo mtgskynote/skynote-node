@@ -2,6 +2,18 @@ import React, { useEffect } from 'react';
 import PropTypes from 'prop-types';
 import Chart from 'chart.js/auto';
 
+/**
+ * The RecordingsProgressChart component renders a bar chart showing the number of lessons recorded over the past week.
+ *
+ * Props:
+ * - id (string): The unique identifier for the canvas element.
+ * - recordingsData (array of numbers): The data points representing the number of lessons recorded each day.
+ *
+ * The component:
+ * - Uses useEffect to initialize and update the Chart.js bar chart when recordingsData or id changes.
+ * - Creates a linear gradient for the bar colors.
+ * - Configures the chart with labels for the past 7 days and customizes the appearance of the bars and axes.
+ */
 const RecordingsProgressChart = ({ id, recordingsData }) => {
   useEffect(() => {
     const ctx = document.getElementById(id).getContext('2d');

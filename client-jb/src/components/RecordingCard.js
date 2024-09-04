@@ -17,6 +17,27 @@ import EditIcon from '@mui/icons-material/Edit';
 import StarRating from './StarRating';
 import PopUpWindow from './PopUpWindow';
 
+/**
+ * The RecordingCard component displays information about a recording and provides options to view, edit, or delete it.
+ *
+ * Props:
+ * - recordingName (string): The name of the recording.
+ * - skill (string): The skill level associated with the recording.
+ * - stars (number): The star rating of the recording.
+ * - xml (string): The XML path for the recording.
+ * - recordingId (string): The unique identifier for the recording.
+ * - recordingDate (string): The date of the recording.
+ * - onDeleteRecording (function): Callback to handle recording deletion.
+ * - width (string): The width of the recording card.
+ * - backgroundColour (string): The background color of the recording card.
+ * - hoverBackgroundColour (string): The background color of the recording card on hover.
+ * - textColour (string): The text color of the recording card.
+ * - onEditRecording (function): Callback to handle recording name edits.
+ *
+ * The component:
+ * - Uses useState to manage the visibility of edit and delete pop-up windows, the new recording name, warnings, and loading states.
+ * - Provides functions to handle viewing, editing, and deleting recordings.
+ */
 const RecordingCard = ({
   recordingName,
   skill,

@@ -5,6 +5,22 @@ import PlayCircleOutlineIcon from '@mui/icons-material/PlayCircleOutline';
 import PauseCircleOutlineIcon from '@mui/icons-material/PauseCircleOutline';
 import { getAudioContext } from '../context/audioContext';
 
+/**
+ * The AudioPlayerIcon component displays a play/pause button for audio playback.
+ *
+ * Props:
+ * - audio (object): The audio data to play, containing a data property.
+ * - isPlaying (boolean): Indicates if the audio is currently playing.
+ * - onPlay (function): Callback when the audio starts playing.
+ *
+ * The component:
+ * - Manages internal play state with useState.
+ * - Uses useRef to reference the current audio source.
+ * - Uses useEffect to handle audio playback and cleanup.
+ * - Plays audio using the Web Audio API and an AudioContext.
+ * - Toggles play/pause state on button click.
+ * - Displays a play or pause icon based on the internal play state.
+ */
 const AudioPlayerIcon = ({ audio, isPlaying, onPlay }) => {
   const [internalPlayState, setInternalPlayState] = useState(false);
   const currentSourceRef = useRef(null);

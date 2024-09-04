@@ -4,6 +4,27 @@ import { useNavigate } from 'react-router-dom';
 import Card from '@mui/material/Card';
 import CardContent from '@mui/material/CardContent';
 
+/**
+ * The AssignmentCard component displays information about an assignment.
+ *
+ * Props:
+ * - assignmentId (string): The unique identifier for the assignment.
+ * - daysLeft (number): The number of days left until the assignment is due.
+ * - dueDate (Date): The due date of the assignment.
+ * - score (object): Contains details about the assignment, including:
+ *   - fname (string): The filename associated with the assignment.
+ *   - title (string): The title of the assignment.
+ *   - skill (string): The skill level required for the assignment.
+ *   - level (string): The level of the assignment.
+ *
+ * The component:
+ * - Uses useNavigate from react-router-dom to navigate to different routes.
+ * - Displays the assignment status (LATE or UNSUBMITTED) based on daysLeft.
+ * - Shows the due date formatted according to dateOptions.
+ * - Displays the assignment title, skill, and level.
+ * - Provides buttons to record and see more details about the assignment.
+ * - Applies various Tailwind CSS classes for styling and transitions.
+ */
 const AssignmentCard = ({ assignmentId, daysLeft, dueDate, score }) => {
   const dateOptions = {
     weekDay: 'short',

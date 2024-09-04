@@ -3,6 +3,13 @@ import PropTypes from 'prop-types';
 import StarRateRoundedIcon from '@mui/icons-material/StarRateRounded';
 import StarBorderRoundedIcon from '@mui/icons-material/StarBorderRounded';
 
+/**
+ * The StarRating component displays a star rating with filled and empty stars.
+ *
+ * Props:
+ * - stars (number): The number of filled stars to display.
+ * - size (string): The size of the star icons. Defaults to 'text-4xl' if not provided.
+ */
 const StarRating = ({ stars, size }) => {
   const renderStars = () => {
     const filledStars = [];

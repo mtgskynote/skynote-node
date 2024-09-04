@@ -1,3 +1,4 @@
+// THIS FILE SHOULD BE DELETED ONCE ASSIGNMENTS IS REDESIGNED
 import React, { useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
 import { useNavigate } from 'react-router-dom';

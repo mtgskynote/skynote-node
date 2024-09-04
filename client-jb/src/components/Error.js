@@ -4,6 +4,17 @@ import { Link } from 'react-router-dom';
 import img_404 from '../assets/images/not-found.svg';
 import img_general from '../assets/images/error_violin.png';
 
+/**
+ * The Error component is a functional React component that displays an error message.
+ * It supports two types of errors: '404' and 'general'.
+ *
+ * - If the type is '404', it displays a "Page Not Found" message with an image.
+ * - If the type is 'general', it displays a general error message with a different image.
+ *
+ * Props:
+ * - type (string): The type of error to display. Defaults to 'general'.
+ * - message (string): The error message to display for general errors. Defaults to an empty string.
+ */
 const Error = ({ type = 'general', message = '' }) => {
   if (type === '404') {
     return (
@@ -19,7 +30,7 @@ const Error = ({ type = 'general', message = '' }) => {
           We can&apos;t seem to find the page you are looking for.
         </p>
         <Link to="/" className="text-blue-500 underline">
-          back home
+          Back to dashboard
         </Link>
       </div>
     );

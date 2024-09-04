@@ -11,6 +11,20 @@ import StarRateRoundedIcon from '@mui/icons-material/StarRateRounded';
 import StarBorderRoundedIcon from '@mui/icons-material/StarBorderRounded';
 import LessonCard from '../components/LessonCard.js';
 
+/**
+ * The SubLevelCard component displays a card for a sub-level, including its lessons and progress.
+ *
+ * Props:
+ * - index (number): The index of the sub-level.
+ * - subLevelName (string): The name of the sub-level.
+ * - levelNumber (number): The number of the level.
+ * - category (string): The category of the sub-level.
+ * - totalStars (number): The total number of stars earned in the sub-level.
+ * - subLevelLessons (array): The lessons in the sub-level.
+ * - isOpen (boolean): Indicates if the sub-level card is expanded.
+ * - onCardClick (function): Callback to handle card click events.
+ * - refreshData (function): Callback to refresh data.
+ */
 const SubLevelCard = ({
   index,
   subLevelName,

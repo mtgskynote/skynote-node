@@ -6,6 +6,25 @@ import { useAppContext } from '../context/appContext';
 import LoadingScreen from './LoadingScreen.js';
 import RecordingCard from './RecordingCard.js';
 
+/**
+ * The ListRecordings component displays a list of recordings for a specific score.
+ *
+ * State:
+ * - userData (object|null): Stores the current user data.
+ * - recordingList (array|null): List of recordings fetched from the API.
+ * - recordingNames (array|null): Names of the recordings.
+ * - recordingStars (array|null): Star ratings of the recordings.
+ * - recordingDates (array|null): Dates of the recordings.
+ * - recordingIds (array|null): IDs of the recordings.
+ * - scoreSkill (string|null): Skill level of the score.
+ * - scoreLevel (string|null): Level of the score.
+ * - scoreXml (string|null): XML filename of the score.
+ *
+ * The component:
+ * - Formats recording dates using the specified options.
+ * - Displays a loading screen while fetching data.
+ * - Renders a list of RecordingCard components or a message if no recordings are found.
+ */
 const ListRecordings = () => {
   const { getCurrentUser } = useAppContext();
   const [userData, setUserData] = useState(null);
@@ -45,7 +64,7 @@ const ListRecordings = () => {
     setScoreXml(itemFoundLocalStorage.fname);
     const fetchDataFromAPI = () => {
       if (userData === null) {
-        getCurrentUser() // fetchData is already an async function
+        getCurrentUser()
           .then((result) => {
             setUserData(result);
           })

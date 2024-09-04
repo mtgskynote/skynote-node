@@ -1,5 +1,5 @@
 import React from 'react';
-import ViolinIpad from '../components/violinipad.js';
+import ViolinIpadImage from '../components/ViolinIpadImage.js';
 import { Link } from 'react-router-dom';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import DemosCSS from './Demos.module.css';
@@ -117,7 +117,7 @@ const Demos = () => {
         <div>
           <div className={DemosCSS.violinipadContainer}>
             <div className={DemosCSS.violinipad}>
-              <ViolinIpad />
+              <ViolinIpadImage />
             </div>
           </div>
           <div className={DemosCSS.violinipadOverlay}>

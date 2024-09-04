@@ -1,6 +1,19 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
+/**
+ * The ControlBarPanel component displays a panel that can show or hide its content.
+ *
+ * Props:
+ * - show (boolean): Determines whether to show the panel.
+ * - children (node): The content to display inside the panel.
+ *
+ * The component:
+ * - Uses Tailwind CSS classes for styling and transitions.
+ * - Adjusts height and opacity based on the show prop.
+ * - Positions the panel at the bottom of the screen with a high z-index.
+ * - Displays children content and a horizontal rule when the panel is shown.
+ */
 const ControlBarPanel = ({ show, children }) => {
   return (
     <div

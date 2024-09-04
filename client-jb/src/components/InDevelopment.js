@@ -1,6 +1,10 @@
 import React from 'react';
 import img from '../assets/images/pencil_violin.png';
 
+/**
+ * The InDevelopment component displays a "Coming Soon" message with an image, which
+ * can be displayed when a page is under construction.
+ */
 const InDevelopment = () => {
   return (
     <div className={'relative rounded overflow-hidden w-full'}>

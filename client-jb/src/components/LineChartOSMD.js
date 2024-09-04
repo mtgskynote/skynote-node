@@ -1,7 +1,27 @@
 import React, { useEffect, useRef } from 'react';
 import PropTypes from 'prop-types';
 
-//Pitch track line component
+/**
+ * The LineChart component renders a pitch track line chart on a canvas.
+ *
+ * Props:
+ * - pitchData (array): Array of pitch data values.
+ * - pitchDataPosX (array of numbers): X-coordinates for pitch data points.
+ * - pitchDataPosY (array of numbers): Y-coordinates for pitch data points.
+ * - pitchIndex (array of numbers): Indices for pitch data points.
+ * - pitchColor (array of strings): Colors for pitch data points.
+ * - repetitionNumber (array of numbers): Repetition numbers for pitch data points.
+ * - showingRep (number): The current repetition number being displayed.
+ * - zoom (number): Zoom level for the OSMD component.
+ * - width (number): Width of the canvas.
+ * - height (number): Height of the canvas.
+ *
+ * The component:
+ * - Uses useRef to reference the container and canvas elements.
+ * - Uses useEffect to draw the pitch track line on the canvas whenever relevant props change.
+ * - Clears the canvas and sets the line width based on the zoom level of the OSMD component.
+ * - Draws the line by connecting valid pitch data points, with logic to handle jumps between notes and avoid line joining when jumping score lines.
+ */
 const LineChart = (props) => {
   const containerRef = useRef(null);
   const canvasRef = useRef(null);
@@ -27,8 +47,8 @@ const LineChart = (props) => {
 
     // Set a threshold for the distance; adjust as needed
     const distanceThreshold = rect.width * 0.6;
-    //To jump between notes: props.pitchIndex[1]!==0?(props.pitchIndex[1]+1):(props.pitchIndex[2]+1);
-    //To avoid line joining when jumping score lines: rect.width*0.6 (0.6 or whatever ratio <0.9)
+    // To jump between notes: props.pitchIndex[1]!==0?(props.pitchIndex[1]+1):(props.pitchIndex[2]+1);
+    // To avoid line joining when jumping score lines: rect.width*0.6 (0.6 or whatever ratio <0.9)
 
     for (let i = 1; i < props.pitchDataPosX.length; i++) {
       if (
