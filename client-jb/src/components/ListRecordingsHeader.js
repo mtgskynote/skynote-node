@@ -1,4 +1,5 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 
 /**
  * The ListRecordingsHeader component displays a header with a title, skill, and level for a list of recordings.

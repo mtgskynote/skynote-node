@@ -1,4 +1,5 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 
 /**
  * The ButtonNoOutline component renders a customizable button without an outline.
