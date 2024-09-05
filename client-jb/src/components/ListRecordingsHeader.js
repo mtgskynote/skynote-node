@@ -26,4 +26,10 @@ const ListRecordingsHeader = ({ title, skill, level }) => {
   );
 };
 
+ListRecordingsHeader.propTypes = {
+  title: PropTypes.string.isRequired,
+  skill: PropTypes.string.isRequired,
+  level: PropTypes.number.isRequired,
+};
+
 export default ListRecordingsHeader;

@@ -1,6 +1,6 @@
 // ListRecordings.js
 import React, { useState, useEffect } from 'react';
-import { useLocation, useNavigate } from 'react-router-dom';
+import { useLocation } from 'react-router-dom';
 import { getRecData } from '../utils/studentRecordingMethods.js';
 import { useAppContext } from '../context/appContext';
 import LoadingScreen from './LoadingScreen.js';
@@ -21,7 +21,6 @@ const ListRecordings = () => {
   const [scoreXml, setScoreXml] = useState(null);
 
   const location = useLocation();
-  const navigate = useNavigate();
 
   // Define options for formatting date
   const options = {
