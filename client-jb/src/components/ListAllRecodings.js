@@ -3,6 +3,8 @@ import { getAllRecData } from '../utils/studentRecordingMethods.js';
 import { useAppContext } from '../context/appContext';
 import RecordingCard from './RecordingCard.js';
 import LoadingScreen from './LoadingScreen.js';
+import ListRecordingsHeader from './ListRecordingsHeader.js';
+import BackButton from './BackButton.js';
 
 const ListAllRecordings = () => {
   const { getCurrentUser } = useAppContext();
@@ -76,9 +78,10 @@ const ListAllRecordings = () => {
     // eslint-disable-next-line
   }, [userData, recordingsByScore, getCurrentUser]);
 
-  const findScoreTitleByRecordingName = (object, recordingName) => {
-    for (let scoreTitle in object) {
-      let recordings = object[scoreTitle];
+  // Retrieve the score for a specific recording from an object cataloging lists of recordings by score titles
+  const findScoreTitleByRecordingName = (recordingsObject, recordingName) => {
+    for (let scoreTitle in recordingsObject) {
+      let recordings = recordingsObject[scoreTitle];
       for (let recording of recordings) {
         if (recording.recordingName === recordingName) {
           return scoreTitle;
@@ -88,6 +91,7 @@ const ListAllRecordings = () => {
     return null;
   };
 
+  // Handle editing of a recording's name
   const handleEditRecording = (recordingName, newRecordingName) => {
     const scoreTitle = findScoreTitleByRecordingName(
       recordingsByScore,
@@ -107,6 +111,7 @@ const ListAllRecordings = () => {
     setRecordingsByScore(newRecordings);
   };
 
+  // Handle deletion of a recording
   const handleDeleteRecording = (recordingId) => {
     const newRecordings = JSON.parse(JSON.stringify(recordingsByScore));
 
@@ -119,13 +124,14 @@ const ListAllRecordings = () => {
     setRecordingsByScore(newRecordings);
   };
 
+  // Display loading screen while fetching data
   if (recordingsByScore === null) {
     return <LoadingScreen />;
   }
 
-  // Your component logic using the variables
   return (
     <div className="container mx-auto px-4 py-8">
+      <BackButton />
       <div className="flex justify-center items-start">
         <h2 className="text-center">All Recordings</h2>
       </div>
@@ -134,21 +140,11 @@ const ListAllRecordings = () => {
         const recordings = recordingsByScore[scoreTitle];
         return (
           <div key={index}>
-            <div>
-              <div className="flex items-center justify-between mt-12">
-                {/* Left side: Title */}
-                <div className="text-2xl font-bold capitalize">
-                  {scoreTitle}
-                </div>
-
-                {/* Right side: Skill and Level */}
-                <div className="text-lg text-gray-600 text-right">
-                  <div>{scoreObject.skill}</div>
-                  <div>Level {scoreObject.level}</div>
-                </div>
-              </div>
-              <hr className="h-0.5 border-t-0 bg-gray-700 mb-10" />
-            </div>
+            <ListRecordingsHeader
+              title={scoreTitle}
+              skill={scoreObject.skill}
+              level={scoreObject.level}
+            />
             <div className="relative overflow-x-auto whitespace-no-wrap no-scrollbar">
               <div className="inline-flex items-start space-x-8 mr-8">
                 {recordings.map((recording, index) => {

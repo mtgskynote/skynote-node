@@ -403,7 +403,7 @@ const Stats = () => {
             <h4 className="font-medium my-6">Continue Recording</h4>
             <button
               onClick={handleViewAllRecordings}
-              className="ml-auto mr-8 hover:cursor-pointer transition ease-in-out delay-50 text-center text-white text-sm border-transparent focus:border-transparent focus:ring-0 focus:outline-none bg-blue-600 hover:bg-blue-700 font-extralight py-1 px-2 rounded-l-none outline-none rounded"
+              className="ml-auto mr-8 hover:cursor-pointer transition ease-in-out delay-50 text-center text-white text-sm border-transparent focus:border-transparent focus:ring-0 focus:outline-none bg-red-500 hover:bg-red-600 font-extralight py-1 px-2 rounded-l-none outline-none rounded"
             >
               View All Recordings
             </button>
