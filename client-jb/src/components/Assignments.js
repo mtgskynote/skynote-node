@@ -21,6 +21,7 @@ import PopUpWindowRecordings from './PopUpWindowRecordings.js';
 import Messages from './messages.js';
 import LoadingScreen from './LoadingScreen.js';
 import Error from './Error.js';
+import MessagesCard from './MessagesCard.js';
 
 const Assignments = () => {
   const navigate = useNavigate();
@@ -192,8 +193,26 @@ const Assignments = () => {
   }
 
   return (
-    <>
-      {teacherDataError ? (
+    <div className="h-screen px-8 pt-2 pb-12">
+      <div className="h-full flex">
+        {/* Left side with cards stacked vertically */}
+        <div className="w-2/3 p-4 overflow-y-auto">
+          <div className="space-y-4">
+            <div className="bg-white shadow-md rounded-lg p-4">Card 1</div>
+            <div className="bg-white shadow-md rounded-lg p-4">Card 2</div>
+            <div className="bg-white shadow-md rounded-lg p-4">Card 3</div>
+            <div className="bg-white shadow-md rounded-lg p-4">Card 4</div>
+            {/* Add more cards as needed */}
+          </div>
+        </div>
+
+        {/* Right side messages board */}
+        <div className="w-1/3 p-4 flex flex-col">
+          <MessagesCard user={userData} teacher={teacherData} />
+        </div>
+      </div>
+    </div>
+    /* {teacherDataError ? (
         <Error message={errorMessages.teacherDataError} />
       ) : assignmentsError ? (
         <Error message={errorMessages.assignmentsError} />
@@ -398,8 +417,7 @@ const Assignments = () => {
             />
           )}
         </div>
-      )}
-    </>
+      )} */
   );
 };
 
