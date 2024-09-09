@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from 'react';
 import { Chart as ChartJS, ArcElement, Tooltip, Legend } from 'chart.js';
-import { useNavigate } from 'react-router-dom';
 import { useAppContext } from '../../context/appContext';
 import { getAllRecData } from '../../utils/studentRecordingMethods.js';
 import { getAllAssignments } from '../../utils/assignmentsMethods.js';
@@ -18,7 +17,6 @@ ChartJS.register(ArcElement, Tooltip, Legend);
 
 const Stats = () => {
   const { getCurrentUser } = useAppContext();
-  const navigate = useNavigate();
 
   const [isLoading, setIsLoading] = useState(true);
   const [userData, setUserData] = useState(null);
@@ -105,10 +103,6 @@ const Stats = () => {
       )
     );
     //this will trigger the reloading of the useEffect in charge of sending data to child components
-  };
-
-  const handleViewAllRecordings = () => {
-    navigate('/all-recordings');
   };
 
   useEffect(() => {
