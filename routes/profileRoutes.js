@@ -9,7 +9,7 @@ import {
   updateRecordingsPastWeek,
 } from '../controllers/profileController.js';
 import { authenticateUser } from '../middleware-jb/authenticateUser.js';
-import upload from '../multerConfig.js';
+import multer from 'multer';
 import bodyParser from 'body-parser';
 // Middleware setup for parsing form data
 const formParser = bodyParser.urlencoded({ extended: false });
@@ -28,6 +28,7 @@ router
 router
   .route('/uploadXML/:userId')
   .post(authenticateUser, upload.single('file'), uploadXMLFile);
+
 router.route('/removeXMLFile/:userId').post(authenticateUser, removeXMLFile);
 router
   .route('/recordingsPastWeek/:userId')

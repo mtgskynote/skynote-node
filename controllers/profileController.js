@@ -1,8 +1,10 @@
 import User from '../models/User.js';
-import xmlScores from '../models/xmlScoreModel.js';
 import { StatusCodes } from 'http-status-codes';
 import { BadRequestError, NotFoundError } from '../errors/index.js';
 import mongoose from 'mongoose';
+import path from 'path';
+import { GridFSBucket } from 'mongodb';
+import fs from 'fs';
 
 // Update user email and name when editing the profile
 const updateProfileData = async (req, res) => {
@@ -129,9 +131,9 @@ const removeFavourite = async (req, res) => {
 };
 
 const uploadXMLFile = async (req, res) => {
-  console.log('uploadXMLFile');
   const { userId } = req.params;
-  const file = req.file; // Get the file from req.file, not req.params
+  const file = req.file;
+  const { fileName, skillLevel, skill } = req.body; // User-defined details
 
   // Validate userId
   if (!mongoose.Types.ObjectId.isValid(userId)) {
@@ -149,6 +151,11 @@ const uploadXMLFile = async (req, res) => {
         .json({ message: 'No file uploaded.' });
     }
 
+    // Default values if not provided
+    const defaultFileName = fileName || file.originalname;
+    const defaultSkillLevel = skillLevel || 0;
+    const defaultSkill = skill || '';
+
     const user = await User.findById(userId);
     if (!user) {
       return res
@@ -156,38 +163,53 @@ const uploadXMLFile = async (req, res) => {
         .json({ message: 'User not found' });
     }
 
-    // Store the file path, not the file object
-    user.importedScores.push({ filePath: file.path });
+    // Save the file path and user-defined details in the user's document
+    user.importedScores.push({
+      scores: [
+        {
+          fname: defaultFileName,
+          level: defaultSkillLevel,
+          skill: defaultSkill,
+        },
+      ],
+      filepaths: [file.path], // Add the file path
+    });
+
     await user.save();
 
-    res
-      .status(StatusCodes.OK)
-      .json({ message: 'File uploaded successfully', filePath: file.path });
+    res.status(StatusCodes.OK).json({
+      message: 'File uploaded and scores saved successfully',
+      filePath: file.path,
+    });
   } catch (error) {
     console.error('Error uploading XML file to database:', error);
-    res
-      .status(StatusCodes.INTERNAL_SERVER_ERROR)
-      .json({ message: 'Internal server error', error: error.message });
+    res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
+      message: 'Internal server error',
+      error: error.message,
+    });
   }
 };
 
 const removeXMLFile = async (req, res) => {
+  const { userId } = req.params;
+  const { fileId } = req.body; // Expect fileId in the request body
+
+  console.log(`Removing XML file: userId=${userId}, fileId=${fileId}`);
+
+  // Validate userId
+  if (!mongoose.Types.ObjectId.isValid(userId)) {
+    return res
+      .status(StatusCodes.BAD_REQUEST)
+      .json({ error: 'Invalid userId format' });
+  }
+
+  if (!mongoose.Types.ObjectId.isValid(fileId)) {
+    return res
+      .status(StatusCodes.BAD_REQUEST)
+      .json({ error: 'Invalid fileId format' });
+  }
+
   try {
-    const { userId } = req.params;
-    const { filePath } = req.body; // Expect filePath in the request body
-
-    console.log(
-      `Removing XML file upload: userId=${userId}, filePath=${filePath}`
-    );
-
-    // Validate userId
-    if (!mongoose.Types.ObjectId.isValid(userId)) {
-      return res
-        .status(StatusCodes.BAD_REQUEST)
-        .json({ error: 'Invalid userId format' });
-    }
-
-    // Find the user
     const user = await User.findById(userId);
     if (!user) {
       return res
@@ -196,8 +218,8 @@ const removeXMLFile = async (req, res) => {
     }
 
     // Find the index of the file to remove
-    const scoreIndex = user.importedScores.findIndex(
-      (score) => score.filePath === filePath
+    const scoreIndex = user.importedScores.findIndex((score) =>
+      score.fileId.equals(fileId)
     );
 
     if (scoreIndex === -1) {
@@ -206,28 +228,32 @@ const removeXMLFile = async (req, res) => {
         .json({ message: 'File not found' });
     }
 
-    // Remove the file path from the user's record
-    user.importedScores.splice(scoreIndex, 1);
+    // Remove the file from GridFS
+    const bucket = new GridFSBucket(mongoose.connection.db, {
+      bucketName: 'uploads',
+    });
 
-    // Save the updated user document
-    await user.save();
-
-    // Remove the file from the filesystem
-    fs.unlink(path.resolve(filePath), (err) => {
+    bucket.delete(new mongoose.Types.ObjectId(fileId), async (err) => {
       if (err) {
-        console.error('Error removing file from filesystem:', err);
+        console.error('Error removing file from GridFS:', err);
         return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
-          message: 'Error removing file from filesystem',
+          message: 'Error removing file from GridFS',
           error: err.message,
         });
       }
+
+      // Remove the file reference from the user's document
+      user.importedScores.splice(scoreIndex, 1);
+      await user.save();
+
       res.status(StatusCodes.OK).json({ message: 'File removed successfully' });
     });
   } catch (error) {
     console.error('Error removing XML file from user:', error);
-    res
-      .status(StatusCodes.INTERNAL_SERVER_ERROR)
-      .json({ message: 'Internal server error', error: error.message });
+    res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
+      message: 'Internal server error',
+      error: error.message,
+    });
   }
 };
 

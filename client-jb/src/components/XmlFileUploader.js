@@ -3,9 +3,13 @@ import axios from 'axios';
 import PropTypes from 'prop-types';
 import { useAppContext } from '../context/appContext';
 import UploadIcon from '@mui/icons-material/CloudUpload';
+import TextField from '@mui/material/TextField';
+import Button from '@mui/material/Button';
 
 const XmlFileUploader = ({ refreshData }) => {
   const [file, setFile] = useState(null);
+  const [fileName, setFileName] = useState(''); // State for file name
+  const [skill, setSkill] = useState(''); // State for skill (optional)
   const [uploadProgress, setUploadProgress] = useState(0);
   const [uploadError, setUploadError] = useState(null);
   const fileInputRef = useRef();
@@ -48,6 +52,11 @@ const XmlFileUploader = ({ refreshData }) => {
         return;
       }
 
+      if (!fileName) {
+        alert('Please enter a file name.');
+        return;
+      }
+
       if (!userId) {
         alert('User ID is missing. Please ensure you are logged in.');
         return;
@@ -55,6 +64,9 @@ const XmlFileUploader = ({ refreshData }) => {
 
       const formData = new FormData();
       formData.append('file', file);
+      formData.append('fileName', fileName);
+      formData.append('skill', skill);
+      formData.append('skillLevel', 0); // Skill level is always 0
 
       setUploadError(null);
       const response = await axios.post(
@@ -78,6 +90,8 @@ const XmlFileUploader = ({ refreshData }) => {
       alert('File uploaded successfully!');
 
       setFile(null);
+      setFileName('');
+      setSkill('');
       setUploadProgress(0);
       if (refreshData) refreshData();
     } catch (error) {
@@ -113,12 +127,30 @@ const XmlFileUploader = ({ refreshData }) => {
         )}
         {file && (
           <div className="mt-4 text-center">
-            <button
+            <TextField
+              fullWidth
+              label="File Name"
+              variant="outlined"
+              value={fileName}
+              onChange={(e) => setFileName(e.target.value)}
+              className="mb-4"
+            />
+            <TextField
+              fullWidth
+              label="Skill (optional)"
+              variant="outlined"
+              value={skill}
+              onChange={(e) => setSkill(e.target.value)}
+              className="mb-4"
+            />
+            <Button
+              variant="contained"
+              color="success"
               onClick={handleUpload}
-              className="bg-green-500 border-none text-white px-4 py-2 rounded"
+              className="mb-4"
             >
               Upload {file.name}
-            </button>
+            </Button>
             <p
               className="text-blue-500 mt-2 cursor-pointer"
               onClick={() => fileInputRef.current.click()}

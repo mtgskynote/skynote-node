@@ -2,6 +2,7 @@ import mongoose from 'mongoose';
 import validator from 'validator';
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
+import xmlScoreSchema from './xmlScoreModel.js';
 
 // Define the User schema
 const UserSchema = new mongoose.Schema({
@@ -85,9 +86,8 @@ const UserSchema = new mongoose.Schema({
   ],
   importedScores: [
     {
-      filePath: {
-        type: String,
-      },
+      scores: [xmlScoreSchema],
+      filepaths: [String],
     },
   ],
   recordingsPastWeek: {
