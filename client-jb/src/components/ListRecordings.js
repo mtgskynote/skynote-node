@@ -1,10 +1,12 @@
 // ListRecordings.js
 import React, { useState, useEffect } from 'react';
-import { useLocation, useNavigate } from 'react-router-dom';
+import { useLocation } from 'react-router-dom';
 import { getRecData } from '../utils/studentRecordingMethods.js';
 import { useAppContext } from '../context/appContext';
 import LoadingScreen from './LoadingScreen.js';
 import RecordingCard from './RecordingCard.js';
+import ListRecordingsHeader from './ListRecordingsHeader.js';
+import BackButton from './BackButton.js';
 
 const ListRecordings = () => {
   const { getCurrentUser } = useAppContext();
@@ -19,7 +21,6 @@ const ListRecordings = () => {
   const [scoreXml, setScoreXml] = useState(null);
 
   const location = useLocation();
-  const navigate = useNavigate();
 
   // Define options for formatting date
   const options = {
@@ -81,11 +82,6 @@ const ListRecordings = () => {
     fetchDataFromAPI();
   }, [userData]);
 
-  // Go back to previous page
-  const handleGoBack = () => {
-    navigate(-1);
-  };
-
   // Update state variables after deleting recording
   const handleDeleteRecording = (recordingId) => {
     const index = recordingIds.indexOf(recordingId);
@@ -120,23 +116,12 @@ const ListRecordings = () => {
 
   return (
     <div className="container mx-auto px-4 py-8">
-      <button
-        onClick={handleGoBack}
-        className="ml-auto hover:cursor-pointer transition ease-in-out delay-50 text-center text-white text-sm border-transparent focus:border-transparent focus:ring-0 focus:outline-none bg-blue-400 hover:bg-blue-500 font-extralight py-1 px-2 rounded-l-none outline-none rounded"
-      >
-        Go Back
-      </button>
-      <div className="flex items-center justify-between mt-12">
-        {/* Left side: Title */}
-        <div className="text-4xl font-bold capitalize">{song}</div>
-
-        {/* Right side: Skill and Level */}
-        <div className="text-lg text-gray-600 text-right">
-          <div>{scoreSkill}</div>
-          <div>Level {scoreLevel}</div>
-        </div>
-      </div>
-      <hr className="h-0.5 border-t-0 bg-gray-700 mb-10" />
+      <BackButton />
+      <ListRecordingsHeader
+        title={song}
+        skill={scoreSkill}
+        level={scoreLevel}
+      />
       {recordingNames.length !== 0 ? (
         <div className="grid sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4 gap-4">
           {recordingNames.map((recordingName, index) => (

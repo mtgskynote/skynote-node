@@ -362,10 +362,6 @@ const Stats = () => {
     }
   }, [userData, scoresData, recordingList]);
 
-  console.log('USER DATA:', userData);
-  console.log('SCORES DATA:', scoresData);
-  console.log('RECORDING LIST:', recordingList);
-
   if (isLoading) {
     return <LoadingScreen />;
   }
@@ -397,8 +393,10 @@ const Stats = () => {
       </div>
       <div className="w-4/6 h-full">
         <div className="pt-6">
-          <h4 className="font-medium my-6">Continue Recording</h4>
-          <div className="relative overflow-x-auto whitespace-no-wrap no-scrollbar">
+          <div className="flex items-center justify-between">
+            <h4 className="font-medium my-6">Continue Recording</h4>
+          </div>
+          <div className="relative overflow-x-auto whitespace-no-wrap no-scrollbar mr-8">
             <div className="inline-flex items-start space-x-8 mr-8">
               {Object.keys(recentScores).map((title, index) => {
                 const lesson = recentScores[title];
@@ -432,7 +430,7 @@ const Stats = () => {
               {unansweredTasks}
             </div>
           </div>
-          <div className="overflow-x-auto whitespace-no-wrap no-scrollbar">
+          <div className="relative overflow-x-auto whitespace-no-wrap no-scrollbar mr-8">
             <div className="inline-flex items-start space-x-8 mr-8">
               {dueTasksContent.map((task, index) => {
                 return (
