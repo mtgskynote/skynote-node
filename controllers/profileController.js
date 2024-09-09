@@ -131,9 +131,9 @@ const removeFavourite = async (req, res) => {
 };
 
 const uploadXMLFile = async (req, res) => {
+  console.log('uploadXMLFile');
   const { userId } = req.params;
-  const file = req.file;
-  const { fileName, skillLevel, skill } = req.body; // User-defined details
+  const file = req.file; // Get the file from req.file
 
   // Validate userId
   if (!mongoose.Types.ObjectId.isValid(userId)) {
@@ -151,11 +151,6 @@ const uploadXMLFile = async (req, res) => {
         .json({ message: 'No file uploaded.' });
     }
 
-    // Default values if not provided
-    const defaultFileName = fileName || file.originalname;
-    const defaultSkillLevel = skillLevel || 0;
-    const defaultSkill = skill || '';
-
     const user = await User.findById(userId);
     if (!user) {
       return res
@@ -163,30 +158,45 @@ const uploadXMLFile = async (req, res) => {
         .json({ message: 'User not found' });
     }
 
-    // Save the file path and user-defined details in the user's document
-    user.importedScores.push({
-      scores: [
-        {
-          fname: defaultFileName,
-          level: defaultSkillLevel,
-          skill: defaultSkill,
-        },
-      ],
-      filepaths: [file.path], // Add the file path
-    });
+    // Create an object to store in MongoDB
+    const uploadedScore = {
+      filePath: file.path,
+      score: {
+        // Initialize with default values or from user input
+        fname: '',
+        level: 0,
+        skill: '',
+      },
+    };
 
+    // Add to importedScores
+    user.importedScores.push(uploadedScore);
     await user.save();
 
-    res.status(StatusCodes.OK).json({
-      message: 'File uploaded and scores saved successfully',
-      filePath: file.path,
+    // Remove the file from the filesystem after saving to MongoDB
+    fs.unlink(path.resolve(file.path), (err) => {
+      if (err) {
+        console.error('Error removing file from filesystem:', err);
+        return res
+          .status(StatusCodes.INTERNAL_SERVER_ERROR)
+          .json({
+            message: 'Error removing file from filesystem',
+            error: err.message,
+          });
+      }
+
+      res
+        .status(StatusCodes.OK)
+        .json({
+          message: 'File uploaded and saved successfully',
+          filePath: file.path,
+        });
     });
   } catch (error) {
     console.error('Error uploading XML file to database:', error);
-    res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
-      message: 'Internal server error',
-      error: error.message,
-    });
+    res
+      .status(StatusCodes.INTERNAL_SERVER_ERROR)
+      .json({ message: 'Internal server error', error: error.message });
   }
 };
 

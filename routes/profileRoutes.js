@@ -9,7 +9,7 @@ import {
   updateRecordingsPastWeek,
 } from '../controllers/profileController.js';
 import { authenticateUser } from '../middleware-jb/authenticateUser.js';
-import multer from 'multer';
+import upload from '../middleware-jb/uploadConfig.js';
 import bodyParser from 'body-parser';
 // Middleware setup for parsing form data
 const formParser = bodyParser.urlencoded({ extended: false });

@@ -86,8 +86,11 @@ const UserSchema = new mongoose.Schema({
   ],
   importedScores: [
     {
-      scores: [xmlScoreSchema],
-      filepaths: [String],
+      filePath: {
+        type: String,
+        required: true,
+      },
+      score: xmlScoreSchema,
     },
   ],
   recordingsPastWeek: {

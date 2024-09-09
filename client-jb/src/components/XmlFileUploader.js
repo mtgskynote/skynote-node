@@ -101,6 +101,15 @@ const XmlFileUploader = ({ refreshData }) => {
     }
   };
 
+  const handleCancel = () => {
+    // Reset the state to its initial values
+    setFile(null);
+    setFileName('');
+    setSkill('');
+    setUploadProgress(0);
+    setUploadError(null);
+  };
+
   return (
     <div className="w-full flex justify-center mt-4">
       <div
@@ -143,20 +152,29 @@ const XmlFileUploader = ({ refreshData }) => {
               onChange={(e) => setSkill(e.target.value)}
               className="mb-4"
             />
-            <Button
-              variant="contained"
-              color="success"
-              onClick={handleUpload}
-              className="mb-4"
-            >
-              Upload {file.name}
-            </Button>
-            <p
-              className="text-blue-500 mt-2 cursor-pointer"
-              onClick={() => fileInputRef.current.click()}
-            >
-              Change file
-            </p>
+            <div className="flex justify-between items-center">
+              <div className="flex space-x-4">
+                <p
+                  className="text-blue-500 cursor-pointer pt-3"
+                  onClick={() => fileInputRef.current.click()}
+                >
+                  Change file
+                </p>
+                <p
+                  className="text-red-500 cursor-pointer pt-3"
+                  onClick={handleCancel}
+                >
+                  Cancel upload
+                </p>
+              </div>
+              <Button
+                variant="contained"
+                color="success"
+                onClick={handleUpload}
+              >
+                Upload {file.name}
+              </Button>
+            </div>
             {uploadProgress > 0 && !uploadError && (
               <div className="mt-4">
                 <div className="relative pt-1">
