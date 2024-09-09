@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { getAllRecData } from '../utils/studentRecordingMethods.js';
-import { useAppContext } from '../context/appContext';
+import { useAppContext } from '../context/appContext.js';
 import RecordingCard from './RecordingCard.js';
 import LoadingScreen from './LoadingScreen.js';
 import ListRecordingsHeader from './ListRecordingsHeader.js';

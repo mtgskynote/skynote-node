@@ -401,12 +401,6 @@ const Stats = () => {
         <div className="pt-6">
           <div className="flex items-center justify-between">
             <h4 className="font-medium my-6">Continue Recording</h4>
-            <button
-              onClick={handleViewAllRecordings}
-              className="ml-auto mr-8 hover:cursor-pointer transition ease-in-out delay-50 text-center text-white text-sm border-transparent focus:border-transparent focus:ring-0 focus:outline-none bg-red-500 hover:bg-red-600 font-extralight py-1 px-2 rounded-l-none outline-none rounded"
-            >
-              View All Recordings
-            </button>
           </div>
           <div className="relative overflow-x-auto whitespace-no-wrap no-scrollbar mr-8">
             <div className="inline-flex items-start space-x-8 mr-8">
