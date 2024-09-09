@@ -25,7 +25,7 @@ import ErrorBoundary from './components/ErrorBoundary';
 import TimbreVisualization from './components/TimbreVisualization';
 import ListRecordings from './components/ListRecordings';
 import AudioPlayer from './components/AudioPlayer';
-import ListAllRecordings from './components/ListAllRecodings';
+import ListAllRecordings from './components/ListAllRecordings';
 import Assignments from './components/Assignments';
 
 import Apitesting from './components/apitesting';
@@ -123,7 +123,7 @@ function App() {
                   path="ListRecordings/:files"
                   element={<ProgressPlayFileVisual mode="visual" />}
                 />
-                <Route path="myrecordings" element={<ListAllRecordings />} />
+                <Route path="all-recordings" element={<ListAllRecordings />} />
               </Route>
 
               <Route path="/AudioPlayer" element={<AudioPlayer />} />

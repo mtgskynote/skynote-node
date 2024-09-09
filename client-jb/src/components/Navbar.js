@@ -124,7 +124,7 @@ function Navbar() {
     ['Dashboard', '/'],
     ['Lessons', '/lessons'],
     ['Assignments', '/assignments'],
-    // ["Imported Scores", "/imported-scores"],
+    ['All Recordings', '/all-recordings'],
   ];
 
   const navItemsMobile = [
