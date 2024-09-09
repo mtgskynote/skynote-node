@@ -193,7 +193,7 @@ const Assignments = () => {
   }
 
   return (
-    <div className="h-screen px-8 pt-2 pb-12">
+    <div className="h-screen px-8 pt-2 pb-16">
       <div className="h-full flex">
         {/* Left side with cards stacked vertically */}
         <div className="w-2/3 p-4 overflow-y-auto">
