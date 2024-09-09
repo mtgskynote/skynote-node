@@ -4,7 +4,7 @@
 import React, { useEffect, useState, useRef } from 'react';
 import { useParams, useNavigate, useLocation } from 'react-router-dom';
 import { HotKeys } from 'react-hotkeys';
-import OpenSheetMusicDisplay from './OpenSheetMusicDisplayTemp';
+import OpenSheetMusicDisplay from './OpenSheetMusicDisplay';
 import PopUpWindow from './PopUpWindow.js';
 import LoadingScreen from './LoadingScreen.js';
 import {
