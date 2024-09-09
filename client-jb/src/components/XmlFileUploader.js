@@ -19,6 +19,7 @@ const XmlFileUploader = ({ refreshData }) => {
     const selectedFile = event.target.files[0];
     if (selectedFile) {
       setFile(selectedFile);
+      setFileName(selectedFile.name); // Set fileName to the name of the uploaded file
       setUploadError(null);
     }
   };
@@ -28,6 +29,7 @@ const XmlFileUploader = ({ refreshData }) => {
     const droppedFile = event.dataTransfer.files[0];
     if (droppedFile) {
       setFile(droppedFile);
+      setFileName(droppedFile.name); // Set fileName to the name of the dropped file
       setUploadError(null);
     }
   };
@@ -152,16 +154,16 @@ const XmlFileUploader = ({ refreshData }) => {
               onChange={(e) => setSkill(e.target.value)}
               className="mb-4"
             />
-            <div className="flex justify-between items-center">
+            <div className="flex items-center justify-between">
               <div className="flex space-x-4">
                 <p
-                  className="text-blue-500 cursor-pointer pt-3"
+                  className="text-blue-500 cursor-pointer"
                   onClick={() => fileInputRef.current.click()}
                 >
                   Change file
                 </p>
                 <p
-                  className="text-red-500 cursor-pointer pt-3"
+                  className="text-red-500 cursor-pointer"
                   onClick={handleCancel}
                 >
                   Cancel upload
@@ -171,10 +173,12 @@ const XmlFileUploader = ({ refreshData }) => {
                 variant="contained"
                 color="success"
                 onClick={handleUpload}
+                className="ml-auto"
               >
-                Upload {file.name}
+                Upload
               </Button>
             </div>
+
             {uploadProgress > 0 && !uploadError && (
               <div className="mt-4">
                 <div className="relative pt-1">
