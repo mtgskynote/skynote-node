@@ -10,7 +10,7 @@
     "install-client": "cd client-jb && npm install",
     "build-client": "cd client-jb && npm run build",
     "server": "nodemon server",
-    "client": "npm start --prefix client-jb",
+    "client": "PORT=3000 npm start --prefix client-jb",
     "start": "concurrently  --kill-others-on-fail  \"npm run server\" \"npm run client\" ",
     "prettier:check": "prettier --check .",
     "prettier:write": "prettier --write .",
