@@ -4,7 +4,7 @@
 import React, { useEffect, useState, useRef, useCallback } from 'react';
 import { HotKeys } from 'react-hotkeys';
 import { useParams, useNavigate } from 'react-router-dom';
-import OpenSheetMusicDisplay from './OpenSheetMusicDisplay';
+import OpenSheetMusicDisplay from './OpenSheetMusicDisplayTemp';
 import ControlBar from './ControlBar.js';
 import { makeAudioStreamer } from './audioStreamer.js';
 import CountDownTimer from './CountDownTimer.js';
@@ -97,6 +97,7 @@ const ProgressPlayFile = () => {
   const showSaveRecordingPopUpRef = useRef(showSaveRecordingPopUp);
   const practiceModeRef = useRef(practiceMode);
   const showCountDownTimerRef = useRef(showCountDownTimer);
+  const [audioStreamer, setAudioStreamer] = useState(null);
 
   // Hot keys map and handlers
   const keyMap = {
@@ -248,8 +249,10 @@ const ProgressPlayFile = () => {
     featureValues.spectralFlux.push(features.spectralFlux); // SPECTRAL FLUX
   };
 
-  // Audio streamer that will handle recording audio
-  const audioStreamer = makeAudioStreamer(handlePitchCallback, null, aCb);
+  useEffect(() => {
+    const newAudioStreamer = makeAudioStreamer(handlePitchCallback, null, aCb);
+    setAudioStreamer(newAudioStreamer);
+  }, []);
 
   // Get user data once the score title is loaded
   useEffect(() => {
@@ -619,7 +622,7 @@ const ProgressPlayFile = () => {
   useEffect(() => {
     const handleBeforeUnload = (event) => {
       // Ensure recording is not saved and audioStreamer is properly cleaned up
-      if (isRecording) {
+      if (isRecording && audioStreamer) {
         audioStreamer.save_or_not('delete');
         stopRecordingAudio(playbackRef.current);
       }

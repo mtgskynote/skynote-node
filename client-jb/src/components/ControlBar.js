@@ -180,7 +180,9 @@ const ControlBar = ({
             <div>
               <p className="text-white font-bold text-2xl mb-0">{stats.name}</p>
               <p className="text-white opacity-75 mb-3">
-                {stats.date} | {stats.bpm} BPM
+                {stats.date} | {stats.bpm} BPM |{' '}
+                {stats.transpose > 0 ? '+' : ''}
+                {stats.transpose} Transpose
               </p>
               <StarRating size="text-3xl" stars={stats.stars} />
             </div>
@@ -380,18 +382,19 @@ ControlBar.propTypes = {
   isRecording: PropTypes.bool,
   isBpmDisabled: PropTypes.bool,
   playbackMode: PropTypes.bool.isRequired,
-  handleShowPopUpWindow: PropTypes.func.isRequired,
+  handleShowPopUpWindow: PropTypes.func,
   handleToggleStats: PropTypes.func,
   handleToggleInfo: PropTypes.func.isRequired,
   showStats: PropTypes.bool,
   showInfo: PropTypes.bool.isRequired,
   stats: PropTypes.shape({
-    name: PropTypes.string.isRequired,
-    date: PropTypes.string.isRequired,
-    bpm: PropTypes.number.isRequired,
-    stars: PropTypes.number.isRequired,
-    level: PropTypes.number.isRequired,
-    skill: PropTypes.string.isRequired,
+    name: PropTypes.string,
+    date: PropTypes.string,
+    bpm: PropTypes.number,
+    stars: PropTypes.number,
+    level: PropTypes.number,
+    skill: PropTypes.string,
+    transpose: PropTypes.number,
   }),
   practiceMode: PropTypes.bool.isRequired,
   isMac: PropTypes.bool.isRequired,

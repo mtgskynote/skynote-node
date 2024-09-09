@@ -4,8 +4,9 @@
 import React, { useEffect, useState, useRef } from 'react';
 import { useParams, useNavigate, useLocation } from 'react-router-dom';
 import { HotKeys } from 'react-hotkeys';
-import OpenSheetMusicDisplay from './OpenSheetMusicDisplay';
+import OpenSheetMusicDisplay from './OpenSheetMusicDisplayTemp';
 import PopUpWindow from './PopUpWindow.js';
+import LoadingScreen from './LoadingScreen.js';
 import {
   getRecording,
   deleteRecording,
@@ -58,8 +59,9 @@ const ProgressPlayFileVisual = () => {
 
   const [cursorFinished, setCursorFinished] = useState(false);
   const [cursorJumped, setCursorJumped] = useState(false);
+  const [recordingId, setRecordingId] = useState(null);
 
-  const [json, setJson] = useState([]);
+  const [json, setJson] = useState(null);
   const [metaData, setMetaData] = useState({
     name: null,
     stars: null,
@@ -67,6 +69,7 @@ const ProgressPlayFileVisual = () => {
   });
 
   const [isMac, setIsMac] = useState(false);
+  const [loading, setLoading] = useState(true);
 
   // Hot keys map and handlers
   const keyMap = {
@@ -107,33 +110,44 @@ const ProgressPlayFileVisual = () => {
   };
   const newUrl = window.location.href;
 
-  const recordingID = location.state?.id;
+  useEffect(() => {
+    setRecordingId(location.state?.id);
+  }, []);
 
   useEffect(() => {
-    getRecording(recordingID).then((recordingJSON) => {
-      // Get score info
-      const scoreInfo = JSON.parse(localStorage.getItem('scoreData')).find(
-        (item) => item.fname === params.files
-      );
+    if (recordingId) {
+      getRecording(recordingId).then((recordingJSON) => {
+        // Get score info
+        const scoreInfo = JSON.parse(localStorage.getItem('scoreData')).find(
+          (item) => item.fname === params.files
+        );
 
-      // Set MetaData
-      const recordingDate = new Date(recordingJSON.date);
-      setMetaData({
-        name: recordingJSON.recordingName,
-        stars: recordingJSON.info.stars,
-        date: recordingDate.toLocaleDateString('en-UK', options),
-        skill: scoreInfo.skill,
-        level: scoreInfo.level,
-        score: scoreInfo.title,
-        bpm: recordingJSON.info.bpm,
+        // Set MetaData
+        const recordingDate = new Date(recordingJSON.date);
+        setMetaData({
+          name: recordingJSON.recordingName,
+          stars: recordingJSON.info.stars,
+          date: recordingDate.toLocaleDateString('en-UK', options),
+          skill: scoreInfo.skill,
+          level: scoreInfo.level,
+          score: scoreInfo.title,
+          bpm: recordingJSON.info.bpm,
+          transpose: recordingJSON.info.transpose
+            ? recordingJSON.info.transpose
+            : 0,
+        });
+        // Save json.info (recording data, pitch, colors...) to send to OSMD
+        setJson(recordingJSON.info);
+        // Save audio
+        setTranspose(
+          recordingJSON.info.transpose ? recordingJSON.info.transpose : 0
+        );
+        setBpm(recordingJSON.info.bpm);
+        setSongFile(recordingJSON.audio);
+        setLoading(false);
       });
-      // Save json.info (recording data, pitch, colors...) to send to OSMD
-      setJson(recordingJSON.info);
-      // Save audio
-      setBpm(recordingJSON.info.bpm);
-      setSongFile(recordingJSON.audio);
-    });
-  }, [recordingID]);
+    }
+  }, [recordingId]);
 
   // Set reset flag as false when resetting is complete
   const onResetDone = () => {
@@ -263,7 +277,7 @@ const ProgressPlayFileVisual = () => {
   // Handle deleting a recording from the database
   const handleDeleteRecording = () => {
     setShowDeleteRecordingPopUp(false);
-    deleteRecording(recordingID)
+    deleteRecording(recordingId)
       .then(() => {
         navigate(-1);
       })
@@ -349,30 +363,36 @@ const ProgressPlayFileVisual = () => {
     <HotKeys keyMap={keyMap} handlers={handlers}>
       <div className="flex flex-col min-h-screen justify-between">
         <div className="relative">
-          <OpenSheetMusicDisplay
-            file={`${folderBasePath}/${params.files}.xml`}
-            autoResize={true}
-            cursorRef={cursorRef}
-            playbackRef={playbackRef}
-            metroVol={metronomeVolume / 100}
-            bpm={bpm}
-            zoom={zoom}
-            followCursor={true}
-            pitch={pitch}
-            pitchConfidence={confidence}
-            startPitchTrack={startPitchTrack}
-            showPitchTrack={showPitchTrack}
-            recordVol={midiVolume}
-            isResetButtonPressed={isResetButtonPressed}
-            repeatsIterator={repeatsIterator}
-            showRepeatsInfo={handleReceiveRepetitionInfo}
-            onResetDone={onResetDone}
-            cursorActivity={handleFinishedCursorOSMDCallback}
-            cursorJumpsBack={handleJumpedCursorOSMDCallback}
-            mode={true} // Passed as true to indicate that we are not in a type of record mode
-            visual={'yes'}
-            visualJSON={json}
-          />
+          {loading ? (
+            <LoadingScreen />
+          ) : (
+            <OpenSheetMusicDisplay
+              file={`${folderBasePath}/${params.files}.xml`}
+              autoResize={true}
+              cursorRef={cursorRef}
+              playbackRef={playbackRef}
+              metroVol={metronomeVolume / 100}
+              bpm={bpm}
+              transpose={transpose}
+              zoom={zoom}
+              followCursor={true}
+              pitch={pitch}
+              pitchConfidence={confidence}
+              startPitchTrack={startPitchTrack}
+              showPitchTrack={showPitchTrack}
+              recordVol={midiVolume}
+              isResetButtonPressed={isResetButtonPressed}
+              repeatsIterator={repeatsIterator}
+              showRepeatsInfo={handleReceiveRepetitionInfo}
+              onResetDone={onResetDone}
+              cursorActivity={handleFinishedCursorOSMDCallback}
+              cursorJumpsBack={handleJumpedCursorOSMDCallback}
+              mode={true} // Passed as true to indicate that we are not in a type of record mode
+              visual={'yes'}
+              visualJSON={json}
+            />
+          )}
+
           <div className="absolute top-0 left-0 w-full h-full bg-transparent z-20 pointer-events-auto"></div>
         </div>
 

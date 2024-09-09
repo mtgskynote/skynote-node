@@ -36,15 +36,15 @@ const LineChart = (props) => {
         props.pitchColor[i] !== '#FFFFFF'
       ) {
         // get coordinates (x,y)
-        var x = props.pitchDataPosX[i] + props.pitchIndex[i] - rect.left;
-        var y = props.pitchDataPosY[i] - rect.top;
+        let x = props.pitchDataPosX[i] + props.pitchIndex[i] - rect.left;
+        let y = props.pitchDataPosY[i] - rect.top;
 
         // if previous pitch input was "invalid", force the jump
         if (props.pitchColor[i - 1] === '#FFFFFF') {
           ctx.moveTo(x, y);
         } else {
           //calculate distance
-          var distance = Math.abs(
+          let distance = Math.abs(
             x -
               (props.pitchDataPosX[i - 1] + props.pitchIndex[i - 1] - rect.left)
           );
@@ -59,7 +59,13 @@ const LineChart = (props) => {
     }
 
     ctx.stroke();
-  }, [props.pitchData, props.zoom, props.showingRep]);
+  }, [
+    props.pitchData,
+    props.zoom,
+    props.showingRep,
+    props.pitchDataPosX,
+    props.pitchDataPosY,
+  ]);
 
   return (
     <div ref={containerRef}>
@@ -69,14 +75,16 @@ const LineChart = (props) => {
 };
 
 LineChart.propTypes = {
-  pitchData: PropTypes.arrayOf(PropTypes.number).isRequired,
+  pitchData: PropTypes.arrayOf(
+    PropTypes.oneOfType([PropTypes.number, PropTypes.string])
+  ).isRequired,
   pitchDataPosX: PropTypes.arrayOf(PropTypes.number).isRequired,
   pitchDataPosY: PropTypes.arrayOf(PropTypes.number).isRequired,
   pitchIndex: PropTypes.arrayOf(PropTypes.number).isRequired,
   pitchColor: PropTypes.arrayOf(PropTypes.string).isRequired,
   repetitionNumber: PropTypes.arrayOf(PropTypes.number).isRequired,
   showingRep: PropTypes.number.isRequired,
-  zoom: PropTypes.number.isRequired,
+  zoom: PropTypes.number,
   width: PropTypes.number.isRequired,
   height: PropTypes.number.isRequired,
 };
