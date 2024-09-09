@@ -25,7 +25,7 @@ import ErrorBoundary from './components/ErrorBoundary';
 import TimbreVisualization from './components/TimbreVisualization';
 import ListRecordings from './components/ListRecordings';
 import AudioPlayer from './components/AudioPlayer';
-import ListAllRecordings from './components/ListAllRecodings';
+import ListAllRecordings from './components/ListAllRecordings';
 import Assignments from './components/Assignments';
 
 import Apitesting from './components/apitesting';
