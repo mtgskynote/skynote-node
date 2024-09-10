@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useRef } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   getMessages,
   putMessage,
@@ -11,7 +11,6 @@ const MessagesCard = ({ user, teacher }) => {
   const [chat, setChat] = useState(null);
   const [aux, setAux] = useState(0);
   const [inputValue, setInputValue] = useState('');
-  const chatInputRef = useRef();
 
   const options = {
     year: 'numeric',
@@ -86,10 +85,6 @@ const MessagesCard = ({ user, teacher }) => {
     }
   };
 
-  const handleReload = () => {
-    fetchChat();
-  };
-
   const handleEnterKey = (event) => {
     if (event.key === 'Enter') {
       handleSend();
@@ -105,18 +100,12 @@ const MessagesCard = ({ user, teacher }) => {
   return (
     <div className="bg-blue-200 shadow-lg rounded-2xl flex flex-col h-full p-4">
       <div className="flex-1 overflow-y-auto">
-        <div className="space-y-4 ">
+        <div className="space-y-4 mx-3">
           {chat !== null ? (
             Object.values(chat)
               .reverse()
               .map((message, index) => {
                 const [date, time] = message.messageDate.split(', ');
-                if (index > 0)
-                  console.log(
-                    'prev chat date:',
-                    chat[index - 1].messageDate.split(', ')[0]
-                  );
-                console.log(date, time);
                 return (
                   <div key={index}>
                     {(index === 0 ||
@@ -138,7 +127,9 @@ const MessagesCard = ({ user, teacher }) => {
                 );
               })
           ) : (
-            <p>You have no messages.</p>
+            <p className="text-lg text-black opacity-50 text-center">
+              You have no messages.
+            </p>
           )}
         </div>
       </div>

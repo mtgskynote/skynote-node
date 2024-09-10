@@ -22,6 +22,7 @@ import Messages from './messages.js';
 import LoadingScreen from './LoadingScreen.js';
 import Error from './Error.js';
 import MessagesCard from './MessagesCard.js';
+import AssignmentPanel from './AssignmentPanel.js';
 
 const Assignments = () => {
   const navigate = useNavigate();
@@ -194,23 +195,41 @@ const Assignments = () => {
 
   return (
     <div className="h-screen px-8 pt-2 pb-16">
-      <div className="h-full flex">
-        {/* Left side with cards stacked vertically */}
-        <div className="w-2/3 p-4 overflow-y-auto">
-          <div className="space-y-4">
-            <div className="bg-white shadow-md rounded-lg p-4">Card 1</div>
-            <div className="bg-white shadow-md rounded-lg p-4">Card 2</div>
-            <div className="bg-white shadow-md rounded-lg p-4">Card 3</div>
-            <div className="bg-white shadow-md rounded-lg p-4">Card 4</div>
-            {/* Add more cards as needed */}
+      {teacherDataError ? (
+        <Error message={errorMessages.teacherDataError} />
+      ) : assignmentsError ? (
+        <Error message={errorMessages.assignmentsError} />
+      ) : (
+        <div className="h-full flex">
+          {/* Left side with cards stacked vertically */}
+          <div className="w-2/3 p-4 overflow-y-auto">
+            <div className="space-y-4">
+              {userAnnouncements !== null ? (
+                userAnnouncements.map((announcement, index) => {
+                  return (
+                    <AssignmentPanel
+                      key={index}
+                      dueDate={announcement.dueDate}
+                      postedDate={announcement.postDate}
+                      tasks={announcement.tasks}
+                      scoresData={scoresData}
+                      assignmentId={announcement._id}
+                      userId={userData.id}
+                    />
+                  );
+                })
+              ) : (
+                <p>No assignments.</p>
+              )}
+            </div>
+          </div>
+
+          {/* Right side messages board */}
+          <div className="w-1/3 p-4 flex flex-col">
+            <MessagesCard user={userData} teacher={teacherData} />
           </div>
         </div>
-
-        {/* Right side messages board */}
-        <div className="w-1/3 p-4 flex flex-col">
-          <MessagesCard user={userData} teacher={teacherData} />
-        </div>
-      </div>
+      )}
     </div>
     /* {teacherDataError ? (
         <Error message={errorMessages.teacherDataError} />

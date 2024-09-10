@@ -70,6 +70,7 @@ const ProgressPlayFileVisual = () => {
 
   const [isMac, setIsMac] = useState(false);
   const [loading, setLoading] = useState(true);
+  const [recordingIdMissing, setRecordingIdMissing] = useState(false);
 
   // Hot keys map and handlers
   const keyMap = {
@@ -116,36 +117,42 @@ const ProgressPlayFileVisual = () => {
 
   useEffect(() => {
     if (recordingId) {
-      getRecording(recordingId).then((recordingJSON) => {
-        // Get score info
-        const scoreInfo = JSON.parse(localStorage.getItem('scoreData')).find(
-          (item) => item.fname === params.files
-        );
+      getRecording(recordingId)
+        .then((recordingJSON) => {
+          // Get score info
+          const scoreInfo = JSON.parse(localStorage.getItem('scoreData')).find(
+            (item) => item.fname === params.files
+          );
 
-        // Set MetaData
-        const recordingDate = new Date(recordingJSON.date);
-        setMetaData({
-          name: recordingJSON.recordingName,
-          stars: recordingJSON.info.stars,
-          date: recordingDate.toLocaleDateString('en-UK', options),
-          skill: scoreInfo.skill,
-          level: scoreInfo.level,
-          score: scoreInfo.title,
-          bpm: recordingJSON.info.bpm,
-          transpose: recordingJSON.info.transpose
-            ? recordingJSON.info.transpose
-            : 0,
+          // Set MetaData
+          const recordingDate = new Date(recordingJSON.date);
+          setMetaData({
+            name: recordingJSON.recordingName,
+            stars: recordingJSON.info.stars,
+            date: recordingDate.toLocaleDateString('en-UK', options),
+            skill: scoreInfo.skill,
+            level: scoreInfo.level,
+            score: scoreInfo.title,
+            bpm: recordingJSON.info.bpm,
+            transpose: recordingJSON.info.transpose
+              ? recordingJSON.info.transpose
+              : 0,
+          });
+          // Save json.info (recording data, pitch, colors...) to send to OSMD
+          setJson(recordingJSON.info);
+          // Save audio
+          setTranspose(
+            recordingJSON.info.transpose ? recordingJSON.info.transpose : 0
+          );
+          setBpm(recordingJSON.info.bpm);
+          setSongFile(recordingJSON.audio);
+          setLoading(false);
+        })
+        .catch((error) => {
+          console.log(error);
+          setRecordingIdMissing(true);
+          setLoading(false);
         });
-        // Save json.info (recording data, pitch, colors...) to send to OSMD
-        setJson(recordingJSON.info);
-        // Save audio
-        setTranspose(
-          recordingJSON.info.transpose ? recordingJSON.info.transpose : 0
-        );
-        setBpm(recordingJSON.info.bpm);
-        setSongFile(recordingJSON.audio);
-        setLoading(false);
-      });
     }
   }, [recordingId]);
 
@@ -365,6 +372,8 @@ const ProgressPlayFileVisual = () => {
         <div className="relative">
           {loading ? (
             <LoadingScreen />
+          ) : recordingIdMissing ? (
+            <p>Oh no! This recording seems to be missing or deleted.</p>
           ) : (
             <OpenSheetMusicDisplay
               file={`${folderBasePath}/${params.files}.xml`}
