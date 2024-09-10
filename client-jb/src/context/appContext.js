@@ -80,6 +80,7 @@ const AppProvider = ({ children }) => {
 
   // Set up user with current user, endpoint, and alert text
   const setupUser = async ({ currentUser, endPoint, alertText }) => {
+    console.log('setting user');
     dispatch({ type: SETUP_USER_BEGIN });
     try {
       const { data } = await axios.post(
@@ -100,9 +101,11 @@ const AppProvider = ({ children }) => {
       });
       addUserToLocalStorage(user, token, location); // why are we doing this?
       setInstrumentLocalStorage(user.instrument);
+      console.log('getting data');
       getAllScoreData2();
       window.dispatchEvent(new Event('storageUpdated'));
     } catch (error) {
+      console.log('ERROR');
       dispatch({
         type: SETUP_USER_ERROR,
         payload: { msg: error.response.data.msg },
@@ -179,14 +182,18 @@ const AppProvider = ({ children }) => {
 
   //OUR
   const getAllScoreData2 = async () => {
+    console.log('getAllScoreData2');
     try {
+      console.log('getting...');
       const response = await axios.get('/api/v1/scores/getAllScoreData2', {});
+      console.log('BOING');
       var tempScoreData = response.data;
       for (let file of tempScoreData) {
         let scoreName = await getTitle(file.fname);
         tempScoreData.find((obj) => obj.fname === file.fname).title = scoreName;
       }
       localStorage.setItem('scoreData', JSON.stringify(tempScoreData));
+      console.log(tempScoreData);
       return tempScoreData;
     } catch (error) {
       console.error('Error fetching file names:', error);

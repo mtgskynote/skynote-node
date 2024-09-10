@@ -5,6 +5,7 @@ import {
   getManyRecordings,
   deleteRecording,
 } from '../utils/studentRecordingMethods';
+import { getImportedFile } from '../utils/usersMethods'; // Ensure this is the correct path
 import {
   CardContent,
   Typography,
@@ -58,7 +59,6 @@ const LessonCard = ({
     : 'hover:bg-blue-500';
   const tColour = textColour ? textColour : 'text-white';
 
-  // Resets the deletionStatus to null after 10 seconds when it changes.
   useEffect(() => {
     let timer;
     if (deletionStatus) {
@@ -71,7 +71,6 @@ const LessonCard = ({
     };
   }, [deletionStatus]);
 
-  // Adds and removes a mousedown event listener for closing the modal when clicking outside of it.
   useEffect(() => {
     document.addEventListener('mousedown', handleClickOutsideModal);
     return () => {
@@ -79,7 +78,6 @@ const LessonCard = ({
     };
   });
 
-  // Converts a given date string into a formatted string that follows the "en-UK" locale format.
   const formatDate = (dateString) => {
     const date = new Date(dateString);
     const options = {
@@ -92,22 +90,55 @@ const LessonCard = ({
     return date.toLocaleString('en-UK', options);
   };
 
-  // Handles the click event for viewing the score of the lesson and navigates to the '/all-lessons' route.
-  const handleViewScore = (e) => {
+  const handleViewScore = async (e) => {
     e.stopPropagation(); // Prevents the event from bubbling up to the parent component.
 
-    let path = xml;
-    const basePath = '/all-lessons/';
-    if (!xml.startsWith(basePath)) {
-      path = `${basePath}${xml}`;
+    if (!xml || typeof xml !== 'string') {
+      console.error('Invalid xml path:', xml);
+      return;
     }
 
-    navigate(path, { state: { id } });
+    const basePath = '/all-lessons/';
+    let path = xml;
+
+    // Ensure the path includes the base path
+    if (!path.startsWith(basePath)) {
+      path = `${basePath}${path}`;
+    }
+
+    // Strip the basePath if it is included in the XML path for comparison
+    const fileName = path.replace(basePath, '');
+
+    // Find the relevant score entry
+    const storedScoreData = JSON.parse(localStorage.getItem('scoreData')) || [];
+    const scoreEntry = storedScoreData.find((item) => item.fname === fileName);
+
+    if (scoreEntry) {
+      // File is found in the scoreData
+      navigate(path, {
+        state: { id, fileData: scoreEntry },
+      });
+    } else {
+      try {
+        // Fetch file from the server
+        const response = await getImportedFile(fileName);
+        if (response.ok) {
+          const fileData = response.data;
+          // Update the local storage with the fetched data
+          storedScoreData.push(fileData);
+          localStorage.setItem('scoreData', JSON.stringify(storedScoreData));
+          navigate(path, { state: { id, fileData } });
+        } else {
+          console.error('Failed to fetch file:', response.statusText);
+        }
+      } catch (error) {
+        console.error('Error fetching file:', error);
+      }
+    }
   };
 
-  // Opens the recordings modal, fetches the audio for all recordings if not already fetched, and updates the state accordingly.
   const handleOpenRecordingsModal = async (e) => {
-    e.stopPropagation(); // Prevents the event from bubbling up to the parent component.
+    e.stopPropagation();
 
     setOpenRecordingsModal(true);
     setLoading(true);
@@ -137,13 +168,11 @@ const LessonCard = ({
     }
   };
 
-  // Closes the recordings modal and resets the state.
   const handleCloseRecordingsModal = () => {
     deletedRecordingIds.forEach((recordingId) => {
       reloadRecordingsCallback(recordingId);
     });
 
-    // Dispatch the 'stopAllAudio' event
     const event = new Event('stopAllAudio');
     window.dispatchEvent(event);
     setPlayingAudioId(null);
@@ -154,14 +183,12 @@ const LessonCard = ({
     setLoading(false);
   };
 
-  // Closes the recordings modal when a click is detected outside of it.
   const handleClickOutsideModal = (e) => {
     if (modalRef.current && !modalRef.current.contains(e.target)) {
       handleCloseRecordingsModal();
     }
   };
 
-  // Deletes the recording with the provided recordingId and updates the state accordingly.
   const handleDeleteRecording = async (recordingId) => {
     setDeletingRecording(recordingId);
     try {
@@ -179,7 +206,6 @@ const LessonCard = ({
 
       deletedRecordingIds.push(recordingId);
       setDeletionStatus('success');
-      console.log(deletionStatus);
     } catch (error) {
       console.log(`Cannot delete recording from database: ${error}`);
       setDeletionStatus('failure');
@@ -188,17 +214,15 @@ const LessonCard = ({
     }
   };
 
-  // Navigates to the ListRecordings route with the provided xml and recordingId.
   const handleViewRecording = async (recordingId, xml) => {
     navigate(`/ListRecordings/${xml}`, { state: { id: recordingId } });
   };
 
-  // Toggles the playing audio ID based on the provided audioId.
   const handleAudioPlay = (audioId) => {
     if (playingAudioId === audioId) {
-      setPlayingAudioId(null); // If the currently playing audio is clicked again, set playingAudioId to null
+      setPlayingAudioId(null);
     } else {
-      setPlayingAudioId(audioId); // Set the new audio as playing
+      setPlayingAudioId(audioId);
     }
   };
 
@@ -291,11 +315,10 @@ const LessonCard = ({
           }`}
           onClick={(e) => e.stopPropagation()}
         >
-          {loading ? ( // Display loading indicator if loading
+          {loading ? (
             <CircularProgress />
           ) : (
             <div>
-              {/* Display modal content if recordingsAudio is loaded */}
               {recordingsAudio ? (
                 <div>
                   <div className="flex justify-between items-center mb-2">
@@ -310,7 +333,6 @@ const LessonCard = ({
                       <CloseRoundedIcon className="rounded text-2xl" />
                     </button>
                   </div>
-                  {/* Render table with recordings and recordingsAudio data */}
                   <table className="table-auto w-full border-solid border border-2">
                     <thead>
                       <tr className="border-solid border border-2 border-blue-400">

@@ -131,72 +131,65 @@ const removeFavourite = async (req, res) => {
 };
 
 const uploadXMLFile = async (req, res) => {
-  console.log('uploadXMLFile');
-  const { userId } = req.params;
-  const file = req.file; // Get the file from req.file
-
-  // Validate userId
-  if (!mongoose.Types.ObjectId.isValid(userId)) {
-    return res
-      .status(StatusCodes.BAD_REQUEST)
-      .json({ error: 'Invalid userId format' });
-  }
-
   try {
-    console.log(`Uploading XML file: userId=${userId}`);
+    const { userId } = req.params;
+    const { fileName, skill, level } = req.body;
 
-    if (!file) {
-      return res
-        .status(StatusCodes.BAD_REQUEST)
-        .json({ message: 'No file uploaded.' });
-    }
-
+    // Find the user
     const user = await User.findById(userId);
     if (!user) {
-      return res
-        .status(StatusCodes.NOT_FOUND)
-        .json({ message: 'User not found' });
+      return res.status(404).json({ msg: 'User not found' });
     }
 
-    // Create an object to store in MongoDB
-    const uploadedScore = {
-      filePath: file.path,
-      score: {
-        // Initialize with default values or from user input
-        fname: '',
-        level: 0,
-        skill: '',
-      },
+    // Read the file data from the uploaded file in the temporary location
+    const fileData = fs.readFileSync(req.file.path);
+
+    // Create a new importedScore entry
+    const newScore = {
+      fileData,
+      fname: fileName,
+      level: level || 0,
+      skill: skill || '',
     };
 
-    // Add to importedScores
-    user.importedScores.push(uploadedScore);
+    // Add the new score to the user's importedScores array
+    user.importedScores.push(newScore);
+
+    // Save the user with the new score
     await user.save();
 
-    // Remove the file from the filesystem after saving to MongoDB
-    fs.unlink(path.resolve(file.path), (err) => {
-      if (err) {
-        console.error('Error removing file from filesystem:', err);
-        return res
-          .status(StatusCodes.INTERNAL_SERVER_ERROR)
-          .json({
-            message: 'Error removing file from filesystem',
-            error: err.message,
-          });
-      }
+    // Optionally delete the file from the temporary location
+    fs.unlinkSync(req.file.path);
 
-      res
-        .status(StatusCodes.OK)
-        .json({
-          message: 'File uploaded and saved successfully',
-          filePath: file.path,
-        });
-    });
-  } catch (error) {
-    console.error('Error uploading XML file to database:', error);
     res
-      .status(StatusCodes.INTERNAL_SERVER_ERROR)
-      .json({ message: 'Internal server error', error: error.message });
+      .status(200)
+      .json({ msg: 'File uploaded and stored in MongoDB successfully' });
+  } catch (error) {
+    console.error('Error uploading file:', error);
+    res.status(500).json({ msg: 'Error uploading file' });
+  }
+};
+
+const getUserImportedFile = async (req, res) => {
+  const { userId, fileName } = req.params;
+
+  try {
+    const user = await User.findById(userId);
+
+    if (!user) {
+      return res.status(404).json({ message: 'User not found' });
+    }
+
+    const score = user.importedScores.find((score) => score.fname === fileName);
+
+    if (!score) {
+      return res.status(404).json({ message: 'File not found' });
+    }
+
+    res.set('Content-Type', 'application/xml');
+    res.send(score.file.data);
+  } catch (error) {
+    res.status(500).json({ message: 'Server error', error });
   }
 };
 
@@ -226,44 +219,8 @@ const removeXMLFile = async (req, res) => {
         .status(StatusCodes.NOT_FOUND)
         .json({ message: 'User not found' });
     }
-
-    // Find the index of the file to remove
-    const scoreIndex = user.importedScores.findIndex((score) =>
-      score.fileId.equals(fileId)
-    );
-
-    if (scoreIndex === -1) {
-      return res
-        .status(StatusCodes.NOT_FOUND)
-        .json({ message: 'File not found' });
-    }
-
-    // Remove the file from GridFS
-    const bucket = new GridFSBucket(mongoose.connection.db, {
-      bucketName: 'uploads',
-    });
-
-    bucket.delete(new mongoose.Types.ObjectId(fileId), async (err) => {
-      if (err) {
-        console.error('Error removing file from GridFS:', err);
-        return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
-          message: 'Error removing file from GridFS',
-          error: err.message,
-        });
-      }
-
-      // Remove the file reference from the user's document
-      user.importedScores.splice(scoreIndex, 1);
-      await user.save();
-
-      res.status(StatusCodes.OK).json({ message: 'File removed successfully' });
-    });
-  } catch (error) {
-    console.error('Error removing XML file from user:', error);
-    res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
-      message: 'Internal server error',
-      error: error.message,
-    });
+  } catch {
+    console.log('Error');
   }
 };
 
@@ -308,6 +265,7 @@ export {
   addFavourite,
   removeFavourite,
   uploadXMLFile,
+  getUserImportedFile,
   removeXMLFile,
   updateRecordingsPastWeek,
 };

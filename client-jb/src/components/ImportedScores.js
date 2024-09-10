@@ -42,49 +42,66 @@ const ImportedScores = () => {
   }, [getCurrentUser, userData, importedScores, recordingList, favourites]);
 
   useEffect(() => {
+    const calculateRecordings = (lessonId) => {
+      if (!recordingList) return 0;
+
+      const lessonRecordings = recordingList.filter(
+        (recording) => recording.scoreID === lessonId
+      );
+
+      return lessonRecordings.length;
+    };
+
+    const calculateStars = (lessonId) => {
+      if (!recordingList) return 0;
+
+      const lessonRecordings = recordingList.filter(
+        (recording) => recording.scoreID === lessonId
+      );
+
+      if (lessonRecordings.length > 0) {
+        return Math.max(
+          ...lessonRecordings.map((recording) => recording.recordingStars)
+        );
+      } else {
+        return 0;
+      }
+    };
+
     if (importedScores && recordingList && favourites) {
       const formatted = importedScores.map((score, index) => {
-        // Extract additional information from the file path if available
-        const fileName = score.filePath.split('/').pop();
-        const title = fileName.replace(/\.[^/.]+$/, ''); // Removing the file extension
-        const skill = 'skill';
+        const title = score.fname.replace(/\.[^/.]+$/, ''); // Remove the file extension
+        const skill = score.skill || '';
+        const level = score.level || 0;
         const isFavourite = favourites.some(
           (fav) => String(fav.songId) === String(score._id)
         );
 
-        const stars = calculateStars(score._id); // Ensure this function is correctly defined and imported
+        const stars = calculateStars(score._id);
 
-        return {
-          ...score,
+        const formattedScore = {
+          id: score._id,
+          name: score.fname,
           title: title || `Score ${index + 1}`,
-          skill: skill || '', // If skill data is available, populate it
-          level: 0, // Define level for imported scores
-          isFavourite: isFavourite,
+          path: `/api/v1/profile/xmlScores/${userData.id}/${score.fname}`, // Updated path to access file via API
+          route_path: `/all-lessons/${score.fname}`,
+          skill: skill,
+          level: level,
           stars: stars,
-          xml: score.filePath, // Assuming xml path is the file path
+          recordings: calculateRecordings(score._id),
+          favourite: isFavourite,
         };
+
+        // Log the formatted score for debugging
+        console.log('Formatted Score:', formattedScore);
+
+        return formattedScore;
       });
 
       setFormattedScores(formatted);
       setIsLoading(false);
     }
-  }, [importedScores, recordingList, favourites]);
-
-  const calculateStars = (lessonId) => {
-    if (!recordingList) return 0;
-
-    const lessonRecordings = recordingList.filter(
-      (recording) => recording.scoreID === lessonId
-    );
-
-    if (lessonRecordings.length > 0) {
-      return Math.max(
-        ...lessonRecordings.map((recording) => recording.recordingStars)
-      );
-    } else {
-      return 0;
-    }
-  };
+  }, [importedScores, recordingList, favourites, userData]);
 
   const refreshData = async () => {
     try {
@@ -109,19 +126,21 @@ const ImportedScores = () => {
       <div className="w-4/5 flex flex-wrap justify-center mt-4">
         <XmlFileUploader refreshData={refreshData} />
         <div className="w-full mt-4 flex flex-wrap justify-center gap-4">
-          {importedScores.map((score, index) => (
+          {formattedScores.map((score, index) => (
             <LessonCard
               key={index}
               title={score.title || `Score ${index + 1}`}
               skill={score.skill || ''}
-              level={0}
-              stars={0}
-              isFavourite={false}
-              xml={score.xml}
-              id={score._id}
+              level={score.level || 0}
+              stars={score.stars || 0}
+              isFavourite={score.favourite || false}
+              xml={score.route_path}
+              path={score.path}
+              id={score.id}
               width={`${levelCardWidth}px`}
               renderViewRecordings={false}
               refreshData={refreshData}
+              recordings={score.recordings}
             />
           ))}
         </div>

@@ -5,6 +5,7 @@ import {
   addFavourite,
   removeFavourite,
   uploadXMLFile,
+  getUserImportedFile,
   removeXMLFile,
   updateRecordingsPastWeek,
 } from '../controllers/profileController.js';
@@ -28,6 +29,12 @@ router
 router
   .route('/uploadXML/:userId')
   .post(authenticateUser, upload.single('file'), uploadXMLFile);
+
+router.get(
+  '/xmlScores/:userId/:fileName',
+  authenticateUser,
+  getUserImportedFile
+);
 
 router.route('/removeXMLFile/:userId').post(authenticateUser, removeXMLFile);
 router

@@ -53,6 +53,48 @@ async function getUserImportedScores(userId) {
   }
 }
 
+const getImportedFile = async (fileName) => {
+  const scoreData = JSON.parse(localStorage.getItem('scoreData')) || [];
+  const scoreEntry = scoreData.find((item) => item.fname === fileName);
+
+  if (scoreEntry) {
+    return {
+      ok: true,
+      data: scoreEntry,
+    };
+  } else {
+    try {
+      // Fetch file from the server
+      const response = await axios.get(
+        `/api/v1/profile/xmlScores/${fileName}`,
+        { responseType: 'json' }
+      );
+      const fileData = response.data;
+
+      // Prepare the data to be added to localStorage
+      const newScoreData = {
+        fname: fileData.fname || fileName,
+        level: fileData.level || 0,
+        skill: fileData.skill || '',
+        title: fileData.title || fileName,
+        _id: fileData._id || '',
+      };
+
+      // Update the scoreData in local storage
+      scoreData.push(newScoreData);
+      localStorage.setItem('scoreData', JSON.stringify(scoreData));
+
+      return {
+        ok: true,
+        data: newScoreData,
+      };
+    } catch (error) {
+      console.error('Error fetching file:', error);
+      return { ok: false };
+    }
+  }
+};
+
 const getRecordingsPastWeek = async (userId) => {
   try {
     const response = await axios.get('/api/v1/auth/getProfileData', {
@@ -94,5 +136,6 @@ export {
   getUserFavourites,
   updateRecordingsPastWeek,
   getUserImportedScores,
+  getImportedFile,
   getRecordingsPastWeek,
 };

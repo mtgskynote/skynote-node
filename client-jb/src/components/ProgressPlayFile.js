@@ -148,9 +148,13 @@ const ProgressPlayFile = () => {
   };
 
   const navigate = useNavigate();
+  console.log('scoreDATA');
+  console.log(JSON.parse(localStorage.getItem('scoreData')));
   const scoreID = JSON.parse(localStorage.getItem('scoreData')).find(
     (item) => item.fname === params.files
   )._id;
+
+  console.log(scoreID);
 
   // Reset the reset button
   const onResetDone = () => {

@@ -56,6 +56,36 @@ const Lessons = () => {
   }, [getCurrentUser, userData, recordingList, favourites]);
 
   useEffect(() => {
+    const calculateRecordings = (lessonId) => {
+      if (!recordingList) return 0;
+
+      const lessonRecordings = recordingList.filter(
+        (recording) => recording.scoreID === lessonId
+      );
+
+      if (lessonRecordings.length > 0) {
+        return lessonRecordings.length;
+      } else {
+        return 0;
+      }
+    };
+
+    const calculateStars = (lessonId) => {
+      if (!recordingList) return 0;
+
+      const lessonRecordings = recordingList.filter(
+        (recording) => recording.scoreID === lessonId
+      );
+
+      if (lessonRecordings.length > 0) {
+        return Math.max(
+          ...lessonRecordings.map((recording) => recording.recordingStars)
+        );
+      } else {
+        return 0;
+      }
+    };
+
     if (localScoreData && recordingList && favourites) {
       const lessonData = localScoreData.reduce((result, item) => {
         const { level, skill, _id, fname, title } = item;
@@ -182,36 +212,6 @@ const Lessons = () => {
     setSubLevelCounts(counts);
   }, [filteredLessons]);
 
-  const calculateRecordings = (lessonId) => {
-    if (!recordingList) return 0;
-
-    const lessonRecordings = recordingList.filter(
-      (recording) => recording.scoreID === lessonId
-    );
-
-    if (lessonRecordings.length > 0) {
-      return lessonRecordings.length;
-    } else {
-      return 0;
-    }
-  };
-
-  const calculateStars = (lessonId) => {
-    if (!recordingList) return 0;
-
-    const lessonRecordings = recordingList.filter(
-      (recording) => recording.scoreID === lessonId
-    );
-
-    if (lessonRecordings.length > 0) {
-      return Math.max(
-        ...lessonRecordings.map((recording) => recording.recordingStars)
-      );
-    } else {
-      return 0;
-    }
-  };
-
   const handleFilterClick = (filter) => {
     setSelectedFilter(filter);
   };
@@ -257,7 +257,6 @@ const Lessons = () => {
             levelNumber={levelIndex + 1}
             levelName={level}
             levelLessons={filteredLessons[level]}
-            filter={selectedFilter}
             refreshData={refreshData}
             subLevelIsOpen={openSubLevel !== null}
             handleSubLevelClick={handleSubLevelClick}
