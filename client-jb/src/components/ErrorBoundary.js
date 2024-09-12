@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import Error from './Error';
+import Error from './Error'; // Ensure you have this component available
 
 class ErrorBoundary extends Component {
   constructor(props) {
@@ -8,16 +8,21 @@ class ErrorBoundary extends Component {
     this.state = { hasError: false };
   }
 
-  componentDidCatch() {
+  // This method is invoked if a child component throws an error
+  componentDidCatch(error, info) {
+    console.error('Error caught by ErrorBoundary:', error, info);
+
+    // Update state to show fallback UI
     this.setState({ hasError: true });
-    // Log the error to an error reporting service
   }
 
   render() {
     if (this.state.hasError) {
-      // Return a fallback UI for the error state
+      // Render fallback UI if there is an error
       return <Error message={'Something went wrong.'} />;
     }
+
+    // Render children if no error
     return this.props.children;
   }
 }

@@ -47,6 +47,7 @@ const PopUpWindow = ({ children, isOpen, onClose }) => {
 PopUpWindow.propTypes = {
   children: PropTypes.node.isRequired,
   isOpen: PropTypes.bool.isRequired,
+  onClose: PropTypes.func,
 };
 
 export default PopUpWindow;

@@ -107,13 +107,14 @@ const MessagesCard = ({ user, teacher }) => {
               .reverse()
               .map((message, index) => {
                 const [date, time] = message.messageDate.split(', ');
+                const reversedChat = Object.values(chat).reverse();
+                const prevMessageDate =
+                  index > 0
+                    ? reversedChat[index - 1].messageDate.split(', ')[0]
+                    : null;
                 return (
                   <div key={index}>
-                    {(index === 0 ||
-                      date !==
-                        Object.values(chat)
-                          .reverse()
-                          [index - 1].messageDate.split(', ')[0]) && (
+                    {(index === 0 || date !== prevMessageDate) && (
                       <div className="text-center text-sm opacity-75 text-gray-500 mb-4">
                         {date}
                       </div>

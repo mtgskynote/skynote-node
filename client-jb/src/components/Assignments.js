@@ -155,7 +155,7 @@ const Assignments = () => {
                 })
               ) : (
                 <p className="text-center text-2xl font-bold text-gray-800">
-                  Looks like your teacher hasn't assigned you anything yet!
+                  Looks like your teacher hasn&apos;t assigned you anything yet!
                 </p>
               )}
             </div>

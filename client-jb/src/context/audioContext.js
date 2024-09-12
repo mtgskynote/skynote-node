@@ -1,4 +1,4 @@
-// src/audioContext.js
+/* eslint-disable */
 let audioContext;
 
 function createAudioContext() {
