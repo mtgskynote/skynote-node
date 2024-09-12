@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import PropTypes from 'prop-types';
 import {
   getMessages,
   putMessage,
@@ -154,6 +155,15 @@ const MessagesCard = ({ user, teacher }) => {
       </div>
     </div>
   );
+};
+
+MessagesCard.propTypes = {
+  user: PropTypes.shape({
+    id: PropTypes.string.isRequired,
+  }).isRequired,
+  teacher: PropTypes.shape({
+    id: PropTypes.string.isRequired,
+  }).isRequired,
 };
 
 export default MessagesCard;

@@ -13,6 +13,7 @@ import {
 } from '../utils/studentRecordingMethods.js';
 import ControlBar from './ControlBar.js';
 import { getAudioContext } from '../context/audioContext';
+import Error from './Error.js';
 
 const folderBasePath = '/xmlScores/violin';
 
@@ -373,7 +374,7 @@ const ProgressPlayFileVisual = () => {
           {loading ? (
             <LoadingScreen />
           ) : recordingIdMissing ? (
-            <p>Oh no! This recording seems to be missing or deleted.</p>
+            <Error message="This recording seems to be missing or deleted."></Error>
           ) : (
             <OpenSheetMusicDisplay
               file={`${folderBasePath}/${params.files}.xml`}

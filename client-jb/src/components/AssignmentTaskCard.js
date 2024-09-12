@@ -1,11 +1,12 @@
 import React, { useState, useEffect } from 'react';
+import PropTypes from 'prop-types';
 import { useNavigate } from 'react-router-dom';
 import ExitToAppIcon from '@mui/icons-material/ExitToApp';
 import GradingIcon from '@mui/icons-material/Grading';
 import KeyboardVoiceIcon from '@mui/icons-material/KeyboardVoice';
 import UploadIcon from '@mui/icons-material/Upload';
 import { IconButton, Tooltip } from '@mui/material';
-import PopUpWindowGrades from './PopUpWindowGradesNew';
+import PopUpWindowGrades from './PopUpWindowGrades';
 import PopUpWindowSubmit from './PopUpWindowSubmit';
 
 const AssignmentTaskCard = ({ task, score, assignmentId, userId }) => {
@@ -24,28 +25,34 @@ const AssignmentTaskCard = ({ task, score, assignmentId, userId }) => {
     setStatus(status);
   }, [task]);
 
+  // Navigate to a specific recording submission
   const handleViewSubmission = () => {
     navigate(`/ListRecordings/${score.fname}`, {
       state: { id: task.answer.recordingId },
     });
   };
 
+  // Handle navigation to ProgressPlayFile for a specific score to record a task
   const handleRecordTask = () => {
     navigate(`/all-lessons/${score.fname}`);
   };
 
+  // Open the grades pop-up window
   const handleOpenGradesPopUpWindow = () => {
     setShowGradesPopUpWindow(true);
   };
 
+  // Close the grades pop-up window
   const handleCloseGradesPopUpWindow = () => {
     setShowGradesPopUpWindow(false);
   };
 
+  // Open the submit pop-up window
   const handleOpenSubmitPopUpWindow = () => {
     setShowSubmitPopUpWindow(true);
   };
 
+  // Close the submit pop-up window
   const handleCloseSubmitPopUpWindow = () => {
     setShowSubmitPopUpWindow(false);
   };
@@ -112,6 +119,24 @@ const AssignmentTaskCard = ({ task, score, assignmentId, userId }) => {
       />
     </div>
   );
+};
+
+AssignmentTaskCard.propTypes = {
+  task: PropTypes.shape({
+    answer: PropTypes.shape({
+      recordingId: PropTypes.string,
+      comment: PropTypes.string,
+      grade: PropTypes.string,
+    }),
+  }).isRequired,
+  score: PropTypes.shape({
+    fname: PropTypes.string.isRequired,
+    title: PropTypes.string.isRequired,
+    skill: PropTypes.string.isRequired,
+    level: PropTypes.number.isRequired,
+  }).isRequired,
+  assignmentId: PropTypes.string.isRequired,
+  userId: PropTypes.string.isRequired,
 };
 
 export default AssignmentTaskCard;

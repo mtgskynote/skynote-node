@@ -1,4 +1,5 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 import DoneAllIcon from '@mui/icons-material/DoneAll';
 
 const Message = ({ content, date, seen, isCurrentUser }) => {
@@ -29,6 +30,13 @@ const Message = ({ content, date, seen, isCurrentUser }) => {
       </div>
     </div>
   );
+};
+
+Message.propTypes = {
+  content: PropTypes.string.isRequired,
+  date: PropTypes.string.isRequired,
+  seen: PropTypes.bool.isRequired,
+  isCurrentUser: PropTypes.bool.isRequired,
 };
 
 export default Message;

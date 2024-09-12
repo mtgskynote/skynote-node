@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import PropTypes from 'prop-types';
 import { getRecData } from '../utils/studentRecordingMethods.js';
 import { updateAssignment } from '../utils/assignmentsMethods.js';
 import PopUpWindow from './PopUpWindow';
@@ -121,6 +122,17 @@ const PopUpWindowSubmit = ({
       )}
     </PopUpWindow>
   );
+};
+
+PopUpWindowSubmit.propTypes = {
+  isOpen: PropTypes.bool.isRequired,
+  handleClose: PropTypes.func.isRequired,
+  score: PropTypes.shape({
+    _id: PropTypes.string.isRequired,
+    title: PropTypes.string.isRequired,
+  }).isRequired,
+  assignmentId: PropTypes.string.isRequired,
+  userId: PropTypes.string.isRequired,
 };
 
 export default PopUpWindowSubmit;
