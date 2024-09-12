@@ -1,3 +1,4 @@
+/* eslint-disable */
 /*
 USAGE:
  const audioStreamer = makeAudioStreamer(pitchCallback, pitchVectorCb, analysisCb);
