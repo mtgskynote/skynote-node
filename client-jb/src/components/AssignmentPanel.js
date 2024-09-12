@@ -94,8 +94,17 @@ AssignmentPanel.propTypes = {
   postedDate: PropTypes.string.isRequired,
   tasks: PropTypes.arrayOf(
     PropTypes.shape({
-      answer: PropTypes.string,
-      score: PropTypes.string.isRequired,
+      _id: PropTypes.oneOfType([PropTypes.string, PropTypes.bool]),
+      score: PropTypes.oneOfType([PropTypes.string, PropTypes.object]),
+      answers: PropTypes.arrayOf(
+        PropTypes.shape({
+          _id: PropTypes.oneOfType([PropTypes.string, PropTypes.bool]),
+          studentId: PropTypes.oneOfType([PropTypes.string, PropTypes.object]),
+          recordingId: PropTypes.string,
+          grade: PropTypes.number,
+          comment: PropTypes.string,
+        })
+      ),
     })
   ).isRequired,
   message: PropTypes.string,

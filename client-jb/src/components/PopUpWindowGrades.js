@@ -59,7 +59,7 @@ const PopUpWindowGrades = ({ isOpen, comment, grade, score, handleClose }) => {
 PopUpWindowGrades.propTypes = {
   isOpen: PropTypes.bool.isRequired,
   comment: PropTypes.string,
-  grade: PropTypes.string,
+  grade: PropTypes.number,
   score: PropTypes.shape({
     title: PropTypes.string.isRequired,
   }).isRequired,
