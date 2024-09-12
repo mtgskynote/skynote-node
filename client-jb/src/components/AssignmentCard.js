@@ -81,7 +81,7 @@ AssignmentCard.propTypes = {
     fname: PropTypes.string, // Assuming fname is a string. Adjust based on actual data structure
     title: PropTypes.string.isRequired,
     skill: PropTypes.string.isRequired,
-    level: PropTypes.string.isRequired,
+    level: PropTypes.number.isRequired,
   }).isRequired,
 };
 

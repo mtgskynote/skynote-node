@@ -35,7 +35,7 @@ const Message = ({ content, date, seen, isCurrentUser }) => {
 Message.propTypes = {
   content: PropTypes.string.isRequired,
   date: PropTypes.string.isRequired,
-  seen: PropTypes.bool.isRequired,
+  seen: PropTypes.bool,
   isCurrentUser: PropTypes.bool.isRequired,
 };
 

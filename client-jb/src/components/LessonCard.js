@@ -415,14 +415,14 @@ LessonCard.propTypes = {
       stars: PropTypes.number.isRequired,
       audio: PropTypes.string,
     })
-  ).isRequired,
-  reloadRecordingsCallback: PropTypes.func.isRequired,
+  ),
+  reloadRecordingsCallback: PropTypes.func,
   renderViewRecordings: PropTypes.bool,
   width: PropTypes.string,
   backgroundColour: PropTypes.string,
   hoverBackgroundColour: PropTypes.string,
   textColour: PropTypes.string,
-  refreshData: PropTypes.func.isRequired,
+  refreshData: PropTypes.func,
 };
 
 export default LessonCard;
