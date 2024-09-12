@@ -1,58 +1,30 @@
 import React, { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
 import { useAppContext } from '../context/appContext';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import AssignmentsCSS from './Assignments.module.css';
 import { getAllAssignments } from '../utils/assignmentsMethods.js';
 import { getProfileData } from '../utils/usersMethods.js';
-import {
-  faFileImport,
-  faUser,
-  faTriangleExclamation,
-  faEye,
-  faMusic,
-  faPencilSquare,
-  faBoxArchive,
-  faRecordVinyl,
-  faBookBookmark,
-} from '@fortawesome/free-solid-svg-icons';
-import PopUpWindowGrades from './PopUpWindowGrades';
-import PopUpWindowRecordings from './PopUpWindowRecordings.js';
-import Messages from './messages.js';
 import LoadingScreen from './LoadingScreen.js';
 import Error from './Error.js';
+import MessagesCard from './MessagesCard.js';
+import AssignmentPanel from './AssignmentPanel.js';
 
 const Assignments = () => {
-  const navigate = useNavigate();
   const { getCurrentUser } = useAppContext();
 
   const [isLoading, setIsLoading] = useState(true);
   const [userData, setUserData] = useState(null);
   const [teacherData, setTeacherData] = useState(null);
   const [scoresData, setScoresData] = useState(null);
-  const [userAnnouncements, setUserAnnouncements] = useState(null);
-  const [popUpWindowGrade, setPopUpWindowGrade] = useState(false);
-  const [popUpWindowRecordings, setPopUpWindowRecordings] = useState(false);
-  const [taskComment, setTaskComment] = useState(null);
-  const [taskGrade, setTaskGrade] = useState(null);
-  const [selectedScore, setSelectedScore] = useState(null);
-  const [selectedAnnouncement, setSelectedAnnouncement] = useState(null);
+  const [assignments, setAssignments] = useState(null);
   const [teacherDataError, setTeacherDataError] = useState(false);
   const [assignmentsError, setAssignmentsError] = useState(false);
 
-  const options = {
-    year: 'numeric',
-    month: 'numeric',
-    day: 'numeric',
-    hour: '2-digit',
-    minute: '2-digit',
-  };
-
+  // Set error messages for missing data
   const errorMessages = {
     teacherDataError: "We can't find a teacher for your user.",
     assignmentsError: "We can't find any assignments for your user.",
   };
 
+  // Get user data
   const fetchDataFromAPI = () => {
     getCurrentUser()
       .then((result) => {
@@ -63,38 +35,7 @@ const Assignments = () => {
       });
   };
 
-  const handleSeeClick = (id, scoreXML) => {
-    navigate(`/ListRecordings/${scoreXML}`, { state: { id: id } });
-  };
-
-  const handleRecord = (scoreXML) => {
-    navigate(`/all-lessons/${scoreXML}`);
-  };
-
-  const handleSeeGrades = (option, comment, grade) => {
-    if (option === 'see') {
-      setPopUpWindowGrade(true);
-      setTaskComment(comment);
-      setTaskGrade(grade);
-    } else {
-      setPopUpWindowGrade(false);
-      setTaskComment(null);
-      setTaskGrade(null);
-    }
-  };
-
-  const handleSelectRecording = (option, scoreId, announcementId) => {
-    if (option === 'open') {
-      setPopUpWindowRecordings(true);
-      setSelectedScore(scoreId);
-      setSelectedAnnouncement(announcementId);
-    } else {
-      setPopUpWindowRecordings(false);
-      setSelectedScore(null);
-      setSelectedAnnouncement(null);
-    }
-  };
-
+  // Get teacher data
   const fetchTeacherInfo = async (teacherId) => {
     try {
       const result = await getProfileData(teacherId);
@@ -115,7 +56,7 @@ const Assignments = () => {
     }
   };
 
-  //get User Data
+  // Get user and teacher data
   useEffect(() => {
     if (userData === null) {
       fetchDataFromAPI();
@@ -128,21 +69,19 @@ const Assignments = () => {
     }
   }, [userData]);
 
-  //get Scores data
+  // Get scores data from local storage
   useEffect(() => {
-    // import local data
     const local = JSON.parse(localStorage.getItem('scoreData'));
-    // save in state
     setScoresData(local);
-  }, []); // Only once
+  }, []);
 
+  // Retrieve all assignments from a user
   useEffect(() => {
     if (userData !== null && scoresData !== null && teacherData !== null) {
-      // Assignments
       getAllAssignments(userData.id)
         .then((result) => {
           if (result.length !== 0) {
-            setUserAnnouncements(result.reverse());
+            setAssignments(result.reverse());
           } else {
             setAssignmentsError(true);
           }
@@ -154,15 +93,17 @@ const Assignments = () => {
     }
   }, [userData, scoresData, teacherData]);
 
+  // Automatically scroll to the corresponding assignment when navigating from a different page
   useEffect(() => {
-    if (userAnnouncements) {
-      const hash = window.location.hash.substring(1); // Get the hash from the URL
-      const element = document.getElementById(hash); // Find the element with that ID
+    if (assignments) {
+      const hash = window.location.hash.substring(1);
+      const element = document.getElementById(hash);
 
       if (element) {
-        const rect = element.getBoundingClientRect(); // Get the position of the element
-        const offset = window.innerWidth >= 600 ? 64 : 56; // AppBar height
-        const y = rect.top + window.scrollY - offset; // Calculate the y-coordinate to scroll to
+        const rect = element.getBoundingClientRect();
+        // Offset needs to be calculated because of the additional Navbar height
+        const offset = window.innerWidth >= 600 ? 64 : 56;
+        const y = rect.top + window.scrollY - offset;
 
         window.scroll({
           top: y,
@@ -170,236 +111,63 @@ const Assignments = () => {
         });
       }
     }
-  }, [userAnnouncements]);
+  }, [assignments]);
 
+  // Determine whether or not the loading screen is displayed
   useEffect(() => {
-    if (userData && userAnnouncements && teacherData !== null) {
+    if (userData && assignments && teacherData !== null) {
       setIsLoading(false);
     }
     if (teacherDataError || assignmentsError) {
       setIsLoading(false);
     }
-  }, [
-    userData,
-    teacherDataError,
-    userAnnouncements,
-    teacherData,
-    assignmentsError,
-  ]);
+  }, [userData, teacherDataError, assignments, teacherData, assignmentsError]);
 
   if (isLoading) {
     return <LoadingScreen />;
   }
 
   return (
-    <>
+    <div className="h-screen px-8 pt-2 pb-16">
       {teacherDataError ? (
         <Error message={errorMessages.teacherDataError} />
       ) : assignmentsError ? (
         <Error message={errorMessages.assignmentsError} />
       ) : (
-        <div className={AssignmentsCSS.container}>
-          <div className={AssignmentsCSS.left}>
-            {userAnnouncements !== null ? (
-              userAnnouncements.map((announcement, index) => (
-                <div
-                  id={announcement._id}
-                  className={AssignmentsCSS.tableBox}
-                  key={index}
-                >
-                  <div>
-                    <div className={AssignmentsCSS.header}>
-                      <div>
-                        Posted on:{' '}
-                        {new Date(announcement.postDate).toLocaleDateString(
-                          'es-ES',
-                          options
-                        )}
-                      </div>
-                      <div>
-                        Due on:{' '}
-                        {new Date(announcement.dueDate).toLocaleDateString(
-                          'es-ES',
-                          options
-                        )}
-                      </div>
-                    </div>
-                    <div className={AssignmentsCSS.announcementBody}>
-                      <div className={AssignmentsCSS.teacher}>
-                        {teacherData.name}{' '}
-                        <FontAwesomeIcon
-                          icon={faUser}
-                          className={AssignmentsCSS.userIcon}
-                        />{' '}
-                        said...
-                      </div>
-                      <div className={AssignmentsCSS.message}>
-                        {announcement.message}
-                      </div>
-                      <div className={AssignmentsCSS.footNote}>
-                        {announcement.tasks ? (
-                          <div className={AssignmentsCSS.note}>
-                            <FontAwesomeIcon
-                              icon={faTriangleExclamation}
-                              className={AssignmentsCSS.exclamationIcon}
-                            />
-                            <div className={AssignmentsCSS.text}>
-                              {announcement.tasks.length} submission
-                              assignment(s) linked to this announcement
-                            </div>
-                            <FontAwesomeIcon
-                              icon={faTriangleExclamation}
-                              className={AssignmentsCSS.exclamationIcon}
-                            />
-                          </div>
-                        ) : (
-                          ''
-                        )}
-                        <div className={AssignmentsCSS.taskGroup}>
-                          {announcement.tasks.map((task, index) => {
-                            var current_score = scoresData.find(
-                              (item) => item._id === task.score
-                            );
-                            return (
-                              <div
-                                className={AssignmentsCSS.taskItem}
-                                key={index}
-                              >
-                                <div className={AssignmentsCSS.taskHeader}>
-                                  <div>
-                                    <h6>
-                                      <FontAwesomeIcon
-                                        icon={faMusic}
-                                        className={AssignmentsCSS.simpleIcon}
-                                      />
-                                      {current_score.title}
-                                    </h6>
-                                  </div>
-                                  <div>
-                                    <h6>
-                                      <FontAwesomeIcon
-                                        icon={faPencilSquare}
-                                        className={AssignmentsCSS.simpleIcon}
-                                      />
-                                      {current_score.skill}
-                                    </h6>
-                                  </div>
-                                  <div>
-                                    <h6>
-                                      <FontAwesomeIcon
-                                        icon={faBoxArchive}
-                                        className={AssignmentsCSS.simpleIcon}
-                                      />
-                                      Level {current_score.level}
-                                    </h6>
-                                  </div>
-                                </div>
-                                <div>
-                                  {task.answer ? (
-                                    <div className={AssignmentsCSS.submitted}>
-                                      <div className={AssignmentsCSS.cursive}>
-                                        Status: Submitted
-                                      </div>
-                                      <div
-                                        className={AssignmentsCSS.buttonGroup}
-                                      >
-                                        <FontAwesomeIcon
-                                          title="Go to recording assigned to this submission"
-                                          icon={faEye}
-                                          className={AssignmentsCSS.simpleIcon}
-                                          onClick={() =>
-                                            handleSeeClick(
-                                              task.answer.recordingId,
-                                              current_score.fname
-                                            )
-                                          }
-                                        />
-                                        <FontAwesomeIcon
-                                          title="See grade and comment"
-                                          icon={faBookBookmark}
-                                          className={AssignmentsCSS.simpleIcon}
-                                          onClick={() =>
-                                            handleSeeGrades(
-                                              'see',
-                                              task.answer.comment,
-                                              task.answer.grade
-                                            )
-                                          }
-                                        />
-                                      </div>
-                                    </div>
-                                  ) : (
-                                    <div
-                                      className={AssignmentsCSS.notSubmitted}
-                                    >
-                                      <div className={AssignmentsCSS.cursive}>
-                                        Status: Not submitted
-                                      </div>
-                                      <div
-                                        className={AssignmentsCSS.buttonGroup}
-                                      >
-                                        <FontAwesomeIcon
-                                          title="Record for this submission"
-                                          icon={faRecordVinyl}
-                                          className={AssignmentsCSS.simpleIcon}
-                                          onClick={() =>
-                                            handleRecord(current_score.fname)
-                                          }
-                                        />
-                                        <FontAwesomeIcon
-                                          title="Assign recording to this submission"
-                                          icon={faFileImport}
-                                          className={AssignmentsCSS.simpleIcon}
-                                          onClick={() =>
-                                            handleSelectRecording(
-                                              'open',
-                                              task.score,
-                                              announcement._id
-                                            )
-                                          }
-                                        />
-                                      </div>
-                                    </div>
-                                  )}
-                                </div>
-                              </div>
-                            );
-                          })}
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              ))
-            ) : (
-              <div>No announcements yet</div>
-            )}
+        <div className="h-full flex">
+          {/* Left side - assignments board */}
+          <div className="w-2/3 p-4 overflow-y-auto">
+            <div className="space-y-4">
+              {assignments !== null ? (
+                assignments.map((assignment, index) => {
+                  return (
+                    <AssignmentPanel
+                      key={index}
+                      dueDate={assignment.dueDate}
+                      postedDate={assignment.postDate}
+                      tasks={assignment.tasks}
+                      message={assignment.message}
+                      scoresData={scoresData}
+                      assignmentId={assignment._id}
+                      userId={userData.id}
+                    />
+                  );
+                })
+              ) : (
+                <p className="text-center text-2xl font-bold text-gray-800">
+                  Looks like your teacher hasn&apos;t assigned you anything yet!
+                </p>
+              )}
+            </div>
           </div>
-          <div className={AssignmentsCSS.right}>
-            {userData !== null ? (
-              <Messages user={userData} teacher={teacherData} />
-            ) : (
-              <Messages />
-            )}
+
+          {/* Right side - messages board */}
+          <div className="w-1/3 p-4 flex flex-col">
+            <MessagesCard user={userData} teacher={teacherData} />
           </div>
-          {popUpWindowGrade && (
-            <PopUpWindowGrades
-              handlerBack={handleSeeGrades}
-              comment={taskComment}
-              grade={taskGrade}
-            />
-          )}
-          {popUpWindowRecordings && (
-            <PopUpWindowRecordings
-              handlerBack={handleSelectRecording}
-              scoreId={selectedScore}
-              userId={userData.id}
-              announcementId={selectedAnnouncement}
-            />
-          )}
         </div>
       )}
-    </>
+    </div>
   );
 };
 

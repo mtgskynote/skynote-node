@@ -171,7 +171,6 @@ const AppProvider = ({ children }) => {
   const getAllScoreData = async () => {
     try {
       const response = await axios.get('/api/v1/scores/getAllScoreData', {});
-      console.log('======================   names returned :'); //, response.data);
       return response.data;
     } catch (error) {
       console.error('Error fetching file names:', error);
@@ -183,7 +182,6 @@ const AppProvider = ({ children }) => {
     try {
       const response = await axios.get('/api/v1/scores/getAllScoreData2', {});
       var tempScoreData = response.data;
-      console.log(tempScoreData);
       for (let file of tempScoreData) {
         let scoreName = await getTitle(file.fname);
         tempScoreData.find((obj) => obj.fname === file.fname).title = scoreName;

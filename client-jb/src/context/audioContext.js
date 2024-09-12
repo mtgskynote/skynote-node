@@ -1,4 +1,3 @@
-// src/audioContext.js
 let audioContext;
 
 function createAudioContext() {

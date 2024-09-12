@@ -1,4 +1,4 @@
-// TimerManager.js
+/* eslint-disable */
 class TimerManager {
   constructor() {
     this.interval = null;
