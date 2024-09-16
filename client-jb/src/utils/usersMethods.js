@@ -53,45 +53,42 @@ async function getUserImportedScores(userId) {
   }
 }
 
-const getImportedFile = async (fileName) => {
-  const scoreData = JSON.parse(localStorage.getItem('scoreData')) || [];
-  const scoreEntry = scoreData.find((item) => item.fname === fileName);
+const loadImportedFileToLocalStorage = async (userId, scoreEntry) => {
+  try {
+    // Fetch the user's profile data
+    const response = await axios.get('/api/v1/auth/getProfileData', {
+      params: { userId: userId },
+    });
 
-  if (scoreEntry) {
-    return {
-      ok: true,
-      data: scoreEntry,
-    };
-  } else {
-    try {
-      // Fetch file from the server
-      const response = await axios.get(
-        `/api/v1/profile/xmlScores/${fileName}`,
-        { responseType: 'json' }
+    if (response.status === 200) {
+      const importedScores = await getUserImportedScores(userId);
+
+      const matchingScore = importedScores.find(
+        (score) => score.fname === scoreEntry.fname
       );
-      const fileData = response.data;
 
-      // Prepare the data to be added to localStorage
-      const newScoreData = {
-        fname: fileData.fname || fileName,
-        level: fileData.level || 0,
-        skill: fileData.skill || '',
-        title: fileData.title || fileName,
-        _id: fileData._id || '',
-      };
+      if (matchingScore) {
+        // Check if the file is already in local storage
+        if (!localStorage.getItem(matchingScore.fname)) {
+          // Get the XML string
+          const xmlString = matchingScore.fileData;
 
-      // Update the scoreData in local storage
-      scoreData.push(newScoreData);
-      localStorage.setItem('scoreData', JSON.stringify(scoreData));
-
-      return {
-        ok: true,
-        data: newScoreData,
-      };
-    } catch (error) {
-      console.error('Error fetching file:', error);
-      return { ok: false };
+          // Store the XML string in local storage
+          localStorage.setItem(matchingScore.fname, xmlString);
+          console.log(
+            `File "${matchingScore.fname}" added to localStorage as XML.`
+          );
+        } else {
+          console.log(
+            `File "${matchingScore.fname}" already exists in localStorage.`
+          );
+        }
+      } else {
+        console.error('No matching score found for the given fileName.');
+      }
     }
+  } catch (error) {
+    console.error('Error loading imported file to localStorage:', error);
   }
 };
 
@@ -136,6 +133,6 @@ export {
   getUserFavourites,
   updateRecordingsPastWeek,
   getUserImportedScores,
-  getImportedFile,
+  loadImportedFileToLocalStorage,
   getRecordingsPastWeek,
 };

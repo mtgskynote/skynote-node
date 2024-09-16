@@ -20,6 +20,7 @@ import {
   stopMicrophone,
   isMicrophoneActive,
 } from '../context/audioContext';
+import LoadingScreen from './LoadingScreen.js';
 // @ts-ignore
 window.Buffer = Buffer;
 
@@ -29,6 +30,7 @@ const ProgressPlayFile = () => {
   const { getCurrentUser } = useAppContext();
   const [userData, setUserData] = useState(null);
   const params = useParams();
+  const [xmlFile, setXmlFile] = useState(null);
 
   // OSMD playback and cursor references
   const cursorRef = useRef(null);
@@ -148,13 +150,9 @@ const ProgressPlayFile = () => {
   };
 
   const navigate = useNavigate();
-  console.log('scoreDATA');
-  console.log(JSON.parse(localStorage.getItem('scoreData')));
   const scoreID = JSON.parse(localStorage.getItem('scoreData')).find(
     (item) => item.fname === params.files
   )._id;
-
-  console.log(scoreID);
 
   // Reset the reset button
   const onResetDone = () => {
@@ -252,6 +250,44 @@ const ProgressPlayFile = () => {
     featureValues.spectralCentroid.push(features.spectralCentroid); // SPECTRAL CENTROID
     featureValues.spectralFlux.push(features.spectralFlux); // SPECTRAL FLUX
   };
+
+  useEffect(() => {
+    const checkAndSetFile = async () => {
+      try {
+        const fileUrl = `${folderBasePath}/${params.files}.xml`;
+
+        // Fetch the file from the server
+        const response = await fetch(fileUrl);
+        const xmlFileData = await response.text();
+
+        // Check if the file is valid XML (file found in folderBasePath)
+        if (xmlFileData.startsWith('<?xml')) {
+          console.log('File found at folderBasePath:', fileUrl);
+          setXmlFile(fileUrl);
+        } else {
+          const localStorageFile = localStorage.getItem(params.files);
+
+          if (localStorageFile) {
+            console.log('File found in localStorage:', params.files);
+            // Create a Blob URL from the XML data
+            const blob = new Blob([localStorageFile], {
+              type: 'application/xml',
+            });
+            const blobUrl = URL.createObjectURL(blob);
+            setXmlFile(blobUrl);
+          } else {
+            console.error('File not found on server or in localStorage.');
+            setXmlFile('');
+          }
+        }
+      } catch (error) {
+        console.error('Error fetching file:', error);
+        setXmlFile('');
+      }
+    };
+
+    checkAndSetFile();
+  }, [folderBasePath, params.files]);
 
   useEffect(() => {
     const newAudioStreamer = makeAudioStreamer(handlePitchCallback, null, aCb);
@@ -647,12 +683,16 @@ const ProgressPlayFile = () => {
     };
   }, []);
 
+  if (!xmlFile) {
+    return <LoadingScreen />;
+  }
+
   return (
     <HotKeys keyMap={keyMap} handlers={handlers}>
       <div className="flex flex-col min-h-screen justify-between mb-40">
         <div className="relative">
           <OpenSheetMusicDisplay
-            file={`${folderBasePath}/${params.files}.xml`}
+            file={xmlFile}
             autoResize={true}
             cursorRef={cursorRef}
             playbackRef={playbackRef}

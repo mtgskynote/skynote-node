@@ -30,6 +30,7 @@ import {
 Chartjs.register(LineElement, CategoryScale, LinearScale, PointElement);
 
 const OpenSheetMusicDisplay = (props) => {
+  console.log('OSDM PROPS:', props);
   const [pitchColor, setPitchColor] = useState([]);
   const [pitchData, setPitchData] = useState([]);
   const [pitchConfidenceData, setPitchConfidenceData] = useState([]);
@@ -158,9 +159,11 @@ const OpenSheetMusicDisplay = (props) => {
 
     osmd.current = new OSMD(divRef.current, options);
 
+    console.log('OSDM FILE:', props.file);
     osmd.current.load(props.file).then(() => {
       osmd.current.TransposeCalculator = new TransposeCalculator();
       if (osmd.current.Sheet) {
+        console.log('SHEET IS HERE');
         osmd.current.Sheet.Transpose = props.transpose;
         osmd.current.updateGraphic();
         osmd.current.render();

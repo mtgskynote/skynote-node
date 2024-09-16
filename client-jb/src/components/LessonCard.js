@@ -1,11 +1,12 @@
 import React, { useState, useEffect, useRef } from 'react';
 import PropTypes from 'prop-types';
 import { useNavigate } from 'react-router-dom';
+import { useAppContext } from '../context/appContext';
 import {
   getManyRecordings,
   deleteRecording,
 } from '../utils/studentRecordingMethods';
-import { getImportedFile } from '../utils/usersMethods'; // Ensure this is the correct path
+import { loadImportedFileToLocalStorage } from '../utils/usersMethods';
 import {
   CardContent,
   Typography,
@@ -36,6 +37,7 @@ const LessonCard = ({
   hoverBackgroundColour,
   textColour,
   refreshData,
+  importedScore,
 }) => {
   const navigate = useNavigate();
   const [allRecordings, setAllRecordings] = useState(recordings);
@@ -46,6 +48,7 @@ const LessonCard = ({
   const [deletionStatus, setDeletionStatus] = useState(null);
   const [deletedRecordingIds, setDeletedRecordingIds] = useState([]);
   const [playingAudioId, setPlayingAudioId] = useState(null);
+  const { getCurrentUser } = useAppContext();
 
   const modalRef = useRef(null);
 
@@ -109,30 +112,49 @@ const LessonCard = ({
     // Strip the basePath if it is included in the XML path for comparison
     const fileName = path.replace(basePath, '');
 
-    // Find the relevant score entry
+    // Find the relevant score entry in local storage
     const storedScoreData = JSON.parse(localStorage.getItem('scoreData')) || [];
     const scoreEntry = storedScoreData.find((item) => item.fname === fileName);
 
     if (scoreEntry) {
-      // File is found in the scoreData
+      // File is found in the scoreData already
+      if (importedScore) {
+        const currentUser = await getCurrentUser();
+        await loadImportedFileToLocalStorage(currentUser.id, scoreEntry);
+      }
       navigate(path, {
         state: { id, fileData: scoreEntry },
       });
     } else {
+      // add file as entry in scoreData JSON if it's not already there (relevant for imports)
       try {
-        // Fetch file from the server
-        const response = await getImportedFile(fileName);
-        if (response.ok) {
-          const fileData = response.data;
-          // Update the local storage with the fetched data
-          storedScoreData.push(fileData);
-          localStorage.setItem('scoreData', JSON.stringify(storedScoreData));
-          navigate(path, { state: { id, fileData } });
-        } else {
-          console.error('Failed to fetch file:', response.statusText);
+        const fileNameWithoutExtension = fileName
+          .split('.')
+          .slice(0, -1)
+          .join('.');
+
+        const newScoreEntry = {
+          _id: id,
+          fname: fileName,
+          level: level,
+          skill: skill,
+          title: fileNameWithoutExtension,
+        };
+
+        // Update the local storage scoreData with the file
+        storedScoreData.push(newScoreEntry);
+        localStorage.setItem('scoreData', JSON.stringify(storedScoreData));
+        // load to local storage and navigate
+        try {
+          await loadImportedFileToLocalStorage(newScoreEntry);
+          navigate(path, {
+            state: { id, fileData: newScoreEntry },
+          });
+        } catch (error) {
+          console.error('Error adding file to local storage:', error);
         }
       } catch (error) {
-        console.error('Error fetching file:', error);
+        console.error('Error adding file entry to local scoreData:', error);
       }
     }
   };
@@ -445,6 +467,7 @@ LessonCard.propTypes = {
   hoverBackgroundColour: PropTypes.string,
   textColour: PropTypes.string,
   refreshData: PropTypes.func.isRequired,
+  importedScore: PropTypes.bool,
 };
 
 export default LessonCard;

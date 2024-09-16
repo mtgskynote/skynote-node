@@ -124,7 +124,7 @@ const Stats = () => {
     if (!userData) {
       fetchData();
     }
-  }, [userData]);
+  }, [userData, getCurrentUser]);
 
   useEffect(() => {
     const handleStorageUpdate = () => {
@@ -165,7 +165,7 @@ const Stats = () => {
 
   //get Recordings Data for this user
   useEffect(() => {
-    if (userData !== null && scoresData !== null) {
+    if (userData !== null && scoresData !== null && isLoading) {
       getAllRecData(userData.id)
         .then((result) => {
           setRecordingList(JSON.stringify(result));
@@ -240,7 +240,7 @@ const Stats = () => {
           );
         });
     }
-  }, [userData, scoresData]);
+  }, [userData, scoresData, getScoreById]);
 
   //When recordings info is loaded, get neeeded info
   useEffect(() => {
@@ -303,7 +303,20 @@ const Stats = () => {
       setRecentRecordings(allEntries);
       ////////////////////////////////////////////////////////
     }
-  }, [recordingList, recordingNames]);
+  }, [
+    recordingList,
+    recordingNames,
+    recordingDates,
+    recordingIds,
+    recordingLevels,
+    recordingScoresIds,
+    recordingScoresTitles,
+    recordingScoresXML,
+    recordingSkills,
+    recordingStars,
+    scoresData,
+    starsPerLevel,
+  ]);
 
   useEffect(() => {
     if (recentRecordings != null) {
@@ -357,10 +370,10 @@ const Stats = () => {
   }, [recentRecordings]);
 
   useEffect(() => {
-    if (userData && scoresData && recordingList !== null) {
+    if (userData && scoresData && recordingList && favourites !== null) {
       setIsLoading(false);
     }
-  }, [userData, scoresData, recordingList]);
+  }, [userData, scoresData, recordingList, favourites]);
 
   if (isLoading) {
     return <LoadingScreen />;

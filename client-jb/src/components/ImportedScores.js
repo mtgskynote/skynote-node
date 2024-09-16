@@ -70,7 +70,7 @@ const ImportedScores = () => {
 
     if (importedScores && recordingList && favourites) {
       const formatted = importedScores.map((score, index) => {
-        const title = score.fname.replace(/\.[^/.]+$/, ''); // Remove the file extension
+        const title = score.scoreTitle || score.fname.replace(/\.[^/.]+$/, '');
         const skill = score.skill || '';
         const level = score.level || 0;
         const isFavourite = favourites.some(
@@ -91,9 +91,6 @@ const ImportedScores = () => {
           recordings: calculateRecordings(score._id),
           favourite: isFavourite,
         };
-
-        // Log the formatted score for debugging
-        console.log('Formatted Score:', formattedScore);
 
         return formattedScore;
       });
@@ -141,6 +138,7 @@ const ImportedScores = () => {
               renderViewRecordings={false}
               refreshData={refreshData}
               recordings={score.recordings}
+              importedScore={true}
             />
           ))}
         </div>

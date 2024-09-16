@@ -86,16 +86,16 @@ const UserSchema = new mongoose.Schema({
   importedScores: [
     {
       fileData: {
-        type: Buffer,
+        type: String,
         required: true,
       },
       fname: {
         type: String,
         required: true,
       },
-      level: {
-        type: Number,
-        default: 0,
+      scoreTitle: {
+        type: String,
+        required: true,
       },
       skill: {
         type: String,

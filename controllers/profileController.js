@@ -3,8 +3,9 @@ import { StatusCodes } from 'http-status-codes';
 import { BadRequestError, NotFoundError } from '../errors/index.js';
 import mongoose from 'mongoose';
 import path from 'path';
-import { GridFSBucket } from 'mongodb';
 import fs from 'fs';
+import AdmZip from 'adm-zip';
+import { parseStringPromise } from 'xml2js'; // For XML parsing
 
 // Update user email and name when editing the profile
 const updateProfileData = async (req, res) => {
@@ -133,7 +134,9 @@ const removeFavourite = async (req, res) => {
 const uploadXMLFile = async (req, res) => {
   try {
     const { userId } = req.params;
-    const { fileName, skill, level } = req.body;
+    const { fileName, scoreTitle, skill } = req.body;
+
+    console.log(`Adding XML file: userId=${userId}, fileId=${fileName}`);
 
     // Find the user
     const user = await User.findById(userId);
@@ -141,25 +144,64 @@ const uploadXMLFile = async (req, res) => {
       return res.status(404).json({ msg: 'User not found' });
     }
 
-    // Read the file data from the uploaded file in the temporary location
-    const fileData = fs.readFileSync(req.file.path);
+    // Ensure a file was uploaded
+    if (!req.file) {
+      return res.status(400).json({ msg: 'No file uploaded' });
+    }
 
-    // Create a new importedScore entry
+    // Get the file path from the uploaded file
+    const filePath = req.file.path;
+    console.log(filePath);
+    const fileExtension = path.extname(fileName).toLowerCase();
+
+    let fileDataString;
+
+    if (fileExtension === '.mxl') {
+      // Uncompress the .mxl file to get the container XML
+      const zip = new AdmZip(filePath);
+      const zipEntries = zip.getEntries();
+      const containerEntry = zipEntries.find((entry) =>
+        entry.entryName.endsWith('.xml')
+      );
+
+      if (!containerEntry) {
+        throw new Error('No container XML file found in the .mxl archive');
+      }
+
+      const containerXml = containerEntry.getData().toString('utf8');
+
+      // Parse the container XML to find the path of the MusicXML file
+      const containerData = await parseStringPromise(containerXml);
+      const rootFilePath =
+        containerData.container.rootfiles[0].rootfile[0]['$']['full-path'];
+
+      // Find the actual MusicXML file in the archive
+      const xmlEntry = zipEntries.find(
+        (entry) => entry.entryName === rootFilePath
+      );
+      if (!xmlEntry) {
+        throw new Error('No MusicXML file found in the .mxl archive');
+      }
+
+      fileDataString = xmlEntry.getData().toString('utf8');
+    } else {
+      // Read the file directly if it's not .mxl
+      fileDataString = fs.readFileSync(filePath, 'utf8');
+    }
+
     const newScore = {
-      fileData,
+      fileData: fileDataString,
       fname: fileName,
-      level: level || 0,
+      scoreTitle: scoreTitle || fileName,
       skill: skill || '',
     };
 
     // Add the new score to the user's importedScores array
     user.importedScores.push(newScore);
-
-    // Save the user with the new score
     await user.save();
 
-    // Optionally delete the file from the temporary location
-    fs.unlinkSync(req.file.path);
+    // Remove the temporary file
+    fs.unlinkSync(filePath);
 
     res
       .status(200)
@@ -170,34 +212,9 @@ const uploadXMLFile = async (req, res) => {
   }
 };
 
-const getUserImportedFile = async (req, res) => {
-  const { userId, fileName } = req.params;
-
-  try {
-    const user = await User.findById(userId);
-
-    if (!user) {
-      return res.status(404).json({ message: 'User not found' });
-    }
-
-    const score = user.importedScores.find((score) => score.fname === fileName);
-
-    if (!score) {
-      return res.status(404).json({ message: 'File not found' });
-    }
-
-    res.set('Content-Type', 'application/xml');
-    res.send(score.file.data);
-  } catch (error) {
-    res.status(500).json({ message: 'Server error', error });
-  }
-};
-
 const removeXMLFile = async (req, res) => {
   const { userId } = req.params;
   const { fileId } = req.body; // Expect fileId in the request body
-
-  console.log(`Removing XML file: userId=${userId}, fileId=${fileId}`);
 
   // Validate userId
   if (!mongoose.Types.ObjectId.isValid(userId)) {
@@ -265,7 +282,6 @@ export {
   addFavourite,
   removeFavourite,
   uploadXMLFile,
-  getUserImportedFile,
   removeXMLFile,
   updateRecordingsPastWeek,
 };

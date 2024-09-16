@@ -8,8 +8,9 @@ import Button from '@mui/material/Button';
 
 const XmlFileUploader = ({ refreshData }) => {
   const [file, setFile] = useState(null);
-  const [fileName, setFileName] = useState(''); // State for file name
-  const [skill, setSkill] = useState(''); // State for skill (optional)
+  const [scoreTitle, setScoreTitle] = useState('');
+  const [fileName, setFileName] = useState('');
+  const [skill, setSkill] = useState('');
   const [uploadProgress, setUploadProgress] = useState(0);
   const [uploadError, setUploadError] = useState(null);
   const fileInputRef = useRef();
@@ -19,7 +20,8 @@ const XmlFileUploader = ({ refreshData }) => {
     const selectedFile = event.target.files[0];
     if (selectedFile) {
       setFile(selectedFile);
-      setFileName(selectedFile.name); // Set fileName to the name of the uploaded file
+      setScoreTitle(selectedFile.name);
+      setFileName(selectedFile.name);
       setUploadError(null);
     }
   };
@@ -29,7 +31,8 @@ const XmlFileUploader = ({ refreshData }) => {
     const droppedFile = event.dataTransfer.files[0];
     if (droppedFile) {
       setFile(droppedFile);
-      setFileName(droppedFile.name); // Set fileName to the name of the dropped file
+      setScoreTitle(droppedFile.name);
+      setFileName(droppedFile.name);
       setUploadError(null);
     }
   };
@@ -55,7 +58,7 @@ const XmlFileUploader = ({ refreshData }) => {
       }
 
       if (!fileName) {
-        alert('Please enter a file name.');
+        alert('Please enter a title for the score.');
         return;
       }
 
@@ -67,8 +70,8 @@ const XmlFileUploader = ({ refreshData }) => {
       const formData = new FormData();
       formData.append('file', file);
       formData.append('fileName', fileName);
+      formData.append('scoreTitle', scoreTitle);
       formData.append('skill', skill);
-      formData.append('skillLevel', 0); // Skill level is always 0
 
       setUploadError(null);
       const response = await axios.post(
@@ -92,6 +95,7 @@ const XmlFileUploader = ({ refreshData }) => {
       alert('File uploaded successfully!');
 
       setFile(null);
+      setScoreTitle('');
       setFileName('');
       setSkill('');
       setUploadProgress(0);
@@ -106,6 +110,7 @@ const XmlFileUploader = ({ refreshData }) => {
   const handleCancel = () => {
     // Reset the state to its initial values
     setFile(null);
+    setScoreTitle('');
     setFileName('');
     setSkill('');
     setUploadProgress(0);
@@ -122,7 +127,7 @@ const XmlFileUploader = ({ refreshData }) => {
       >
         <input
           type="file"
-          accept=".xml,.musicxml,.mxl"
+          accept=".xml,.mxl"
           ref={fileInputRef}
           onChange={handleFileChange}
           className="hidden"
@@ -130,8 +135,7 @@ const XmlFileUploader = ({ refreshData }) => {
         {!file && (
           <div className="flex flex-col items-center">
             <p className="text-gray-600 text-center">
-              Drag and drop an XML, MusicXML, or MXL file here, or click to
-              select one.
+              Drag and drop an XML or MXL file here, or click to select one.
             </p>
             <UploadIcon className="text-gray-600 sm:text-2xl md:text-2xl lg:text-3xl xl:text-3xl" />
           </div>
@@ -140,10 +144,10 @@ const XmlFileUploader = ({ refreshData }) => {
           <div className="mt-4 text-center">
             <TextField
               fullWidth
-              label="File Name"
+              label="Score title"
               variant="outlined"
-              value={fileName}
-              onChange={(e) => setFileName(e.target.value)}
+              value={scoreTitle}
+              onChange={(e) => setScoreTitle(e.target.value)}
               className="mb-4"
             />
             <TextField
