@@ -48,6 +48,8 @@ const RecordingCard = ({
     : 'hover:bg-blue-500';
   const tColour = textColour ? textColour : 'text-white';
 
+  console.log('xml in:', xml);
+
   // Navigate to the ListRecordings route with the provided xml and recordingId
   const handleViewRecording = async () => {
     navigate(`/ListRecordings/${xml}`, { state: { id: recordingId } });

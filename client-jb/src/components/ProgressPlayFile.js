@@ -268,7 +268,6 @@ const ProgressPlayFile = () => {
           const localStorageFile = localStorage.getItem(params.files);
 
           if (localStorageFile) {
-            console.log('File found in localStorage:', params.files);
             // Create a Blob URL from the XML data
             const blob = new Blob([localStorageFile], {
               type: 'application/xml',
@@ -308,22 +307,28 @@ const ProgressPlayFile = () => {
       try {
         const response = await fetch(`${folderBasePath}/${params.files}.xml`);
         const xmlFileData = await response.text();
-        const movementTitle = Array.from(
-          new XMLParser()
-            .parseFromString(xmlFileData)
-            .getElementsByTagName('movement-title')
-        );
-        if (movementTitle.length > 0) {
-          setScoreTitle(movementTitle[0].value);
+        // Check if the file was actually found (if not, html is found)
+        if (xmlFileData.startsWith('<?xml')) {
+          const movementTitle = Array.from(
+            new XMLParser()
+              .parseFromString(xmlFileData)
+              .getElementsByTagName('movement-title')
+          );
+          if (movementTitle.length > 0) {
+            setScoreTitle(movementTitle[0].value);
+          } else {
+            setScoreTitle('untitledScore');
+          }
         } else {
-          setScoreTitle('untitledScore');
+          // TO DO: refactor requestScoreTitle in ProgressPlayFile so that it takes the same name as the LessonCard does
+          setScoreTitle(params.files.split('.').slice(0, -1).join('.'));
         }
       } catch (error) {
         console.log(error.message);
       }
     };
     requestScoreTitle();
-  }, []);
+  }, [params.files]);
 
   // Ask user for microphone permissions so that the application can record audio
   useEffect(() => {

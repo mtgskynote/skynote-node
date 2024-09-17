@@ -240,7 +240,7 @@ const Stats = () => {
           );
         });
     }
-  }, [userData, scoresData, getScoreById]);
+  }, [userData, scoresData, getScoreById, isLoading]);
 
   //When recordings info is loaded, get neeeded info
   useEffect(() => {

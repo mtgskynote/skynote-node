@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { getAllRecData } from '../utils/studentRecordingMethods.js';
 import { useAppContext } from '../context/appContext.js';
+import { getUserImportedScores } from '../utils/usersMethods';
 import RecordingCard from './RecordingCard.js';
 import LoadingScreen from './LoadingScreen.js';
 import ListRecordingsHeader from './ListRecordingsHeader.js';
@@ -11,6 +12,7 @@ const ListAllRecordings = () => {
   const [userData, setUserData] = useState(null);
   const [localData, setLocalData] = useState(null);
   const [recordingsByScore, setRecordingsByScore] = useState(null);
+  const [importedScores, setImportedScores] = useState(null);
 
   // Define options for formatting date
   const options = {

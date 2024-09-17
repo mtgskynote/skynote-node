@@ -76,6 +76,17 @@ const AppProvider = ({ children }) => {
     localStorage.removeItem('location');
     localStorage.removeItem('scoreData'); // This is technically not User data, but it's simpler if I leave it here cause we have to get rid of it anyways :)
     localStorage.removeItem('instrument'); // This information is part of User data but exists separately as well for easy transitioning between selected instrument states
+
+    // Remove keys that contain .mxl, .xml, or .musicxml
+    Object.keys(localStorage).forEach((key) => {
+      if (
+        key.includes('.mxl') ||
+        key.includes('.xml') ||
+        key.includes('.musicxml')
+      ) {
+        localStorage.removeItem(key);
+      }
+    });
   };
 
   // Set up user with current user, endpoint, and alert text

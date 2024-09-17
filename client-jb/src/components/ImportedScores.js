@@ -10,13 +10,13 @@ import { getAllRecData } from '../utils/studentRecordingMethods.js';
 import LessonCard from '../components/LessonCard';
 
 const ImportedScores = () => {
-  const [importedScores, setImportedScores] = useState([]);
-  const [formattedScores, setFormattedScores] = useState([]);
+  const { getCurrentUser } = useAppContext();
+  const [importedScores, setImportedScores] = useState(null);
+  const [formattedScores, setFormattedScores] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
   const [userData, setUserData] = useState(null);
   const [recordingList, setRecordingList] = useState(null);
   const [favourites, setFavourites] = useState(null);
-  const { getCurrentUser } = useAppContext();
 
   const levelCardWidth = 265;
 
@@ -32,7 +32,7 @@ const ImportedScores = () => {
         const imports = await getUserImportedScores(currentUser.id);
         setImportedScores(imports);
       } catch (error) {
-        console.log('Error fetching data: ', error);
+        console.error('Error fetching data: ', error);
       }
     };
 
@@ -96,7 +96,6 @@ const ImportedScores = () => {
       });
 
       setFormattedScores(formatted);
-      setIsLoading(false);
     }
   }, [importedScores, recordingList, favourites, userData]);
 
@@ -107,9 +106,15 @@ const ImportedScores = () => {
         setImportedScores(imports);
       }
     } catch (error) {
-      console.log('Error refreshing imported scores:', error);
+      console.error('Error refreshing imported scores:', error);
     }
   };
+
+  useEffect(() => {
+    if (importedScores && formattedScores !== null) {
+      setIsLoading(false);
+    }
+  }, [importedScores, formattedScores]);
 
   if (isLoading) return <LoadingScreen />;
 
@@ -126,18 +131,17 @@ const ImportedScores = () => {
           {formattedScores.map((score, index) => (
             <LessonCard
               key={index}
-              title={score.title || `Score ${index + 1}`}
-              skill={score.skill || ''}
-              level={score.level || 0}
-              stars={score.stars || 0}
-              isFavourite={score.favourite || false}
+              title={score.title}
+              skill={score.skill}
+              level={score.level}
+              stars={score.stars}
+              isFavourite={score.favourite}
               xml={score.route_path}
               path={score.path}
               id={score.id}
               width={`${levelCardWidth}px`}
               renderViewRecordings={false}
               refreshData={refreshData}
-              recordings={score.recordings}
               importedScore={true}
             />
           ))}

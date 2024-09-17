@@ -6,6 +6,8 @@ import UploadIcon from '@mui/icons-material/CloudUpload';
 import TextField from '@mui/material/TextField';
 import Button from '@mui/material/Button';
 
+const SUPPORTED_FILE_TYPES = ['.xml', '.mxl', '.musicxml'];
+
 const XmlFileUploader = ({ refreshData }) => {
   const [file, setFile] = useState(null);
   const [scoreTitle, setScoreTitle] = useState('');
@@ -16,13 +18,24 @@ const XmlFileUploader = ({ refreshData }) => {
   const fileInputRef = useRef();
   const { getCurrentUser } = useAppContext();
 
+  const isFileSupported = (file) => {
+    const fileExtension = file.name.split('.').pop().toLowerCase();
+    return SUPPORTED_FILE_TYPES.includes(`.${fileExtension}`);
+  };
+
   const handleFileChange = (event) => {
     const selectedFile = event.target.files[0];
     if (selectedFile) {
-      setFile(selectedFile);
-      setScoreTitle(selectedFile.name);
-      setFileName(selectedFile.name);
-      setUploadError(null);
+      if (isFileSupported(selectedFile)) {
+        setFile(selectedFile);
+        setScoreTitle(selectedFile.name);
+        setFileName(selectedFile.name);
+        setUploadError(null);
+      } else {
+        alert(
+          'Unsupported file type. Please select an XML, MXL, or MusicXML file.'
+        );
+      }
     }
   };
 
@@ -30,10 +43,16 @@ const XmlFileUploader = ({ refreshData }) => {
     event.preventDefault();
     const droppedFile = event.dataTransfer.files[0];
     if (droppedFile) {
-      setFile(droppedFile);
-      setScoreTitle(droppedFile.name);
-      setFileName(droppedFile.name);
-      setUploadError(null);
+      if (isFileSupported(droppedFile)) {
+        setFile(droppedFile);
+        setScoreTitle(droppedFile.name);
+        setFileName(droppedFile.name);
+        setUploadError(null);
+      } else {
+        alert(
+          'Unsupported file type. Please drop an XML, MXL, or MusicXML file.'
+        );
+      }
     }
   };
 
@@ -127,7 +146,7 @@ const XmlFileUploader = ({ refreshData }) => {
       >
         <input
           type="file"
-          accept=".xml,.mxl"
+          accept=".xml,.mxl,.musicxml"
           ref={fileInputRef}
           onChange={handleFileChange}
           className="hidden"
@@ -135,7 +154,8 @@ const XmlFileUploader = ({ refreshData }) => {
         {!file && (
           <div className="flex flex-col items-center">
             <p className="text-gray-600 text-center">
-              Drag and drop an XML or MXL file here, or click to select one.
+              Drag and drop an XML, MXL or MusicXML file here, or click to
+              select one.
             </p>
             <UploadIcon className="text-gray-600 sm:text-2xl md:text-2xl lg:text-3xl xl:text-3xl" />
           </div>

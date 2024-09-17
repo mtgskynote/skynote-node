@@ -126,7 +126,7 @@ const LessonCard = ({
         state: { id, fileData: scoreEntry },
       });
     } else {
-      // add file as entry in scoreData JSON if it's not already there (relevant for imports)
+      // Add file as entry in scoreData JSON if it's not already there (relevant for imports)
       try {
         const fileNameWithoutExtension = fileName
           .split('.')
@@ -144,9 +144,12 @@ const LessonCard = ({
         // Update the local storage scoreData with the file
         storedScoreData.push(newScoreEntry);
         localStorage.setItem('scoreData', JSON.stringify(storedScoreData));
-        // load to local storage and navigate
+
+        // Load to local storage and navigate
         try {
-          await loadImportedFileToLocalStorage(newScoreEntry);
+          const currentUser = await getCurrentUser();
+          await loadImportedFileToLocalStorage(currentUser.id, newScoreEntry);
+
           navigate(path, {
             state: { id, fileData: newScoreEntry },
           });
@@ -459,8 +462,8 @@ LessonCard.propTypes = {
       stars: PropTypes.number.isRequired,
       audio: PropTypes.string,
     })
-  ).isRequired,
-  reloadRecordingsCallback: PropTypes.func.isRequired,
+  ),
+  reloadRecordingsCallback: PropTypes.func,
   renderViewRecordings: PropTypes.bool,
   width: PropTypes.string,
   backgroundColour: PropTypes.string,

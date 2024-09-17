@@ -72,7 +72,6 @@ const loadImportedFileToLocalStorage = async (userId, scoreEntry) => {
         if (!localStorage.getItem(matchingScore.fname)) {
           // Get the XML string
           const xmlString = matchingScore.fileData;
-
           // Store the XML string in local storage
           localStorage.setItem(matchingScore.fname, xmlString);
           console.log(
