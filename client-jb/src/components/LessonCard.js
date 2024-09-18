@@ -126,39 +126,7 @@ const LessonCard = ({
         state: { id, fileData: scoreEntry },
       });
     } else {
-      // Add file as entry in scoreData JSON if it's not already there (relevant for imports)
-      try {
-        const fileNameWithoutExtension = fileName
-          .split('.')
-          .slice(0, -1)
-          .join('.');
-
-        const newScoreEntry = {
-          _id: id,
-          fname: fileName,
-          level: level,
-          skill: skill,
-          title: fileNameWithoutExtension,
-        };
-
-        // Update the local storage scoreData with the file
-        storedScoreData.push(newScoreEntry);
-        localStorage.setItem('scoreData', JSON.stringify(storedScoreData));
-
-        // Load to local storage and navigate
-        try {
-          const currentUser = await getCurrentUser();
-          await loadImportedFileToLocalStorage(currentUser.id, newScoreEntry);
-
-          navigate(path, {
-            state: { id, fileData: newScoreEntry },
-          });
-        } catch (error) {
-          console.error('Error adding file to local storage:', error);
-        }
-      } catch (error) {
-        console.error('Error adding file entry to local scoreData:', error);
-      }
+      console.error('File not found in local ScoreData');
     }
   };
 

@@ -70,7 +70,7 @@ const ImportedScores = () => {
 
     if (importedScores && recordingList && favourites) {
       const formatted = importedScores.map((score, index) => {
-        const title = score.scoreTitle || score.fname.replace(/\.[^/.]+$/, '');
+        const title = score.scoreTitle || score.fname;
         const skill = score.skill || '';
         const level = score.level || 0;
         const isFavourite = favourites.some(
@@ -126,7 +126,10 @@ const ImportedScores = () => {
       </div>
       <div className="w-4/5 h-px bg-gray-200"></div>
       <div className="w-4/5 flex flex-wrap justify-center mt-4">
-        <XmlFileUploader refreshData={refreshData} />
+        <XmlFileUploader
+          refreshData={refreshData}
+          formattedScores={formattedScores}
+        />
         <div className="w-full mt-4 flex flex-wrap justify-center gap-4">
           {formattedScores.map((score, index) => (
             <LessonCard

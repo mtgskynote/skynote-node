@@ -110,8 +110,26 @@ const XmlFileUploader = ({ refreshData }) => {
         }
       );
 
-      console.log('File uploaded successfully:', response.data);
       alert('File uploaded successfully!');
+
+      // add new score to scoreData in local storage
+      const uploadedScore = response.data.score;
+      console.log('uploadedScore: ', uploadedScore);
+
+      const storedScoreData =
+        JSON.parse(localStorage.getItem('scoreData')) || [];
+
+      const newScoreEntry = {
+        _id: uploadedScore._id,
+        fname: uploadedScore.fname,
+        level: 0,
+        skill: uploadedScore.skill,
+        title: uploadedScore.scoreTitle,
+      };
+
+      // Update the local storage scoreData with the file
+      storedScoreData.push(newScoreEntry);
+      localStorage.setItem('scoreData', JSON.stringify(storedScoreData));
 
       setFile(null);
       setScoreTitle('');

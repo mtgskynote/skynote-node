@@ -203,9 +203,19 @@ const uploadXMLFile = async (req, res) => {
     // Remove the temporary file
     fs.unlinkSync(filePath);
 
-    res
-      .status(200)
-      .json({ msg: 'File uploaded and stored in MongoDB successfully' });
+    // Find the newly added score's to return (for _id, etc.)
+    const addedScore = user.importedScores.find(
+      (score) => score.fname === fileName && score.fileData === fileDataString
+    );
+
+    if (!addedScore) {
+      throw new Error('Newly added score not found.');
+    }
+
+    res.status(200).json({
+      msg: 'File uploaded and stored in MongoDB successfully',
+      score: addedScore,
+    });
   } catch (error) {
     console.error('Error uploading file:', error);
     res.status(500).json({ msg: 'Error uploading file' });

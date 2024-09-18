@@ -51,6 +51,8 @@ const SubLevelCard = ({
     return null;
   }
 
+  console.log('subLevelLessons: ', subLevelLessons);
+
   return (
     <div className="w-full" ref={containerRef}>
       <div
@@ -149,6 +151,7 @@ const SubLevelCard = ({
                     hoverBackgroundColour={'hover:bg-slate-200'}
                     textColour={'text-black'}
                     refreshData={refreshData}
+                    importedScore={lesson.level == 'Imported Scores'}
                   />
                 );
               })}
