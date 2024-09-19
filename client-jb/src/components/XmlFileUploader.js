@@ -6,7 +6,7 @@ import TextField from '@mui/material/TextField';
 import Button from '@mui/material/Button';
 import {
   addImportedScore,
-  updateScoreDataInLocalStorage,
+  addImportToLocalStorageScoreData,
 } from '../utils/usersMethods';
 
 const SUPPORTED_FILE_TYPES = ['.xml', '.mxl', '.musicxml'];
@@ -108,7 +108,7 @@ const XmlFileUploader = ({ refreshData }) => {
       alert('File uploaded successfully!');
 
       // Update local storage with the new score
-      updateScoreDataInLocalStorage(uploadedScore);
+      addImportToLocalStorageScoreData(uploadedScore);
 
       // Reset form
       setFile(null);

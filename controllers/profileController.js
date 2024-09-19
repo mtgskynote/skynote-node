@@ -193,7 +193,7 @@ const uploadXMLFile = async (req, res) => {
       fileData: fileDataString,
       fname: fileName,
       scoreTitle: scoreTitle || fileName,
-      skill: skill || '',
+      skill: skill || 'imports',
     };
 
     // Add the new score to the user's importedScores array
@@ -249,6 +249,36 @@ const removeXMLFile = async (req, res) => {
   }
 };
 
+const updateXMLFile = async (req, res) => {
+  try {
+    const { scoreId } = req.params;
+    const { title, skill } = req.body; // Both title and skill are optional
+
+    const user = await User.findOne({ 'importedScores._id': scoreId });
+
+    if (!user) {
+      return res.status(404).json({ message: 'User not found' });
+    }
+
+    const score = user.importedScores.id(scoreId);
+    if (score) {
+      if (title !== undefined) {
+        score.scoreTitle = title;
+      }
+      if (skill !== '' || skill !== undefined) {
+        score.skill = skill;
+      }
+      await user.save();
+      res.status(200).json(user);
+    } else {
+      res.status(404).json({ message: 'Score not found' });
+    }
+  } catch (error) {
+    console.error('Error updating uploaded file:', error);
+    res.status(500).json({ message: error.message });
+  }
+};
+
 // Endpoint handler to update recordingsPastWeek
 const updateRecordingsPastWeek = async (req, res) => {
   const userId = req.params.userId;
@@ -291,5 +321,6 @@ export {
   removeFavourite,
   uploadXMLFile,
   removeXMLFile,
+  updateXMLFile,
   updateRecordingsPastWeek,
 };

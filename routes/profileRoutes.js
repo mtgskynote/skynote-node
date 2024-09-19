@@ -6,6 +6,7 @@ import {
   removeFavourite,
   uploadXMLFile,
   removeXMLFile,
+  updateXMLFile,
   updateRecordingsPastWeek,
 } from '../controllers/profileController.js';
 import { authenticateUser } from '../middleware-jb/authenticateUser.js';
@@ -28,10 +29,10 @@ router
 router
   .route('/uploadXML/:userId')
   .post(authenticateUser, upload.single('file'), uploadXMLFile);
-
 router
   .route('/removeXMLFile/:userId/:importID')
   .delete(authenticateUser, removeXMLFile);
+router.route('/updateXMLFile/:scoreId').put(authenticateUser, updateXMLFile);
 router
   .route('/recordingsPastWeek/:userId')
   .post(authenticateUser, updateRecordingsPastWeek);

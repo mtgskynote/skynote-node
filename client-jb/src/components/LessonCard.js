@@ -8,9 +8,11 @@ import {
 } from '../utils/studentRecordingMethods';
 import {
   loadImportedFileToLocalStorage,
-  removeScoreFromLocalStorage,
+  deleteImportedFileFromLocalStorage,
+  removeScoreFromLocalStorageScoreData,
   deleteImportedScore,
-  editImportedScore,
+  editImportedScoreTitleInLocalStorageScoreData,
+  editImportedScoreInDataBase,
 } from '../utils/usersMethods';
 import {
   CardContent,
@@ -62,7 +64,8 @@ const LessonCard = ({
 
   const [showEditPopUpWindow, setShowEditPopUpWindow] = useState(false);
   const [showDeletePopUpWindow, setShowDeletePopUpWindow] = useState(false);
-  const [newImportName, setNewImportName] = useState(importName || '');
+  const [newImportTitle, setNewImportName] = useState(importName || '');
+  const [newSkill, setNewSkill] = useState(skill || '');
   const [showEditWarning, setShowEditWarning] = useState(false);
   const [showDeleteWarning, setShowDeleteWarning] = useState(false);
   const [showEditLoading, setShowEditLoading] = useState(false);
@@ -239,37 +242,34 @@ const LessonCard = ({
     }
   };
 
-  // Handle opening the delete recording popup window
-  const handleShowEditPopUpWindow = () => {
-    setShowEditPopUpWindow(true);
-  };
-
-  // Handle closing the delete recording popup window
-  const handleHideEditPopUpWindow = () => {
-    setShowEditPopUpWindow(false);
-    setTimeout(() => {
-      setNewImportName(importName);
-      setShowEditWarning(false);
-    }, 1000);
-  };
-
-  // Set new recording name whenever the user input changes
-  const handleRenameImport = (e) => {
-    setNewImportName(e.target.value);
-  };
-
   // Update recording name in the database
-  const handleUpdateImportName = () => {
-    if (newImportName !== '' && newImportName !== importName) {
-      setShowEditWarning(false);
+  const handleEditImportedScore = async () => {
+    if (newImportTitle !== '' && newSkill !== '' && newImportTitle !== title) {
       setShowEditLoading(true);
-      editImportedScore(id, newImportName).then(() => {
-        editImportedScore(importName, newImportName);
-        setNewImportName(newImportName);
-        setShowEditPopUpWindow(false);
-        setShowEditLoading(false);
-      });
-    } else if (newImportName === importName) {
+      setShowEditWarning(false);
+      // Prepare updates object
+      const updates = {};
+      if (newImportTitle !== undefined) updates.title = newImportTitle;
+      if (newSkill !== undefined) updates.skill = newSkill;
+
+      // Update in localStorage
+      editImportedScoreTitleInLocalStorageScoreData(
+        id,
+        newImportTitle,
+        newSkill
+      );
+
+      // Update in database
+      try {
+        await editImportedScoreInDataBase(id, updates);
+      } catch (error) {
+        console.error('Error updating score:', error);
+        setShowEditWarning(true);
+      }
+      setShowEditLoading(false);
+      setShowEditPopUpWindow(false);
+      if (refreshData) refreshData();
+    } else if (title === newImportTitle) {
       setShowEditWarning(false);
       setShowEditPopUpWindow(false);
     } else {
@@ -277,32 +277,27 @@ const LessonCard = ({
     }
   };
 
-  // Open the delete recording popup window
-  const handleShowDeletePopUpWindow = () => {
-    setShowDeletePopUpWindow(true);
-  };
-
-  // Close the delete recording popup window
-  const handleHideDeletePopUpWindow = () => {
-    setShowDeletePopUpWindow(false);
-  };
-
-  const handleDeleteImport = async () => {
+  const handleDeleteImportedScore = async () => {
     try {
       const result = await getCurrentUser();
       const userId = result.id;
 
       await deleteImportedScore(userId, id); // Axios delete call in usermethods
 
-      alert('Score deleted successfully!');
-
       // Update local storage by removing the score
-      removeScoreFromLocalStorage(id);
+      removeScoreFromLocalStorageScoreData(id);
+
+      // remove file from local storage if its there
+      deleteImportedFileFromLocalStorage(xml.split('/').pop());
 
       if (refreshData) refreshData();
+
+      setShowDeletePopUpWindow(false);
+      setShowDeleteLoading(false);
     } catch (error) {
       console.error('Error deleting score:', error);
-      alert('Error deleting score.');
+      setShowDeleteLoading(false);
+      setShowDeleteWarning(true);
     }
   };
 
@@ -370,24 +365,41 @@ const LessonCard = ({
                     </IconButton>
                   </Tooltip>
                 ) : null}
-                <FavouriteButton
-                  key={id}
-                  songId={id}
-                  singTitle={title}
-                  initialIsFavourite={isFavourite}
-                  refreshData={refreshData}
-                />
-                {renderImportButtons ? (
-                  <IconButton
-                    className="text-white"
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      handleShowDeletePopUpWindow();
-                    }}
-                  >
-                    <DeleteIcon className="text-3xl" />
-                  </IconButton>
-                ) : null}
+                {!renderImportButtons && (
+                  <FavouriteButton
+                    key={id}
+                    songId={id}
+                    singTitle={title}
+                    initialIsFavourite={isFavourite}
+                    refreshData={refreshData}
+                  />
+                )}
+                {renderImportButtons && (
+                  <div className="grid grid-cols-2 ml-auto">
+                    <Tooltip placement="bottom" title="Edit" arrow>
+                      <IconButton
+                        className="text-white"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          setShowEditPopUpWindow(true);
+                        }}
+                      >
+                        <EditIcon className="text-3xl" />
+                      </IconButton>
+                    </Tooltip>
+                    <Tooltip placement="bottom" title="Delete Score" arrow>
+                      <IconButton
+                        className="text-white"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          setShowDeletePopUpWindow(true);
+                        }}
+                      >
+                        <DeleteIcon className="text-3xl" />
+                      </IconButton>
+                    </Tooltip>
+                  </div>
+                )}
               </div>
             </div>
           </CardContent>
@@ -398,12 +410,15 @@ const LessonCard = ({
       <EditPopUp
         isOpen={showEditPopUpWindow}
         itemName={title}
-        newItemName={newImportName}
+        newItemName={newImportTitle}
         showLoading={showEditLoading}
         showWarning={showEditWarning}
         handleHidePopUp={() => setShowEditPopUpWindow(false)}
         handleInputChange={(e) => setNewImportName(e.target.value)}
-        handleConfirmEdit={handleUpdateImportName}
+        handleConfirmEdit={handleEditImportedScore}
+        secondaryItemName={skill}
+        newSecondaryItemName={newSkill}
+        handleSecondaryInputChange={(e) => setNewSkill(e.target.value)}
       />
 
       {/* Delete Pop-Up */}
@@ -413,7 +428,7 @@ const LessonCard = ({
         showLoading={showDeleteLoading}
         showWarning={showDeleteWarning}
         handleHidePopUp={() => setShowDeletePopUpWindow(false)}
-        handleConfirmDelete={handleDeleteImport}
+        handleConfirmDelete={handleDeleteImportedScore}
       />
 
       {/* Modal */}

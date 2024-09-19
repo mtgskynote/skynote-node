@@ -91,6 +91,19 @@ const loadImportedFileToLocalStorage = async (userId, scoreEntry) => {
   }
 };
 
+const deleteImportedFileFromLocalStorage = (fileName) => {
+  try {
+    if (localStorage.getItem(fileName)) {
+      localStorage.removeItem(fileName);
+      console.log(`File "${fileName}" removed from localStorage.`);
+    } else {
+      console.log(`File "${fileName}" does not exist in localStorage.`);
+    }
+  } catch (error) {
+    console.error('Error deleting imported file from localStorage:', error);
+  }
+};
+
 const addImportedScore = async (userId, formData, setUploadProgress) => {
   const response = await axios.post(
     `/api/v1/profile/uploadXML/${userId}`,
@@ -145,7 +158,7 @@ const updateScoreDataInLocalStorage = (uploadedScore) => {
 };
 
 // Remove a score from scoreData in local storage
-const removeScoreFromLocalStorage = (scoreId) => {
+const removeScoreFromScoreDataInLocalStorage = (scoreId) => {
   const storedScoreData = JSON.parse(localStorage.getItem('scoreData')) || [];
 
   const updatedScoreData = storedScoreData.filter(
@@ -155,7 +168,54 @@ const removeScoreFromLocalStorage = (scoreId) => {
   localStorage.setItem('scoreData', JSON.stringify(updatedScoreData));
 };
 
-const editImportedScore = async () => {};
+const editImportedScoreTitleInLocalStorageScoreData = (
+  scoreId,
+  newName,
+  newSkill
+) => {
+  const storedScoreData = JSON.parse(localStorage.getItem('scoreData')) || [];
+  const scoreIndex = storedScoreData.findIndex(
+    (score) => score._id === scoreId
+  );
+
+  // If the score is found, update its name and skill
+  if (scoreIndex !== -1) {
+    if (newName !== undefined || newName !== '') {
+      storedScoreData[scoreIndex].title = newName;
+    }
+    if (newSkill !== undefined || newSkill !== '') {
+      storedScoreData[scoreIndex].skill = newSkill;
+    }
+  } else {
+    console.error(`Score with ID ${scoreId} not found`);
+    return;
+  }
+
+  localStorage.setItem('scoreData', JSON.stringify(storedScoreData));
+};
+
+const editImportedScoreInDataBase = async (scoreId, updates) => {
+  try {
+    const response = await axios.put(
+      `/api/v1/profile/updateXMLFile/${scoreId}`,
+      updates, // Pass updates object, which can include title, skill, or both
+      {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem('token')}`,
+        },
+      }
+    );
+
+    if (response.status === 200) {
+      console.log('Score updated successfully in the database');
+    } else {
+      console.error('Failed to update score in the database');
+    }
+  } catch (error) {
+    console.error('Error updating score in the database:', error);
+    throw new Error('Failed to update score in the database');
+  }
+};
 
 const getRecordingsPastWeek = async (userId) => {
   try {
@@ -199,10 +259,12 @@ export {
   updateRecordingsPastWeek,
   getUserImportedScores,
   loadImportedFileToLocalStorage,
+  deleteImportedFileFromLocalStorage,
   addImportedScore,
   deleteImportedScore,
-  editImportedScore,
-  removeScoreFromLocalStorage,
-  updateScoreDataInLocalStorage,
+  editImportedScoreInDataBase,
+  editImportedScoreTitleInLocalStorageScoreData,
+  removeScoreFromScoreDataInLocalStorage as removeScoreFromLocalStorageScoreData,
+  updateScoreDataInLocalStorage as addImportToLocalStorageScoreData,
   getRecordingsPastWeek,
 };

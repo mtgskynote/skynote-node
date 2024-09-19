@@ -1,16 +1,20 @@
 import React from 'react';
+import PropTypes from 'prop-types'; // Import PropTypes
 import CircularProgress from '@material-ui/core/CircularProgress'; // Import based on your setup
 import PopUpWindow from './PopUpWindow'; // Assuming you have a PopUpWindow component
 
 const EditPopUp = ({
   isOpen,
-  itemName, // Name of the item to be edited
-  newItemName, // Current state of the input for editing the item name
-  showLoading, // Loading state during editing process
-  showWarning, // Warning for invalid input
-  handleHidePopUp, // Handler to close/cancel the popup
-  handleInputChange, // Handler for input change
-  handleConfirmEdit, // Handler for confirming the edit action
+  itemName,
+  newItemName,
+  showLoading,
+  showWarning,
+  handleHidePopUp,
+  handleInputChange,
+  handleConfirmEdit,
+  secondaryItemName,
+  secondaryItemValue,
+  handleSecondaryInputChange,
 }) => {
   return (
     <PopUpWindow isOpen={isOpen}>
@@ -22,7 +26,7 @@ const EditPopUp = ({
         )}
         <div className={`mb-4 ${showLoading ? 'opacity-50' : ''}`}>
           <label className="block text-gray-700 mb-2" htmlFor="itemName">
-            Edit {itemName}:
+            Edit title:
           </label>
           <input
             type="text"
@@ -34,8 +38,26 @@ const EditPopUp = ({
           />
           {showWarning && (
             <div className="bg-red-100 text-red-700 text-sm py-1 px-2 mb-4 rounded-lg flex justify-center items-center transition duration-300 ease-in-out">
-              <p className="m-0">{itemName} cannot be empty</p>
+              <p className="m-0">Field cannot be empty</p>
             </div>
+          )}
+          {secondaryItemName && (
+            <>
+              <label
+                className="block text-gray-700 mb-2"
+                htmlFor="secondaryItemName"
+              >
+                Edit skill:
+              </label>
+              <input
+                type="text"
+                id="secondaryItemName"
+                value={secondaryItemValue}
+                onChange={handleSecondaryInputChange}
+                className="w-full px-3 py-2 mb-1 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                disabled={showLoading}
+              />
+            </>
           )}
         </div>
         <div className="flex justify-between space-x-2">
@@ -57,6 +79,20 @@ const EditPopUp = ({
       </div>
     </PopUpWindow>
   );
+};
+
+EditPopUp.propTypes = {
+  isOpen: PropTypes.bool.isRequired,
+  itemName: PropTypes.string,
+  newItemName: PropTypes.string.isRequired,
+  showLoading: PropTypes.bool.isRequired,
+  showWarning: PropTypes.bool.isRequired,
+  handleHidePopUp: PropTypes.func.isRequired,
+  handleInputChange: PropTypes.func.isRequired,
+  handleConfirmEdit: PropTypes.func.isRequired,
+  secondaryItemName: PropTypes.string,
+  secondaryItemValue: PropTypes.string,
+  handleSecondaryInputChange: PropTypes.func,
 };
 
 export default EditPopUp;
