@@ -1,10 +1,13 @@
 import React, { useState, useRef } from 'react';
-import axios from 'axios';
 import PropTypes from 'prop-types';
 import { useAppContext } from '../context/appContext';
 import UploadIcon from '@mui/icons-material/CloudUpload';
 import TextField from '@mui/material/TextField';
 import Button from '@mui/material/Button';
+import {
+  addImportedScore,
+  updateScoreDataInLocalStorage,
+} from '../utils/usersMethods';
 
 const SUPPORTED_FILE_TYPES = ['.xml', '.mxl', '.musicxml'];
 
@@ -93,44 +96,21 @@ const XmlFileUploader = ({ refreshData }) => {
       formData.append('skill', skill);
 
       setUploadError(null);
-      const response = await axios.post(
-        `/api/v1/profile/uploadXML/${userId}`,
+
+      // Call the method to upload the file (axios request)
+      const response = await addImportedScore(
+        userId,
         formData,
-        {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem('token')}`,
-            'Content-Type': 'multipart/form-data',
-          },
-          onUploadProgress: (progressEvent) => {
-            const progress = Math.round(
-              (progressEvent.loaded * 100) / progressEvent.total
-            );
-            setUploadProgress(progress);
-          },
-        }
+        setUploadProgress
       );
+      const uploadedScore = response.data.score;
 
       alert('File uploaded successfully!');
 
-      // add new score to scoreData in local storage
-      const uploadedScore = response.data.score;
-      console.log('uploadedScore: ', uploadedScore);
+      // Update local storage with the new score
+      updateScoreDataInLocalStorage(uploadedScore);
 
-      const storedScoreData =
-        JSON.parse(localStorage.getItem('scoreData')) || [];
-
-      const newScoreEntry = {
-        _id: uploadedScore._id,
-        fname: uploadedScore.fname,
-        level: 0,
-        skill: uploadedScore.skill,
-        title: uploadedScore.scoreTitle,
-      };
-
-      // Update the local storage scoreData with the file
-      storedScoreData.push(newScoreEntry);
-      localStorage.setItem('scoreData', JSON.stringify(storedScoreData));
-
+      // Reset form
       setFile(null);
       setScoreTitle('');
       setFileName('');

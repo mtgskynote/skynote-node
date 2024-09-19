@@ -6,7 +6,12 @@ import {
   getManyRecordings,
   deleteRecording,
 } from '../utils/studentRecordingMethods';
-import { loadImportedFileToLocalStorage } from '../utils/usersMethods';
+import {
+  loadImportedFileToLocalStorage,
+  removeScoreFromLocalStorage,
+  deleteImportedScore,
+  editImportedScore,
+} from '../utils/usersMethods';
 import {
   CardContent,
   Typography,
@@ -15,11 +20,15 @@ import {
   Tooltip,
   IconButton,
 } from '@mui/material';
+import DeleteIcon from '@mui/icons-material/Delete';
+import EditIcon from '@mui/icons-material/Edit';
 import { CloseRounded as CloseRoundedIcon } from '@mui/icons-material';
 import AudioPlayerIcon from './AudioPlayerIcon';
 import StarRating from './StarRating';
 import QueueMusicIcon from '@mui/icons-material/QueueMusic';
 import FavouriteButton from './FavouriteButton';
+import EditPopUp from './EditPopUp';
+import DeletePopUp from './DeletePopUp';
 
 const LessonCard = ({
   title,
@@ -38,6 +47,8 @@ const LessonCard = ({
   textColour,
   refreshData,
   importedScore,
+  importName,
+  renderImportButtons,
 }) => {
   const navigate = useNavigate();
   const [allRecordings, setAllRecordings] = useState(recordings);
@@ -48,6 +59,15 @@ const LessonCard = ({
   const [deletionStatus, setDeletionStatus] = useState(null);
   const [deletedRecordingIds, setDeletedRecordingIds] = useState([]);
   const [playingAudioId, setPlayingAudioId] = useState(null);
+
+  const [showEditPopUpWindow, setShowEditPopUpWindow] = useState(false);
+  const [showDeletePopUpWindow, setShowDeletePopUpWindow] = useState(false);
+  const [newImportName, setNewImportName] = useState(importName || '');
+  const [showEditWarning, setShowEditWarning] = useState(false);
+  const [showDeleteWarning, setShowDeleteWarning] = useState(false);
+  const [showEditLoading, setShowEditLoading] = useState(false);
+  const [showDeleteLoading, setShowDeleteLoading] = useState(false);
+
   const { getCurrentUser } = useAppContext();
 
   const modalRef = useRef(null);
@@ -219,6 +239,73 @@ const LessonCard = ({
     }
   };
 
+  // Handle opening the delete recording popup window
+  const handleShowEditPopUpWindow = () => {
+    setShowEditPopUpWindow(true);
+  };
+
+  // Handle closing the delete recording popup window
+  const handleHideEditPopUpWindow = () => {
+    setShowEditPopUpWindow(false);
+    setTimeout(() => {
+      setNewImportName(importName);
+      setShowEditWarning(false);
+    }, 1000);
+  };
+
+  // Set new recording name whenever the user input changes
+  const handleRenameImport = (e) => {
+    setNewImportName(e.target.value);
+  };
+
+  // Update recording name in the database
+  const handleUpdateImportName = () => {
+    if (newImportName !== '' && newImportName !== importName) {
+      setShowEditWarning(false);
+      setShowEditLoading(true);
+      editImportedScore(id, newImportName).then(() => {
+        editImportedScore(importName, newImportName);
+        setNewImportName(newImportName);
+        setShowEditPopUpWindow(false);
+        setShowEditLoading(false);
+      });
+    } else if (newImportName === importName) {
+      setShowEditWarning(false);
+      setShowEditPopUpWindow(false);
+    } else {
+      setShowEditWarning(true);
+    }
+  };
+
+  // Open the delete recording popup window
+  const handleShowDeletePopUpWindow = () => {
+    setShowDeletePopUpWindow(true);
+  };
+
+  // Close the delete recording popup window
+  const handleHideDeletePopUpWindow = () => {
+    setShowDeletePopUpWindow(false);
+  };
+
+  const handleDeleteImport = async () => {
+    try {
+      const result = await getCurrentUser();
+      const userId = result.id;
+
+      await deleteImportedScore(userId, id); // Axios delete call in usermethods
+
+      alert('Score deleted successfully!');
+
+      // Update local storage by removing the score
+      removeScoreFromLocalStorage(id);
+
+      if (refreshData) refreshData();
+    } catch (error) {
+      console.error('Error deleting score:', error);
+      alert('Error deleting score.');
+    }
+  };
+
   return (
     <div>
       <div className="flex">
@@ -243,11 +330,13 @@ const LessonCard = ({
                 </Typography>
               </div>
               <div></div>
-              <div
-                className={`sm:text-xs md:text-xs lg:text-xs xl:text-sm font-extralight p-1 rounded align-right`}
-              >
-                Level {level}
-              </div>
+              {!importedScore && (
+                <div
+                  className={`sm:text-xs md:text-xs lg:text-xs xl:text-sm font-extralight p-1 rounded align-right`}
+                >
+                  Level {level}
+                </div>
+              )}
             </div>
 
             <div className="whitespace-normal w-fit">
@@ -288,11 +377,44 @@ const LessonCard = ({
                   initialIsFavourite={isFavourite}
                   refreshData={refreshData}
                 />
+                {renderImportButtons ? (
+                  <IconButton
+                    className="text-white"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      handleShowDeletePopUpWindow();
+                    }}
+                  >
+                    <DeleteIcon className="text-3xl" />
+                  </IconButton>
+                ) : null}
               </div>
             </div>
           </CardContent>
         </div>
       </div>
+
+      {/* Edit Import Pop-Up */}
+      <EditPopUp
+        isOpen={showEditPopUpWindow}
+        itemName={title}
+        newItemName={newImportName}
+        showLoading={showEditLoading}
+        showWarning={showEditWarning}
+        handleHidePopUp={() => setShowEditPopUpWindow(false)}
+        handleInputChange={(e) => setNewImportName(e.target.value)}
+        handleConfirmEdit={handleUpdateImportName}
+      />
+
+      {/* Delete Pop-Up */}
+      <DeletePopUp
+        isOpen={showDeletePopUpWindow}
+        itemName={title}
+        showLoading={showDeleteLoading}
+        showWarning={showDeleteWarning}
+        handleHidePopUp={() => setShowDeletePopUpWindow(false)}
+        handleConfirmDelete={handleDeleteImport}
+      />
 
       {/* Modal */}
       <div
@@ -439,6 +561,8 @@ LessonCard.propTypes = {
   textColour: PropTypes.string,
   refreshData: PropTypes.func.isRequired,
   importedScore: PropTypes.bool,
+  importName: PropTypes.string,
+  renderImportButtons: PropTypes.bool,
 };
 
 export default LessonCard;

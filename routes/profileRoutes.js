@@ -29,7 +29,9 @@ router
   .route('/uploadXML/:userId')
   .post(authenticateUser, upload.single('file'), uploadXMLFile);
 
-router.route('/removeXMLFile/:userId').post(authenticateUser, removeXMLFile);
+router
+  .route('/removeXMLFile/:userId/:importID')
+  .delete(authenticateUser, removeXMLFile);
 router
   .route('/recordingsPastWeek/:userId')
   .post(authenticateUser, updateRecordingsPastWeek);

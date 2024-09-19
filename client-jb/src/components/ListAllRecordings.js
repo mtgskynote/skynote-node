@@ -140,6 +140,7 @@ const ListAllRecordings = () => {
       {Object.keys(recordingsByScore).map((scoreTitle, index) => {
         const scoreObject = localData.find((item) => item.title === scoreTitle);
         const recordings = recordingsByScore[scoreTitle];
+        console.log('scoreObject: ', scoreObject);
         return (
           <div key={index}>
             <ListRecordingsHeader

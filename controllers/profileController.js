@@ -223,31 +223,29 @@ const uploadXMLFile = async (req, res) => {
 };
 
 const removeXMLFile = async (req, res) => {
-  const { userId } = req.params;
-  const { fileId } = req.body; // Expect fileId in the request body
-
-  // Validate userId
-  if (!mongoose.Types.ObjectId.isValid(userId)) {
-    return res
-      .status(StatusCodes.BAD_REQUEST)
-      .json({ error: 'Invalid userId format' });
-  }
-
-  if (!mongoose.Types.ObjectId.isValid(fileId)) {
-    return res
-      .status(StatusCodes.BAD_REQUEST)
-      .json({ error: 'Invalid fileId format' });
-  }
-
   try {
+    const { userId, importID } = req.params; // Make sure parameter names match
     const user = await User.findById(userId);
+
+    console.log(
+      `Removing uploaded file: userId=${userId}, importID=${importID}`
+    );
+
     if (!user) {
-      return res
-        .status(StatusCodes.NOT_FOUND)
-        .json({ message: 'User not found' });
+      return res.status(404).json({ message: 'User not found' });
     }
-  } catch {
-    console.log('Error');
+
+    user.importedScores = user.importedScores.filter(
+      (score) => !score._id.equals(importID)
+    );
+    await user.save();
+
+    res.status(StatusCodes.OK).json(user);
+  } catch (error) {
+    console.error('Error removing uploaded file:', error);
+    res
+      .status(StatusCodes.INTERNAL_SERVER_ERROR)
+      .json({ message: error.message });
   }
 };
 

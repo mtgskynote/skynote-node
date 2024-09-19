@@ -48,6 +48,7 @@ async function getAllRecData(studentId) {
 */
 async function putRecording(recordingObject) {
   try {
+    console.log('recordingObject', recordingObject);
     // foo, "V_001_Cuerdas_Al_Aire_1_Suelta_A"
     const response = await axios.put(
       '/api/v1/recordings/putRecording',

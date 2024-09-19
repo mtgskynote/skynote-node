@@ -91,6 +91,72 @@ const loadImportedFileToLocalStorage = async (userId, scoreEntry) => {
   }
 };
 
+const addImportedScore = async (userId, formData, setUploadProgress) => {
+  const response = await axios.post(
+    `/api/v1/profile/uploadXML/${userId}`,
+    formData,
+    {
+      headers: {
+        Authorization: `Bearer ${localStorage.getItem('token')}`,
+        'Content-Type': 'multipart/form-data',
+      },
+      onUploadProgress: (progressEvent) => {
+        const progress = Math.round(
+          (progressEvent.loaded * 100) / progressEvent.total
+        );
+        setUploadProgress(progress);
+      },
+    }
+  );
+  return response;
+};
+
+const deleteImportedScore = async (userId, scoreId) => {
+  try {
+    const response = await axios.delete(
+      `/api/v1/profile/removeXMLFile/${userId}/${scoreId}`,
+      {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem('token')}`,
+        },
+      }
+    );
+    return response.data;
+  } catch (error) {
+    console.error('Error deleting score:', error);
+    throw new Error('Failed to delete score');
+  }
+};
+
+// Updates local storage by adding a new score to scoreData
+const updateScoreDataInLocalStorage = (uploadedScore) => {
+  const storedScoreData = JSON.parse(localStorage.getItem('scoreData')) || [];
+
+  const newScoreEntry = {
+    _id: uploadedScore._id,
+    fname: uploadedScore.fname,
+    level: 0,
+    skill: uploadedScore.skill,
+    title: uploadedScore.scoreTitle,
+  };
+
+  storedScoreData.push(newScoreEntry);
+  localStorage.setItem('scoreData', JSON.stringify(storedScoreData));
+};
+
+// Remove a score from scoreData in local storage
+const removeScoreFromLocalStorage = (scoreId) => {
+  const storedScoreData = JSON.parse(localStorage.getItem('scoreData')) || [];
+
+  const updatedScoreData = storedScoreData.filter(
+    (score) => score._id !== scoreId
+  );
+
+  localStorage.setItem('scoreData', JSON.stringify(updatedScoreData));
+};
+
+const editImportedScore = async () => {};
+
 const getRecordingsPastWeek = async (userId) => {
   try {
     const response = await axios.get('/api/v1/auth/getProfileData', {
@@ -133,5 +199,10 @@ export {
   updateRecordingsPastWeek,
   getUserImportedScores,
   loadImportedFileToLocalStorage,
+  addImportedScore,
+  deleteImportedScore,
+  editImportedScore,
+  removeScoreFromLocalStorage,
+  updateScoreDataInLocalStorage,
   getRecordingsPastWeek,
 };

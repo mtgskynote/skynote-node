@@ -51,8 +51,6 @@ const SubLevelCard = ({
     return null;
   }
 
-  console.log('subLevelLessons: ', subLevelLessons);
-
   return (
     <div className="w-full" ref={containerRef}>
       <div

@@ -146,6 +146,8 @@ const ImportedScores = () => {
               renderViewRecordings={false}
               refreshData={refreshData}
               importedScore={true}
+              importName={score.fname}
+              renderImportButtons={true}
             />
           ))}
         </div>
