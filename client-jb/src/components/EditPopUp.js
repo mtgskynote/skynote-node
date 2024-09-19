@@ -5,7 +5,6 @@ import PopUpWindow from './PopUpWindow'; // Assuming you have a PopUpWindow comp
 
 const EditPopUp = ({
   isOpen,
-  itemName,
   newItemName,
   showLoading,
   showWarning,

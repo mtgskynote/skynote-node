@@ -1,14 +1,15 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 import CircularProgress from '@material-ui/core/CircularProgress'; // Import based on your setup
 import PopUpWindow from './PopUpWindow'; // Assuming you have a PopUpWindow component
 
 const DeletePopUp = ({
   isOpen,
-  itemName, // Name of the item to be deleted
-  showLoading, // Loading state during deletion process
-  showWarning, // Warning message for delete failure
-  handleHidePopUp, // Handler to close/cancel the popup
-  handleConfirmDelete, // Handler for confirming the delete action
+  itemName,
+  showLoading,
+  showWarning,
+  handleHidePopUp,
+  handleConfirmDelete,
 }) => {
   return (
     <PopUpWindow isOpen={isOpen}>
@@ -50,6 +51,15 @@ const DeletePopUp = ({
       </div>
     </PopUpWindow>
   );
+};
+
+DeletePopUp.propTypes = {
+  isOpen: PropTypes.bool.isRequired,
+  itemName: PropTypes.string.isRequired,
+  showLoading: PropTypes.bool.isRequired,
+  showWarning: PropTypes.bool.isRequired,
+  handleHidePopUp: PropTypes.func.isRequired,
+  handleConfirmDelete: PropTypes.func.isRequired,
 };
 
 export default DeletePopUp;
