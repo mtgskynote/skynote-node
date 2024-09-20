@@ -6,6 +6,7 @@ import RecordingCard from './RecordingCard.js';
 import LoadingScreen from './LoadingScreen.js';
 import ListRecordingsHeader from './ListRecordingsHeader.js';
 import BackButton from './BackButton.js';
+import { CoPresentSharp } from '@mui/icons-material';
 
 const ListAllRecordings = () => {
   const { getCurrentUser } = useAppContext();
@@ -140,7 +141,6 @@ const ListAllRecordings = () => {
       {Object.keys(recordingsByScore).map((scoreTitle, index) => {
         const scoreObject = localData.find((item) => item.title === scoreTitle);
         const recordings = recordingsByScore[scoreTitle];
-        console.log('scoreObject: ', scoreObject);
         return (
           <div key={index}>
             <ListRecordingsHeader
@@ -166,6 +166,7 @@ const ListAllRecordings = () => {
                       xml={scoreObject.fname}
                       onEditRecording={handleEditRecording}
                       onDeleteRecording={handleDeleteRecording}
+                      importedScore={scoreObject.level === 0}
                     />
                   );
                 })}

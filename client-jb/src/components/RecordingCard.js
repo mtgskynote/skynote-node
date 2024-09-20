@@ -5,6 +5,7 @@ import {
   deleteRecording,
   editRecording,
 } from '../utils/studentRecordingMethods';
+import { loadImportedFileToLocalStorage } from '../utils/usersMethods';
 import {
   CardContent,
   Typography,
@@ -16,6 +17,7 @@ import DeleteIcon from '@mui/icons-material/Delete';
 import EditIcon from '@mui/icons-material/Edit';
 import StarRating from './StarRating';
 import PopUpWindow from './PopUpWindow';
+import { useAppContext } from '../context/appContext';
 
 const RecordingCard = ({
   recordingName,
@@ -30,6 +32,7 @@ const RecordingCard = ({
   hoverBackgroundColour,
   textColour,
   onEditRecording,
+  importedScore,
 }) => {
   const [showEditPopUpWindow, setShowEditPopUpWindow] = useState(false);
   const [showDeletePopUpWindow, setShowDeletePopUpWindow] = useState(false);
@@ -39,6 +42,7 @@ const RecordingCard = ({
   const [showEditLoading, setShowEditLoading] = useState(false);
   const [showDeleteLoading, setShowDeleteLoading] = useState(false);
   const navigate = useNavigate();
+  const { getCurrentUser } = useAppContext();
 
   // Set defaults
   const xSize = width ? width : '290px';
@@ -48,11 +52,35 @@ const RecordingCard = ({
     : 'hover:bg-blue-500';
   const tColour = textColour ? textColour : 'text-white';
 
-  console.log('xml in:', xml);
-
   // Navigate to the ListRecordings route with the provided xml and recordingId
   const handleViewRecording = async () => {
-    navigate(`/ListRecordings/${xml}`, { state: { id: recordingId } });
+    if (!xml || typeof xml !== 'string') {
+      console.error('Invalid xml path:', xml);
+      return;
+    }
+
+    const basePath = '/ListRecordings/';
+    let path = xml;
+
+    if (!path.startsWith(basePath)) {
+      path = `${basePath}${path}`;
+    }
+
+    const fileName = path.replace(basePath, '');
+
+    // Find the relevant recording entry in local storage
+    const storedScoreData = JSON.parse(localStorage.getItem('scoreData')) || [];
+    const scoreEntry = storedScoreData.find((item) => item.fname === fileName);
+    console.log('importedScore: ', importedScore);
+    if (scoreEntry) {
+      if (importedScore) {
+        const currentUser = await getCurrentUser();
+        await loadImportedFileToLocalStorage(currentUser.id, scoreEntry);
+      }
+      navigate(`/ListRecordings/${xml}`, { state: { id: recordingId } });
+    } else {
+      console.error('File not found in local ScoreData');
+    }
   };
 
   // Handle opening the delete recording popup window
