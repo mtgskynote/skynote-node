@@ -149,6 +149,7 @@ const SubLevelCard = ({
                     hoverBackgroundColour={'hover:bg-slate-200'}
                     textColour={'text-black'}
                     refreshData={refreshData}
+                    importedScore={lesson.level == 'Imported Scores'}
                   />
                 );
               })}

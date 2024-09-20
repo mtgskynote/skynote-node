@@ -134,6 +134,7 @@ const ListRecordings = () => {
                 xml={scoreXml}
                 onDeleteRecording={handleDeleteRecording}
                 onEditRecording={handleEditRecording}
+                importedScore={scoreLevel === 0}
               />
             </div>
           ))}

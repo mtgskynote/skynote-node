@@ -83,6 +83,26 @@ const UserSchema = new mongoose.Schema({
       },
     },
   ],
+  importedScores: [
+    {
+      fileData: {
+        type: String,
+        required: true,
+      },
+      fname: {
+        type: String,
+        required: true,
+      },
+      scoreTitle: {
+        type: String,
+        required: true,
+      },
+      skill: {
+        type: String,
+        default: '',
+      },
+    },
+  ],
   recordingsPastWeek: {
     type: [Number],
     validate: {
