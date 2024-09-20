@@ -321,6 +321,7 @@ RecordingCard.propTypes = {
   hoverBackgroundColour: PropTypes.string,
   textColour: PropTypes.string,
   onEditRecording: PropTypes.func.isRequired,
+  importedScore: PropTypes.bool,
 };
 
 export default RecordingCard;

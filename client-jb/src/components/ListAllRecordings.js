@@ -6,7 +6,6 @@ import RecordingCard from './RecordingCard.js';
 import LoadingScreen from './LoadingScreen.js';
 import ListRecordingsHeader from './ListRecordingsHeader.js';
 import BackButton from './BackButton.js';
-import { CoPresentSharp } from '@mui/icons-material';
 
 const ListAllRecordings = () => {
   const { getCurrentUser } = useAppContext();
