@@ -2,6 +2,10 @@ import User from '../models/User.js';
 import { StatusCodes } from 'http-status-codes';
 import { BadRequestError, NotFoundError } from '../errors/index.js';
 import mongoose from 'mongoose';
+import path from 'path';
+import fs from 'fs';
+import AdmZip from 'adm-zip';
+import { parseStringPromise } from 'xml2js'; // For XML parsing
 
 // Update user email and name when editing the profile
 const updateProfileData = async (req, res) => {
@@ -127,6 +131,154 @@ const removeFavourite = async (req, res) => {
   }
 };
 
+const uploadXMLFile = async (req, res) => {
+  try {
+    const { userId } = req.params;
+    const { fileName, scoreTitle, skill } = req.body;
+
+    console.log(`Adding XML file: userId=${userId}, fileId=${fileName}`);
+
+    // Find the user
+    const user = await User.findById(userId);
+    if (!user) {
+      return res.status(404).json({ msg: 'User not found' });
+    }
+
+    // Ensure a file was uploaded
+    if (!req.file) {
+      return res.status(400).json({ msg: 'No file uploaded' });
+    }
+
+    // Get the file path from the uploaded file
+    const filePath = req.file.path;
+    console.log(filePath);
+    const fileExtension = path.extname(fileName).toLowerCase();
+
+    let fileDataString;
+
+    if (fileExtension === '.mxl') {
+      // Uncompress the .mxl file to get the container XML
+      const zip = new AdmZip(filePath);
+      const zipEntries = zip.getEntries();
+      const containerEntry = zipEntries.find((entry) =>
+        entry.entryName.endsWith('.xml')
+      );
+
+      if (!containerEntry) {
+        throw new Error('No container XML file found in the .mxl archive');
+      }
+
+      const containerXml = containerEntry.getData().toString('utf8');
+
+      // Parse the container XML to find the path of the MusicXML file
+      const containerData = await parseStringPromise(containerXml);
+      const rootFilePath =
+        containerData.container.rootfiles[0].rootfile[0]['$']['full-path'];
+
+      // Find the actual MusicXML file in the archive
+      const xmlEntry = zipEntries.find(
+        (entry) => entry.entryName === rootFilePath
+      );
+      if (!xmlEntry) {
+        throw new Error('No MusicXML file found in the .mxl archive');
+      }
+
+      fileDataString = xmlEntry.getData().toString('utf8');
+    } else {
+      // Read the file directly if it's not .mxl
+      fileDataString = fs.readFileSync(filePath, 'utf8');
+    }
+
+    const newScore = {
+      fileData: fileDataString,
+      fname: fileName,
+      scoreTitle: scoreTitle || fileName,
+      skill: skill || 'imports',
+    };
+
+    // Add the new score to the user's importedScores array
+    user.importedScores.push(newScore);
+    await user.save();
+
+    // Remove the temporary file
+    fs.unlinkSync(filePath);
+
+    // Find the newly added score's to return (for _id, etc.)
+    const addedScore = user.importedScores.find(
+      (score) => score.fname === fileName && score.fileData === fileDataString
+    );
+
+    if (!addedScore) {
+      throw new Error('Newly added score not found.');
+    }
+
+    res.status(200).json({
+      msg: 'File uploaded and stored in MongoDB successfully',
+      score: addedScore,
+    });
+  } catch (error) {
+    console.error('Error uploading file:', error);
+    res.status(500).json({ msg: 'Error uploading file' });
+  }
+};
+
+const removeXMLFile = async (req, res) => {
+  try {
+    const { userId, importID } = req.params; // Make sure parameter names match
+    const user = await User.findById(userId);
+
+    console.log(
+      `Removing uploaded file: userId=${userId}, importID=${importID}`
+    );
+
+    if (!user) {
+      return res.status(404).json({ message: 'User not found' });
+    }
+
+    user.importedScores = user.importedScores.filter(
+      (score) => !score._id.equals(importID)
+    );
+    await user.save();
+
+    res.status(StatusCodes.OK).json(user);
+  } catch (error) {
+    console.error('Error removing uploaded file:', error);
+    res
+      .status(StatusCodes.INTERNAL_SERVER_ERROR)
+      .json({ message: error.message });
+  }
+};
+
+const updateXMLFile = async (req, res) => {
+  try {
+    const { scoreId } = req.params;
+    const { title, skill } = req.body; // Both title and skill are optional
+
+    const user = await User.findOne({ 'importedScores._id': scoreId });
+
+    if (!user) {
+      return res.status(404).json({ message: 'User not found' });
+    }
+
+    const score = user.importedScores.id(scoreId);
+    if (score) {
+      if (title !== undefined) {
+        score.scoreTitle = title;
+      }
+      if (skill !== '' || skill !== undefined) {
+        score.skill = skill;
+      }
+      await user.save();
+      res.status(200).json(user);
+    } else {
+      res.status(404).json({ message: 'Score not found' });
+    }
+  } catch (error) {
+    console.error('Error updating uploaded file:', error);
+    res.status(500).json({ message: error.message });
+  }
+};
+
 // Endpoint handler to update recordingsPastWeek
 const updateRecordingsPastWeek = async (req, res) => {
   const userId = req.params.userId;
@@ -167,5 +319,8 @@ export {
   updateProfileData,
   addFavourite,
   removeFavourite,
+  uploadXMLFile,
+  removeXMLFile,
+  updateXMLFile,
   updateRecordingsPastWeek,
 };

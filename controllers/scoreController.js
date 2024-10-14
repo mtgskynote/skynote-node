@@ -130,6 +130,7 @@ const getAllScoreData = async (req, res) => {
 const getAllScoreData2 = async (req, res) => {
   try {
     const allScores = await xmlScores.find();
+    console.log('BOOPBOOP');
     res.status(StatusCodes.OK).json(allScores);
   } catch (error) {
     console.error('Error fetching data:', error);

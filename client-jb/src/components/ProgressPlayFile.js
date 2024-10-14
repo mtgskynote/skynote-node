@@ -20,6 +20,7 @@ import {
   stopMicrophone,
   isMicrophoneActive,
 } from '../context/audioContext';
+import LoadingScreen from './LoadingScreen.js';
 // @ts-ignore
 window.Buffer = Buffer;
 
@@ -29,6 +30,7 @@ const ProgressPlayFile = () => {
   const { getCurrentUser } = useAppContext();
   const [userData, setUserData] = useState(null);
   const params = useParams();
+  const [xmlFile, setXmlFile] = useState(null);
 
   // OSMD playback and cursor references
   const cursorRef = useRef(null);
@@ -250,6 +252,43 @@ const ProgressPlayFile = () => {
   };
 
   useEffect(() => {
+    const checkAndSetFile = async () => {
+      try {
+        const fileUrl = `${folderBasePath}/${params.files}.xml`;
+
+        // Fetch the file from the server
+        const response = await fetch(fileUrl);
+        const xmlFileData = await response.text();
+
+        // Check if the file is valid XML (file found in folderBasePath)
+        if (xmlFileData.startsWith('<?xml')) {
+          console.log('File found at folderBasePath:', fileUrl);
+          setXmlFile(fileUrl);
+        } else {
+          const localStorageFile = localStorage.getItem(params.files);
+
+          if (localStorageFile) {
+            // Create a Blob URL from the XML data
+            const blob = new Blob([localStorageFile], {
+              type: 'application/xml',
+            });
+            const blobUrl = URL.createObjectURL(blob);
+            setXmlFile(blobUrl);
+          } else {
+            console.error('File not found on server or in localStorage.');
+            setXmlFile('');
+          }
+        }
+      } catch (error) {
+        console.error('Error fetching file:', error);
+        setXmlFile('');
+      }
+    };
+
+    checkAndSetFile();
+  }, [folderBasePath, params.files]);
+
+  useEffect(() => {
     const newAudioStreamer = makeAudioStreamer(handlePitchCallback, null, aCb);
     setAudioStreamer(newAudioStreamer);
   }, []);
@@ -268,22 +307,28 @@ const ProgressPlayFile = () => {
       try {
         const response = await fetch(`${folderBasePath}/${params.files}.xml`);
         const xmlFileData = await response.text();
-        const movementTitle = Array.from(
-          new XMLParser()
-            .parseFromString(xmlFileData)
-            .getElementsByTagName('movement-title')
-        );
-        if (movementTitle.length > 0) {
-          setScoreTitle(movementTitle[0].value);
+        // Check if the file was actually found (if not, html is found)
+        if (xmlFileData.startsWith('<?xml')) {
+          const movementTitle = Array.from(
+            new XMLParser()
+              .parseFromString(xmlFileData)
+              .getElementsByTagName('movement-title')
+          );
+          if (movementTitle.length > 0) {
+            setScoreTitle(movementTitle[0].value);
+          } else {
+            setScoreTitle('untitledScore');
+          }
         } else {
-          setScoreTitle('untitledScore');
+          // TO DO: refactor requestScoreTitle in ProgressPlayFile so that it takes the same name as the LessonCard does
+          setScoreTitle(params.files.split('.').slice(0, -1).join('.'));
         }
       } catch (error) {
         console.log(error.message);
       }
     };
     requestScoreTitle();
-  }, []);
+  }, [params.files]);
 
   // Ask user for microphone permissions so that the application can record audio
   useEffect(() => {
@@ -643,12 +688,16 @@ const ProgressPlayFile = () => {
     };
   }, []);
 
+  if (!xmlFile) {
+    return <LoadingScreen />;
+  }
+
   return (
     <HotKeys keyMap={keyMap} handlers={handlers}>
       <div className="flex flex-col min-h-screen justify-between mb-40">
         <div className="relative">
           <OpenSheetMusicDisplay
-            file={`${folderBasePath}/${params.files}.xml`}
+            file={xmlFile}
             autoResize={true}
             cursorRef={cursorRef}
             playbackRef={playbackRef}

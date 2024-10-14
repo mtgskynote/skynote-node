@@ -24,6 +24,7 @@ const ProgressPlayFileVisual = () => {
   const params = useParams();
 
   const [songFile, setSongFile] = useState(null);
+  const [xmlFile, setXmlFile] = useState(null);
   const pauseTimeRef = useRef(0);
   const startTimeRef = useRef(0);
 
@@ -202,7 +203,9 @@ const ProgressPlayFileVisual = () => {
       // Transform data type and play
       const uint8Array = new Uint8Array(songFile.data);
       const arrayBuffer = uint8Array.buffer;
+      console.log('arrayBuffer: ', arrayBuffer);
       const audioBuffer = await audioContext.decodeAudioData(arrayBuffer);
+      console.log('audioBuffer: ', audioBuffer);
       currentSource = audioContext.createBufferSource();
       currentSource.buffer = audioBuffer;
       currentSource.connect(audioContext.destination);
@@ -367,6 +370,47 @@ const ProgressPlayFileVisual = () => {
     checkIsMacOs();
   }, []);
 
+  useEffect(() => {
+    const checkAndSetFile = async () => {
+      try {
+        const fileUrl = `${folderBasePath}/${params.files}.xml`;
+
+        // Fetch the file from the server
+        const response = await fetch(fileUrl);
+        const xmlFileData = await response.text();
+
+        // Check if the file is valid XML (file found in folderBasePath)
+        if (xmlFileData.startsWith('<?xml')) {
+          console.log('File found at folderBasePath:', fileUrl);
+          setXmlFile(fileUrl);
+        } else {
+          const localStorageFile = localStorage.getItem(params.files);
+
+          if (localStorageFile) {
+            // Create a Blob URL from the XML data
+            const blob = new Blob([localStorageFile], {
+              type: 'application/xml',
+            });
+            const blobUrl = URL.createObjectURL(blob);
+            setXmlFile(blobUrl);
+          } else {
+            console.error('File not found on server or in localStorage.');
+            setXmlFile('');
+          }
+        }
+      } catch (error) {
+        console.error('Error fetching file:', error);
+        setXmlFile('');
+      }
+    };
+
+    checkAndSetFile();
+  }, [folderBasePath, params.files]);
+
+  if (!xmlFile) {
+    return <LoadingScreen />;
+  }
+
   return (
     <HotKeys keyMap={keyMap} handlers={handlers}>
       <div className="flex flex-col min-h-screen justify-between">
@@ -377,7 +421,7 @@ const ProgressPlayFileVisual = () => {
             <Error message="This recording seems to be missing or deleted."></Error>
           ) : (
             <OpenSheetMusicDisplay
-              file={`${folderBasePath}/${params.files}.xml`}
+              file={xmlFile}
               autoResize={true}
               cursorRef={cursorRef}
               playbackRef={playbackRef}

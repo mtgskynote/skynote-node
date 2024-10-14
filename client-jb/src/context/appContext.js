@@ -14,6 +14,8 @@ import reducer from './reducer';
 import axios from 'axios';
 import XMLParser from 'react-xml-parser';
 
+import { getUserImportedScores } from '../utils/usersMethods';
+
 // Get user, token, and userLocation from local storage
 const user = localStorage.getItem('user');
 const token = localStorage.getItem('token');
@@ -76,11 +78,24 @@ const AppProvider = ({ children }) => {
     localStorage.removeItem('location');
     localStorage.removeItem('scoreData'); // This is technically not User data, but it's simpler if I leave it here cause we have to get rid of it anyways :)
     localStorage.removeItem('instrument'); // This information is part of User data but exists separately as well for easy transitioning between selected instrument states
+
+    // Remove keys that contain .mxl, .xml, or .musicxml
+    Object.keys(localStorage).forEach((key) => {
+      if (
+        key.includes('.mxl') ||
+        key.includes('.xml') ||
+        key.includes('.musicxml')
+      ) {
+        localStorage.removeItem(key);
+      }
+    });
   };
 
   // Set up user with current user, endpoint, and alert text
   const setupUser = async ({ currentUser, endPoint, alertText }) => {
+    console.log('setting user');
     dispatch({ type: SETUP_USER_BEGIN });
+
     try {
       const { data } = await axios.post(
         `/api/v1/auth/${endPoint}`,
@@ -98,16 +113,26 @@ const AppProvider = ({ children }) => {
           alertText,
         },
       });
-      addUserToLocalStorage(user, token, location); // why are we doing this?
+
+      // Store user details in local storage
+      addUserToLocalStorage(user, token, location);
       setInstrumentLocalStorage(user.instrument);
-      getAllScoreData2();
+
+      console.log('User set. Now fetching score data...');
+
+      // Ensure user is set before fetching score data
+      await getAllScoreData2(user);
+
+      // Dispatch event to notify that storage has been updated
       window.dispatchEvent(new Event('storageUpdated'));
     } catch (error) {
+      console.log('ERROR');
       dispatch({
         type: SETUP_USER_ERROR,
         payload: { msg: error.response.data.msg },
       });
     }
+
     clearAlert();
   };
 
@@ -178,18 +203,45 @@ const AppProvider = ({ children }) => {
   };
 
   //OUR
-  const getAllScoreData2 = async () => {
+  const getAllScoreData2 = async (user) => {
     try {
+      // Ensure that the user is loaded
+      if (!user) {
+        console.error('User not loaded yet. Cannot fetch imported scores.');
+        return;
+      }
+
       const response = await axios.get('/api/v1/scores/getAllScoreData2', {});
-      var tempScoreData = response.data;
+      let tempScoreData = response.data;
+
+      // Fetch user imported scores using user.id
+      const importedScores = await getUserImportedScores(user.id);
+      console.log('importedScores: ', importedScores);
+
+      // Transform importedScores to match the format of tempScoreData
+      const formattedImportedScores = importedScores.map((score) => ({
+        _id: score._id,
+        fname: score.fname,
+        level: 0, // Default level for imported scores
+        skill: score.skill || '',
+        title: score.scoreTitle,
+      }));
+
+      // Concatenate the formatted imported scores
+      tempScoreData = tempScoreData.concat(formattedImportedScores);
+
+      // Update titles in tempScoreData
       for (let file of tempScoreData) {
         let scoreName = await getTitle(file.fname);
         tempScoreData.find((obj) => obj.fname === file.fname).title = scoreName;
       }
+
       localStorage.setItem('scoreData', JSON.stringify(tempScoreData));
+      console.log(tempScoreData);
+
       return tempScoreData;
     } catch (error) {
-      console.error('Error fetching file names:', error);
+      console.error('Error fetching score data or imported scores:', error);
     }
   };
 

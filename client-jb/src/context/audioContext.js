@@ -1,6 +1,7 @@
 let audioContext;
 
 function createAudioContext() {
+  console.log('creating......');
   return new (window.AudioContext || window.webkitAudioContext)({
     latencyHint: 'interactive',
   });
@@ -8,8 +9,11 @@ function createAudioContext() {
 
 export function getAudioContext() {
   if (!audioContext) {
+    console.log('creating audio context');
     audioContext = createAudioContext();
   }
+
+  console.log('audioContext: ', audioContext);
   return audioContext;
 }
 

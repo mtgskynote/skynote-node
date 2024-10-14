@@ -1,10 +1,19 @@
 import React, { useState, useEffect, useRef } from 'react';
 import PropTypes from 'prop-types';
 import { useNavigate } from 'react-router-dom';
+import { useAppContext } from '../context/appContext';
 import {
   getManyRecordings,
   deleteRecording,
 } from '../utils/studentRecordingMethods';
+import {
+  loadImportedFileToLocalStorage,
+  deleteImportedFileFromLocalStorage,
+  removeScoreFromLocalStorageScoreData,
+  deleteImportedScore,
+  editImportedScoreTitleInLocalStorageScoreData,
+  editImportedScoreInDataBase,
+} from '../utils/usersMethods';
 import {
   CardContent,
   Typography,
@@ -13,11 +22,15 @@ import {
   Tooltip,
   IconButton,
 } from '@mui/material';
+import DeleteIcon from '@mui/icons-material/Delete';
+import EditIcon from '@mui/icons-material/Edit';
 import { CloseRounded as CloseRoundedIcon } from '@mui/icons-material';
 import AudioPlayerIcon from './AudioPlayerIcon';
 import StarRating from './StarRating';
 import QueueMusicIcon from '@mui/icons-material/QueueMusic';
 import FavouriteButton from './FavouriteButton';
+import EditPopUp from './EditPopUp';
+import DeletePopUp from './DeletePopUp';
 
 const LessonCard = ({
   title,
@@ -35,6 +48,9 @@ const LessonCard = ({
   hoverBackgroundColour,
   textColour,
   refreshData,
+  importedScore,
+  importName,
+  renderImportButtons,
 }) => {
   const navigate = useNavigate();
   const [allRecordings, setAllRecordings] = useState(recordings);
@@ -45,6 +61,17 @@ const LessonCard = ({
   const [deletionStatus, setDeletionStatus] = useState(null);
   const [deletedRecordingIds, setDeletedRecordingIds] = useState([]);
   const [playingAudioId, setPlayingAudioId] = useState(null);
+
+  const [showEditPopUpWindow, setShowEditPopUpWindow] = useState(false);
+  const [showDeletePopUpWindow, setShowDeletePopUpWindow] = useState(false);
+  const [newImportTitle, setNewImportName] = useState(importName || '');
+  const [newSkill, setNewSkill] = useState(skill || '');
+  const [showEditWarning, setShowEditWarning] = useState(false);
+  const [showDeleteWarning, setShowDeleteWarning] = useState(false);
+  const [showEditLoading, setShowEditLoading] = useState(false);
+  const [showDeleteLoading, setShowDeleteLoading] = useState(false);
+
+  const { getCurrentUser } = useAppContext();
 
   const modalRef = useRef(null);
 
@@ -58,7 +85,6 @@ const LessonCard = ({
     : 'hover:bg-blue-500';
   const tColour = textColour ? textColour : 'text-white';
 
-  // Resets the deletionStatus to null after 10 seconds when it changes.
   useEffect(() => {
     let timer;
     if (deletionStatus) {
@@ -71,7 +97,6 @@ const LessonCard = ({
     };
   }, [deletionStatus]);
 
-  // Adds and removes a mousedown event listener for closing the modal when clicking outside of it.
   useEffect(() => {
     document.addEventListener('mousedown', handleClickOutsideModal);
     return () => {
@@ -79,7 +104,6 @@ const LessonCard = ({
     };
   });
 
-  // Converts a given date string into a formatted string that follows the "en-UK" locale format.
   const formatDate = (dateString) => {
     const date = new Date(dateString);
     const options = {
@@ -92,22 +116,45 @@ const LessonCard = ({
     return date.toLocaleString('en-UK', options);
   };
 
-  // Handles the click event for viewing the score of the lesson and navigates to the '/all-lessons' route.
-  const handleViewScore = (e) => {
+  const handleViewScore = async (e) => {
     e.stopPropagation(); // Prevents the event from bubbling up to the parent component.
 
-    let path = xml;
-    const basePath = '/all-lessons/';
-    if (!xml.startsWith(basePath)) {
-      path = `${basePath}${xml}`;
+    if (!xml || typeof xml !== 'string') {
+      console.error('Invalid xml path:', xml);
+      return;
     }
 
-    navigate(path, { state: { id } });
+    const basePath = '/all-lessons/';
+    let path = xml;
+
+    // Ensure the path includes the base path
+    if (!path.startsWith(basePath)) {
+      path = `${basePath}${path}`;
+    }
+
+    // Strip the basePath if it is included in the XML path for comparison
+    const fileName = path.replace(basePath, '');
+
+    // Find the relevant score entry in local storage
+    const storedScoreData = JSON.parse(localStorage.getItem('scoreData')) || [];
+    const scoreEntry = storedScoreData.find((item) => item.fname === fileName);
+
+    if (scoreEntry) {
+      // File is found in the scoreData already
+      if (importedScore) {
+        const currentUser = await getCurrentUser();
+        await loadImportedFileToLocalStorage(currentUser.id, scoreEntry);
+      }
+      navigate(path, {
+        state: { id, fileData: scoreEntry },
+      });
+    } else {
+      console.error('File not found in local ScoreData');
+    }
   };
 
-  // Opens the recordings modal, fetches the audio for all recordings if not already fetched, and updates the state accordingly.
   const handleOpenRecordingsModal = async (e) => {
-    e.stopPropagation(); // Prevents the event from bubbling up to the parent component.
+    e.stopPropagation();
 
     setOpenRecordingsModal(true);
     setLoading(true);
@@ -137,13 +184,11 @@ const LessonCard = ({
     }
   };
 
-  // Closes the recordings modal and resets the state.
   const handleCloseRecordingsModal = () => {
     deletedRecordingIds.forEach((recordingId) => {
       reloadRecordingsCallback(recordingId);
     });
 
-    // Dispatch the 'stopAllAudio' event
     const event = new Event('stopAllAudio');
     window.dispatchEvent(event);
     setPlayingAudioId(null);
@@ -154,14 +199,12 @@ const LessonCard = ({
     setLoading(false);
   };
 
-  // Closes the recordings modal when a click is detected outside of it.
   const handleClickOutsideModal = (e) => {
     if (modalRef.current && !modalRef.current.contains(e.target)) {
       handleCloseRecordingsModal();
     }
   };
 
-  // Deletes the recording with the provided recordingId and updates the state accordingly.
   const handleDeleteRecording = async (recordingId) => {
     setDeletingRecording(recordingId);
     try {
@@ -179,7 +222,6 @@ const LessonCard = ({
 
       deletedRecordingIds.push(recordingId);
       setDeletionStatus('success');
-      console.log(deletionStatus);
     } catch (error) {
       console.log(`Cannot delete recording from database: ${error}`);
       setDeletionStatus('failure');
@@ -188,17 +230,74 @@ const LessonCard = ({
     }
   };
 
-  // Navigates to the ListRecordings route with the provided xml and recordingId.
   const handleViewRecording = async (recordingId, xml) => {
     navigate(`/ListRecordings/${xml}`, { state: { id: recordingId } });
   };
 
-  // Toggles the playing audio ID based on the provided audioId.
   const handleAudioPlay = (audioId) => {
     if (playingAudioId === audioId) {
-      setPlayingAudioId(null); // If the currently playing audio is clicked again, set playingAudioId to null
+      setPlayingAudioId(null);
     } else {
-      setPlayingAudioId(audioId); // Set the new audio as playing
+      setPlayingAudioId(audioId);
+    }
+  };
+
+  // Update recording name in the database
+  const handleEditImportedScore = async () => {
+    if (newImportTitle !== '' && newSkill !== '' && newImportTitle !== title) {
+      setShowEditLoading(true);
+      setShowEditWarning(false);
+      // Prepare updates object
+      const updates = {};
+      if (newImportTitle !== undefined) updates.title = newImportTitle;
+      if (newSkill !== undefined) updates.skill = newSkill;
+
+      // Update in localStorage
+      editImportedScoreTitleInLocalStorageScoreData(
+        id,
+        newImportTitle,
+        newSkill
+      );
+
+      // Update in database
+      try {
+        await editImportedScoreInDataBase(id, updates);
+      } catch (error) {
+        console.error('Error updating score:', error);
+        setShowEditWarning(true);
+      }
+      setShowEditLoading(false);
+      setShowEditPopUpWindow(false);
+      if (refreshData) refreshData();
+    } else if (title === newImportTitle) {
+      setShowEditWarning(false);
+      setShowEditPopUpWindow(false);
+    } else {
+      setShowEditWarning(true);
+    }
+  };
+
+  const handleDeleteImportedScore = async () => {
+    try {
+      const result = await getCurrentUser();
+      const userId = result.id;
+
+      await deleteImportedScore(userId, id); // Axios delete call in usermethods
+
+      // Update local storage by removing the score
+      removeScoreFromLocalStorageScoreData(id);
+
+      // remove file from local storage if its there
+      deleteImportedFileFromLocalStorage(xml.split('/').pop());
+
+      if (refreshData) refreshData();
+
+      setShowDeletePopUpWindow(false);
+      setShowDeleteLoading(false);
+    } catch (error) {
+      console.error('Error deleting score:', error);
+      setShowDeleteLoading(false);
+      setShowDeleteWarning(true);
     }
   };
 
@@ -226,11 +325,13 @@ const LessonCard = ({
                 </Typography>
               </div>
               <div></div>
-              <div
-                className={`sm:text-xs md:text-xs lg:text-xs xl:text-sm font-extralight p-1 rounded align-right`}
-              >
-                Level {level}
-              </div>
+              {!importedScore && (
+                <div
+                  className={`sm:text-xs md:text-xs lg:text-xs xl:text-sm font-extralight p-1 rounded align-right`}
+                >
+                  Level {level}
+                </div>
+              )}
             </div>
 
             <div className="whitespace-normal w-fit">
@@ -264,18 +365,71 @@ const LessonCard = ({
                     </IconButton>
                   </Tooltip>
                 ) : null}
-                <FavouriteButton
-                  key={id}
-                  songId={id}
-                  singTitle={title}
-                  initialIsFavourite={isFavourite}
-                  refreshData={refreshData}
-                />
+                {!renderImportButtons && (
+                  <FavouriteButton
+                    key={id}
+                    songId={id}
+                    singTitle={title}
+                    initialIsFavourite={isFavourite}
+                    refreshData={refreshData}
+                  />
+                )}
+                {renderImportButtons && (
+                  <div className="grid grid-cols-2 ml-auto">
+                    <Tooltip placement="bottom" title="Edit" arrow>
+                      <IconButton
+                        className="text-white"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          setShowEditPopUpWindow(true);
+                        }}
+                      >
+                        <EditIcon className="text-3xl" />
+                      </IconButton>
+                    </Tooltip>
+                    <Tooltip placement="bottom" title="Delete Score" arrow>
+                      <IconButton
+                        className="text-white"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          setShowDeletePopUpWindow(true);
+                        }}
+                      >
+                        <DeleteIcon className="text-3xl" />
+                      </IconButton>
+                    </Tooltip>
+                  </div>
+                )}
               </div>
             </div>
           </CardContent>
         </div>
       </div>
+
+      {/* Edit Import Pop-Up */}
+      <EditPopUp
+        isOpen={showEditPopUpWindow}
+        itemName={title}
+        newItemName={newImportTitle}
+        showLoading={showEditLoading}
+        showWarning={showEditWarning}
+        handleHidePopUp={() => setShowEditPopUpWindow(false)}
+        handleInputChange={(e) => setNewImportName(e.target.value)}
+        handleConfirmEdit={handleEditImportedScore}
+        secondaryItemName={skill}
+        newSecondaryItemName={newSkill}
+        handleSecondaryInputChange={(e) => setNewSkill(e.target.value)}
+      />
+
+      {/* Delete Pop-Up */}
+      <DeletePopUp
+        isOpen={showDeletePopUpWindow}
+        itemName={title}
+        showLoading={showDeleteLoading}
+        showWarning={showDeleteWarning}
+        handleHidePopUp={() => setShowDeletePopUpWindow(false)}
+        handleConfirmDelete={handleDeleteImportedScore}
+      />
 
       {/* Modal */}
       <div
@@ -291,11 +445,10 @@ const LessonCard = ({
           }`}
           onClick={(e) => e.stopPropagation()}
         >
-          {loading ? ( // Display loading indicator if loading
+          {loading ? (
             <CircularProgress />
           ) : (
             <div>
-              {/* Display modal content if recordingsAudio is loaded */}
               {recordingsAudio ? (
                 <div>
                   <div className="flex justify-between items-center mb-2">
@@ -310,7 +463,6 @@ const LessonCard = ({
                       <CloseRoundedIcon className="rounded text-2xl" />
                     </button>
                   </div>
-                  {/* Render table with recordings and recordingsAudio data */}
                   <table className="table-auto w-full border-solid border border-2">
                     <thead>
                       <tr className="border-solid border border-2 border-blue-400">
@@ -415,14 +567,17 @@ LessonCard.propTypes = {
       stars: PropTypes.number.isRequired,
       audio: PropTypes.string,
     })
-  ).isRequired,
-  reloadRecordingsCallback: PropTypes.func.isRequired,
+  ),
+  reloadRecordingsCallback: PropTypes.func,
   renderViewRecordings: PropTypes.bool,
   width: PropTypes.string,
   backgroundColour: PropTypes.string,
   hoverBackgroundColour: PropTypes.string,
   textColour: PropTypes.string,
   refreshData: PropTypes.func.isRequired,
+  importedScore: PropTypes.bool,
+  importName: PropTypes.string,
+  renderImportButtons: PropTypes.bool,
 };
 
 export default LessonCard;
