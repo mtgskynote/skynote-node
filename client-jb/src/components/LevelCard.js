@@ -43,26 +43,28 @@ const LevelCard = ({
 
       {/* SubLevelCards */}
       <div className="w-4/5 flex flex-wrap justify-center mt-4">
-        {Object.keys(levelLessons).map(
-          (skill, index) =>
-            levelLessons[skill] && (
-              <SubLevelCard
-                index={baseSubLevelIndex + index} // Calculate unique index
-                key={index}
-                subLevelName={skill}
-                levelNumber={levelNumber}
-                category={levelName}
-                timeRecorded="4h 15min"
-                totalStars={countStars(levelLessons[skill])}
-                subLevelLessons={levelLessons[skill]}
-                isOpen={
-                  openSubLevel === baseSubLevelIndex + index && subLevelIsOpen
-                }
-                onCardClick={handleSubLevelClick}
-                refreshData={refreshData}
-              />
-            )
-        )}
+        {Object.keys(levelLessons)
+          .filter((skill) => levelLessons[skill].length > 0)
+          .map(
+            (skill, index) =>
+              levelLessons[skill] && (
+                <SubLevelCard
+                  index={baseSubLevelIndex + index} // Calculate unique index
+                  key={index}
+                  subLevelName={skill}
+                  levelNumber={levelNumber}
+                  category={levelName}
+                  timeRecorded="4h 15min"
+                  totalStars={countStars(levelLessons[skill])}
+                  subLevelLessons={levelLessons[skill]}
+                  isOpen={
+                    openSubLevel === baseSubLevelIndex + index && subLevelIsOpen
+                  }
+                  onCardClick={handleSubLevelClick}
+                  refreshData={refreshData}
+                />
+              )
+          )}
       </div>
     </div>
   );
