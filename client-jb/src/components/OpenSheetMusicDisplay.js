@@ -298,12 +298,16 @@ const OpenSheetMusicDisplay = (props) => {
 
   const updateTranspose = (newTranspose) => {
     if (newTranspose !== undefined && newTranspose) {
+      // if (newTranspose === '0') {
+      //   setupOsmd();
+      // } else {
       osmd.current.Sheet.Transpose = parseInt(newTranspose);
       osmd.current.updateGraphic();
       if (osmd.current.IsReadyToRender()) osmd.current.render();
       if (osmd.current.graphic)
         [osmd.current.IDdict, osmd.current.IDInvDict] =
           generateNoteIDsAssociation(osmd.current);
+      // }
     }
   };
 
@@ -388,8 +392,7 @@ const OpenSheetMusicDisplay = (props) => {
             undefined
         ) {
           notePitch =
-            osmd.current.cursor.NotesUnderCursor()[0].TransposedPitch !==
-            undefined
+            parseInt(props.transpose) !== 0
               ? osmd.current.cursor.NotesUnderCursor()[0].TransposedPitch
                   .frequency
               : osmd.current.cursor.NotesUnderCursor()[0].Pitch.frequency;
