@@ -12,7 +12,7 @@ import {
 
 import { Profile, Stats, SharedLayout } from './pages/dashboard';
 import Lessons from './pages/Lessons';
-//import ImportedScores from "./pages/ImportedScores";
+import AudioAnalyzer from './pages/AudioAnalyzer';
 import { useAppContext } from './context/appContext';
 import ProgressPlayFile from './components/ProgressPlayFile';
 import ProgressPlayFileVisual from './components/ProgressPlayFileVisual';
@@ -133,6 +133,7 @@ function App() {
               <Route path="/demos" element={<Demos />} />
               <Route path="/landing" element={<Landing />} />
               <Route path="*" element={<Error type={'404'} />} />
+              <Route path="/audio-analyzer" element={<AudioAnalyzer />} />
             </Routes>
           </BrowserRouter>
         </div>
