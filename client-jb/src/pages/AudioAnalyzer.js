@@ -9,12 +9,14 @@ import WaveSurfer from 'wavesurfer.js';
 import HighlightedAudioChart from '../components/HighlightedAudioChart';
 import audioAnalyzerUtils from '../utils/audioAnalyzerUtils';
 
-const { extractFeatures } = audioAnalyzerUtils;
+const { extractFeatures, detectVariableSections, plotAudioWithHighlights } =
+  audioAnalyzerUtils;
 
 const AudioAnalyzer = () => {
   const [file, setFile] = useState(null);
   const [audioBuffer, setAudioBuffer] = useState(null);
   const [isPlaying, setIsPlaying] = useState(false);
+  const [highlightedSections, setHighlightedSections] = useState(null);
   const waveSurferRef = useRef(null);
   const waveformContainerRef = useRef(null);
 
@@ -107,6 +109,8 @@ const AudioAnalyzer = () => {
       extractFeatures(audioBuffer)
         .then((features) => {
           console.log(features);
+          const sections = detectVariableSections(...Object.values(features));
+          setHighlightedSections(sections);
         })
         .catch((error) => {
           console.error('Error extracting features:', error);
@@ -179,7 +183,15 @@ const AudioAnalyzer = () => {
           </div>
         </div>
       )}
-      {/* {audioBuffer && <HighlightedAudioChart audioBuffer={audioBuffer} />} */}
+      {audioBuffer && highlightedSections && (
+        <div className="p-4">
+          <HighlightedAudioChart
+            audioData={audioBuffer.getChannelData(0)}
+            sr={audioBuffer.sampleRate}
+            highlightedSections={highlightedSections}
+          />
+        </div>
+      )}
     </div>
   );
 };
