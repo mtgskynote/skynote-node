@@ -103,9 +103,9 @@ const AudioAnalyzer = () => {
       waveSurferRef.current = WaveSurfer.create({
         container: waveformContainerRef.current,
         waveColor: '#60a5fa',
-        progressColor: '#1e40af',
+        progressColor: '#3b82f6',
         barWidth: 2,
-        cursorColor: '#1e40af',
+        cursorColor: '#3b82f6',
         height: 80,
         responsive: true,
       });
@@ -127,8 +127,10 @@ const AudioAnalyzer = () => {
   return (
     <div className="flex flex-col items-center min-h-screen bg-gray-100">
       {/* Header */}
-      <header className="w-full bg-blue-500 py-4 text-center">
-        <h1 className="text-4xl text-white font-bold">Audio Analyzer</h1>
+      <header className="w-full bg-blue-500 py-3 text-center">
+        <h1 className="text-4xl text-white font-semibold tracking-widest">
+          Audio Analyzer
+        </h1>
       </header>
 
       {/* File Upload Area */}
@@ -158,9 +160,11 @@ const AudioAnalyzer = () => {
           </label>
         </div>
       ) : (
-        <div className="flex flex-col mt-8 w-3/4 max-w-lg p-4 bg-blue-100 rounded-lg border border-blue-300">
+        <div className="flex flex-col mt-8 w-1/2 p-4 bg-blue-100 rounded-lg border-2 border-blue-300 border-solid">
           <div className="flex items-center mb-1">
-            <div className="text-sm text-blue-800">{file.name}</div>
+            <div className="text-sm font-semibold text-blue-500">
+              {file.name}
+            </div>
             {/* Remove File Button */}
             <button
               onClick={removeFile}
@@ -177,9 +181,9 @@ const AudioAnalyzer = () => {
               className="mr-1"
             >
               {isPlaying ? (
-                <PauseCircleIcon className="text-blue-800 text-3xl" />
+                <PauseCircleIcon className="text-blue-500 text-3xl" />
               ) : (
-                <PlayCircleIcon className="text-blue-800 text-3xl" />
+                <PlayCircleIcon className="text-blue-500 text-3xl" />
               )}
             </IconButton>
 
@@ -189,14 +193,17 @@ const AudioAnalyzer = () => {
         </div>
       )}
       {audioBuffer && highlightedSections && (
-        <div className="p-4 mt-">
-          <HighlightedAudioChart
-            audioData={audioBuffer.getChannelData(0)}
-            sr={audioBuffer.sampleRate}
-            highlightedSections={highlightedSections}
-            audioBuffer={audioBuffer}
-            audioContext={audioContextRef.current}
-          />
+        <div>
+          <hr className="my-4 border-t-2 border-gray-400" />
+          <div className="p-4 bg-blue-50 rounded-lg border-2 border-blue-300 border-solid">
+            <HighlightedAudioChart
+              audioData={audioBuffer.getChannelData(0)}
+              sr={audioBuffer.sampleRate}
+              highlightedSections={highlightedSections}
+              audioBuffer={audioBuffer}
+              audioContext={audioContextRef.current}
+            />
+          </div>
         </div>
       )}
     </div>
