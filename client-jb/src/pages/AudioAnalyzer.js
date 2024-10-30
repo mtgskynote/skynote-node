@@ -1,41 +1,72 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useRef, useCallback } from 'react';
 import UploadFileIcon from '@mui/icons-material/UploadFile';
 import PlayCircleIcon from '@mui/icons-material/PlayCircle';
 import PauseCircleIcon from '@mui/icons-material/PauseCircle';
-import CancelIcon from '@mui/icons-material/Cancel';
 import IconButton from '@mui/material/IconButton';
-import Tooltip from '@mui/material/Tooltip';
 import WaveSurfer from 'wavesurfer.js';
 import HighlightedAudioChart from '../components/HighlightedAudioChart';
 import audioAnalyzerUtils from '../utils/audioAnalyzerUtils';
 
-const { extractFeatures, detectVariableSections, plotAudioWithHighlights } =
-  audioAnalyzerUtils;
+const { extractFeatures, detectVariableSections } = audioAnalyzerUtils;
 
 const AudioAnalyzer = () => {
   const [file, setFile] = useState(null);
   const [audioBuffer, setAudioBuffer] = useState(null);
-  const [isPlaying, setIsPlaying] = useState(false);
   const [highlightedSections, setHighlightedSections] = useState(null);
+  const [isPlaying, setIsPlaying] = useState(false);
   const waveSurferRef = useRef(null);
   const waveformContainerRef = useRef(null);
+  const audioContextRef = useRef(null);
 
-  const handleFileUpload = (event) => {
+  const getAudioBuffer = useCallback(async (audioFile) => {
+    if (!audioContextRef.current) {
+      audioContextRef.current = new (window.AudioContext ||
+        window.webkitAudioContext)();
+    }
+    const reader = new FileReader();
+    return new Promise((resolve, reject) => {
+      reader.onload = (event) => {
+        audioContextRef.current.decodeAudioData(
+          event.target.result,
+          (buffer) => {
+            resolve(buffer);
+          },
+          reject
+        );
+      };
+      reader.readAsArrayBuffer(audioFile);
+    });
+  }, []);
+
+  const processAudioBuffer = async (buffer) => {
+    try {
+      const features = await extractFeatures(buffer);
+      const sections = detectVariableSections(...Object.values(features));
+      setAudioBuffer(buffer);
+      setHighlightedSections(sections);
+    } catch (error) {
+      console.error('Error processing audio buffer:', error);
+    }
+  };
+
+  const handleFileUpload = async (event) => {
     const uploadedFile = event.target.files[0];
     if (uploadedFile && uploadedFile.type.startsWith('audio/')) {
       setFile(uploadedFile);
-      getAudioBuffer(uploadedFile);
+      const buffer = await getAudioBuffer(uploadedFile);
+      await processAudioBuffer(buffer);
     } else {
       alert('Please upload an audio file.');
     }
   };
 
-  const handleDrop = (event) => {
+  const handleDrop = async (event) => {
     event.preventDefault();
     const uploadedFile = event.dataTransfer.files[0];
     if (uploadedFile && uploadedFile.type.startsWith('audio/')) {
       setFile(uploadedFile);
-      getAudioBuffer(uploadedFile);
+      const buffer = await getAudioBuffer(uploadedFile);
+      await processAudioBuffer(buffer);
     } else {
       alert('Please upload an audio file.');
     }
@@ -45,22 +76,11 @@ const AudioAnalyzer = () => {
     event.preventDefault();
   };
 
-  const getAudioBuffer = (audioFile) => {
-    const audioContext = new (window.AudioContext ||
-      window.webkitAudioContext)();
-    const reader = new FileReader();
-    reader.onload = (event) => {
-      audioContext.decodeAudioData(event.target.result, (buffer) => {
-        setAudioBuffer(buffer);
-      });
-    };
-    reader.readAsArrayBuffer(audioFile);
-  };
-
   const removeFile = () => {
     setFile(null);
     setIsPlaying(false);
     setAudioBuffer(null);
+    setHighlightedSections(null);
     if (waveSurferRef.current) {
       waveSurferRef.current.destroy();
       waveSurferRef.current = null;
@@ -70,11 +90,11 @@ const AudioAnalyzer = () => {
   const togglePlayPause = () => {
     if (waveSurferRef.current) {
       waveSurferRef.current.playPause();
-      setIsPlaying(!isPlaying);
+      setIsPlaying((prev) => !prev);
     }
   };
 
-  useEffect(() => {
+  React.useEffect(() => {
     if (file && waveformContainerRef.current) {
       if (waveSurferRef.current) {
         waveSurferRef.current.destroy();
@@ -82,10 +102,10 @@ const AudioAnalyzer = () => {
 
       waveSurferRef.current = WaveSurfer.create({
         container: waveformContainerRef.current,
-        waveColor: '#A8DBA8',
-        progressColor: '#3B8686',
+        waveColor: '#60a5fa',
+        progressColor: '#1e40af',
         barWidth: 2,
-        cursorColor: '#3B8686',
+        cursorColor: '#1e40af',
         height: 80,
         responsive: true,
       });
@@ -103,20 +123,6 @@ const AudioAnalyzer = () => {
       }
     };
   }, [file]);
-
-  useEffect(() => {
-    if (audioBuffer) {
-      extractFeatures(audioBuffer)
-        .then((features) => {
-          console.log(features);
-          const sections = detectVariableSections(...Object.values(features));
-          setHighlightedSections(sections);
-        })
-        .catch((error) => {
-          console.error('Error extracting features:', error);
-        });
-    }
-  }, [audioBuffer]);
 
   return (
     <div className="flex flex-col items-center min-h-screen bg-gray-100">
@@ -153,30 +159,29 @@ const AudioAnalyzer = () => {
         </div>
       ) : (
         <div className="flex flex-col mt-8 w-3/4 max-w-lg p-4 bg-blue-100 rounded-lg border border-blue-300">
-          <div className="flex items-center justify-center mb-1">
-            <div className="text-sm text-gray-700">{file.name}</div>{' '}
+          <div className="flex items-center mb-1">
+            <div className="text-sm text-blue-800">{file.name}</div>
             {/* Remove File Button */}
-            <Tooltip title="Remove File" arrow placement="top">
-              <IconButton aria-label="remove file" onClick={removeFile}>
-                <CancelIcon className="text-gray-500 hover:text-red-500 text-lg" />
-              </IconButton>
-            </Tooltip>
+            <button
+              onClick={removeFile}
+              className={`ml-auto hover:cursor-pointer transition ease-in-out delay-50 text-xs text-center text-white hover:text-white text-sm border-transparent focus:border-transparent focus:ring-0 focus:outline-none bg-red-500 hover:bg-red-400 py-1 px-2 rounded-l-none outline-none rounded`}
+            >
+              Remove File
+            </button>
           </div>
           <div className="flex items-center">
             {/* Play/Pause Button */}
-            <Tooltip title={isPlaying ? 'Pause' : 'Play'} arrow>
-              <IconButton
-                aria-label={isPlaying ? 'pause' : 'play'}
-                onClick={togglePlayPause}
-                className="mr-1"
-              >
-                {isPlaying ? (
-                  <PauseCircleIcon className="text-green-800 text-3xl" />
-                ) : (
-                  <PlayCircleIcon className="text-green-800 text-3xl" />
-                )}
-              </IconButton>
-            </Tooltip>
+            <IconButton
+              aria-label={isPlaying ? 'pause' : 'play'}
+              onClick={togglePlayPause}
+              className="mr-1"
+            >
+              {isPlaying ? (
+                <PauseCircleIcon className="text-blue-800 text-3xl" />
+              ) : (
+                <PlayCircleIcon className="text-blue-800 text-3xl" />
+              )}
+            </IconButton>
 
             {/* Waveform Container */}
             <div className="flex-grow" ref={waveformContainerRef}></div>
@@ -184,11 +189,13 @@ const AudioAnalyzer = () => {
         </div>
       )}
       {audioBuffer && highlightedSections && (
-        <div className="p-4">
+        <div className="p-4 mt-">
           <HighlightedAudioChart
             audioData={audioBuffer.getChannelData(0)}
             sr={audioBuffer.sampleRate}
             highlightedSections={highlightedSections}
+            audioBuffer={audioBuffer}
+            audioContext={audioContextRef.current}
           />
         </div>
       )}

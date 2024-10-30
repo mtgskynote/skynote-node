@@ -129,8 +129,6 @@ const detectVariableSections = (mfccs, rms, pitches, sampleRate, hopLength) => {
   const maxLoudnessIdx = loudnessVariability.indexOf(
     Math.max(...loudnessVariability)
   );
-  console.log('max loudness index');
-  console.log(maxLoudnessIdx);
 
   // Calculate pitch differences from piano notes using a sliding window
   let pitchDiffVariability = [];
@@ -169,84 +167,7 @@ const detectVariableSections = (mfccs, rms, pitches, sampleRate, hopLength) => {
   ];
 };
 
-const plotAudioWithHighlights = (
-  audioBuffer,
-  highlightedSections,
-  containerId
-) => {
-  const data = audioBuffer.getChannelData(0); // Using the first channel
-  const sampleRate = audioBuffer.sampleRate;
-
-  // Generate x-axis labels as time in seconds
-  const timeLabels = Array.from(
-    { length: data.length },
-    (_, i) => i / sampleRate
-  );
-
-  const ctx = document.getElementById(containerId).getContext('2d');
-
-  // Plot the base line chart
-  new Chart(ctx, {
-    type: 'line',
-    data: {
-      labels: timeLabels,
-      datasets: [
-        {
-          label: 'Audio Waveform',
-          data,
-          backgroundColor: 'rgba(0, 123, 255, 0.2)', // Use a default fill color
-          borderColor: 'rgba(0, 123, 255, 0.8)',
-          borderWidth: 1,
-          fill: true,
-          pointRadius: 0,
-        },
-      ],
-    },
-    options: {
-      responsive: true,
-      plugins: {
-        legend: { display: false },
-        // Custom plugin for highlighting sections
-        beforeDraw: (chart) => {
-          const ctx = chart.ctx;
-          highlightedSections.forEach((section, index) => {
-            const color = [
-              'rgba(255, 0, 0, 0.3)',
-              'rgba(0, 255, 0, 0.3)',
-              'rgba(255, 165, 0, 0.3)',
-            ][index % 3]; // Cycle through colors
-
-            const startSample = section.start;
-            const endSample = section.end;
-
-            // Convert sample indices to pixel positions
-            const startPixel = chart.scales.x.getPixelForValue(
-              startSample / sampleRate
-            ); // Start time in pixels
-            const endPixel = chart.scales.x.getPixelForValue(
-              endSample / sampleRate
-            ); // End time in pixels
-
-            ctx.fillStyle = color;
-            ctx.fillRect(
-              startPixel, // Start pixel
-              chart.scales.y.bottom, // Bottom of the chart
-              endPixel - startPixel, // Width of the section
-              chart.scales.y.top - chart.scales.y.bottom // Height of the chart
-            );
-          });
-        },
-      },
-      scales: {
-        x: { type: 'linear', title: { display: true, text: 'Time (s)' } },
-        y: { title: { display: true, text: 'Amplitude' } },
-      },
-    },
-  });
-};
-
 export default {
   extractFeatures,
   detectVariableSections,
-  plotAudioWithHighlights,
 };
