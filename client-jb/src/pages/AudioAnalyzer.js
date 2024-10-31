@@ -1,4 +1,4 @@
-import React, { useState, useRef, useCallback } from 'react';
+import React, { useState, useRef, useCallback, useEffect } from 'react';
 import UploadFileIcon from '@mui/icons-material/UploadFile';
 import PlayCircleIcon from '@mui/icons-material/PlayCircle';
 import PauseCircleIcon from '@mui/icons-material/PauseCircle';
@@ -6,6 +6,7 @@ import IconButton from '@mui/material/IconButton';
 import WaveSurfer from 'wavesurfer.js';
 import HighlightedAudioChart from '../components/HighlightedAudioChart';
 import audioAnalyzerUtils from '../utils/audioAnalyzerUtils';
+import AudioFeaturesGraph from '../components/AudioFeaturesGraph';
 
 const { extractFeatures, detectVariableSections } = audioAnalyzerUtils;
 
@@ -13,7 +14,8 @@ const AudioAnalyzer = () => {
   const [file, setFile] = useState(null);
   const [audioBuffer, setAudioBuffer] = useState(null);
   const [highlightedSections, setHighlightedSections] = useState(null);
-  const [isPlaying, setIsPlaying] = useState(false);
+  const [playingSection, setPlayingSection] = useState(null);
+  const [features, setFeatures] = useState(null);
   const waveSurferRef = useRef(null);
   const waveformContainerRef = useRef(null);
   const audioContextRef = useRef(null);
@@ -41,6 +43,8 @@ const AudioAnalyzer = () => {
   const processAudioBuffer = async (buffer) => {
     try {
       const features = await extractFeatures(buffer);
+      setFeatures(features);
+
       const sections = detectVariableSections(...Object.values(features));
       setAudioBuffer(buffer);
       setHighlightedSections(sections);
@@ -78,7 +82,7 @@ const AudioAnalyzer = () => {
 
   const removeFile = () => {
     setFile(null);
-    setIsPlaying(false);
+    setPlayingSection(null);
     setAudioBuffer(null);
     setHighlightedSections(null);
     if (waveSurferRef.current) {
@@ -89,8 +93,12 @@ const AudioAnalyzer = () => {
 
   const togglePlayPause = () => {
     if (waveSurferRef.current) {
+      // Stop any highlighted section that's currently playing
+      if (playingSection !== 'waveform' && playingSection !== null) {
+        setPlayingSection(null);
+      }
       waveSurferRef.current.playPause();
-      setIsPlaying((prev) => !prev);
+      setPlayingSection((prev) => (prev !== 'waveform' ? 'waveform' : null));
     }
   };
 
@@ -112,8 +120,12 @@ const AudioAnalyzer = () => {
 
       waveSurferRef.current.load(URL.createObjectURL(file));
 
+      waveSurferRef.current.on('play', () => {
+        setPlayingSection('waveform');
+      });
+
       waveSurferRef.current.on('finish', () => {
-        setIsPlaying(false);
+        setPlayingSection(null);
       });
     }
 
@@ -123,6 +135,11 @@ const AudioAnalyzer = () => {
       }
     };
   }, [file]);
+
+  useEffect(() => {
+    console.log('features');
+    console.log(features);
+  }, [features]);
 
   return (
     <div className="flex flex-col items-center min-h-screen bg-gray-100">
@@ -176,11 +193,11 @@ const AudioAnalyzer = () => {
           <div className="flex items-center">
             {/* Play/Pause Button */}
             <IconButton
-              aria-label={isPlaying ? 'pause' : 'play'}
+              aria-label={playingSection === 'waveform' ? 'pause' : 'play'}
               onClick={togglePlayPause}
               className="mr-1"
             >
-              {isPlaying ? (
+              {playingSection === 'waveform' ? (
                 <PauseCircleIcon className="text-blue-500 text-3xl" />
               ) : (
                 <PlayCircleIcon className="text-blue-500 text-3xl" />
@@ -195,13 +212,39 @@ const AudioAnalyzer = () => {
       {audioBuffer && highlightedSections && (
         <div>
           <hr className="my-4 border-t-2 border-gray-400" />
-          <div className="p-4 bg-blue-50 rounded-lg border-2 border-blue-300 border-solid">
+          <div className="p-4 bg-blue-50 rounded-lg border-2 border-blue-300 border-solid relative">
             <HighlightedAudioChart
               audioData={audioBuffer.getChannelData(0)}
               sr={audioBuffer.sampleRate}
               highlightedSections={highlightedSections}
               audioBuffer={audioBuffer}
               audioContext={audioContextRef.current}
+              playingSection={playingSection}
+              setPlayingSection={setPlayingSection}
+              waveSurferRef={waveSurferRef}
+            />
+          </div>
+        </div>
+      )}
+      {audioBuffer && features && (
+        <div className="flex flex-row space-x-6">
+          <div className="my-4 p-4 bg-blue-50 rounded-lg border-2 border-blue-300 border-solid relative">
+            <AudioFeaturesGraph
+              values={features.rms}
+              sampleRate={features.sampleRate}
+              hopSize={features.hopLength}
+              color="#008000"
+              title="Loudness"
+            />
+          </div>
+          <div className="my-4 p-4 bg-blue-50 rounded-lg border-2 border-blue-300 border-solid relative">
+            <AudioFeaturesGraph
+              values={features.pitches}
+              sampleRate={features.sampleRate}
+              hopSize={features.hopLength}
+              maxY={800}
+              color="#FFA500"
+              title="Pitch"
             />
           </div>
         </div>

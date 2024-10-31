@@ -4,7 +4,16 @@ import PlayCircleIcon from '@mui/icons-material/PlayCircle';
 import PauseCircleIcon from '@mui/icons-material/PauseCircle';
 
 const HighlightedAudioChart = React.memo(
-  ({ audioData, sr, highlightedSections, audioBuffer, audioContext }) => {
+  ({
+    audioData,
+    sr,
+    highlightedSections,
+    audioBuffer,
+    audioContext,
+    playingSection,
+    setPlayingSection,
+    waveSurferRef,
+  }) => {
     const canvasRef = useRef();
     const [isPlaying, setIsPlaying] = useState(null); // Track which section is playing
     const [sourceNode, setSourceNode] = useState(null); // Track audio source node for control
@@ -116,9 +125,16 @@ const HighlightedAudioChart = React.memo(
     }, [audioData, sr, combinedSections]); // Only depend on combinedSections
 
     const handlePlayPause = (idx, start, end) => {
+      // Stop waveform audio if it's playing
+      if (playingSection === 'waveform' && waveSurferRef.current) {
+        waveSurferRef.current.pause();
+        setIsPlaying(null);
+      }
+
       if (isPlaying === idx && sourceNode) {
         sourceNode.stop();
         setIsPlaying(null);
+        setPlayingSection(null);
         return;
       }
 
@@ -131,11 +147,21 @@ const HighlightedAudioChart = React.memo(
         source.buffer = audioBuffer;
         source.connect(audioContext.destination);
         source.start(0, start / sr, (end - start) / sr);
-        source.onended = () => setIsPlaying(null);
+        source.onended = () => {
+          setIsPlaying(null);
+        };
         setSourceNode(source);
         setIsPlaying(idx);
+        setPlayingSection(idx);
       }
     };
+
+    useEffect(() => {
+      if (playingSection === 'waveform' && sourceNode) {
+        setIsPlaying(null);
+        sourceNode.stop();
+      }
+    }, [playingSection]);
 
     return (
       <div className="flex flex-col items-center">
@@ -153,7 +179,11 @@ const HighlightedAudioChart = React.memo(
                   }
                   style={{ color: section.color }}
                 >
-                  {isPlaying === idx ? <PauseCircleIcon /> : <PlayCircleIcon />}
+                  {playingSection === idx ? (
+                    <PauseCircleIcon />
+                  ) : (
+                    <PlayCircleIcon />
+                  )}
                 </IconButton>
                 <span className="text-sm text-slate-800">{section.label}</span>
               </div>
