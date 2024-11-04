@@ -136,7 +136,7 @@ const HighlightedAudioChart = React.memo(
       ) {
         sourceNodeRef.current.stop();
         sourceNodeRef.current = null;
-      } else {
+      } else if (playingSection !== null) {
         if (sourceNodeRef.current) {
           sourceNodeRef.current.stop();
           sourceNodeRef.current = null;
@@ -154,12 +154,13 @@ const HighlightedAudioChart = React.memo(
           source.onended = () => {
             if (sourceNodeRef.current === source) {
               setPlayingSection(null);
+              sourceNodeRef.current = null;
             }
           };
           sourceNodeRef.current = source;
         }
       }
-    }, [playingSection, playingAudioRange]);
+    }, [playingSection]);
 
     return (
       <div className="flex flex-col items-center">

@@ -3,9 +3,6 @@ import Pitchfinder from 'pitchfinder';
 import axios from 'axios';
 
 const processAudio = async (audioFile) => {
-  console.log('Processing audio file');
-  console.log(audioFile);
-
   const formData = new FormData();
   formData.append('audioFile', audioFile);
 

@@ -11,12 +11,9 @@ const processAudio = async (req, res) => {
     }
 
     const audioFile = req.file;
-
     if (!audioFile) {
       return res.status(400).json({ error: 'No file uploaded' });
     }
-
-    console.log('File received in controller: ', audioFile);
 
     const formData = new FormData();
     formData.append('audioFile', audioFile.buffer, audioFile.originalname);
