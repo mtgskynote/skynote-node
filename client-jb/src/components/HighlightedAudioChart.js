@@ -15,8 +15,8 @@ const HighlightedAudioChart = React.memo(
     waveSurferRef,
   }) => {
     const canvasRef = useRef();
-    const [isPlaying, setIsPlaying] = useState(null); // Track which section is playing
-    const [sourceNode, setSourceNode] = useState(null); // Track audio source node for control
+    const sourceNodeRef = useRef(null); // Use ref to track audio source node for control
+    const [playingAudioRange, setPlayingAudioRange] = useState(null);
 
     // Memoize combined sections to avoid unnecessary recalculations
     const combinedSections = useMemo(() => {
@@ -125,45 +125,41 @@ const HighlightedAudioChart = React.memo(
     }, [audioData, sr, combinedSections]); // Only depend on combinedSections
 
     const handlePlayPause = (idx, start, end) => {
-      // Stop waveform audio if it's playing
-      if (playingSection === 'waveform' && waveSurferRef.current) {
-        waveSurferRef.current.pause();
-        setIsPlaying(null);
-      }
-
-      if (isPlaying === idx && sourceNode) {
-        sourceNode.stop();
-        setIsPlaying(null);
-        setPlayingSection(null);
-        return;
-      }
-
-      if (sourceNode) {
-        sourceNode.stop();
-      }
-
-      if (audioContext && audioBuffer) {
-        const source = audioContext.createBufferSource();
-        source.buffer = audioBuffer;
-        source.connect(audioContext.destination);
-        source.start(0, start / sr, (end - start) / sr);
-        source.onended = () => {
-          setIsPlaying(null);
-        };
-        setSourceNode(source);
-        setIsPlaying(idx);
-        setPlayingSection(idx);
-      }
+      setPlayingSection(idx);
+      setPlayingAudioRange([start, end]);
     };
 
     useEffect(() => {
-      if (playingSection === 'waveform' && sourceNode) {
-        setIsPlaying(null);
-        sourceNode.stop();
-      }
-    }, [playingSection]);
+      if (
+        (playingSection === 'waveform' || playingSection === null) &&
+        sourceNodeRef.current
+      ) {
+        sourceNodeRef.current.stop();
+        sourceNodeRef.current = null;
+      } else {
+        if (sourceNodeRef.current) {
+          sourceNodeRef.current.stop();
+          sourceNodeRef.current = null;
+        }
 
-    console.log('playing section: ' + playingSection);
+        if (audioContext && audioBuffer && playingAudioRange) {
+          const source = audioContext.createBufferSource();
+          source.buffer = audioBuffer;
+          source.connect(audioContext.destination);
+          source.start(
+            0,
+            playingAudioRange[0] / sr,
+            (playingAudioRange[1] - playingAudioRange[0]) / sr
+          );
+          source.onended = () => {
+            if (sourceNodeRef.current === source) {
+              setPlayingSection(null);
+            }
+          };
+          sourceNodeRef.current = source;
+        }
+      }
+    }, [playingSection, playingAudioRange]);
 
     return (
       <div className="flex flex-col items-center">

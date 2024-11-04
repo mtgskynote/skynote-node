@@ -91,12 +91,14 @@ const AudioAnalyzer = () => {
 
   const togglePlayPause = () => {
     if (waveSurferRef.current) {
-      // Stop any highlighted section that's currently playing
-      if (playingSection !== 'waveform' && playingSection !== null) {
-        setPlayingSection(null);
+      if (waveSurferRef.current.isPlaying()) {
+        waveSurferRef.current.pause();
+        if (playingSection === 'waveform') {
+          setPlayingSection(null);
+        }
+      } else {
+        waveSurferRef.current.play();
       }
-      waveSurferRef.current.playPause();
-      setPlayingSection((prev) => (prev !== 'waveform' ? 'waveform' : null));
     }
   };
 
@@ -133,6 +135,12 @@ const AudioAnalyzer = () => {
       }
     };
   }, [file]);
+
+  useEffect(() => {
+    if (playingSection !== null && playingSection !== 'waveform') {
+      waveSurferRef.current.pause();
+    }
+  }, [playingSection]);
 
   return (
     <div className="flex flex-col items-center min-h-screen bg-gray-100">
