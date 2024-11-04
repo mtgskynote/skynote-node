@@ -5,15 +5,12 @@ import PauseCircleIcon from '@mui/icons-material/PauseCircle';
 import IconButton from '@mui/material/IconButton';
 import WaveSurfer from 'wavesurfer.js';
 import HighlightedAudioChart from '../components/HighlightedAudioChart';
-import audioAnalyzerUtils from '../utils/audioAnalyzerUtils';
 import AudioFeaturesGraph from '../components/AudioFeaturesGraph';
-
-const { extractFeatures, detectVariableSections } = audioAnalyzerUtils;
+import { processAudio } from '../utils/audioAnalyzerUtils';
 
 const AudioAnalyzer = () => {
   const [file, setFile] = useState(null);
   const [audioBuffer, setAudioBuffer] = useState(null);
-  const [highlightedSections, setHighlightedSections] = useState(null);
   const [playingSection, setPlayingSection] = useState(null);
   const [features, setFeatures] = useState(null);
   const waveSurferRef = useRef(null);
@@ -40,16 +37,15 @@ const AudioAnalyzer = () => {
     });
   }, []);
 
-  const processAudioBuffer = async (buffer) => {
+  const processAudioBuffer = async (file) => {
     try {
-      const features = await extractFeatures(buffer);
-      setFeatures(features);
+      const processAudioResult = await processAudio(file);
+      setFeatures(processAudioResult);
 
-      const sections = detectVariableSections(...Object.values(features));
-      setAudioBuffer(buffer);
-      setHighlightedSections(sections);
+      console.log('PYTHON RESULT');
+      console.log(processAudioResult);
     } catch (error) {
-      console.error('Error processing audio buffer:', error);
+      console.error('Error processing audio:', error);
     }
   };
 
@@ -58,7 +54,8 @@ const AudioAnalyzer = () => {
     if (uploadedFile && uploadedFile.type.startsWith('audio/')) {
       setFile(uploadedFile);
       const buffer = await getAudioBuffer(uploadedFile);
-      await processAudioBuffer(buffer);
+      setAudioBuffer(buffer);
+      await processAudioBuffer(uploadedFile);
     } else {
       alert('Please upload an audio file.');
     }
@@ -70,7 +67,8 @@ const AudioAnalyzer = () => {
     if (uploadedFile && uploadedFile.type.startsWith('audio/')) {
       setFile(uploadedFile);
       const buffer = await getAudioBuffer(uploadedFile);
-      await processAudioBuffer(buffer);
+      setAudioBuffer(buffer);
+      await processAudioBuffer(uploadedFile);
     } else {
       alert('Please upload an audio file.');
     }
@@ -84,7 +82,7 @@ const AudioAnalyzer = () => {
     setFile(null);
     setPlayingSection(null);
     setAudioBuffer(null);
-    setHighlightedSections(null);
+    setFeatures(null);
     if (waveSurferRef.current) {
       waveSurferRef.current.destroy();
       waveSurferRef.current = null;
@@ -102,7 +100,7 @@ const AudioAnalyzer = () => {
     }
   };
 
-  React.useEffect(() => {
+  useEffect(() => {
     if (file && waveformContainerRef.current) {
       if (waveSurferRef.current) {
         waveSurferRef.current.destroy();
@@ -135,11 +133,6 @@ const AudioAnalyzer = () => {
       }
     };
   }, [file]);
-
-  useEffect(() => {
-    console.log('features');
-    console.log(features);
-  }, [features]);
 
   return (
     <div className="flex flex-col items-center min-h-screen bg-gray-100">
@@ -209,14 +202,14 @@ const AudioAnalyzer = () => {
           </div>
         </div>
       )}
-      {audioBuffer && highlightedSections && (
+      {audioBuffer && features && (
         <div>
           <hr className="my-4 border-t-2 border-gray-400" />
           <div className="p-4 bg-blue-50 rounded-lg border-2 border-blue-300 border-solid relative">
             <HighlightedAudioChart
               audioData={audioBuffer.getChannelData(0)}
               sr={audioBuffer.sampleRate}
-              highlightedSections={highlightedSections}
+              highlightedSections={features.variable_sections}
               audioBuffer={audioBuffer}
               audioContext={audioContextRef.current}
               playingSection={playingSection}
@@ -230,9 +223,9 @@ const AudioAnalyzer = () => {
         <div className="flex flex-row space-x-6">
           <div className="my-4 p-4 bg-blue-50 rounded-lg border-2 border-blue-300 border-solid relative">
             <AudioFeaturesGraph
-              values={features.rms}
-              sampleRate={features.sampleRate}
-              hopSize={features.hopLength}
+              values={features.rms[0]}
+              sampleRate={features.sample_rate}
+              hopSize={features.hop_length}
               color="#008000"
               title="Loudness"
             />
@@ -240,9 +233,8 @@ const AudioAnalyzer = () => {
           <div className="my-4 p-4 bg-blue-50 rounded-lg border-2 border-blue-300 border-solid relative">
             <AudioFeaturesGraph
               values={features.pitches}
-              sampleRate={features.sampleRate}
-              hopSize={features.hopLength}
-              maxY={800}
+              sampleRate={features.sample_rate}
+              hopSize={features.hop_length}
               color="#FFA500"
               title="Pitch"
             />

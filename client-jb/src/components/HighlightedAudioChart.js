@@ -163,6 +163,8 @@ const HighlightedAudioChart = React.memo(
       }
     }, [playingSection]);
 
+    console.log('playing section: ' + playingSection);
+
     return (
       <div className="flex flex-col items-center">
         <div className="text-center mb-4 text-slate-800">
