@@ -29,8 +29,12 @@ def process_audio():
     # Detect variable sections
     variable_sections, timbre_variability, loudness_variability, pitch_diff_variability = detect_variable_sections(mfccs, rms, pitches, sr, hop_length)
 
-    print("Variable sections")
-    print(variable_sections)
+    # Normalize the extracted features
+    time_axis = np.arange(len(timbre_variability)) * (hop_length * 25) / sr
+    timbre_variability_normalized = (timbre_variability - np.min(timbre_variability)) / (np.max(timbre_variability) - np.min(timbre_variability))
+    loudness_variability_normalized = (loudness_variability - np.min(loudness_variability)) / (np.max(loudness_variability) - np.min(loudness_variability))
+    pitch_diff_variability_normalized = (pitch_diff_variability - np.min(pitch_diff_variability)) / (np.max(pitch_diff_variability) - np.min(pitch_diff_variability))
+    articulation_levels_normalized = (articulation_levels - np.min(articulation_levels)) / (np.max(articulation_levels) - np.min(articulation_levels))
 
     # Convert all numpy arrays to lists
     response = {
@@ -44,7 +48,12 @@ def process_audio():
         'variable_sections': variable_sections.tolist(),
         'timbre_variability': timbre_variability.tolist(),
         'loudness_variability': loudness_variability.tolist(),
-        'pitch_diff_variability': pitch_diff_variability.tolist()
+        'pitch_diff_variability': pitch_diff_variability.tolist(),
+        'normalized_time_axis': time_axis.tolist(),
+        'normalized_timbre_variability': timbre_variability_normalized.tolist(),
+        'normalized_loudness_variability': loudness_variability_normalized.tolist(),
+        'normalized_pitch_variability': pitch_diff_variability_normalized.tolist(),
+        'normalized_articulation_variability': articulation_levels_normalized.tolist(),
     }
 
     # Ensure all elements in the response are JSON serializable

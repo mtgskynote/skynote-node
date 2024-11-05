@@ -12,7 +12,6 @@ const HighlightedAudioChart = React.memo(
     audioContext,
     playingSection,
     setPlayingSection,
-    waveSurferRef,
   }) => {
     const canvasRef = useRef();
     const sourceNodeRef = useRef(null); // Use ref to track audio source node for control
@@ -45,7 +44,7 @@ const HighlightedAudioChart = React.memo(
 
     useEffect(() => {
       const margin = { top: 20, right: 15, bottom: 40, left: 20 };
-      const width = 800 - margin.left - margin.right;
+      const width = 750 - margin.left - margin.right;
       const height = 200 - margin.top - margin.bottom;
 
       const canvas = canvasRef.current;
@@ -168,10 +167,10 @@ const HighlightedAudioChart = React.memo(
           Highlighted Sections on Original Audio
         </div>
         <div className="flex flex-row items-center">
-          <canvas ref={canvasRef} style={{ width: '800px', height: '200px' }} />
+          <canvas ref={canvasRef} className="w-full h-56" />
           <div className="flex flex-col justify-center ml-4 self-center">
             {combinedSections.map((section, idx) => (
-              <div key={idx}>
+              <div key={idx} className="flex items-center space-x-2">
                 <IconButton
                   onClick={() =>
                     handlePlayPause(idx, section.start, section.end)
