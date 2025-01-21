@@ -1,8 +1,8 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useRef, memo } from 'react';
 import PropTypes from 'prop-types';
 
 //Pitch track line component
-const LineChart = (props) => {
+const LineChart = memo((props) => {
   const containerRef = useRef(null);
   const canvasRef = useRef(null);
 
@@ -72,7 +72,7 @@ const LineChart = (props) => {
       <canvas ref={canvasRef} width={props.width} height={props.height} />;
     </div>
   );
-};
+});
 
 LineChart.propTypes = {
   pitchData: PropTypes.arrayOf(

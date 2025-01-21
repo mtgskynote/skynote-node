@@ -290,6 +290,7 @@ const ProgressPlayFile = () => {
 
   useEffect(() => {
     const newAudioStreamer = makeAudioStreamer(handlePitchCallback, null, aCb);
+    newAudioStreamer.preload(['rms', 'spectralCentroid', 'spectralFlux']);
     setAudioStreamer(newAudioStreamer);
   }, []);
 
@@ -629,11 +630,12 @@ const ProgressPlayFile = () => {
       setShowPitchTrack(true);
 
       // Start recording with audio streamer
-      audioStreamer.init(!practiceMode, [
-        'rms',
-        'spectralCentroid',
-        'spectralFlux',
-      ]);
+      // audioStreamer.init(!practiceMode, [
+      //   'rms',
+      //   'spectralCentroid',
+      //   'spectralFlux',
+      // ]);
+      audioStreamer.start(!practiceMode);
 
       // Play MIDI audio playback
       playAudio(playbackManager);

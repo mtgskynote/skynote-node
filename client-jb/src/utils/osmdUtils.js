@@ -90,18 +90,24 @@ const generateNoteIDsAssociation = (osmd) => {
 };
 
 const renderPitchLineZoom = (osmd, state, prevZoom, showingRep) => {
-  //When zoom happens, coordinates X and Y of pitch tracking points have to be updated
   let staves = osmd.graphic.measureList;
   let copy_pitchPositionX = state.pitchPositionX.slice();
   let copy_pitchPositionY = state.pitchPositionY.slice();
+
   for (let stave_index = 0; stave_index < staves.length; stave_index++) {
     let stave = staves[stave_index][0];
     const staveLines = document.getElementsByClassName('vf-stave')[stave_index];
-    const upperLineStave = staveLines.children[0].getBoundingClientRect().top; //upper line
-    const middleLineStave = staveLines.children[2].getBoundingClientRect().top; //middle line
-    const lowerLineStave = staveLines.children[4].getBoundingClientRect().top; //lower line
-    const oneStepPixels = Math.abs(upperLineStave - lowerLineStave) / 4 / 2; //steps corresponding to one step in staff
+    const upperLineStave = staveLines.children[0].getBoundingClientRect().top;
+    const middleLineStave = staveLines.children[2].getBoundingClientRect().top;
+    const lowerLineStave = staveLines.children[4].getBoundingClientRect().top;
+    const oneStepPixels = Math.abs(upperLineStave - lowerLineStave) / 4 / 2;
 
+    // Initialize initial offsets at the first usage, if needed
+    if (!state.initialPitchLineOffsets) {
+      state.initialPitchLineOffsets = [];
+    }
+
+    // Loop through notes on the stave
     for (
       let note_index = 0;
       note_index < stave.staffEntries.length;
@@ -113,49 +119,66 @@ const renderPitchLineZoom = (osmd, state, prevZoom, showingRep) => {
       let noteX = note.graphicalVoiceEntries[0].notes[0]
         .getSVGGElement()
         .getBoundingClientRect().x;
-      //check for notehead color
+
+      // Handle coloring of notes (same as before)
       const colorsArray = state.colorNotes.slice();
-      const index = colorsArray.findIndex(
+      const colorIndex = colorsArray.findIndex(
         (item) => item[0][0] === noteNEWID && item[0][2] === showingRep
       );
-      if (index !== -1) {
-        //note has a color assigned--> color notehead
-        // this is for all the notes except the quarter and whole notes
+      if (colorIndex !== -1) {
         const svgElement =
           note.graphicalVoiceEntries[0].notes[0].getSVGGElement();
         svgElement.children[0].children[0].children[0].style.fill =
-          colorsArray[index][0][1]; // notehead
+          colorsArray[colorIndex][0][1];
         if (
           svgElement &&
           svgElement.children[0] &&
           svgElement.children[0].children[0] &&
           svgElement.children[0].children[1]
         ) {
-          //this is for all the quarter and whole notes
           svgElement.children[0].children[0].children[0].style.fill =
-            colorsArray[index][0][1]; // notehead
+            colorsArray[colorIndex][0][1];
           svgElement.children[0].children[1].children[0].style.fill =
-            colorsArray[index][0][1]; // notehead
+            colorsArray[colorIndex][0][1];
         }
       }
-      //check for pitch tracking line
+
+      // Recalculate position for pitch lines
       for (let index = 0; index < copy_pitchPositionX.length; index++) {
         if (state.recordedNoteIDs[index] === noteID) {
-          //this note has been recorded
+          // Calculate the pitch step
           let midiToStaffStep = midi2StaffGaps(
             freq2midipitch(state.pitchData[index])
           );
           copy_pitchPositionX[index] = noteX;
-          copy_pitchPositionY[index] =
+          let pitchPositionY =
             middleLineStave + midiToStaffStep * oneStepPixels;
+
+          // Initialize initial offset for the first time a pitch line is drawn
+          if (state.initialPitchLineOffsets[index] === undefined) {
+            state.initialPitchLineOffsets[index] =
+              pitchPositionY - upperLineStave; // Record the offset from the stave's top
+          } else {
+            // Ensure the pitch position stays consistent during scroll and zoom
+            pitchPositionY =
+              upperLineStave +
+              state.initialPitchLineOffsets[index] +
+              window.scrollY;
+          }
+
+          // Ensure pitch position Y doesn't "jump" during a few initial staves
+          copy_pitchPositionY[index] = pitchPositionY;
         }
       }
     }
   }
+
+  // Scale and recalculate recorded note index based on zoom
   let copy_recordedNoteIndex = state.recordedNoteIndex.slice();
   copy_recordedNoteIndex = copy_recordedNoteIndex.map(
     (item) => (item * osmd.zoom) / prevZoom
   );
+
   return [copy_pitchPositionX, copy_pitchPositionY, copy_recordedNoteIndex];
 };
 
@@ -193,10 +216,29 @@ const setNoteColor = (osmd, colorsArray, stave, noteIndex, showingRep) => {
   return [noteX, noteID];
 };
 
+const resetNotesColor = (osmd) => {
+  const colorBlack = '#000000';
+  const svgContainer = osmd.container;
+  const svgElements = svgContainer.getElementsByTagName('svg');
+
+  for (let i = 0; i < svgElements.length; i++) {
+    const svgElement = svgElements[i];
+    // Select all elements with class "vf-notehead" within the SVG element
+    const noteheads = svgElement.getElementsByClassName('vf-notehead');
+    for (let j = 0; j < noteheads.length; j++) {
+      let notehead = noteheads[j];
+      let path = notehead.querySelector('path');
+      // Set the fill attribute to black
+      path.setAttribute('style', 'fill: ' + colorBlack + ' !important');
+    }
+  }
+};
+
 export {
   freq2midipitch,
   midi2StaffGaps,
   generateNoteIDsAssociation,
   renderPitchLineZoom,
   setNoteColor,
+  resetNotesColor,
 };
