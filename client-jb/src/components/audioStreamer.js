@@ -64,8 +64,6 @@ var makeAudioStreamer = function (
     },
 
     preload: async function (meydaFeatures = []) {
-      console.log('meydaFeatures ', meydaFeatures);
-
       // Access audio input (microphone) permissions but do not start recording
       if (!mediaStream) {
         mediaStream = await navigator.mediaDevices.getUserMedia({
@@ -105,7 +103,6 @@ var makeAudioStreamer = function (
       const minBufferSize = (audioContext.sampleRate / 16000) * 1024;
       let bufferSize = 4;
       for (; bufferSize < minBufferSize; bufferSize *= 2);
-      console.log('CREPE Buffer size = ' + bufferSize);
 
       scriptNode = await makeCrepeScriptNode(
         audioContext,
@@ -156,100 +153,6 @@ var makeAudioStreamer = function (
       }
 
       console.log('Pitch tracking started.');
-    },
-
-    init: async function (recordMode, meydaFeatures = []) {
-      console.log('meydaFeatures ', meydaFeatures);
-
-      mediaStream = await navigator.mediaDevices.getUserMedia({
-        audio: {
-          echoCancellation: false,
-          autoGainControl: false,
-          noiseSuppression: false,
-          latency: { ideal: 0.01, max: 0.05 },
-          sampleRate: 22050,
-        },
-      });
-
-      mediaRecorder = new MediaRecorder(mediaStream);
-      mediaRecorder.ondataavailable = (event) => {
-        if (event.data.size > 0) {
-          audioChunks.push(event.data);
-        }
-      };
-
-      // mediaRecorder.onstop = () => {
-      //   console.log('----------MediaRecorder stopped');
-      //   const audioBlob = new Blob(audioChunks, { type: 'audio/wav' });
-      //   const audioUrl = URL.createObjectURL(audioBlob);
-      //   const audio = document.getElementById('audioPlayback');
-      //   if (! audio) {
-      //     console.log('No audio element to play back - Should the audio save dialog box return a file name first, or what ?????');
-      //   } else {
-      //     audio.src = audioUrl;
-      //   }
-      //   audioChunks = [];
-
-      // };
-
-      if (recordMode === true) {
-        mediaRecorder.start();
-        console.log("We're now recording stuff :D");
-      }
-
-      resumeAudioContext();
-      sourceNode = audioContext.createMediaStreamSource(mediaStream);
-
-      if (typeof Meyda === 'undefined') {
-        console.log('Meyda could not be found! Have you included it?');
-      } else {
-        const analyzer = Meyda.createMeydaAnalyzer({
-          audioContext: audioContext,
-          source: sourceNode,
-          // The docs (https://meyda.js.org/guides/online-web-audio) imply this can be anything, and also that it
-          //     determines not just the buffer size, but in fact the rate at which the analyzer gets called.
-          bufferSize: meyda_buff_fft_length,
-          featureExtractors: meydaFeatures,
-          callback: (features) => {
-            //console.log(`CALLBACK FEATURES:  +${JSON.parse(features)}`);
-            this.analyzerCb && this.analyzerCb(features);
-          },
-        });
-        analyzer.start();
-      }
-
-      // // analyserNode defined in object
-      this.analyserNode.fftSize = meyda_buff_fft_length;
-
-      // // Connect the source node to the analyser node
-      sourceNode.connect(this.analyserNode);
-
-      // The Crepe script node downsamples to 16kHz
-      // We need the buffer size that is a power of two and is longer than 1024 samples when resampled to 16000 Hz.
-      // In most platforms where the sample rate is 44.1 kHz or 48 kHz, this will be 4096, giving 10-12 updates/sec.
-      const minBufferSize = (audioContext.sampleRate / 16000) * 1024;
-      for (var bufferSize = 4; bufferSize < minBufferSize; bufferSize *= 2);
-      console.log('CREPE Buffer size = ' + bufferSize);
-      // console.log(
-      //   `Setting up a crepescriptnode with pitchcallback  ${pitchCallback}`
-      // );
-      scriptNode = await makeCrepeScriptNode(
-        audioContext,
-        bufferSize,
-        pitchCallback,
-        pitchVectorCallback
-      );
-
-      sourceNode.connect(scriptNode);
-      console.log(`audioStreamer: OK = pitch node connected!!`);
-
-      // necessary to pull audio throuth the scriptNode???????
-      gain = audioContext.createGain();
-      gain.gain.setValueAtTime(0, audioContext.currentTime);
-
-      scriptNode.connect(gain);
-
-      gain.connect(audioContext.destination);
     },
 
     close: function () {

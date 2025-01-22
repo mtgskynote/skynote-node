@@ -33,6 +33,7 @@ const OpenSheetMusicDisplay = (props) => {
   const [selectionEndReached, setSelectionEndReached] = useState(false);
   const [calculatePunctuation, setCalculatePunctuation] = useState(false);
   const [scrolled, setScrolled] = useState(false);
+  const [spacing, setSpacing] = useState(12);
 
   const osmd = useRef(undefined);
   const playbackManager = useRef(null);
@@ -49,7 +50,7 @@ const OpenSheetMusicDisplay = (props) => {
   const noteColor = useRef(null);
   const pitchColorRef = useRef([]);
   const index = useRef(null);
-  const spacing = useRef(4);
+  // const spacing = useRef(12);
   const countGoodNotes = useRef(0);
   const countBadNotes = useRef(0);
   const coords = useRef([0, 0]);
@@ -111,6 +112,7 @@ const OpenSheetMusicDisplay = (props) => {
       playbackManager.current.initialize(osmd.Sheet.musicPartManager);
       playbackManager.current.addListener(osmd.cursor);
       playbackManager.current.reset();
+      playbackManager.current.setBpm(props.bpm);
       osmd.PlaybackManager = playbackManager.current;
 
       for (const instrument of playbackManager.current.InstrumentIdMapping.values()) {
@@ -253,12 +255,22 @@ const OpenSheetMusicDisplay = (props) => {
     });
   };
 
+  const calculateSpacing = (currentSpacing, currentBPM, newBPM) => {
+    return currentSpacing * (currentBPM / newBPM);
+  };
+
   const updateMetronomeVolume = (newVolume) => {
     osmd.current.PlaybackManager.Metronome.Volume = newVolume;
   };
 
   // update bpm value
   const updateBpm = (newBpm) => {
+    const newSpacing = calculateSpacing(
+      spacing,
+      parseInt(osmd.current.PlaybackManager.currentBPM),
+      newBpm
+    );
+    setSpacing(newSpacing);
     //Update bpm
     osmd.current.PlaybackManager.setBpm(newBpm);
     //Just in case, update bpm values for every measure of the score
@@ -672,12 +684,13 @@ const OpenSheetMusicDisplay = (props) => {
 
   useEffect(() => {
     if (props.startPitchTrack) {
+      console.log('spacing: ' + spacing);
       if (
         notePositionX.current ===
         pitchPositionXRef.current[pitchPositionXRef.current.length - 1]
       ) {
         // we are still on the same note
-        index.current = index.current + spacing.current; // 6 is the spacing between points
+        index.current = index.current + spacing; // 12 is the spacing between points
       } else {
         // new note
         index.current = 0; // reset index

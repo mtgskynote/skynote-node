@@ -262,7 +262,6 @@ const ProgressPlayFile = () => {
 
         // Check if the file is valid XML (file found in folderBasePath)
         if (xmlFileData.startsWith('<?xml')) {
-          console.log('File found at folderBasePath:', fileUrl);
           setXmlFile(fileUrl);
         } else {
           const localStorageFile = localStorage.getItem(params.files);
@@ -397,13 +396,13 @@ const ProgressPlayFile = () => {
       setIsBpmDeactivated(true);
     }
     setRecordInactive(false);
-    setStartPitchTrack(true);
     setShowPitchTrack(true);
     setShowCountDownTimer(true);
   };
 
   // Stop recording audio
   const stopRecordingAudio = (playbackManager) => {
+    setStartPitchTrack(false);
     if (practiceMode) audioStreamer.close_not_save();
     else {
       audioStreamer.close_maybe_save();
@@ -415,7 +414,6 @@ const ProgressPlayFile = () => {
     }
 
     setIsPlaying(false);
-    setStartPitchTrack(false);
 
     resetAudio(playbackManager);
     setIsSwitchingMode(false);
@@ -630,11 +628,6 @@ const ProgressPlayFile = () => {
       setShowPitchTrack(true);
 
       // Start recording with audio streamer
-      // audioStreamer.init(!practiceMode, [
-      //   'rms',
-      //   'spectralCentroid',
-      //   'spectralFlux',
-      // ]);
       audioStreamer.start(!practiceMode);
 
       // Play MIDI audio playback
@@ -760,7 +753,7 @@ const ProgressPlayFile = () => {
 
         {showCountDownTimer ? (
           <CountDownTimer
-            bpm={bpm}
+            bpm={parseInt(bpm)}
             mode={practiceMode}
             onCountDownFinished={handleCountDownFinished}
           />
