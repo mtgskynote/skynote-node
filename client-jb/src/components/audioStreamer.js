@@ -49,18 +49,28 @@ var makeAudioStreamer = function (
     preloaded: false,
 
     dismantleAudioNodes: function () {
-      console.log('DiSMANTLING audio nodes');
-      // Stop all tracks on the audio source
       if (mediaStream) {
-        mediaStream.getTracks().forEach((track) => track.stop());
+        mediaStream.getTracks().forEach((track) => {
+          track.stop();
+        });
         mediaStream = null;
-        console.log('MediaStream tracks stopped');
       }
 
+      // Disconnect nodes
       sourceNode && sourceNode.disconnect();
       scriptNode && scriptNode.disconnect();
       this.analyserNode && this.analyserNode.disconnect();
       gain && gain.disconnect();
+
+      // Nullify node references to clean up memory
+      sourceNode = null;
+      scriptNode = null;
+      gain = null;
+      this.analyserNode = null;
+      this.meydaAnalyzer = null;
+      this.preloaded = false;
+
+      console.log('Audio nodes dismantled.');
     },
 
     preload: async function (meydaFeatures = []) {
@@ -156,14 +166,15 @@ var makeAudioStreamer = function (
     },
 
     close: function () {
-      console.log('audiochunks', audioChunks);
       if (this.meydaAnalyzer) this.meydaAnalyzer.stop();
-      if (mediaRecorder) {
-        console.log('mediaRecorder.state is ', mediaRecorder.state);
+
+      if (mediaRecorder && mediaRecorder.state !== 'inactive') {
+        console.log('Stopping mediaRecorder with state:', mediaRecorder.state);
         mediaRecorder.stop();
       }
 
       this.dismantleAudioNodes();
+      suspendAudioContext();
     },
 
     close_not_save: function () {

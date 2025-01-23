@@ -99,7 +99,7 @@ const ProgressPlayFile = () => {
   const showSaveRecordingPopUpRef = useRef(showSaveRecordingPopUp);
   const practiceModeRef = useRef(practiceMode);
   const showCountDownTimerRef = useRef(showCountDownTimer);
-  const [audioStreamer, setAudioStreamer] = useState(null);
+  const audioStreamerRef = useRef(null);
 
   // Hot keys map and handlers
   const keyMap = {
@@ -290,7 +290,7 @@ const ProgressPlayFile = () => {
   useEffect(() => {
     const newAudioStreamer = makeAudioStreamer(handlePitchCallback, null, aCb);
     newAudioStreamer.preload(['rms', 'spectralCentroid', 'spectralFlux']);
-    setAudioStreamer(newAudioStreamer);
+    audioStreamerRef.current = newAudioStreamer;
   }, []);
 
   // Get user data once the score title is loaded
@@ -333,30 +333,26 @@ const ProgressPlayFile = () => {
   // Ask user for microphone permissions so that the application can record audio
   useEffect(() => {
     if (!isMicrophoneActive()) {
-      startMicrophone()
-        .then(() => {
-          console.log('Microphone started');
-        })
-        .catch((error) => {
-          console.error('Failed to get microphone access:', error);
-          alert('Please allow microphone access to use this feature');
-          setCanRecord(false);
-          window.location.reload();
-        });
+      startMicrophone().catch((error) => {
+        console.error('Failed to get microphone access:', error);
+        alert('Please allow microphone access to use this feature');
+        setCanRecord(false);
+        window.location.reload();
+      });
     }
 
     return () => {
       if (isMicrophoneActive()) {
         stopMicrophone();
       }
-      audioStreamer && audioStreamer.close();
+      audioStreamerRef.current && audioStreamerRef.current.close();
     };
   }, []); //This should run only once
 
   // Save recording to user profile when audio is available to download
   useEffect(() => {
     if (audioReady) {
-      audioStreamer
+      audioStreamerRef.current
         .save_or_not('save')
         .then((dataToDownload) => {
           const buffer = new Buffer.from(dataToDownload);
@@ -403,9 +399,9 @@ const ProgressPlayFile = () => {
   // Stop recording audio
   const stopRecordingAudio = (playbackManager) => {
     setStartPitchTrack(false);
-    if (practiceMode) audioStreamer.close_not_save();
+    if (practiceMode) audioStreamerRef.current.close_not_save();
     else {
-      audioStreamer.close_maybe_save();
+      audioStreamerRef.current.close_maybe_save();
       if (!isSwitchingMode) {
         setShowSaveRecordingPopUp(true);
       }
@@ -493,7 +489,7 @@ const ProgressPlayFile = () => {
   const handleDeleteRecording = () => {
     setShowSaveRecordingPopUp(false);
 
-    audioStreamer.save_or_not('delete');
+    audioStreamerRef.current.save_or_not('delete');
     setPitch([]);
     setConfidence([]);
 
@@ -628,7 +624,7 @@ const ProgressPlayFile = () => {
       setShowPitchTrack(true);
 
       // Start recording with audio streamer
-      audioStreamer.start(!practiceMode);
+      audioStreamerRef.current.start(!practiceMode);
 
       // Play MIDI audio playback
       playAudio(playbackManager);
@@ -662,8 +658,8 @@ const ProgressPlayFile = () => {
   useEffect(() => {
     const handleBeforeUnload = (event) => {
       // Ensure recording is not saved and audioStreamer is properly cleaned up
-      if (isRecording && audioStreamer) {
-        audioStreamer.save_or_not('delete');
+      if (isRecording && audioStreamerRef.current) {
+        audioStreamerRef.current.save_or_not('delete');
         stopRecordingAudio(playbackRef.current);
       }
       // Cancel the event as stated by the standard
@@ -679,7 +675,7 @@ const ProgressPlayFile = () => {
       if (isMicrophoneActive()) {
         stopMicrophone();
       }
-      audioStreamer && audioStreamer.close();
+      audioStreamerRef.current && audioStreamerRef.current.close();
     };
   }, []);
 
