@@ -1,14 +1,18 @@
 import axios from 'axios';
 
+/**
+ * Fetches all assignments for a given student.
+ * @param {string} studentId - The ID of the student.
+ * @returns {Promise<Array>} - A promise that resolves to an array of assignments.
+ */
 async function getAllAssignments(studentId) {
   try {
-    // scoreId: "64d0de60d9ac9a34a66b4d45" is for the score "V_001_Cuerdas_Al_Aire_1_Suelta_A"
     const response = await axios.get('/api/v1/assignments/getAllAssignments', {
       params: { studentId: studentId },
     });
 
     if (response.status === 200) {
-      return response.data; // save results locally
+      return response.data;
     } else {
       console.log('getAllAssignments response.status is not 200!');
       return [];
@@ -18,6 +22,11 @@ async function getAllAssignments(studentId) {
   }
 }
 
+/**
+ * Updates an assignment with the given assignment object.
+ * @param {Object} assignmentObject - The assignment object to update.
+ * @returns {Promise<Object|null>} - A promise that resolves to the updated assignment data or null if the update failed.
+ */
 async function putAssignment(assignmentObject) {
   try {
     const response = await axios.put(
@@ -28,8 +37,7 @@ async function putAssignment(assignmentObject) {
       `response from putAssignment was ${JSON.stringify(response.data)}`
     );
     if (response.status === 201) {
-      /* 201 is the status code for a successful PUT */
-      console.log('putAssignment  returned OK');
+      console.log('putAssignment returned OK');
       return response.data;
     } else {
       console.log('putAssignment failed!');
@@ -40,9 +48,13 @@ async function putAssignment(assignmentObject) {
   }
 }
 
+/**
+ * Deletes an assignment with the given assignment ID.
+ * @param {string} assignmentId - The ID of the assignment to delete.
+ * @returns {Promise<Object>} - A promise that resolves to the response data.
+ */
 async function deleteAssignment(assignmentId) {
   try {
-    // console.log(`will try to delete assignmentId ${assignmentId}`)
     const response = await axios.delete(
       `/api/v1/assignments/deleteAssignment/${assignmentId}`
     );
@@ -57,16 +69,20 @@ async function deleteAssignment(assignmentId) {
   }
 }
 
+/**
+ * Fetches the latest assignment for a given student.
+ * @param {string} studentId - The ID of the student.
+ * @returns {Promise<Object>} - A promise that resolves to the latest assignment data.
+ */
 async function getLatestAssignment(studentId) {
   try {
-    // scoreId: "64d0de60d9ac9a34a66b4d45" is for the score "V_001_Cuerdas_Al_Aire_1_Suelta_A"
     const response = await axios.get(
       '/api/v1/assignments/getLatestAssignment',
       { params: { studentId: studentId } }
     );
 
     if (response.status === 200) {
-      return response.data; // save results locally
+      return response.data;
     } else {
       console.log('getLatestAssignment response.status is not 200!');
       return [];
@@ -76,6 +92,14 @@ async function getLatestAssignment(studentId) {
   }
 }
 
+/**
+ * Updates an assignment with the given parameters.
+ * @param {string} assignmentId - The ID of the assignment to update.
+ * @param {string} studentId - The ID of the student.
+ * @param {string} scoreId - The ID of the score.
+ * @param {string} recordingId - The ID of the recording.
+ * @returns {Promise<Object|null>} - A promise that resolves to the updated assignment data or null if the update failed.
+ */
 async function updateAssignment(assignmentId, studentId, scoreId, recordingId) {
   try {
     const response = await axios.put(
@@ -91,8 +115,7 @@ async function updateAssignment(assignmentId, studentId, scoreId, recordingId) {
       `response from putAssignment was ${JSON.stringify(response.data)}`
     );
     if (response.status === 200) {
-      /* 200 is the status code everything okay */
-      console.log('updateAssignment  returned OK');
+      console.log('updateAssignment returned OK');
       return response.data;
     } else {
       console.log('updateAssignment failed!');

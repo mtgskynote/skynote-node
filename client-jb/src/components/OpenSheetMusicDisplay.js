@@ -364,6 +364,11 @@ const OpenSheetMusicDisplay = (props) => {
         osmd.current.cursor.NotesUnderCursor()[0].Pitch !== undefined ||
         osmd.current.cursor.NotesUnderCursor()[0].TransposedPitch !== undefined
       ) {
+        // also need to check if the transpose prop coming in is 0
+        console.log('pitch');
+        console.log(osmd.current.cursor.NotesUnderCursor()[0].Pitch);
+        console.log('transposed pitch');
+        console.log(osmd.current.cursor.NotesUnderCursor()[0].TransposedPitch);
         notePitch =
           osmd.current.cursor.NotesUnderCursor()[0].TransposedPitch !==
           undefined
@@ -701,7 +706,7 @@ const OpenSheetMusicDisplay = (props) => {
       const midiToStaffStep = midi2StaffGaps(newPitchMIDI); // where to locate the played note in the staff with respect to B4(middle line)
       if (
         midiToStaffStep === 0 ||
-        props.pitchConfidence[props.pitchConfidence.length - 1] < 0.5 // pitch confidence is becoming weirdly low on the 2nd or third time pitch tracking is done...why??
+        props.pitchConfidence[props.pitchConfidence.length - 1] < 0.3 // pitch confidence is becoming weirdly low on the 2nd or third time pitch tracking is done...why??
       ) {
         // Color turns white/invisible when pitch is out of bounds or pitch confidence is below 0.5
         color.current = '#FFFFFF';

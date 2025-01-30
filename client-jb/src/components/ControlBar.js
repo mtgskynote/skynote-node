@@ -1,25 +1,17 @@
 import React, { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
 import ModeToggle from './ModeToggle';
-import {
-  PlayCircle as PlayIcon,
-  PauseCircle as PauseIcon,
-  RadioButtonChecked as RecordIcon,
-  ImportExport as TransposeIcon,
-  AccessTime as BpmIcon,
-  VolumeUp as VolumeIcon,
-  Hearing as ListenIcon,
-  HearingDisabled as ListenPauseIcon,
-  RestartAlt as ResetIcon,
-  Equalizer as StatsIcon,
-  Info as InfoIcon,
-} from '@mui/icons-material';
-import IconButton from '@mui/material/IconButton';
-import Tooltip from '@mui/material/Tooltip';
+import ShortcutsPanel from './ShortcutsPanel';
+import StatsPanel from './StatsPanel';
+import IconButtonWithTooltip from './IconButtonWithTooltip';
 import ControlBarPopover from './ControlBarPopover';
 import RangeInput from './RangeInput';
 import ControlBarPanel from './ControlBarPanel';
-import StarRating from './StarRating';
+import {
+  allModeIcons,
+  practiceModeIcons,
+  recordModeIcons,
+} from '../utils/controlBarIcons';
 
 const ControlBar = ({
   onTransposeChange,
@@ -55,103 +47,6 @@ const ControlBar = ({
   const initialBpm = 100;
   const initialMetronomeVolume = 0;
 
-  const allModeIcons = [
-    {
-      tooltip: 'Transpose',
-      icon: <TransposeIcon className="text-4xl" />,
-      labels: ['Transpose'],
-      mins: [-12],
-      maxs: [12],
-      initials: [initialTranspose],
-      onChanges: [onTransposeChange],
-      slidersDisabled: practiceModeOn ? [false] : [isBpmDisabled],
-      showInPlaybackMode: false,
-      showInInteractiveMode: true,
-    },
-    {
-      tooltip: 'Metronome',
-      icon: <BpmIcon className="text-4xl" />,
-      labels: playbackMode ? ['Volume'] : ['BPM', 'Volume'],
-      mins: playbackMode ? [0] : [30, 0],
-      maxs: playbackMode ? [100] : [200, 100],
-      initials: playbackMode
-        ? [initialMetronomeVolume]
-        : [initialBpm, initialMetronomeVolume],
-      onChanges: playbackMode
-        ? [onMetronomeVolumeChange]
-        : [onBpmChange, onMetronomeVolumeChange],
-      slidersDisabled: playbackMode ? [false] : [isBpmDisabled, false],
-      showInPlaybackMode: true,
-      showInInteractiveMode: true,
-    },
-    {
-      tooltip: 'MIDI Volume',
-      icon: <VolumeIcon className="text-4xl" />,
-      labels: ['Volume'],
-      mins: [0],
-      maxs: [100],
-      initials: [initialMidiVolume],
-      onChanges: [onMidiVolumeChange],
-      slidersDisabled: practiceModeOn ? [false] : [true],
-      showInPlaybackMode: false,
-      showInInteractiveMode: true,
-    },
-    {
-      tooltip: 'Stats',
-      icon: <StatsIcon className="text-4xl" />,
-      toggle: handleToggleStats,
-      showInPlaybackMode: true,
-      showInInteractiveMode: false,
-    },
-    {
-      tooltip: 'Shortcuts',
-      icon: <InfoIcon className="text-4xl" />,
-      toggle: handleToggleInfo,
-      showInPlaybackMode: true,
-      showInInteractiveMode: true,
-    },
-  ];
-
-  const practiceModeIcons = [
-    {
-      tooltip: 'Reset',
-      iconPlay: <ResetIcon className="text-4xl" />,
-      iconPause: <ResetIcon className="text-4xl" />,
-      toggle: onReset,
-      showInPlaybackMode: true,
-    },
-    {
-      tooltip: isListening ? 'Stop Listening' : 'Listen',
-      iconPlay: <ListenIcon className="text-4xl" />,
-      iconPause: <ListenPauseIcon className="text-4xl" />,
-      toggle: onToggleListen,
-      flag: isListening,
-      showInPlaybackMode: false,
-    },
-    {
-      tooltip: playbackMode
-        ? isPlaying
-          ? 'Pause'
-          : 'Play'
-        : isPlaying
-        ? 'Stop Practicing'
-        : 'Practice',
-      iconPlay: <PlayIcon className="text-4xl" />,
-      iconPause: <PauseIcon className="text-4xl" />,
-      toggle: onTogglePlay,
-      flag: isPlaying,
-      showInPlaybackMode: true,
-    },
-  ];
-
-  const recordModeIcons = [
-    {
-      tooltip: isRecording ? 'Stop Recording' : 'Record',
-      icon: <RecordIcon className="text-4xl" />,
-      toggle: onRecord,
-    },
-  ];
-
   // Sets the current mode state and passes this state up the parent components
   const handleModeChange = (newMode) => {
     setPracticeModeOn(newMode);
@@ -176,77 +71,15 @@ const ControlBar = ({
     >
       {playbackMode && (
         <ControlBarPanel show={showStats} stats={stats}>
-          <div className="flex justify-between">
-            <div>
-              <p className="text-white font-bold text-2xl mb-0">{stats.name}</p>
-              <p className="text-white opacity-75 mb-3">
-                {stats.date} | {stats.bpm} BPM |{' '}
-                {stats.transpose > 0 ? '+' : ''}
-                {stats.transpose} Transpose
-              </p>
-              <StarRating size="text-3xl" stars={stats.stars} />
-            </div>
-            <div>
-              <p className="text-white font-bold text-xl mb-0 text-right">
-                Level {stats.level}
-              </p>
-              <p className="text-white opacity-75">{stats.skill}</p>
-            </div>
-          </div>
+          <StatsPanel stats={stats} />
         </ControlBarPanel>
       )}
       <ControlBarPanel show={showInfo} stats={stats}>
-        <div className={`${practiceModeOn ? 'pb-2' : 'pb-8'}`}>
-          <p className="font-bold text-white text-2xl mb-3">Shortcuts</p>
-          <div className="flex justify-between space-x-4">
-            <div>
-              {(playbackMode || practiceModeOn) && (
-                <div>
-                  <span className="text-white font-bold">
-                    {isMac ? 'Command' : 'Ctrl'} + Shift + R:{' '}
-                  </span>
-                  <span className="text-white opacity-75">Reset</span>
-                </div>
-              )}
-              <div>
-                <span className="text-white font-bold">
-                  {playbackMode ? `S: ` : `M: `}
-                </span>
-                <span className="text-white opacity-75">
-                  {playbackMode ? 'Toggle Stats' : 'Switch Modes'}
-                </span>
-              </div>
-            </div>
-            <div>
-              {!playbackMode && practiceModeOn && (
-                <div>
-                  <span className="text-white font-bold">L: </span>
-                  <span className="text-white opacity-75">Toggle Listen</span>
-                </div>
-              )}
-              {practiceModeOn && (
-                <div>
-                  <span className="text-white font-bold">P: </span>
-                  <span className="text-white opacity-75">
-                    {playbackMode ? 'Toggle Playback' : 'Toggle Practice'}
-                  </span>
-                </div>
-              )}
-              {!playbackMode && !practiceModeOn && (
-                <div>
-                  <span className="text-white font-bold">R: </span>
-                  <span className="text-white opacity-75">Toggle Record</span>
-                </div>
-              )}
-            </div>
-            <div>
-              <div>
-                <span className="text-white font-bold">I: </span>
-                <span className="text-white opacity-75">View Shortcuts</span>
-              </div>
-            </div>
-          </div>
-        </div>
+        <ShortcutsPanel
+          playbackMode={playbackMode}
+          practiceModeOn={practiceModeOn}
+          isMac={isMac}
+        />
       </ControlBarPanel>
       <div
         className={`px-4 py-3 bg-blue-400 ${
@@ -269,35 +102,58 @@ const ControlBar = ({
 
           <div className="flex flex-grow justify-around">
             {practiceModeOn
-              ? practiceModeIcons
+              ? practiceModeIcons(
+                  playbackMode,
+                  isListening,
+                  isPlaying,
+                  onReset,
+                  onToggleListen,
+                  onTogglePlay
+                )
                   .filter((modeIcon) =>
                     playbackMode ? modeIcon.showInPlaybackMode : true
                   )
                   .map((modeIcon, index) => (
-                    <Tooltip title={modeIcon.tooltip} key={index}>
-                      <IconButton
-                        className="text-white"
-                        onClick={modeIcon.toggle}
-                      >
-                        {modeIcon.flag ? modeIcon.iconPause : modeIcon.iconPlay}
-                      </IconButton>
-                    </Tooltip>
+                    <IconButtonWithTooltip
+                      key={index}
+                      tooltip={modeIcon.tooltip}
+                      onClick={modeIcon.toggle}
+                      icon={
+                        modeIcon.flag ? modeIcon.iconPause : modeIcon.iconPlay
+                      }
+                      className="text-white"
+                    />
                   ))
-              : recordModeIcons.map((modeIcon, index) => (
-                  <Tooltip title={modeIcon.tooltip} key={index}>
-                    <IconButton
+              : recordModeIcons(isRecording, onRecord).map(
+                  (modeIcon, index) => (
+                    <IconButtonWithTooltip
+                      key={index}
+                      tooltip={modeIcon.tooltip}
+                      onClick={modeIcon.toggle}
+                      icon={modeIcon.icon}
                       className={`${
                         isRecording && modeIcon.tooltip === 'Stop Recording'
                           ? 'text-red-500'
                           : 'text-white'
                       }`}
-                      onClick={modeIcon.toggle}
-                    >
-                      {modeIcon.icon}
-                    </IconButton>
-                  </Tooltip>
-                ))}
-            {allModeIcons
+                    />
+                  )
+                )}
+            {allModeIcons(
+              playbackMode,
+              practiceModeOn,
+              isBpmDisabled,
+              initialTranspose,
+              initialBpm,
+              initialMetronomeVolume,
+              initialMidiVolume,
+              onTransposeChange,
+              onBpmChange,
+              onMetronomeVolumeChange,
+              onMidiVolumeChange,
+              handleToggleStats,
+              handleToggleInfo
+            )
               .filter((modeIcon) =>
                 playbackMode
                   ? modeIcon.showInPlaybackMode
@@ -306,22 +162,22 @@ const ControlBar = ({
               .map((modeIcon, index) =>
                 modeIcon.tooltip === 'Stats' ||
                 modeIcon.tooltip === 'Shortcuts' ? (
-                  <Tooltip title={modeIcon.tooltip} key={index}>
-                    <IconButton
-                      className="text-white"
-                      onClick={modeIcon.toggle}
-                    >
-                      {modeIcon.icon}
-                    </IconButton>
-                  </Tooltip>
+                  <IconButtonWithTooltip
+                    key={index}
+                    tooltip={modeIcon.tooltip}
+                    onClick={modeIcon.toggle}
+                    icon={modeIcon.icon}
+                    className="text-white"
+                  />
                 ) : (
                   <ControlBarPopover key={index}>
                     {/* Popover trigger */}
-                    <Tooltip title={modeIcon.tooltip}>
-                      <IconButton className="text-white">
-                        {modeIcon.icon}
-                      </IconButton>
-                    </Tooltip>
+                    <IconButtonWithTooltip
+                      tooltip={modeIcon.tooltip}
+                      onClick={() => {}}
+                      icon={modeIcon.icon}
+                      className="text-white"
+                    />
 
                     {/* Popover content */}
                     <div>

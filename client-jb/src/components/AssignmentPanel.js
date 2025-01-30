@@ -2,6 +2,23 @@ import React, { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
 import AssignmentTaskCard from './AssignmentTaskCard';
 
+/**
+ * AssignmentPanel component to display assignment details and tasks.
+ * @component
+ * @param {Object} props - The component props.
+ * @param {string} props.dueDate - The due date of the assignment.
+ * @param {string} props.postedDate - The date the assignment was posted.
+ * @param {string} props.message - The message from the teacher.
+ * @param {Array} props.tasks - The list of tasks associated with the assignment.
+ * @example
+ * // Example usage:
+ * // <AssignmentPanel
+ * //   dueDate="2023-12-31T23:59:59Z"
+ * //   postedDate="2023-01-01T00:00:00Z"
+ * //   message="Complete the following tasks."
+ * //   tasks={[{ answer: {} }, { answer: {recordingId: 'abc', comment: 'Great work!', grade: 'A+} }]}
+ * // />
+ */
 const AssignmentPanel = ({
   dueDate,
   postedDate,

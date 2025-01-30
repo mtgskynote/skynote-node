@@ -19,6 +19,7 @@ import {
   startMicrophone,
   stopMicrophone,
   isMicrophoneActive,
+  suspendAudioContext,
 } from '../context/audioContext';
 import LoadingScreen from './LoadingScreen.js';
 // @ts-ignore
@@ -373,6 +374,7 @@ const ProgressPlayFile = () => {
   const resetAudio = (playbackManager) => {
     pauseAudio(playbackManager);
     playbackManager.reset();
+    suspendAudioContext();
 
     setStartPitchTrack(false);
     setShowPitchTrack(false);

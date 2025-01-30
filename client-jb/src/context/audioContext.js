@@ -13,7 +13,6 @@ export function getAudioContext() {
     audioContext = createAudioContext();
   }
 
-  console.log('audioContext: ', audioContext);
   return audioContext;
 }
 

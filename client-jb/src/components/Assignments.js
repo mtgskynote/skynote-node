@@ -7,6 +7,14 @@ import Error from './Error.js';
 import MessagesCard from './MessagesCard.js';
 import AssignmentPanel from './AssignmentPanel.js';
 
+/**
+ * Assignments page component to display user assignments and related information,
+ * like messages.
+ * @component
+ * @example
+ * // Example usage:
+ * // <Assignments />
+ */
 const Assignments = () => {
   const { getCurrentUser } = useAppContext();
 
