@@ -151,6 +151,7 @@ const renderPitchLineZoom = (osmd, state, prevZoom, showingRep) => {
             freq2midipitch(state.pitchData[index])
           );
           copy_pitchPositionX[index] = noteX;
+
           let pitchPositionY =
             middleLineStave + midiToStaffStep * oneStepPixels;
 
