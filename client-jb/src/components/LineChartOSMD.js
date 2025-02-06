@@ -6,14 +6,11 @@ const LineChart = memo((props) => {
   const canvasRef = useRef(null);
   const [showingRep, setShowingRep] = useState(props.showingRep);
 
-  console.log(props.pitchDataPosX);
-
   useEffect(() => {
     setShowingRep(props.showingRep);
   }, [props.showingRep]);
 
   useEffect(() => {
-    console.log('running chart');
     const canvas = canvasRef.current;
     const ctx = canvas.getContext('2d');
 
@@ -23,18 +20,18 @@ const LineChart = memo((props) => {
     ctx.clearRect(0, 0, rect.width, rect.height);
     ctx.lineWidth = 2 * props.zoom;
 
-    const distanceThreshold = rect.width * 0.02;
+    const distanceThreshold = rect.width * 0.1;
     let lastPitch = null;
     let isDrawing = false;
 
-    // ctx.fillStyle = 'red';
-    // for (let i = 0; i < props.pitchDataPosX.length; i++) {
-    //   let x = props.pitchDataPosX[i] + props.pitchIndex[i] - rect.left;
-    //   let y = props.pitchDataPosY[i] - rect.top;
-    //   ctx.fillRect(x, y, 3, 3); // Small red squares at each pitch point
-    // }
-
-    console.log(props.pitchDataPosX.length);
+    ctx.fillStyle = 'red';
+    for (let i = 0; i < props.pitchDataPosX.length; i++) {
+      if (props.showingRep === props.repetitionNumber[i]) {
+        let x = props.pitchDataPosX[i] + props.pitchIndex[i] - rect.left;
+        let y = props.pitchDataPosY[i] - rect.top;
+        ctx.fillRect(x, y, 3, 3);
+      } // Small red squares at each pitch point
+    }
 
     for (let i = 0; i < props.pitchDataPosX.length; i++) {
       if (
@@ -45,10 +42,7 @@ const LineChart = memo((props) => {
         let y = props.pitchDataPosY[i] - rect.top;
         let currentPitch = props.pitchData[i];
 
-        let isFirstNote = i === 0;
-
         let isLargeJump =
-          isFirstNote ||
           Math.abs(
             x -
               (props.pitchDataPosX[i - 1] + props.pitchIndex[i - 1] - rect.left)
@@ -60,16 +54,18 @@ const LineChart = memo((props) => {
           isNewPitch = Math.abs(currentPitch - lastPitch) > halfStepThreshold;
         }
 
-        if (isFirstNote || isNewPitch || isLargeJump || !isDrawing) {
+        if (isNewPitch || isLargeJump || !isDrawing) {
           ctx.beginPath();
           ctx.moveTo(x, y);
           isDrawing = true;
+        } else {
+          ctx.lineTo(x, y);
+          ctx.stroke();
         }
 
-        ctx.lineTo(x, y);
-        ctx.stroke();
-
         lastPitch = currentPitch;
+      } else {
+        isDrawing = false; // Reset drawing state if the point is invalid
       }
     }
   }, [
@@ -78,6 +74,7 @@ const LineChart = memo((props) => {
     showingRep,
     props.pitchDataPosX,
     props.pitchDataPosY,
+    props.isPitchDataReady,
   ]);
 
   return (
@@ -88,7 +85,7 @@ const LineChart = memo((props) => {
 });
 
 LineChart.propTypes = {
-  pitchData: PropTypes.arrayOf(PropTypes.number).isRequired,
+  pitchData: PropTypes.array.isRequired,
   pitchDataPosX: PropTypes.arrayOf(PropTypes.number).isRequired,
   pitchDataPosY: PropTypes.arrayOf(PropTypes.number).isRequired,
   pitchIndex: PropTypes.arrayOf(PropTypes.number).isRequired,

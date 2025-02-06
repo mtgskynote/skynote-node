@@ -32,6 +32,7 @@ Chartjs.register(LineElement, CategoryScale, LinearScale, PointElement);
 const OpenSheetMusicDisplay = (props) => {
   const [selectionEndReached, setSelectionEndReached] = useState(false);
   const [calculatePunctuation, setCalculatePunctuation] = useState(false);
+  const [isPitchDataReady, setIsPitchDataReady] = useState(false);
   const [scrolled, setScrolled] = useState(false);
 
   const osmd = useRef(undefined);
@@ -172,8 +173,6 @@ const OpenSheetMusicDisplay = (props) => {
 
       if (props.visualJSON) {
         const json = props.visualJSON;
-        console.log('visual json');
-        console.log(json);
 
         // Update values
         colorNotesRef.current = json.noteColors;
@@ -252,8 +251,8 @@ const OpenSheetMusicDisplay = (props) => {
         // Save in state the new pitch track line X and Y point positions
         pitchPositionXRef.current = copy_pitchPositionX;
         pitchPositionYRef.current = copy_pitchPositionY;
-        console.log('pitch x ref');
-        console.log(pitchPositionXRef.current);
+
+        setIsPitchDataReady(true);
       }
     });
   };
@@ -362,7 +361,6 @@ const OpenSheetMusicDisplay = (props) => {
         osmd.current.cursor.NotesUnderCursor()[0].Pitch !== undefined ||
         osmd.current.cursor.NotesUnderCursor()[0].TransposedPitch !== undefined
       ) {
-        // also need to check if the transpose prop coming in is 0
         if (parseInt(props.transpose) === 0) {
           notePitch = osmd.current.cursor.NotesUnderCursor()[0].Pitch.frequency;
         } else {
@@ -495,9 +493,6 @@ const OpenSheetMusicDisplay = (props) => {
 
   useEffect(() => {
     setupOsmd();
-    console.log('Osmd initialized');
-    console.log('pitch x ref after osdm');
-    console.log(pitchPositionXRef.current);
 
     return () => {
       const playbackManagerRef = props.playbackRef.current;
@@ -691,10 +686,11 @@ const OpenSheetMusicDisplay = (props) => {
         pitchPositionXRef.current[pitchPositionXRef.current.length - 1]
       ) {
         // we are still on the same note
+        // index.current = index.current + 6;
         index.current =
           index.current +
           (currentMeasureWidth.current *
-            0.02 *
+            0.015 *
             parseInt(osmd.current.PlaybackManager.currentBPM)) /
             60; // 0.02 is the aproximate "rate" at which points are drawn every measure
       } else {
@@ -707,7 +703,7 @@ const OpenSheetMusicDisplay = (props) => {
       const midiToStaffStep = midi2StaffGaps(newPitchMIDI); // where to locate the played note in the staff with respect to B4(middle line)
       if (
         midiToStaffStep === 0 ||
-        props.pitchConfidence[props.pitchConfidence.length - 1] < 0.1
+        props.pitchConfidence[props.pitchConfidence.length - 1] < 0.5
       ) {
         // Color turns white/invisible when pitch is out of bounds or pitch confidence is below 0.5
         color.current = '#FFFFFF';
@@ -848,6 +844,7 @@ const OpenSheetMusicDisplay = (props) => {
           pitchIndex={recordedNoteIndexRef.current}
           repetitionNumber={repetitionNumberRef.current}
           showingRep={showingRep.current}
+          isPitchDataReady={isPitchDataReady}
         />
       </div>
 
