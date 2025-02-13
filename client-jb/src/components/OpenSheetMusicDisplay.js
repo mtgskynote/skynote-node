@@ -690,7 +690,7 @@ const OpenSheetMusicDisplay = (props) => {
         index.current =
           index.current +
           (currentMeasureWidth.current *
-            0.015 *
+            0.016 *
             parseInt(osmd.current.PlaybackManager.currentBPM)) /
             60; // 0.02 is the aproximate "rate" at which points are drawn every measure
       } else {
@@ -703,7 +703,7 @@ const OpenSheetMusicDisplay = (props) => {
       const midiToStaffStep = midi2StaffGaps(newPitchMIDI); // where to locate the played note in the staff with respect to B4(middle line)
       if (
         midiToStaffStep === 0 ||
-        props.pitchConfidence[props.pitchConfidence.length - 1] < 0.5
+        props.pitchConfidence[props.pitchConfidence.length - 1] < 0.4
       ) {
         // Color turns white/invisible when pitch is out of bounds or pitch confidence is below 0.5
         color.current = '#FFFFFF';
