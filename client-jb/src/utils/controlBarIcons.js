@@ -1,3 +1,4 @@
+import React from 'react';
 import {
   PlayCircle as PlayIcon,
   PauseCircle as PauseIcon,

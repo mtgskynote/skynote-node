@@ -1,4 +1,5 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 import StarRating from './StarRating';
 
 const StatsPanel = ({ stats }) => (
@@ -21,3 +22,15 @@ const StatsPanel = ({ stats }) => (
 );
 
 export default StatsPanel;
+
+StatsPanel.propTypes = {
+  stats: PropTypes.shape({
+    name: PropTypes.string.isRequired,
+    date: PropTypes.string.isRequired,
+    bpm: PropTypes.number.isRequired,
+    transpose: PropTypes.number.isRequired,
+    stars: PropTypes.number.isRequired,
+    level: PropTypes.number.isRequired,
+    skill: PropTypes.string.isRequired,
+  }).isRequired,
+};

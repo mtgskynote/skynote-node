@@ -1,4 +1,5 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 
 const ShortcutsPanel = ({ playbackMode, practiceModeOn, isMac }) => (
   <div className={`${practiceModeOn ? 'pb-2' : 'pb-8'}`}>
@@ -53,5 +54,11 @@ const ShortcutsPanel = ({ playbackMode, practiceModeOn, isMac }) => (
     </div>
   </div>
 );
+
+ShortcutsPanel.propTypes = {
+  playbackMode: PropTypes.bool.isRequired,
+  practiceModeOn: PropTypes.bool.isRequired,
+  isMac: PropTypes.bool.isRequired,
+};
 
 export default ShortcutsPanel;

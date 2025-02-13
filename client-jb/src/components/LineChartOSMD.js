@@ -84,6 +84,8 @@ const LineChart = memo((props) => {
   );
 });
 
+LineChart.displayName = 'LineChart';
+
 LineChart.propTypes = {
   pitchData: PropTypes.array.isRequired,
   pitchDataPosX: PropTypes.arrayOf(PropTypes.number).isRequired,
@@ -95,6 +97,7 @@ LineChart.propTypes = {
   zoom: PropTypes.number,
   width: PropTypes.number.isRequired,
   height: PropTypes.number.isRequired,
+  isPitchDataReady: PropTypes.bool.isRequired,
 };
 
 export default LineChart;
