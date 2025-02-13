@@ -7,6 +7,7 @@ import IconButtonWithTooltip from './IconButtonWithTooltip';
 import ControlBarPopover from './ControlBarPopover';
 import RangeInput from './RangeInput';
 import ControlBarPanel from './ControlBarPanel';
+import RepetitionToggle from './RepetitionToggle';
 import {
   allModeIcons,
   practiceModeIcons,
@@ -37,6 +38,8 @@ const ControlBar = ({
   stats,
   practiceMode,
   isMac,
+  handleRepeatsIterator,
+  repeatsIterator,
 }) => {
   const [practiceModeOn, setPracticeModeOn] = useState(true);
   const [initialMidiVolume, setInitialMidiVolume] = useState(
@@ -201,19 +204,34 @@ const ControlBar = ({
           <div className="mr-6 h-auto w-0.5 self-stretch bg-white/20"></div>
 
           <div className="flex justify-between items-center space-x-2">
-            <button
-              onClick={handleViewAllRecordings}
-              className="ml-auto hover:cursor-pointer transition ease-in-out delay-50 text-center text-gray-700 hover:text-gray-900 border-transparent focus:border-transparent focus:ring-0 focus:outline-none bg-slate-50 hover:bg-slate-100 font-extralight py-1 px-2 rounded-l-none outline-none rounded"
-            >
-              {playbackMode ? 'Go back' : 'View All Recordings'}
-            </button>
-            {playbackMode && (
+            {!playbackMode && (
               <button
-                onClick={handleShowPopUpWindow}
-                className="ml-auto hover:cursor-pointer transition ease-in-out delay-50 text-center text-white border-transparent focus:border-transparent focus:ring-0 focus:outline-none bg-red-500 hover:bg-red-600 hover:text-white font-extralight py-1 px-2 rounded-l-none outline-none rounded"
+                onClick={handleViewAllRecordings}
+                className="ml-auto hover:cursor-pointer transition ease-in-out delay-50 text-center text-gray-700 hover:text-gray-900 border-transparent focus:border-transparent focus:ring-0 focus:outline-none bg-slate-50 hover:bg-slate-100 font-extralight py-1 px-2 rounded-l-none outline-none rounded"
               >
-                Delete recording
+                View All Recordings
               </button>
+            )}
+            {playbackMode && (
+              <div className="flex flex-row space-x-4">
+                <RepetitionToggle
+                  onToggle={handleRepeatsIterator}
+                  repetitionNumber={repeatsIterator ? 2 : 1}
+                  isToggled={repeatsIterator}
+                />
+                {/* <button
+                  onClick={handleRepeatsIterator}
+                  className="ml-auto hover:cursor-pointer transition ease-in-out delay-50 text-center text-slate-800 border-transparent focus:border-transparent focus:ring-0 focus:outline-none bg-slate-50 hover:opacity-75 font-extralight py-1 px-2 rounded-l-none outline-none rounded"
+                >
+                  Toggle repeats
+                </button> */}
+                <button
+                  onClick={handleShowPopUpWindow}
+                  className="ml-auto hover:cursor-pointer transition ease-in-out delay-50 text-center text-white border-transparent focus:border-transparent focus:ring-0 focus:outline-none bg-red-500 hover:bg-red-600 hover:text-white py-1 px-2 rounded-l-none outline-none rounded"
+                >
+                  Delete recording
+                </button>
+              </div>
             )}
           </div>
         </div>

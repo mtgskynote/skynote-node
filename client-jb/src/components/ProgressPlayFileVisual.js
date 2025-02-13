@@ -471,6 +471,8 @@ const ProgressPlayFileVisual = () => {
             stats={metaData}
             practiceMode={true} // Passed as true because we do not have any recording features in playback
             isMac={isMac}
+            handleRepeatsIterator={handleRepeatLayersButtonClick}
+            repeatsIterator={repeatsIterator}
           />
         </div>
 
