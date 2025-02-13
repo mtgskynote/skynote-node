@@ -1,10 +1,14 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useRef, memo, useState } from 'react';
 import PropTypes from 'prop-types';
 
-//Pitch track line component
-const LineChart = (props) => {
+const LineChart = memo((props) => {
   const containerRef = useRef(null);
   const canvasRef = useRef(null);
+  const [showingRep, setShowingRep] = useState(props.showingRep);
+
+  useEffect(() => {
+    setShowingRep(props.showingRep);
+  }, [props.showingRep]);
 
   useEffect(() => {
     const canvas = canvasRef.current;
@@ -13,71 +17,77 @@ const LineChart = (props) => {
     const containerElement = containerRef.current;
     const rect = containerElement.getBoundingClientRect();
 
-    // Clear the canvas
     ctx.clearRect(0, 0, rect.width, rect.height);
+    ctx.lineWidth = 2 * props.zoom;
 
-    ctx.lineWidth = 2 * props.zoom; // Adjust the thickness as needed
+    const distanceThreshold = rect.width * 0.1;
+    let lastPitch = null;
+    let isDrawing = false;
 
-    // Draw the line
-    ctx.beginPath();
-    ctx.moveTo(
-      props.pitchDataPosX[0] + props.pitchIndex[0] - rect.left,
-      props.pitchDataPosY[0] - rect.top
-    );
+    ctx.fillStyle = 'red';
+    for (let i = 0; i < props.pitchDataPosX.length; i++) {
+      if (props.showingRep === props.repetitionNumber[i]) {
+        let x = props.pitchDataPosX[i] + props.pitchIndex[i] - rect.left;
+        let y = props.pitchDataPosY[i] - rect.top;
+        ctx.fillRect(x, y, 3, 3);
+      } // Small red squares at each pitch point
+    }
 
-    // Set a threshold for the distance; adjust as needed
-    const distanceThreshold = rect.width * 0.6;
-    //To jump between notes: props.pitchIndex[1]!==0?(props.pitchIndex[1]+1):(props.pitchIndex[2]+1);
-    //To avoid line joining when jumping score lines: rect.width*0.6 (0.6 or whatever ratio <0.9)
-
-    for (let i = 1; i < props.pitchDataPosX.length; i++) {
+    for (let i = 0; i < props.pitchDataPosX.length; i++) {
       if (
         props.showingRep === props.repetitionNumber[i] &&
         props.pitchColor[i] !== '#FFFFFF'
       ) {
-        // get coordinates (x,y)
         let x = props.pitchDataPosX[i] + props.pitchIndex[i] - rect.left;
         let y = props.pitchDataPosY[i] - rect.top;
+        let currentPitch = props.pitchData[i];
 
-        // if previous pitch input was "invalid", force the jump
-        if (props.pitchColor[i - 1] === '#FFFFFF') {
-          ctx.moveTo(x, y);
-        } else {
-          //calculate distance
-          let distance = Math.abs(
+        let isLargeJump =
+          Math.abs(
             x -
               (props.pitchDataPosX[i - 1] + props.pitchIndex[i - 1] - rect.left)
-          );
-          // check distance from previous pitch (note change=bigger distance normally)
-          if (distance > distanceThreshold) {
-            ctx.moveTo(x, y); // force jump
-          } else {
-            ctx.lineTo(x, y); // continue line
-          }
+          ) > distanceThreshold;
+
+        let isNewPitch = false;
+        if (lastPitch !== null && currentPitch > 0) {
+          const halfStepThreshold = lastPitch * (Math.pow(2, 1 / 12) - 1);
+          isNewPitch = Math.abs(currentPitch - lastPitch) > halfStepThreshold;
         }
+
+        if (isNewPitch || isLargeJump || !isDrawing) {
+          ctx.beginPath();
+          ctx.moveTo(x, y);
+          isDrawing = true;
+        } else {
+          ctx.lineTo(x, y);
+          ctx.stroke();
+        }
+
+        lastPitch = currentPitch;
+      } else {
+        isDrawing = false; // Reset drawing state if the point is invalid
       }
     }
-
-    ctx.stroke();
   }, [
     props.pitchData,
     props.zoom,
-    props.showingRep,
+    showingRep,
     props.pitchDataPosX,
     props.pitchDataPosY,
+    props.isPitchDataReady,
   ]);
 
   return (
     <div ref={containerRef}>
-      <canvas ref={canvasRef} width={props.width} height={props.height} />;
+      <canvas ref={canvasRef} width={props.width} height={props.height} />
     </div>
   );
-};
+});
+
+LineChart.displayName = 'LineChart';
 
 LineChart.propTypes = {
-  pitchData: PropTypes.arrayOf(
-    PropTypes.oneOfType([PropTypes.number, PropTypes.string])
-  ).isRequired,
+  pitchData: PropTypes.array.isRequired,
   pitchDataPosX: PropTypes.arrayOf(PropTypes.number).isRequired,
   pitchDataPosY: PropTypes.arrayOf(PropTypes.number).isRequired,
   pitchIndex: PropTypes.arrayOf(PropTypes.number).isRequired,
@@ -87,6 +97,7 @@ LineChart.propTypes = {
   zoom: PropTypes.number,
   width: PropTypes.number.isRequired,
   height: PropTypes.number.isRequired,
+  isPitchDataReady: PropTypes.bool.isRequired,
 };
 
 export default LineChart;

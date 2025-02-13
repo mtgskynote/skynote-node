@@ -9,6 +9,31 @@ import { IconButton, Tooltip } from '@mui/material';
 import PopUpWindowGrades from './PopUpWindowGrades';
 import PopUpWindowSubmit from './PopUpWindowSubmit';
 
+/**
+ * AssignmentTaskCard component to display individual task details within an assignment.
+ * @component
+ * @param {Object} props - The component props.
+ * @param {Object} props.task - The task object containing details about the task (AKA individual assignment).
+ * @param {Object} props.task.answer - The answer object containing details about the task answer.
+ * @param {string} [props.task.answer.recordingId] - The ID of the recording associated with the task answer.
+ * @param {string} [props.task.answer.comment] - The comment associated with the task answer.
+ * @param {string} [props.task.answer.grade] - The grade associated with the task answer.
+ * @param {Object} props.score - The score object containing details about the score.
+ * @param {string} props.score.fname - The file name associated with the score.
+ * @param {string} props.score.title - The title of the score.
+ * @param {string} props.score.skill - The skill associated with the score.
+ * @param {number} props.score.level - The level associated with the score.
+ * @param {string} props.assignmentId - The ID of the assignment.
+ * @param {string} props.userId - The ID of the user.
+ * @example
+ * // Example usage:
+ * // <AssignmentTaskCard
+ * //   task={{ answer: { recordingId: "abc", comment: "Great job!", grade: "A+" } }}
+ * //   score={{ fname: "John", title: "Für Elise", skill: "First Finger Changing", level: 2 }}
+ * //   assignmentId="456"
+ * //   userId="789"
+ * // />
+ */
 const AssignmentTaskCard = ({ task, score, assignmentId, userId }) => {
   const [status, setStatus] = useState('');
   const [showGradesPopUpWindow, setShowGradesPopUpWindow] = useState(false);

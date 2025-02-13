@@ -2,15 +2,25 @@ import React from 'react';
 import PropTypes from 'prop-types';
 
 /**
- * The ButtonNoOutline component renders a customizable button without an outline.
- *
- * Props:
- * - handler (function): Callback function to handle button click events.
- * - text (string): The text to display inside the button.
- * - bgColor (string): The Tailwind CSS background color of the button.
- * - hoverBgColor (string): The Tailwind CSS background color of the button on hover.
- * - textColor (string): The Tailwind CSS text color of the button.
- * - hoverTextColor (string): The Tailwind CSS text color of the button on hover. Defaults to textColor if not provided.
+ * ButtonNoOutline component to render a button without an outline.
+ * @component
+ * @param {Object} props - The component props.
+ * @param {function} props.handler - The click handler function.
+ * @param {string} props.text - The text to display on the button.
+ * @param {string} props.bgColor - The background color of the button.
+ * @param {string} props.hoverBgColor - The background color of the button on hover.
+ * @param {string} props.textColor - The text color of the button.
+ * @param {string} props.hoverTextColor - The text color of the button on hover.
+ * @example
+ * // Example usage:
+ * // <ButtonNoOutline
+ * //   handler={() => console.log('Button clicked')}
+ * //   text="Click Me"
+ * //   bgColor="blue-500"
+ * //   hoverBgColor="blue-700"
+ * //   textColor="white"
+ * //   hoverTextColor="gray-200"
+ * // />
  */
 const ButtonNoOutline = ({
   handler,

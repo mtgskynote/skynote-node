@@ -39,103 +39,81 @@ var makeAudioStreamer = function (
   let scriptNode = null;
   let gain = null;
 
-  var audioStreamer = {
+  const audioStreamer = {
     // Create an analyser node to extract amplitude data
     analyserNode: audioContext.createAnalyser(),
     pitch: null,
     analyzer: null,
     analyzerCb: analysisCb,
+    meydaAnalyzer: null,
+    preloaded: false,
 
     dismantleAudioNodes: function () {
-      console.log('DiSMANTLING audio nodes');
-      // Stop all tracks on the audio source
       if (mediaStream) {
-        mediaStream.getTracks().forEach((track) => track.stop());
+        mediaStream.getTracks().forEach((track) => {
+          track.stop();
+        });
         mediaStream = null;
-        console.log('MediaStream tracks stopped');
       }
 
+      // Disconnect nodes
       sourceNode && sourceNode.disconnect();
       scriptNode && scriptNode.disconnect();
       this.analyserNode && this.analyserNode.disconnect();
       gain && gain.disconnect();
+
+      // Nullify node references to clean up memory
+      sourceNode = null;
+      scriptNode = null;
+      gain = null;
+      this.analyserNode = null;
+      this.meydaAnalyzer = null;
+      this.preloaded = false;
+
+      console.log('Audio nodes dismantled.');
     },
 
-    init: async function (recordMode, meydaFeatures = []) {
-      console.log('meydaFeatures ', meydaFeatures);
-
-      mediaStream = await navigator.mediaDevices.getUserMedia({
-        audio: {
-          echoCancellation: false,
-          autoGainControl: false,
-          noiseSuppression: false,
-          latency: { ideal: 0.01, max: 0.05 },
-          sampleRate: 22050,
-        },
-      });
-
-      mediaRecorder = new MediaRecorder(mediaStream);
-      mediaRecorder.ondataavailable = (event) => {
-        if (event.data.size > 0) {
-          audioChunks.push(event.data);
-        }
-      };
-
-      // mediaRecorder.onstop = () => {
-      //   console.log('----------MediaRecorder stopped');
-      //   const audioBlob = new Blob(audioChunks, { type: 'audio/wav' });
-      //   const audioUrl = URL.createObjectURL(audioBlob);
-      //   const audio = document.getElementById('audioPlayback');
-      //   if (! audio) {
-      //     console.log('No audio element to play back - Should the audio save dialog box return a file name first, or what ?????');
-      //   } else {
-      //     audio.src = audioUrl;
-      //   }
-      //   audioChunks = [];
-
-      // };
-
-      if (recordMode === true) {
-        mediaRecorder.start();
-        console.log("We're now recording stuff :D");
+    preload: async function (meydaFeatures = []) {
+      // Access audio input (microphone) permissions but do not start recording
+      if (!mediaStream) {
+        mediaStream = await navigator.mediaDevices.getUserMedia({
+          audio: {
+            echoCancellation: false,
+            autoGainControl: false,
+            noiseSuppression: false,
+            latency: { ideal: 0.01, max: 0.05 },
+            sampleRate: 22050,
+          },
+        });
       }
 
-      resumeAudioContext();
+      // Prepare Web Audio API components
       sourceNode = audioContext.createMediaStreamSource(mediaStream);
 
+      // Initialize the MeydaAnalyzer if present
       if (typeof Meyda === 'undefined') {
         console.log('Meyda could not be found! Have you included it?');
       } else {
-        const analyzer = Meyda.createMeydaAnalyzer({
+        this.meydaAnalyzer = Meyda.createMeydaAnalyzer({
           audioContext: audioContext,
           source: sourceNode,
-          // The docs (https://meyda.js.org/guides/online-web-audio) imply this can be anything, and also that it
-          //     determines not just the buffer size, but in fact the rate at which the analyzer gets called.
           bufferSize: meyda_buff_fft_length,
           featureExtractors: meydaFeatures,
           callback: (features) => {
-            //console.log(`CALLBACK FEATURES:  +${JSON.parse(features)}`);
             this.analyzerCb && this.analyzerCb(features);
           },
         });
-        analyzer.start();
       }
 
-      // // analyserNode defined in object
+      // Connect the source node to the analyser node
       this.analyserNode.fftSize = meyda_buff_fft_length;
-
-      // // Connect the source node to the analyser node
       sourceNode.connect(this.analyserNode);
 
-      // The Crepe script node downsamples to 16kHz
-      // We need the buffer size that is a power of two and is longer than 1024 samples when resampled to 16000 Hz.
-      // In most platforms where the sample rate is 44.1 kHz or 48 kHz, this will be 4096, giving 10-12 updates/sec.
+      // Prepare CREPE pitch-tracking scriptNode
       const minBufferSize = (audioContext.sampleRate / 16000) * 1024;
-      for (var bufferSize = 4; bufferSize < minBufferSize; bufferSize *= 2);
-      console.log('CREPE Buffer size = ' + bufferSize);
-      // console.log(
-      //   `Setting up a crepescriptnode with pitchcallback  ${pitchCallback}`
-      // );
+      let bufferSize = 4;
+      for (; bufferSize < minBufferSize; bufferSize *= 2);
+
       scriptNode = await makeCrepeScriptNode(
         audioContext,
         bufferSize,
@@ -143,40 +121,77 @@ var makeAudioStreamer = function (
         pitchVectorCallback
       );
 
-      sourceNode.connect(scriptNode);
-      console.log(`audioStreamer: OK = pitch node connected!!`);
-
-      // necessary to pull audio throuth the scriptNode???????
+      // Connect to source node and prepare gain node
       gain = audioContext.createGain();
       gain.gain.setValueAtTime(0, audioContext.currentTime);
 
+      sourceNode.connect(scriptNode);
       scriptNode.connect(gain);
-
       gain.connect(audioContext.destination);
+
+      console.log('Preloading completed.');
+      this.preloaded = true;
+
+      return true;
+    },
+
+    start: async function (recordMode = false) {
+      if (!this.preloaded) {
+        console.error(
+          'Error: audioStreamer not preloaded. Call preload() first.'
+        );
+        return;
+      }
+
+      console.log('Starting pitch tracking...');
+      resumeAudioContext(); // Ensure the audio context is active
+
+      if (this.meydaAnalyzer) {
+        this.meydaAnalyzer.start();
+        console.log('MeydaAnalyzer started.');
+      }
+
+      if (recordMode) {
+        mediaRecorder = new MediaRecorder(mediaStream);
+        mediaRecorder.ondataavailable = (event) => {
+          if (event.data.size > 0) {
+            audioChunks.push(event.data);
+          }
+        };
+        mediaRecorder.start();
+        console.log('Recording started.');
+      }
+
+      console.log('Pitch tracking started.');
     },
 
     close: function () {
-      console.log('audiochunks', audioChunks);
-      if (mediaRecorder) {
-        console.log('mediaRecorder.state is ', mediaRecorder.state);
+      if (this.meydaAnalyzer) this.meydaAnalyzer.stop();
+
+      if (mediaRecorder && mediaRecorder.state !== 'inactive') {
+        console.log('Stopping mediaRecorder with state:', mediaRecorder.state);
         mediaRecorder.stop();
       }
 
       this.dismantleAudioNodes();
+      suspendAudioContext();
     },
 
     close_not_save: function () {
       //mediaRecorder.stop();
       // audioContext.suspend();
-      this.dismantleAudioNodes();
+      if (this.meydaAnalyzer) this.meydaAnalyzer.stop();
+      // this.dismantleAudioNodes();
       suspendAudioContext();
     },
     close_maybe_save: function () {
+      if (this.meydaAnalyzer) this.meydaAnalyzer.stop();
       mediaRecorder.stop();
-      audioStreamer.dismantleAudioNodes();
+      // audioStreamer.dismantleAudioNodes();
       //audioContext.suspend();
     },
     save_or_not: async function (answer) {
+      if (this.meydaAnalyzer) this.meydaAnalyzer.stop();
       if (answer === 'save') {
         //This creates an audioBlob
         const audioBlob = new Blob(audioChunks, { type: 'audio/mpeg' });

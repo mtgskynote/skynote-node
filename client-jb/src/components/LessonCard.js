@@ -574,7 +574,7 @@ LessonCard.propTypes = {
   backgroundColour: PropTypes.string,
   hoverBackgroundColour: PropTypes.string,
   textColour: PropTypes.string,
-  refreshData: PropTypes.func.isRequired,
+  refreshData: PropTypes.func,
   importedScore: PropTypes.bool,
   importName: PropTypes.string,
   renderImportButtons: PropTypes.bool,

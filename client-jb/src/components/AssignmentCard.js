@@ -4,6 +4,27 @@ import { useNavigate } from 'react-router-dom';
 import Card from '@mui/material/Card';
 import CardContent from '@mui/material/CardContent';
 
+/**
+ * AssignmentCard component to display assignment details.
+ * @component
+ * @param {Object} props - The component props.
+ * @param {string} props.assignmentId - The ID of the assignment.
+ * @param {number} props.daysLeft - The number of days left until the due date.
+ * @param {Date} props.dueDate - The due date of the assignment.
+ * @param {Object} props.score - The score related to the assignment.
+ * @param {string} props.score.fname - The file name associated with the score.
+ * @param {string} props.score.title - The title of the score.
+ * @param {string} props.score.skill - The skill associated with the score.
+ * @param {string|number} props.score.level - The level associated with the score.
+ * @example
+ * // Example usage:
+ * // <AssignmentCard
+ * //   assignmentId="123"
+ * //   daysLeft={5}
+ * //   dueDate={new Date()}
+ * //   score={{ fname: "John", title: "Für Elise", skill: "First Finger Changing", level: 2 }}
+ * // />
+ */
 const AssignmentCard = ({ assignmentId, daysLeft, dueDate, score }) => {
   const dateOptions = {
     weekDay: 'short',
@@ -78,10 +99,10 @@ AssignmentCard.propTypes = {
   daysLeft: PropTypes.number.isRequired,
   dueDate: PropTypes.instanceOf(Date).isRequired,
   score: PropTypes.shape({
-    fname: PropTypes.string, // Assuming fname is a string. Adjust based on actual data structure
+    fname: PropTypes.string,
     title: PropTypes.string.isRequired,
     skill: PropTypes.string.isRequired,
-    level: PropTypes.string.isRequired,
+    level: PropTypes.oneOfType([PropTypes.string, PropTypes.number]).isRequired,
   }).isRequired,
 };
 
