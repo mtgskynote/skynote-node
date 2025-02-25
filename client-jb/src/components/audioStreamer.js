@@ -199,24 +199,24 @@ var makeAudioStreamer = function (
         try {
           // Convert Blob to ArrayBuffer using await
           const arrayBuffer = await audioBlob.arrayBuffer();
-          // Clean
-          audioChunks = [];
-          this.dismantleAudioNodes();
-          suspendAudioContext();
+          // // Clean
+          // audioChunks = [];
+          // this.dismantleAudioNodes();
+          // suspendAudioContext();
           return arrayBuffer;
         } catch (error) {
           console.error('Error converting Blob to ArrayBuffer:', error);
           // Clean
-          audioChunks = [];
-          //audioContext.suspend();
-          suspendAudioContext();
+          // audioChunks = [];
+          // //audioContext.suspend();
+          // suspendAudioContext();
           return 0;
         }
       }
 
-      audioChunks = [];
-      audioContext.suspend();
-      suspendAudioContext();
+      // audioChunks = [];
+      // audioContext.suspend();
+      // suspendAudioContext();
     },
   };
 
