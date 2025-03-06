@@ -695,7 +695,7 @@ const OpenSheetMusicDisplay = (props) => {
         index.current =
           index.current +
           (currentMeasureWidth.current *
-            0.016 *
+            0.006 *
             parseInt(osmd.current.PlaybackManager.currentBPM)) /
             60; // 0.02 is the aproximate "rate" at which points are drawn every measure
       } else {
