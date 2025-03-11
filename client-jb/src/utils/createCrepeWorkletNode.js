@@ -21,7 +21,7 @@ export async function createCrepeWorkletNode(
   );
 
   // ✅ Create WebSocket in main thread
-  const ws = new WebSocket('http://localhost:8001/crepe');
+  const ws = new WebSocket(process.env.REACT_APP_WEBSOCKET_URL);
 
   ws.onopen = () => console.log('WebSocket connected');
   ws.onerror = (err) => console.error('WebSocket error:', err);

@@ -37,10 +37,10 @@ const server = createServer(app);
 
 const wss = new WebSocketServer({
   server,
-  path: '/crepe', // Handle WebSocket connections at /crepe
+  path: '/crepe',
 });
 
-const modelPath = 'file://./crepeModel/model.json'; // Adjust this path
+const modelPath = 'file://./crepeModel/model.json';
 let model;
 
 async function loadModel() {
