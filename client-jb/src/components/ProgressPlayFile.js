@@ -81,11 +81,9 @@ const ProgressPlayFile = () => {
   const [showPitchTrack, setShowPitchTrack] = useState(false);
 
   const [isResetButtonPressed, setIsResetButtonPressed] = useState(false);
-  const [repeatsIterator, setRepeatsIterator] = useState(false);
-  const [showRepetitionMessage, setShowRepetitionMessage] = useState(false);
-  const [repetitionMessage, setRepetitionMessage] = useState(
-    'No stored recordings yet'
-  );
+  const [repeatsIterator, setRepeatsIterator] = useState(true);
+  const [showToggleRepetition, setShowToggleRepetition] = useState(false);
+  const [currentRep, setCurrentRep] = useState(2);
 
   const [cursorFinished, setCursorFinished] = useState(false);
   const [showSaveRecordingPopUp, setShowSaveRecordingPopUp] = useState(false);
@@ -191,7 +189,10 @@ const ProgressPlayFile = () => {
       const playbackManager = playbackRef.current;
       stopRecordingAudio(playbackManager);
 
+      setShowToggleRepetition(true);
       setCursorFinished(true);
+      setCurrentRep(2);
+      setRepeatsIterator(true);
     }
   };
 
@@ -225,15 +226,8 @@ const ProgressPlayFile = () => {
     setAudioReady(true);
   };
 
-  // Keep track of repetition that user is currently seeing --> WILL BE INTEGRATED IN THE FUTURE
-  const handleReceiveRepetitionInfo = (showingRep, totalRep) => {
-    if (totalRep === 0) {
-      setRepetitionMessage('No recordings yet');
-    } else {
-      const message_aux =
-        'Seeing ' + (showingRep + 1) + ' of ' + (totalRep + 1);
-      setRepetitionMessage(message_aux);
-    }
+  const handleRepeatLayersButtonClick = () => {
+    setRepeatsIterator(!repeatsIterator);
   };
 
   // Keep track of the history of the audio features we extract
@@ -358,6 +352,7 @@ const ProgressPlayFile = () => {
         .then((dataToDownload) => {
           const buffer = new Buffer.from(dataToDownload);
           handleDownload(buffer); // send data to downloading function
+          setFileName('');
         })
         .catch((error) => {
           console.error('Error:', error);
@@ -388,6 +383,9 @@ const ProgressPlayFile = () => {
   const recordAudio = (playbackManager) => {
     resetAudio(playbackManager);
     setIsResetButtonPressed(true);
+    setShowToggleRepetition(false);
+    setRepeatsIterator(true);
+    setCurrentRep(2);
 
     if (!practiceMode) {
       setIsRecording(true);
@@ -448,6 +446,7 @@ const ProgressPlayFile = () => {
     resetAudio(playbackManager);
     playbackManager.setPlaybackStart(0);
 
+    setShowToggleRepetition(false);
     setIsListening(false);
     setIsPlaying(false);
     setIsResetButtonPressed(true);
@@ -456,6 +455,7 @@ const ProgressPlayFile = () => {
   // Toggle between the practice and record mode states
   const handleToggleMode = () => {
     setIsResetButtonPressed(true);
+    setShowToggleRepetition(false);
 
     if (isRecording || isPlaying) {
       setIsSwitchingMode(true);
@@ -492,6 +492,7 @@ const ProgressPlayFile = () => {
     setShowSaveRecordingPopUp(false);
 
     audioStreamerRef.current.save_or_not('delete');
+    setFileName('');
     setPitch([]);
     setConfidence([]);
 
@@ -662,6 +663,7 @@ const ProgressPlayFile = () => {
       // Ensure recording is not saved and audioStreamer is properly cleaned up
       if (isRecording && audioStreamerRef.current) {
         audioStreamerRef.current.save_or_not('delete');
+        setFileName('');
         stopRecordingAudio(playbackRef.current);
       }
       // Cancel the event as stated by the standard
@@ -706,7 +708,6 @@ const ProgressPlayFile = () => {
             recordVol={midiVolume / 100}
             isResetButtonPressed={isResetButtonPressed}
             repeatsIterator={repeatsIterator}
-            showRepeatsInfo={handleReceiveRepetitionInfo}
             onResetDone={onResetDone}
             cursorActivity={handleFinishedCursorOSMDCallback}
             mode={practiceMode}
@@ -714,6 +715,7 @@ const ProgressPlayFile = () => {
             canDownload={canDownload}
             visual={'no'}
             transpose={transpose}
+            setCurrentRep={setCurrentRep}
           />
           {(isRecording || isPlaying) && (
             <div className="absolute top-0 left-0 w-full h-full bg-transparent z-20 pointer-events-auto"></div>
@@ -746,6 +748,10 @@ const ProgressPlayFile = () => {
             handleToggleInfo={handleToggleInfo}
             showInfo={showInfo}
             isMac={isMac}
+            handleRepeatsIterator={handleRepeatLayersButtonClick}
+            repeatsIterator={repeatsIterator}
+            currentRep={currentRep}
+            showToggleRepetition={showToggleRepetition}
           />
         </div>
 

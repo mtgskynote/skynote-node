@@ -54,10 +54,8 @@ const ProgressPlayFileVisual = () => {
 
   const [isResetButtonPressed, setIsResetButtonPressed] = useState(false);
   const [repeatsIterator, setRepeatsIterator] = useState(false);
-  const [showRepetitionMessage, setShowRepetitionMessage] = useState(false);
-  const [repetitionMessage, setRepetitionMessage] = useState(
-    'No stored recordings yet'
-  );
+  const [currentRep, setCurrentRep] = useState(1);
+  const [songDuration, setSongDuration] = useState(null);
 
   const [cursorFinished, setCursorFinished] = useState(false);
   const [cursorJumped, setCursorJumped] = useState(false);
@@ -114,49 +112,32 @@ const ProgressPlayFileVisual = () => {
   const newUrl = window.location.href;
 
   useEffect(() => {
+    const playbackManager = playbackRef.current;
+    if (playbackManager) {
+      // TODO: NEED TO SET START OF CURSOR TO SECOND REPETITION (see discord for instructions)
+      if (currentRep === 2) {
+        pauseTimeRef.current = songDuration / 2;
+      } else {
+        pauseTimeRef.current = 0;
+      }
+    }
+  }, [currentRep]);
+
+  useEffect(() => {
     setRecordingId(location.state?.id);
   }, []);
 
-  useEffect(() => {
-    if (recordingId) {
-      getRecording(recordingId)
-        .then((recordingJSON) => {
-          // Get score info
-          const scoreInfo = JSON.parse(localStorage.getItem('scoreData')).find(
-            (item) => item.fname === params.files
-          );
-
-          // Set MetaData
-          const recordingDate = new Date(recordingJSON.date);
-          setMetaData({
-            name: recordingJSON.recordingName,
-            stars: recordingJSON.info.stars,
-            date: recordingDate.toLocaleDateString('en-UK', options),
-            skill: scoreInfo.skill,
-            level: scoreInfo.level,
-            score: scoreInfo.title,
-            bpm: recordingJSON.info.bpm,
-            transpose: recordingJSON.info.transpose
-              ? recordingJSON.info.transpose
-              : 0,
-          });
-          // Save json.info (recording data, pitch, colors...) to send to OSMD
-          setJson(recordingJSON.info);
-          // Save audio
-          setTranspose(
-            recordingJSON.info.transpose ? recordingJSON.info.transpose : 0
-          );
-          setBpm(recordingJSON.info.bpm);
-          setSongFile(recordingJSON.audio);
-          setLoading(false);
-        })
-        .catch((error) => {
-          console.log(error);
-          setRecordingIdMissing(true);
-          setLoading(false);
-        });
+  const getAudioDuration = async (songFile) => {
+    try {
+      const uint8Array = new Uint8Array(songFile.data);
+      const arrayBuffer = uint8Array.buffer;
+      const audioBuffer = await audioContext.decodeAudioData(arrayBuffer);
+      return audioBuffer.duration;
+    } catch (error) {
+      console.error('Error decoding audio data:', error);
+      return null;
     }
-  }, [recordingId]);
+  };
 
   // Set reset flag as false when resetting is complete
   const onResetDone = () => {
@@ -168,6 +149,8 @@ const ProgressPlayFileVisual = () => {
     if (OSMDfinishedCursor) {
       // Send info to back to parent component and reset all playing
       setCursorFinished(true);
+      setRepeatsIterator(false);
+      setCurrentRep(1);
       const playbackManager = playbackRef.current;
       playbackManager.pause();
       playbackManager.setPlaybackStart(0);
@@ -181,17 +164,6 @@ const ProgressPlayFileVisual = () => {
     setCursorJumped(!cursorJumped);
   };
 
-  // Define recording stop when cursor finishes callback function
-  const handleReceiveRepetitionInfo = (showingRep, totalRep) => {
-    if (totalRep === 0) {
-      setRepetitionMessage('No recordings yet');
-    } else {
-      const message_aux =
-        'Seeing ' + (showingRep + 1) + ' of ' + (totalRep + 1);
-      setRepetitionMessage(message_aux);
-    }
-  };
-
   // Play audio recording
   const playAudio = async () => {
     try {
@@ -203,9 +175,7 @@ const ProgressPlayFileVisual = () => {
       // Transform data type and play
       const uint8Array = new Uint8Array(songFile.data);
       const arrayBuffer = uint8Array.buffer;
-      console.log('arrayBuffer: ', arrayBuffer);
       const audioBuffer = await audioContext.decodeAudioData(arrayBuffer);
-      console.log('audioBuffer: ', audioBuffer);
       currentSource = audioContext.createBufferSource();
       currentSource.buffer = audioBuffer;
       currentSource.connect(audioContext.destination);
@@ -230,7 +200,6 @@ const ProgressPlayFileVisual = () => {
 
   // TODO: Add support for repetition sections
   const handleRepeatLayersButtonClick = () => {
-    //window.location.href = "/TimbreVisualization";
     setRepeatsIterator(!repeatsIterator);
   };
 
@@ -247,6 +216,7 @@ const ProgressPlayFileVisual = () => {
     startTimeRef.current = 0;
     pauseTimeRef.current = 0;
 
+    setRepeatsIterator(false);
     setStartPitchTrack(false);
     setShowPitchTrack(false);
     setPitch([]);
@@ -346,6 +316,7 @@ const ProgressPlayFileVisual = () => {
     if (cursorFinished) {
       setCursorFinished(false);
       setIsPlaying(false);
+      setRepeatsIterator(false);
 
       // Reset start and pause times when playback is finished
       startTimeRef.current = 0;
@@ -407,6 +378,62 @@ const ProgressPlayFileVisual = () => {
     checkAndSetFile();
   }, [folderBasePath, params.files]);
 
+  useEffect(() => {
+    if (recordingId) {
+      getRecording(recordingId)
+        .then((recordingJSON) => {
+          // Get score info
+          const scoreInfo = JSON.parse(localStorage.getItem('scoreData')).find(
+            (item) => item.fname === params.files
+          );
+
+          // Set MetaData
+          const recordingDate = new Date(recordingJSON.date);
+          setMetaData({
+            name: recordingJSON.recordingName,
+            stars: recordingJSON.info.stars,
+            date: recordingDate.toLocaleDateString('en-UK', options),
+            skill: scoreInfo.skill,
+            level: scoreInfo.level,
+            score: scoreInfo.title,
+            bpm: recordingJSON.info.bpm,
+            transpose: recordingJSON.info.transpose
+              ? recordingJSON.info.transpose
+              : 0,
+          });
+          // Save json.info (recording data, pitch, colors...) to send to OSMD
+          setJson(recordingJSON.info);
+          // Save audio
+          setTranspose(
+            recordingJSON.info.transpose ? recordingJSON.info.transpose : 0
+          );
+          setBpm(recordingJSON.info.bpm);
+          setSongFile(recordingJSON.audio);
+          setLoading(false);
+        })
+        .catch((error) => {
+          console.log(error);
+          setRecordingIdMissing(true);
+          setLoading(false);
+        });
+    }
+  }, [recordingId]);
+
+  useEffect(() => {
+    const fetchRecordingData = async () => {
+      try {
+        const duration = await getAudioDuration(songFile);
+        setSongDuration(duration);
+      } catch (error) {
+        console.log(error);
+      }
+    };
+
+    if (songFile && audioContext) {
+      fetchRecordingData();
+    }
+  }, [songFile]);
+
   if (!xmlFile) {
     return <LoadingScreen />;
   }
@@ -437,13 +464,13 @@ const ProgressPlayFileVisual = () => {
               recordVol={midiVolume}
               isResetButtonPressed={isResetButtonPressed}
               repeatsIterator={repeatsIterator}
-              showRepeatsInfo={handleReceiveRepetitionInfo}
               onResetDone={onResetDone}
               cursorActivity={handleFinishedCursorOSMDCallback}
               cursorJumpsBack={handleJumpedCursorOSMDCallback}
               mode={true} // Passed as true to indicate that we are not in a type of record mode
               visual={'yes'}
               visualJSON={json}
+              setCurrentRep={setCurrentRep}
             />
           )}
 
@@ -471,6 +498,9 @@ const ProgressPlayFileVisual = () => {
             stats={metaData}
             practiceMode={true} // Passed as true because we do not have any recording features in playback
             isMac={isMac}
+            handleRepeatsIterator={handleRepeatLayersButtonClick}
+            repeatsIterator={repeatsIterator}
+            currentRep={currentRep}
           />
         </div>
 

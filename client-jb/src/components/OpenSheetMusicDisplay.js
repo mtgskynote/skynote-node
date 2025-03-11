@@ -93,6 +93,8 @@ const OpenSheetMusicDisplay = (props) => {
       selectionEndReached: handleSelectionEndReached,
       resetOccurred: () => {},
       cursorPositionChanged: () => {},
+      soundLoaded: () => {},
+      allSoundsLoaded: () => {},
       pauseOccurred: () => {
         console.log('pause');
       },
@@ -297,7 +299,7 @@ const OpenSheetMusicDisplay = (props) => {
     ) {
       showingRep.current =
         showingRep.current < totalReps.current ? showingRep.current + 1 : 0;
-      props.showRepeatsInfo(showingRep.current, totalReps.current);
+      props.setCurrentRep(showingRep.current + 1);
 
       osmd.current.graphic.measureList.forEach(([stave]) => {
         stave.staffEntries.forEach((_, noteIndex) => {
@@ -646,11 +648,14 @@ const OpenSheetMusicDisplay = (props) => {
     if (osmd.current.graphic) {
       if (showingRep.current < totalReps.current) {
         showingRep.current = showingRep.current + 1;
+        osmd.current.Sheet.SourceMeasures[0].firstRepetitionInstructions[0].parentRepetition.UserNumberOfRepetitions = 1;
+        osmd.current.PlaybackManager.recalculatePlaybackEntriesAndRepetitions();
       } else {
         showingRep.current = 0;
+        osmd.current.Sheet.SourceMeasures[0].firstRepetitionInstructions[0].parentRepetition.UserNumberOfRepetitions = 2;
+        osmd.current.PlaybackManager.recalculatePlaybackEntriesAndRepetitions();
       }
-
-      props.showRepeatsInfo(showingRep.current, totalReps.current);
+      props.setCurrentRep(showingRep.current + 1);
       resetNotesColor(osmd.current);
 
       let staves = osmd.current.graphic.measureList;
@@ -690,7 +695,7 @@ const OpenSheetMusicDisplay = (props) => {
         index.current =
           index.current +
           (currentMeasureWidth.current *
-            0.016 *
+            0.006 *
             parseInt(osmd.current.PlaybackManager.currentBPM)) /
             60; // 0.02 is the aproximate "rate" at which points are drawn every measure
       } else {
@@ -798,10 +803,10 @@ const OpenSheetMusicDisplay = (props) => {
         showingRep.current = 0;
         totalReps.current = 0;
         previousTimestamp.current = 0;
-        props.showRepeatsInfo(0, 0);
         props.onResetDone(); // call the function passed from the parent component
       } else {
         showingRep.current = 0;
+        props.setCurrentRep(showingRep.current + 1);
         let staves = osmd.current.graphic.measureList;
         for (let stave_index = 0; stave_index < staves.length; stave_index++) {
           let stave = staves[stave_index][0];

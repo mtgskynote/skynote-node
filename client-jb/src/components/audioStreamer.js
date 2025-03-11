@@ -16,6 +16,7 @@ USAGE:
 */
 
 import { makeCrepeScriptNode } from './pitch/crepeScriptNode.js';
+import { createCrepeWorkletNode } from '../utils/createCrepeWorkletNode.js';
 import Meyda from 'meyda'; //https://meyda.js.org
 import {
   getAudioContext,
@@ -111,12 +112,22 @@ var makeAudioStreamer = function (
 
       // Prepare CREPE pitch-tracking scriptNode
       const minBufferSize = (audioContext.sampleRate / 16000) * 1024;
+      console.log('min buffer size: ' + minBufferSize);
       let bufferSize = 4;
       for (; bufferSize < minBufferSize; bufferSize *= 2);
 
-      scriptNode = await makeCrepeScriptNode(
+      // bufferSize /= 2;
+      // console.log('buffer size: ' + bufferSize);
+
+      // scriptNode = await makeCrepeScriptNode(
+      //   audioContext,
+      //   bufferSize,
+      //   pitchCallback,
+      //   pitchVectorCallback
+      // );
+
+      scriptNode = await createCrepeWorkletNode(
         audioContext,
-        bufferSize,
         pitchCallback,
         pitchVectorCallback
       );
@@ -199,24 +210,24 @@ var makeAudioStreamer = function (
         try {
           // Convert Blob to ArrayBuffer using await
           const arrayBuffer = await audioBlob.arrayBuffer();
-          // Clean
-          audioChunks = [];
-          this.dismantleAudioNodes();
-          suspendAudioContext();
+          // // Clean
+          // audioChunks = [];
+          // this.dismantleAudioNodes();
+          // suspendAudioContext();
           return arrayBuffer;
         } catch (error) {
           console.error('Error converting Blob to ArrayBuffer:', error);
           // Clean
-          audioChunks = [];
-          //audioContext.suspend();
-          suspendAudioContext();
+          // audioChunks = [];
+          // //audioContext.suspend();
+          // suspendAudioContext();
           return 0;
         }
       }
 
-      audioChunks = [];
-      audioContext.suspend();
-      suspendAudioContext();
+      // audioChunks = [];
+      // audioContext.suspend();
+      // suspendAudioContext();
     },
   };
 

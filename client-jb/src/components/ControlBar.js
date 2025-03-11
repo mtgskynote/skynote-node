@@ -7,6 +7,7 @@ import IconButtonWithTooltip from './IconButtonWithTooltip';
 import ControlBarPopover from './ControlBarPopover';
 import RangeInput from './RangeInput';
 import ControlBarPanel from './ControlBarPanel';
+import RepetitionToggle from './RepetitionToggle';
 import {
   allModeIcons,
   practiceModeIcons,
@@ -37,6 +38,10 @@ const ControlBar = ({
   stats,
   practiceMode,
   isMac,
+  handleRepeatsIterator,
+  repeatsIterator,
+  currentRep,
+  showToggleRepetition,
 }) => {
   const [practiceModeOn, setPracticeModeOn] = useState(true);
   const [initialMidiVolume, setInitialMidiVolume] = useState(
@@ -200,21 +205,47 @@ const ControlBar = ({
 
           <div className="mr-6 h-auto w-0.5 self-stretch bg-white/20"></div>
 
-          <div className="flex justify-between items-center space-x-2">
-            <button
-              onClick={handleViewAllRecordings}
-              className="ml-auto hover:cursor-pointer transition ease-in-out delay-50 text-center text-gray-700 hover:text-gray-900 border-transparent focus:border-transparent focus:ring-0 focus:outline-none bg-slate-50 hover:bg-slate-100 font-extralight py-1 px-2 rounded-l-none outline-none rounded"
-            >
-              {playbackMode ? 'Go back' : 'View All Recordings'}
-            </button>
-            {playbackMode && (
-              <button
-                onClick={handleShowPopUpWindow}
-                className="ml-auto hover:cursor-pointer transition ease-in-out delay-50 text-center text-white border-transparent focus:border-transparent focus:ring-0 focus:outline-none bg-red-500 hover:bg-red-600 hover:text-white font-extralight py-1 px-2 rounded-l-none outline-none rounded"
-              >
-                Delete recording
-              </button>
+          <div className="flex justify-between items-center space-x-4">
+            {(playbackMode || showToggleRepetition) && (
+              <RepetitionToggle
+                onToggle={handleRepeatsIterator}
+                repetitionNumber={currentRep}
+                isToggled={repeatsIterator}
+                isPlaying={isPlaying}
+              />
             )}
+            {(() => {
+              let handler,
+                buttonText,
+                textColor,
+                hoverTextColor,
+                bgColor,
+                hoverBgColor;
+              if (!playbackMode) {
+                handler = handleViewAllRecordings;
+                buttonText = 'View All Recordings';
+                textColor = 'text-gray-700';
+                hoverTextColor = 'text-gray-900';
+                bgColor = 'bg-slate-50';
+                hoverBgColor = 'bg-slate-100';
+              } else {
+                handler = handleShowPopUpWindow;
+                buttonText = 'Delete recording';
+                textColor = 'text-white';
+                hoverTextColor = 'text-white';
+                bgColor = 'bg-red-500';
+                hoverBgColor = 'bg-red-600';
+              }
+
+              return (
+                <button
+                  onClick={handler}
+                  className={`hover:cursor-pointer transition ease-in-out delay-50 text-center ${textColor} hover:${hoverTextColor} border-transparent focus:border-transparent focus:ring-0 focus:outline-none ${bgColor} hover:${hoverBgColor} font-semibold py-1 px-2 rounded-l-none outline-none rounded`}
+                >
+                  {buttonText}
+                </button>
+              );
+            })()}
           </div>
         </div>
       </div>
@@ -254,6 +285,10 @@ ControlBar.propTypes = {
   }),
   practiceMode: PropTypes.bool.isRequired,
   isMac: PropTypes.bool.isRequired,
+  handleRepeatsIterator: PropTypes.func.isRequired,
+  repeatsIterator: PropTypes.bool.isRequired,
+  currentRep: PropTypes.number.isRequired,
+  showToggleRepetition: PropTypes.bool.isRequired,
 };
 
 export default ControlBar;
