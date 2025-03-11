@@ -285,6 +285,10 @@ ControlBar.propTypes = {
   }),
   practiceMode: PropTypes.bool.isRequired,
   isMac: PropTypes.bool.isRequired,
+  handleRepeatsIterator: PropTypes.func.isRequired,
+  repeatsIterator: PropTypes.bool.isRequired,
+  currentRep: PropTypes.number.isRequired,
+  showToggleRepetition: PropTypes.bool.isRequired,
 };
 
 export default ControlBar;

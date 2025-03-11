@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import PropTypes from 'prop-types';
 import Tooltip from '@mui/material/Tooltip';
 
 const RepetitionToggle = ({
@@ -38,6 +39,13 @@ const RepetitionToggle = ({
       </button>
     </Tooltip>
   );
+};
+
+RepetitionToggle.propTypes = {
+  onToggle: PropTypes.func.isRequired,
+  repetitionNumber: PropTypes.number.isRequired,
+  isToggled: PropTypes.bool.isRequired,
+  isPlaying: PropTypes.bool.isRequired,
 };
 
 export default RepetitionToggle;
