@@ -288,7 +288,7 @@ ControlBar.propTypes = {
   handleRepeatsIterator: PropTypes.func.isRequired,
   repeatsIterator: PropTypes.bool.isRequired,
   currentRep: PropTypes.number.isRequired,
-  showToggleRepetition: PropTypes.bool.isRequired,
+  showToggleRepetition: PropTypes.bool,
 };
 
 export default ControlBar;
