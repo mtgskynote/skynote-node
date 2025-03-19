@@ -151,7 +151,7 @@ AssignmentTaskCard.propTypes = {
     answer: PropTypes.shape({
       recordingId: PropTypes.string,
       comment: PropTypes.string,
-      grade: PropTypes.string,
+      grade: PropTypes.number,
     }),
   }).isRequired,
   score: PropTypes.shape({

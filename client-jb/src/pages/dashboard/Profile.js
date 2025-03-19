@@ -325,7 +325,7 @@ const Profile = () => {
               )}
             </>
           ) : null}
-          <div className="mb-3">
+          {/* <div className="mb-3">
             <label
               htmlFor="My Instruments"
               className="block mb-1 text-sm font-medium text-gray-900 dark:text-white"
@@ -354,7 +354,7 @@ const Profile = () => {
                 <span className="ml-2 font-small text-sm">Voice</span>
               </div>
             </div>
-          </div>
+          </div> */}
           {isEditing ? (
             <>
               <button

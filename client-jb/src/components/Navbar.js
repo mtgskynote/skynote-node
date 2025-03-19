@@ -120,11 +120,16 @@ function Navbar() {
   };
 
   // Navigation items
+  // const navItems = [
+  //   ['Dashboard', '/'],
+  //   ['Lessons', '/lessons'],
+  //   ['Assignments', '/assignments'],
+  //   ['All Recordings', '/all-recordings'],
+  // ];
   const navItems = [
-    ['Dashboard', '/'],
+    ['All Recordings', '/'],
     ['Lessons', '/lessons'],
-    ['Assignments', '/assignments'],
-    ['All Recordings', '/all-recordings'],
+    ['Sound Visualization', '/TimbreVisualization'],
   ];
 
   const navItemsMobile = [
@@ -137,13 +142,13 @@ function Navbar() {
     <AppBar position="fixed">
       <Toolbar className="justify-between">
         {/* Greeting section */}
-        <div className="flex items-center">
-          {/* <h5 className="text-slate-50 font-light">
-            Hello{" "}
-            <span className="font-black">{userData ? userData.name : ""}</span>
-            {"!"}
-          </h5> */}
-          <InstrumentDropdown />
+        <div className="flex items-center justify-center h-1/2 px-2">
+          <div className="text-slate-50 font-light text-2xl">
+            Hello{' '}
+            <span className="font-black">{userData ? userData.name : ''}</span>
+            {'!'}
+          </div>
+          {/* <InstrumentDropdown /> */}
         </div>
 
         {/* Desktop navigation - main pages section */}
@@ -170,7 +175,7 @@ function Navbar() {
         {/* Desktop navigation - notifications and settings section */}
         <div className="hidden lg:flex items-center space-x-4">
           {/* Notifications */}
-          <ClickAwayListener onClickAway={handleClickAway}>
+          {/* <ClickAwayListener onClickAway={handleClickAway}>
             <div className="relative">
               <Tooltip
                 placement="bottom"
@@ -187,17 +192,17 @@ function Navbar() {
                     <Notifications />
                   </Badge>
                 </IconButton>
-              </Tooltip>
-              {/* Notifications dropdown */}
-              <div
+              </Tooltip> */}
+          {/* Notifications dropdown */}
+          {/* <div
                 className={`z-50 absolute right-0 w-96 bg-white shadow-md rounded-sm p-4 overflow-y-auto max-h-screen-75 transition-opacity duration-300 ${
                   notificationsOpen
                     ? 'opacity-100'
                     : 'opacity-0 pointer-events-none'
                 }`}
-              >
-                {/* Render unread messages */}
-                {unreadMessagesCount > 0 ? (
+              > */}
+          {/* Render unread messages */}
+          {/* {unreadMessagesCount > 0 ? (
                   unreadMessagesContent.map((message, index) => (
                     <div key={index} className="mb-2">
                       <div className="bg-blue-100 text-blue-800 p-2 rounded-lg">
@@ -211,19 +216,19 @@ function Navbar() {
                     Looks like your inbox is in perfect harmony 🎶 No new
                     messages here!
                   </div>
-                )}
-                {/* Link to see all messages */}
-                <NavLink to="/assignments" onClick={handleClose}>
+                )} */}
+          {/* Link to see all messages */}
+          {/* <NavLink to="/assignments" onClick={handleClose}>
                   <button className="mt-2 w-full font-bold text-lg bg-blue-500 hover:bg-blue-600 text-slate-50 font-bold py-2 px-4 rounded border-0">
                     See all messages
                   </button>
                 </NavLink>
               </div>
             </div>
-          </ClickAwayListener>
+          </ClickAwayListener> */}
 
           {/* Settings */}
-          <Tooltip placement="bottom" title="Settings" arrow>
+          {/* <Tooltip placement="bottom" title="Settings" arrow>
             <IconButton
               edge="start"
               color="inherit"
@@ -232,9 +237,9 @@ function Navbar() {
             >
               <Settings />
             </IconButton>
-          </Tooltip>
+          </Tooltip> */}
           {/* Settings dropdown */}
-          <Menu
+          {/* <Menu
             anchorEl={settingsAnchorEl}
             open={Boolean(settingsAnchorEl)}
             onClose={handleClose}
@@ -246,7 +251,7 @@ function Navbar() {
             >
               Sound Visualization
             </MenuItem>
-          </Menu>
+          </Menu> */}
 
           {/* Profile */}
           <Tooltip placement="bottom" title="Profile" arrow>
@@ -256,7 +261,7 @@ function Navbar() {
               aria-label="profile"
               onClick={handleProfileClick}
             >
-              <AccountCircle />
+              <AccountCircle className="text-4xl" />
             </IconButton>
           </Tooltip>
           {/* Profile dropdown */}

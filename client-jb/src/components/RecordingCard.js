@@ -71,7 +71,6 @@ const RecordingCard = ({
     // Find the relevant recording entry in local storage
     const storedScoreData = JSON.parse(localStorage.getItem('scoreData')) || [];
     const scoreEntry = storedScoreData.find((item) => item.fname === fileName);
-    console.log('importedScore: ', importedScore);
     if (scoreEntry) {
       if (importedScore) {
         const currentUser = await getCurrentUser();

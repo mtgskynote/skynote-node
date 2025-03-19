@@ -1,14 +1,17 @@
 import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { getAllRecData } from '../utils/studentRecordingMethods.js';
 import { useAppContext } from '../context/appContext.js';
 // import { getUserImportedScores } from '../utils/usersMethods';
 import RecordingCard from './RecordingCard.js';
 import LoadingScreen from './LoadingScreen.js';
 import ListRecordingsHeader from './ListRecordingsHeader.js';
-import BackButton from './BackButton.js';
+// import BackButton from './BackButton.js';
 
 const ListAllRecordings = () => {
   const { getCurrentUser } = useAppContext();
+  const navigate = useNavigate();
+
   const [userData, setUserData] = useState(null);
   const [localData, setLocalData] = useState(null);
   const [recordingsByScore, setRecordingsByScore] = useState(null);
@@ -126,14 +129,22 @@ const ListAllRecordings = () => {
     setRecordingsByScore(newRecordings);
   };
 
+  const handleViewAllRecordings = (scoreFilename, scoreTitle) => {
+    const score = `${scoreFilename}`;
+    const song = `${scoreTitle}`;
+    const typeList = 'single-song';
+
+    navigate('/ListRecordings', { state: { score, song, typeList } });
+  };
+
   // Display loading screen while fetching data
   if (recordingsByScore === null) {
     return <LoadingScreen />;
   }
 
   return (
-    <div className="container mx-auto px-4 py-8">
-      <BackButton />
+    <div className="container mx-auto px-4 py-8 mb-12">
+      {/* <BackButton /> */}
       <div className="flex justify-center items-start">
         <h2 className="text-center">All Recordings</h2>
       </div>
@@ -146,6 +157,9 @@ const ListAllRecordings = () => {
               title={scoreTitle}
               skill={scoreObject.skill}
               level={scoreObject.level}
+              handleViewAllRecordings={() =>
+                handleViewAllRecordings(scoreObject.fname, scoreTitle)
+              }
             />
             <div className="relative overflow-x-auto whitespace-no-wrap no-scrollbar">
               <div className="inline-flex items-start space-x-8 mr-8">

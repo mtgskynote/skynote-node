@@ -6,7 +6,7 @@ import { useAppContext } from '../context/appContext';
 import LoadingScreen from './LoadingScreen.js';
 import RecordingCard from './RecordingCard.js';
 import ListRecordingsHeader from './ListRecordingsHeader.js';
-import BackButton from './BackButton.js';
+// import BackButton from './BackButton.js';
 
 const ListRecordings = () => {
   const { getCurrentUser } = useAppContext();
@@ -116,7 +116,7 @@ const ListRecordings = () => {
 
   return (
     <div className="container mx-auto px-4 py-8">
-      <BackButton />
+      {/* <BackButton /> */}
       <ListRecordingsHeader
         title={song}
         skill={scoreSkill}

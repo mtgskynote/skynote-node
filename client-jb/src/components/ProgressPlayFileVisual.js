@@ -352,7 +352,6 @@ const ProgressPlayFileVisual = () => {
 
         // Check if the file is valid XML (file found in folderBasePath)
         if (xmlFileData.startsWith('<?xml')) {
-          console.log('File found at folderBasePath:', fileUrl);
           setXmlFile(fileUrl);
         } else {
           const localStorageFile = localStorage.getItem(params.files);
@@ -477,7 +476,7 @@ const ProgressPlayFileVisual = () => {
           <div className="absolute top-0 left-0 w-full h-full bg-transparent z-20 pointer-events-auto"></div>
         </div>
 
-        <div className="flex justify-center mb-32">
+        <div className="fixed bottom-0 left-0 right-0 z-30 flex justify-center mb-32">
           <ControlBar
             onTransposeChange={(newTranspose) => setTranspose(newTranspose)}
             onBpmChange={(newBpm) => setBpm(newBpm)}

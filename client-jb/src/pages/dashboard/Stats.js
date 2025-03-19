@@ -177,26 +177,42 @@ const Stats = () => {
           setRecordingDates(result.map((recording) => recording.recordingDate));
           setRecordingLevels(
             result.map((recording) => {
-              return scoresData.find((item) => item._id === recording.scoreID)
-                .level;
+              const score = scoresData.find(
+                (item) => item._id === recording.scoreID
+              );
+              if (score)
+                return scoresData.find((item) => item._id === recording.scoreID)
+                  .level;
             })
           );
           setRecordingSkills(
             result.map((recording) => {
-              return scoresData.find((item) => item._id === recording.scoreID)
-                .skill;
+              const score = scoresData.find(
+                (item) => item._id === recording.scoreID
+              );
+              if (score)
+                return scoresData.find((item) => item._id === recording.scoreID)
+                  .skill;
             })
           );
           setRecordingScoresTitles(
             result.map((recording) => {
-              return scoresData.find((item) => item._id === recording.scoreID)
-                .title;
+              const score = scoresData.find(
+                (item) => item._id === recording.scoreID
+              );
+              if (score)
+                return scoresData.find((item) => item._id === recording.scoreID)
+                  .title;
             })
           );
           setRecordingScoresXML(
             result.map((recording) => {
-              return scoresData.find((item) => item._id === recording.scoreID)
-                .fname;
+              const score = scoresData.find(
+                (item) => item._id === recording.scoreID
+              );
+              if (score)
+                return scoresData.find((item) => item._id === recording.scoreID)
+                  .fname;
             })
           );
           setRecordingScoresIds(result.map((recording) => recording.scoreID));
@@ -252,17 +268,20 @@ const Stats = () => {
       copy.forEach((entry) => {
         const scoreID = entry.scoreID;
         const recordingStars = entry.recordingStars;
-        const level = scoresData.find((score) => score._id === scoreID).level;
-        if (!bestScores[level]) {
-          bestScores[level] = {};
-        }
-        // Check if the scoreID is already in the bestScores object
-        if (
-          !bestScores[level][scoreID] ||
-          bestScores[level][scoreID] < recordingStars
-        ) {
-          // If not or if the current recordingStars is greater, update the best score
-          bestScores[level][scoreID] = recordingStars;
+        const score = scoresData.find((score) => score._id === scoreID);
+        if (score !== undefined) {
+          const level = score.level;
+          if (!bestScores[level]) {
+            bestScores[level] = {};
+          }
+          // Check if the scoreID is already in the bestScores object
+          if (
+            !bestScores[level][scoreID] ||
+            bestScores[level][scoreID] < recordingStars
+          ) {
+            // If not or if the current recordingStars is greater, update the best score
+            bestScores[level][scoreID] = recordingStars;
+          }
         }
       });
       // sum up all stars for same level
@@ -439,9 +458,11 @@ const Stats = () => {
         <div className="pb-6">
           <div className="inline-flex space-x-2 my-6">
             <h4 className="font-medium">Unsubmitted Tasks</h4>
-            <div className="h-1/2 px-2 bg-red-500 rounded text-slate-50">
-              {unansweredTasks}
-            </div>
+            {unansweredTasks > 0 && (
+              <div className="h-1/2 px-2 bg-red-500 rounded text-slate-50">
+                {unansweredTasks}
+              </div>
+            )}
           </div>
           <div className="relative overflow-x-auto whitespace-no-wrap no-scrollbar mr-8">
             <div className="inline-flex items-start space-x-8 mr-8">

@@ -19,14 +19,11 @@ const freq2midipitch = (freq) => {
 let audioStreamer = null;
 
 const TimbreVisualization = () => {
-  console.log(`STARTING Timbre Visualization, about to create audio streamer.`);
   const pieChartRef = useRef(null);
   const pitchTunerRef = useRef(null);
 
   //---- Send array of values to pieChart for drawing segments
   function setSegments(sarray) {
-    //console.log(`spectralFlux : ${sarray[3]}`)
-    //console.log(`rms mean : ${featureValues.rms.computeMean()}`)
     if (pieChartRef.current) {
       pieChartRef.current.updateData(sarray);
     }
@@ -94,7 +91,7 @@ const TimbreVisualization = () => {
 
   // Start the streaming audio and request your callbacks
   audioStreamer = makeAudioStreamer(pitchCallback, null, aCb);
-  audioStreamer.init(false, ['rms', 'spectralCentroid', 'spectralFlux']); //LIST ONLY MEYDA FEATURES  !!!!!
+  audioStreamer.preload(false, ['rms', 'spectralCentroid', 'spectralFlux']); //LIST ONLY MEYDA FEATURES  !!!!!
 
   useEffect(() => {
     return () => {

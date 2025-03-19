@@ -12,23 +12,16 @@ import {
 
 import { Profile, Stats, SharedLayout } from './pages/dashboard';
 import Lessons from './pages/Lessons';
-//import ImportedScores from "./pages/ImportedScores";
 import { useAppContext } from './context/appContext';
 import ProgressPlayFile from './components/ProgressPlayFile';
 import ProgressPlayFileVisual from './components/ProgressPlayFileVisual';
 
-import LevelOne from './components/levels/LevelOne';
-import LevelTwo from './components/levels/LevelTwo';
-import LevelThree from './components/levels/LevelThree';
 import ErrorBoundary from './components/ErrorBoundary';
 
 import TimbreVisualization from './components/TimbreVisualization';
 import ListRecordings from './components/ListRecordings';
-import AudioPlayer from './components/AudioPlayer';
 import ListAllRecordings from './components/ListAllRecordings';
 import Assignments from './components/Assignments';
-
-import Apitesting from './components/apitesting';
 import Error from './components/Error';
 
 function App() {
@@ -101,18 +94,14 @@ function App() {
                   </ProtectedRoute>
                 }
               >
-                <Route index element={<Stats />} />
+                {/* <Route index element={<Stats />} /> */}
+                <Route index element={<ListAllRecordings />} />
                 <Route path="profile" element={<Profile />} />
-                <Route path="apitesting" element={<Apitesting />} />
                 <Route path="lessons" element={<Lessons />} />
-                {/* <Route path="imported-scores" element={<ImportedScores />} /> */}
                 <Route
                   path="all-lessons/:files"
                   element={<ProgressPlayFile />}
                 />
-                <Route path="/levels/levelone" element={<LevelOne />} />
-                <Route path="/levels/leveltwo" element={<LevelTwo />} />
-                <Route path="/levels/levelthree" element={<LevelThree />} />
                 <Route
                   path="/TimbreVisualization"
                   element={<TimbreVisualization />}
@@ -126,7 +115,6 @@ function App() {
                 <Route path="all-recordings" element={<ListAllRecordings />} />
               </Route>
 
-              <Route path="/AudioPlayer" element={<AudioPlayer />} />
               <Route path="/register" element={<Register />} />
               <Route path="/ourteam" element={<OurTeam />} />
               <Route path="/research" element={<Research />} />

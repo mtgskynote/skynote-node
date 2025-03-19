@@ -155,7 +155,7 @@ function Register() {
               <select
                 id="role"
                 name="role"
-                className="w-full py-2 px-3 border rounded leading-tight focus:outline-none focus:shadow-outline"
+                className="shadow-sm appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
                 value={formData.role}
                 onChange={handleChange}
               >
@@ -182,7 +182,7 @@ function Register() {
               <select
                 id="instrument"
                 name="instrument"
-                className="w-full py-2 px-3 border rounded leading-tight focus:outline-none focus:shadow-outline"
+                className="shadow-sm appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
                 value={formData.instrument}
                 onChange={handleChange}
               >
@@ -207,10 +207,10 @@ function Register() {
             </button>
 
             <p
-              className="inline-block align-baseline font-bold text-sm text-blue-500 hover:text-blue-800 cursor-pointer"
+              className="inline-block align-baseline text-sm text-blue-500 hover:text-blue-800 cursor-pointer"
               onClick={toggleMember}
             >
-              {/* {formData.isMember ? 'Not a member?' : 'Back to login'} */}
+              {formData.isMember ? 'Not a member?' : 'Back to login'}
             </p>
           </div>
         </form>

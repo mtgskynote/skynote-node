@@ -111,7 +111,7 @@ AssignmentPanel.propTypes = {
   postedDate: PropTypes.string.isRequired,
   tasks: PropTypes.arrayOf(
     PropTypes.shape({
-      answer: PropTypes.string,
+      answer: PropTypes.object,
       score: PropTypes.string.isRequired,
     })
   ).isRequired,

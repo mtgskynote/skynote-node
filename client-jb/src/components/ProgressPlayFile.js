@@ -469,7 +469,9 @@ const ProgressPlayFile = () => {
   // Navigate to all recordings for this particular score
   const handleViewAllRecordings = () => {
     const score = `${params.files}`;
+    console.log('score: ' + score);
     const song = `${scoreTitle}`;
+    console.log('song: ' + song);
     const typeList = 'single-song';
 
     navigate('/ListRecordings', { state: { score, song, typeList } });

@@ -26,7 +26,9 @@ const freq2note = (freq) => {
   let midif = freq2midipitch(freq);
   let noteint = Math.round(midif);
   let noteobj = note_objects[Math.round(midif - 21) % 12];
-  noteobj.mistuning = midif - noteint;
+  if (noteobj) {
+    noteobj.mistuning = midif - noteint;
+  }
   return noteobj;
 };
 

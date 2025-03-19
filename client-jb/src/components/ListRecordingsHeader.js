@@ -9,12 +9,22 @@ import PropTypes from 'prop-types';
  * - skill (string): The skill level associated with the recordings.
  * - level (number): The level associated with the recordings.
  */
-const ListRecordingsHeader = ({ title, skill, level }) => {
+const ListRecordingsHeader = ({
+  title,
+  skill,
+  level,
+  handleViewAllRecordings,
+}) => {
   return (
     <div>
       <div className="flex items-center justify-between mt-12">
         {/* Left side: Title */}
-        <div className="text-2xl font-bold capitalize">{title}</div>
+        <div
+          className="text-2xl font-bold capitalize hover:text-blue-500 hover:cursor-pointer transition duration-300 ease-in-out"
+          onClick={handleViewAllRecordings}
+        >
+          {title}
+        </div>
 
         {/* Right side: Skill and Level */}
         <div className="text-lg text-gray-600 text-right">
