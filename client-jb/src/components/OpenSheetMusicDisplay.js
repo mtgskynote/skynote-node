@@ -29,6 +29,10 @@ import {
 
 Chartjs.register(LineElement, CategoryScale, LinearScale, PointElement);
 
+const SAMPLE_RATE = 16000; // Audio worklet sample rate
+const HOP_SIZE = 256; // Hop size
+const POINTS_PER_SECOND = SAMPLE_RATE / HOP_SIZE; // Rate of pitch points collected per second
+
 const OpenSheetMusicDisplay = (props) => {
   const [selectionEndReached, setSelectionEndReached] = useState(false);
   const [calculatePunctuation, setCalculatePunctuation] = useState(false);
@@ -66,6 +70,13 @@ const OpenSheetMusicDisplay = (props) => {
   const colorNotesRef = useRef([]);
   const currentGNoteinScorePitchRef = useRef(null);
   const currentMeasureWidth = useRef(null);
+  const isFirstNoteInStaffRef = useRef(false);
+  const wasFirstNoteInStaffRef = useRef(false);
+  const isFirstNoteTransitionRef = useRef(false);
+  const firstNoteXPositionRef = useRef(null);
+  const currentStaffElementWidthRef = useRef(null);
+  const currentNumStaffMeasuresRef = useRef(null);
+  const firstNoteXPositionViewportRef = useRef(null);
 
   const lineChartStyle = {
     position: 'absolute',
@@ -324,6 +335,29 @@ const OpenSheetMusicDisplay = (props) => {
       }
 
       const gNote = osmd.current.cursor.GNotesUnderCursor()[0];
+      // const gStaffEntry = gNote.parentVoiceEntry.parentStaffEntry;
+      // currentNumStaffMeasuresRef.current =
+      //   gStaffEntry.parentMeasure.parentMusicSystem.GraphicalMeasures.length;
+
+      // isFirstNoteInStaffRef.current =
+      //   gStaffEntry.parentMeasure.MeasureNumber ===
+      //     gStaffEntry.parentMeasure.parentMusicSystem.GraphicalMeasures[0][0]
+      //       .MeasureNumber && gStaffEntry.relInMeasureTimestamp.RealValue === 0;
+
+      // if (isFirstNoteInStaffRef.current) {
+      //   const svgElement = gNote.getSVGGElement();
+      //   const staffElement = svgElement.closest('g.staffline');
+      //   const staffBBox = staffElement.getBBox();
+      //   currentStaffElementWidthRef.current = staffBBox.width;
+      //   firstNoteXPositionRef.current =
+      //     svgElement.children[0].children[0].children[0].getBoundingClientRect().x;
+      // }
+
+      // isFirstNoteTransitionRef.current =
+      //   !wasFirstNoteInStaffRef.current && isFirstNoteInStaffRef.current;
+
+      // wasFirstNoteInStaffRef.current = isFirstNoteInStaffRef.current;
+
       const svgElement = gNote.getSVGGElement();
       const measureElement = svgElement.closest('g.vf-measure');
       const measureWidth = measureElement.getBBox().width;
@@ -640,7 +674,7 @@ const OpenSheetMusicDisplay = (props) => {
       pitchPositionXRef.current = updatedPitchPositionX;
       pitchPositionYRef.current = updatedPitchPositionY;
       recordedNoteIndexRef.current = updatedNoteIndex;
-      zoom.current = props.zoom; // This forces thta LineChart re-renders the points position
+      zoom.current = props.zoom; // This forces LineChart to re-render the points
     }
   }, [props.zoom]);
 
@@ -686,18 +720,71 @@ const OpenSheetMusicDisplay = (props) => {
 
   useEffect(() => {
     if (props.startPitchTrack) {
+      // if (isFirstNoteTransitionRef.current) {
+      //   index.current = 0;
+      // } else {
+      //   const bpm = parseInt(osmd.current.PlaybackManager.currentBPM);
+      //   const secondsPerBeat = 60 / bpm;
+      //   const beatsPerMeasure = 4;
+      //   const totalBeatsInStaffline =
+      //     currentNumStaffMeasuresRef.current * beatsPerMeasure;
+
+      //   // if the cursor is currently inside a staffline:
+      //   let adjustedStafflineWidth =
+      //     currentStaffElementWidthRef.current - firstNoteXPositionRef.current;
+
+      //   const beatWidthPixels = adjustedStafflineWidth / totalBeatsInStaffline;
+      //   const pixelsPerSecond = beatWidthPixels / secondsPerBeat;
+      //   const spacingPerPoint = pixelsPerSecond / POINTS_PER_SECOND;
+
+      //   index.current += spacingPerPoint * 1.7;
+
+      // const bpm = parseInt(osmd.current.PlaybackManager.currentBPM); // Current BPM
+      // const secondsPerBeat = 60 / bpm; // Seconds per beat
+      // const beatsPerMeasure = 4;
+      // const totalBeatsInStaffline =
+      //   currentNumStaffMeasuresRef.current * beatsPerMeasure;
+
+      // // Calculate total duration of the staffline in seconds
+      // const secondsPerStaffline = totalBeatsInStaffline * secondsPerBeat;
+      // const pointsPerStaffline = POINTS_PER_SECOND * secondsPerStaffline;
+
+      // // Adjust the staffline width for the first note in the staffline
+      // let adjustedStafflineWidth = currentStaffElementWidthRef.current;
+      // if (isFirstNoteInStaffRef.current) {
+      //   adjustedStafflineWidth -= firstNoteXPositionRef.current; // Subtract the x position of the first note
+      // }
+
+      // // Calculate spacing per point for the staffline
+      // const spacingPerPoint = adjustedStafflineWidth / pointsPerStaffline;
+
+      // index.current += spacingPerPoint;
+      // }
       if (
         notePositionX.current ===
         pitchPositionXRef.current[pitchPositionXRef.current.length - 1]
       ) {
         // we are still on the same note
         // index.current = index.current + 6;
-        index.current =
-          index.current +
-          (currentMeasureWidth.current *
-            0.006 *
-            parseInt(osmd.current.PlaybackManager.currentBPM)) /
-            60; // 0.02 is the aproximate "rate" at which points are drawn every measure
+        const bpm = parseInt(osmd.current.PlaybackManager.currentBPM);
+        const secondsPerBeat = 60 / bpm;
+        const beatsPerMeasure = 4;
+
+        const secondsPerMeasure = beatsPerMeasure * secondsPerBeat;
+        const pointsPerMeasure = POINTS_PER_SECOND * secondsPerMeasure;
+
+        let adjustedMeasureWidth = currentMeasureWidth.current;
+
+        const spacingPerPoint = adjustedMeasureWidth / pointsPerMeasure;
+
+        index.current += spacingPerPoint;
+
+        // index.current =
+        //   index.current +
+        //   (currentMeasureWidth.current *
+        //     0.006 *
+        //     parseInt(osmd.current.PlaybackManager.currentBPM)) /
+        //     60; // 0.02 is the aproximate "rate" at which points are drawn every measure
       } else {
         // new note
         index.current = 0; // reset index
@@ -850,6 +937,7 @@ const OpenSheetMusicDisplay = (props) => {
           repetitionNumber={repetitionNumberRef.current}
           showingRep={showingRep.current}
           isPitchDataReady={isPitchDataReady}
+          firstNoteXPosition={firstNoteXPositionRef.current}
         />
       </div>
 

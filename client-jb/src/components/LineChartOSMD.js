@@ -27,6 +27,7 @@ const LineChart = memo((props) => {
     ctx.fillStyle = 'red';
     for (let i = 0; i < props.pitchDataPosX.length; i++) {
       if (props.showingRep === props.repetitionNumber[i]) {
+        // let x = props.firstNoteXPosition + props.pitchIndex[i] - rect.left;
         let x = props.pitchDataPosX[i] + props.pitchIndex[i] - rect.left;
         let y = props.pitchDataPosY[i] - rect.top;
         ctx.fillRect(x, y, 3, 3);
@@ -38,9 +39,15 @@ const LineChart = memo((props) => {
         props.showingRep === props.repetitionNumber[i] &&
         props.pitchColor[i] !== '#FFFFFF'
       ) {
+        // let x = props.firstNoteXPosition + props.pitchIndex[i] - rect.left;
         let x = props.pitchDataPosX[i] + props.pitchIndex[i] - rect.left;
         let y = props.pitchDataPosY[i] - rect.top;
         let currentPitch = props.pitchData[i];
+
+        // let isLargeJump =
+        //   Math.abs(
+        //     x - (props.firstNoteXPosition + props.pitchIndex[i - 1] - rect.left)
+        //   ) > distanceThreshold;
 
         let isLargeJump =
           Math.abs(

@@ -16,11 +16,10 @@ const freq2midipitch = (freq) => {
   return 12 * Math.log2(freq / 440) + 69;
 };
 
-let audioStreamer = null;
-
 const TimbreVisualization = () => {
   const pieChartRef = useRef(null);
   const pitchTunerRef = useRef(null);
+  const audioStreamer = useRef(null);
 
   //---- Send array of values to pieChart for drawing segments
   function setSegments(sarray) {
@@ -89,15 +88,39 @@ const TimbreVisualization = () => {
     ]);
   };
 
-  // Start the streaming audio and request your callbacks
-  audioStreamer = makeAudioStreamer(pitchCallback, null, aCb);
-  audioStreamer.preload(false, ['rms', 'spectralCentroid', 'spectralFlux']); //LIST ONLY MEYDA FEATURES  !!!!!
+  useEffect(() => {
+    if (!audioStreamer.current) {
+      console.log('making new audio stream');
+      audioStreamer.current = makeAudioStreamer(pitchCallback, null, aCb);
+      audioStreamer.current.preload(false, [
+        'rms',
+        'spectralCentroid',
+        'spectralFlux',
+      ]);
+    }
+
+    return () => {
+      console.log('CLOSING');
+      if (audioStreamer.current) {
+        audioStreamer.current.close();
+        audioStreamer.current = null;
+      }
+    };
+  }, []);
 
   useEffect(() => {
+    // Ensure the PieChart is reset when the component is mounted
+    if (pieChartRef.current) {
+      pieChartRef.current.updateData([]); // Clear the chart data
+    }
+
     return () => {
-      audioStreamer.close();
+      // Clean up when the component is unmounted
+      if (pieChartRef.current) {
+        pieChartRef.current.updateData([]); // Reset the chart data
+      }
     };
-  }, []); //This should run only once
+  }, []);
 
   return (
     <div

@@ -2,7 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import AlertMui from '@mui/material/Alert';
 
-const AlertNew = ({ severity, alertText }) => {
+const AlertBannerProfile = ({ severity, alertText }) => {
   return (
     <div className="mb-4">
       <AlertMui severity={severity}>{alertText}</AlertMui>
@@ -10,9 +10,9 @@ const AlertNew = ({ severity, alertText }) => {
   );
 };
 
-AlertNew.propTypes = {
+AlertBannerProfile.propTypes = {
   severity: PropTypes.oneOf(['error', 'warning', 'info', 'success']).isRequired,
   alertText: PropTypes.string.isRequired,
 };
 
-export default AlertNew;
+export default AlertBannerProfile;

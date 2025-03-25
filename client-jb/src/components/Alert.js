@@ -9,10 +9,10 @@ import { useAppContext } from '../context/appContext';
  * // Example usage:
  * // <Alert />
  */
-const Alert = () => {
+const AlertRegister = () => {
   const { alertType, alertText } = useAppContext();
 
   return <div className={`alert alert-${alertType}`}>{alertText}</div>;
 };
 
-export default Alert;
+export default AlertRegister;

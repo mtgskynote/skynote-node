@@ -3,7 +3,7 @@ import { useAppContext } from '../../context/appContext';
 import axios from 'axios';
 import LoadingScreen from '../../components/LoadingScreen';
 import Error from '../../components/Error';
-import AlertNew from '../../components/AlertNew';
+import AlertBannerProfile from '../../components/AlertBannerProfile';
 
 const Profile = () => {
   const { getCurrentUser } = useAppContext();
@@ -50,12 +50,12 @@ const Profile = () => {
       } catch (error) {
         console.error('Network error:', error);
         showAlertMessage('Network error', 'error');
-        setFormData(initialFormData);
+        setFormData(null);
       }
     };
 
     fetchDataFromAPI();
-  }, []);
+  }, [getCurrentUser]);
 
   // Function to show the alert
   const showAlertMessage = (text, type) => {
@@ -189,7 +189,9 @@ const Profile = () => {
       <div className="text-left text-2xl font-bold mb-2">
         <h1>My Profile</h1>
       </div>
-      {showAlert && <AlertNew severity={alertType} alertText={alertText} />}
+      {showAlert && (
+        <AlertBannerProfile severity={alertType} alertText={alertText} />
+      )}
       {isLoading ? (
         <p>Loading...</p>
       ) : formData ? (

@@ -13,7 +13,7 @@ const CountDownTimer = ({ bpm, mode, onCountDownFinished }) => {
 
     osc.type = 'sine';
     osc.frequency.setValueAtTime(1000, audioContext.currentTime); // Click sound frequency
-    gainNode.gain.setValueAtTime(0.2, audioContext.currentTime);
+    gainNode.gain.setValueAtTime(0.1, audioContext.currentTime);
 
     osc.connect(gainNode);
     gainNode.connect(audioContext.destination);
