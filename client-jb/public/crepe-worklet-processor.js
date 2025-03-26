@@ -4,7 +4,7 @@ class CrepeWorkletProcessor extends AudioWorkletProcessor {
     this.originalSampleRate = options.processorOptions.originalSampleRate;
     this.targetSampleRate = 16000;
     this.buffer = new Float32Array(0);
-    this.HOP_SIZE = 512; // Process frames every 512 resampled samples (50% overlap)
+    this.HOP_SIZE = 256; // Process frames every 265 resampled samples (25% overlap)
   }
 
   resample(input, originalSR) {

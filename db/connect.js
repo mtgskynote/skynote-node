@@ -2,6 +2,7 @@ import { createTunnel } from 'tunnel-ssh';
 import mongoose from 'mongoose';
 import fs from 'fs';
 import dotenv from 'dotenv';
+import chalk from 'chalk';
 dotenv.config();
 
 const private_key = process.env.VPS_PRIVATE_KEY;
@@ -44,37 +45,21 @@ const connectDB = async (url) => {
       );
     };
     await mySimpleTunnel(sshOptions, 27017);
-    console.log('tunnel ssh established.');
+    console.log(chalk.blue('SSH tunnel established'));
   } else {
-    console.log('private key not found from .env file');
+    console.log(chalk.red('Private key not found in .env file'));
   }
 
-  console.log(`Let's try to connect to ${url}`);
-
   const connectionDone = mongoose
-    .connect(
-      url,
-      {
-        useNewUrlParser: true,
-        useUnifiedTopology: true,
-      }
-      // ,
-      // (err) => {
-      //   if (err) {
-      //     console.error("FAILED TO CONNECT TO MONGODB");
-      //     console.error(err);
-      //   } else {
-      //     console.log("CONNECTED TO MONGODB");
-      //   }
-      // }
-    )
-    .then(() => {
-      console.log('Connected to the DB then!');
-      console.log(mongoose.connection.readyState);
+    .connect(url, {
+      useNewUrlParser: true,
+      useUnifiedTopology: true,
     })
-    .catch((err) => console.log('error in mongoose connect', err));
+    .then(() => {
+      console.log(chalk.blue('Successfully connected to MongoDB'));
+    })
+    .catch((err) => console.log(chalk.red('Error connecting to MongoDB', err)));
 
-  //console.log("MongoDB connection established");
   return connectionDone;
 };
 
