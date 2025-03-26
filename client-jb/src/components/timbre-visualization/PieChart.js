@@ -64,10 +64,6 @@ const makePieStructure = function (
     textElement.style.fill = '#333';
     textElement.style.background = 'rgba(255, 255, 255, 0.8)';
 
-    svg.appendChild(textElement);
-    const textBBox = textElement.getBBox();
-    svg.removeChild(textElement);
-
     var x =
       center.x +
       (radius + 10) * Math.cos(((i + 0.5) * 2 * Math.PI) / numRadialLines);

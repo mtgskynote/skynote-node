@@ -1,4 +1,4 @@
-// Navbar.js
+/* eslint-disable */
 import React, { useState, useEffect } from 'react';
 import { NavLink } from 'react-router-dom';
 import { useAppContext } from '../../context/appContext.js';

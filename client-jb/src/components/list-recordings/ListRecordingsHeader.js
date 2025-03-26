@@ -41,6 +41,7 @@ ListRecordingsHeader.propTypes = {
   title: PropTypes.string.isRequired,
   skill: PropTypes.string.isRequired,
   level: PropTypes.number.isRequired,
+  handleViewAllRecordings: PropTypes.func.isRequired,
 };
 
 export default ListRecordingsHeader;
