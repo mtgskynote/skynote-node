@@ -93,7 +93,6 @@ const AppProvider = ({ children }) => {
 
   // Set up user with current user, endpoint, and alert text
   const setupUser = async ({ currentUser, endPoint, alertText }) => {
-    console.log('setting user');
     dispatch({ type: SETUP_USER_BEGIN });
 
     try {
@@ -118,15 +117,13 @@ const AppProvider = ({ children }) => {
       addUserToLocalStorage(user, token, location);
       setInstrumentLocalStorage(user.instrument);
 
-      console.log('User set. Now fetching score data...');
-
       // Ensure user is set before fetching score data
       await getAllScoreData2(user);
 
       // Dispatch event to notify that storage has been updated
       window.dispatchEvent(new Event('storageUpdated'));
     } catch (error) {
-      console.log('ERROR');
+      console.log('Error setting up user: ' + error.message);
       dispatch({
         type: SETUP_USER_ERROR,
         payload: { msg: error.response.data.msg },
@@ -216,7 +213,6 @@ const AppProvider = ({ children }) => {
 
       // Fetch user imported scores using user.id
       const importedScores = await getUserImportedScores(user.id);
-      console.log('importedScores: ', importedScores);
 
       // Transform importedScores to match the format of tempScoreData
       const formattedImportedScores = importedScores.map((score) => ({
@@ -237,7 +233,6 @@ const AppProvider = ({ children }) => {
       }
 
       localStorage.setItem('scoreData', JSON.stringify(tempScoreData));
-      console.log(tempScoreData);
 
       return tempScoreData;
     } catch (error) {

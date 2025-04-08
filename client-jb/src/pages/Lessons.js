@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from 'react';
-import LevelCard from '../components/LevelCard';
+import LevelCard from '../components/lessons/LevelCard';
 import { useAppContext } from '../context/appContext';
 import { getUserFavourites } from '../utils/usersMethods.js';
 import { getAllRecData } from '../utils/studentRecordingMethods.js';
-import LoadingScreen from '../components/LoadingScreen.js';
-import ImportedScores from '../components/ImportedScores.js';
+import LoadingScreen from '../components/navigation/LoadingScreen.js';
+import ImportedScores from '../components/lessons/ImportedScores.js';
 
 const Lessons = () => {
   const [lessonList, setLessonList] = useState({});
